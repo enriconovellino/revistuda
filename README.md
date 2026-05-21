@@ -6,13 +6,6 @@ O projeto foca no **Diagnóstico Educacional**, oferecendo aos professores ferra
 
 ---
 
-## 🛑 O Problema
-
-1. **Baixo desempenho em avaliações:** Indicadores nacionais e internacionais (como o PISA) apontam rendimento insatisfatório de estudantes em leitura, matemática e ciências. ([Fonte: INEP](https://www.gov.br/inep/pt-br/centrais-de-conteudo/noticias/acoes-internacionais/pisa-2018-revela-baixo-desempenho-escolar-em-leitura-matematica-e-ciencias-no-brasil)).
-2. **Desigualdade no acesso:** Diferenças socioeconômicas e regionais afetam diretamente a permanência do aluno e a qualidade do aprendizado em áreas vulneráveis. ([Fonte: IBGE/Jornal Nacional](https://g1.globo.com/jornal-nacional/noticia/2023/06/07/pesquisa-do-ibge-revela-o-tamanho-da-desigualdade-que-a-educacao-brasileira-ainda-enfrenta.ghtml)).
-
----
-
 ## 🚀 Funcionalidades Principais (Plano Principal)
 
 ### 👨🏫 Para Professores
