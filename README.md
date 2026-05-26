@@ -30,33 +30,20 @@ O projeto foca no **Diagnóstico Educacional**, oferecendo aos professores ferra
 O projeto adota a arquitetura modular recomendada pelo NestJS, garantindo escalabilidade e separação de conceitos de domínio:
 
 ```text
-meu-projeto/
-├── .env                          # Credenciais reais (Ignorado pelo Git)
-├── .env.example                  # Template de credenciais para a equipe
-├── .gitignore                    # Arquivos ignorados pelo controle de versão
-├── package.json
-├── tsconfig.json
-├── node_modules/
-├── test/                         # Testes automatizados e2e (End-to-End)
-│
-└── src/
-    ├── config/                   # Validação e tipagem de variáveis de ambiente
-    │   └── app.config.ts
-    │
-    ├── common/                   # Recursos transversais compartilhados
-    │   ├── decorators/           # Custom decorators (ex: @CurrentUser())
-    │   ├── filters/              # Tratamento global de exceções HTTP
-    │   └── interceptors/         # Interceptores para formatação de logs/respostas
-    │
-    ├── database/                 # Camada de Infraestrutura e Persistência
-    │   ├── migrations/           # Histórico de alterações do schema do banco
-    │   └── data-source.ts        # Configuração do TypeORM para uso via CLI
-    │
-    ├── modules/                  # Domínios de Negócio (Feature Modules)
-    │   ├── auth/                 # Lógica de Autenticação e Controle de Acesso (JWT)
-    │   ├── users/                # Gestão de Usuários (Perfis e Vinculações)
-    │   ├── projects/             # Gestão de Escolas, Turmas e Matérias
-    │   └── tasks/                # Gestão de Aulas, Banco de Questões, Provas e Cronogramas
+src/
+├── modules/
+│   ├── users/
+│   │   ├── domain/ (Entity, Ports, Use Cases)
+│   │   ├── application/ (DTOs, Presenters)
+│   │   ├── infrastructure/ (Repository)
+│   │   ├── presentation/ (Controller)
+│   │   └── users.module.ts
+│   └── auth/
+│       ├── infrastructure/ (Guard)
+│       └── auth.module.ts
+├── shared/ (Interfaces, Decorators)
+├── prisma/ (PrismaService, PrismaModule)
+└── app.module.ts
     │
     ├── app.module.ts             # Orquestrador central (Config, DB e Modules)
     └── main.ts                   # Ponto de entrada (Bootstrapping da API)
