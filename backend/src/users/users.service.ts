@@ -21,30 +21,24 @@ export class UsersService {
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id }
     });
-
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
-
     return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-
     await this.findOne(id);
-
     return this.prisma.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
 
-  async remove(id: number) {
-
+  async remove(id: number) { 
     await this.findOne(id);
-
     return this.prisma.user.delete({
       where: { id },
     });
