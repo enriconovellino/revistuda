@@ -6,8 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PERMISSIONS_KEY } from './permissions.decorator';
-import { PrismaService } from '../prisma/prisma.service';
+import { PERMISSIONS_KEY } from '@/shared/decorators/permissions.decorator';
+import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -27,18 +27,19 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const userId = parseUserIdFromRequest(request);
+    const userId = this.extractUserIdFromRequest(request);
 
     if (!userId) {
       throw new UnauthorizedException('Usuário não autenticado');
     }
 
-    const user = await this.prisma.$queryRaw<
-      { permissions: string[] | null } | null
-    >`SELECT permissions FROM "User" WHERE id = ${userId} LIMIT 1`;
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { permissions: true },
+    });
 
-    if (!user || !user.permissions) {
-      throw new UnauthorizedException('Usuário não encontrado ou sem permissões');
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
     }
 
     const permissions = user.permissions ?? [];
@@ -52,15 +53,15 @@ export class PermissionsGuard implements CanActivate {
 
     return true;
   }
-}
 
-function parseUserIdFromRequest(request: any): number | null {
-  const headerValue = request.headers?.['x-user-id'] ?? request.headers?.['X-USER-ID'];
+  private extractUserIdFromRequest(request: any): number | null {
+    const headerValue = request.headers?.['x-user-id'] ?? request.headers?.['X-USER-ID'];
 
-  if (!headerValue) {
-    return null;
+    if (!headerValue) {
+      return null;
+    }
+
+    const userId = Number(headerValue);
+    return Number.isInteger(userId) && userId > 0 ? userId : null;
   }
-
-  const userId = Number(headerValue);
-  return Number.isInteger(userId) && userId > 0 ? userId : null;
 }
