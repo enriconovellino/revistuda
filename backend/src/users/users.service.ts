@@ -44,7 +44,8 @@ export class UsersService {
     });
     return {
       nome : user.nome,
-      email: user.email
+      email: user.email,
+      permissions: user.permissions
     }
   }
 
