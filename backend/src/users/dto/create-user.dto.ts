@@ -5,4 +5,5 @@ export class CreateUserDto {
   nome!: string;
   @IsEmail()
   email!: string;
+  permissions?: string[];
 }
