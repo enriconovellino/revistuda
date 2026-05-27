@@ -31,10 +31,21 @@ export class UsersService {
     });
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
+  async createUser(data: Prisma.UserCreateInput): Promise<CreateUserDto> {
+    const userExist = await this.prisma.user.findUnique({
+      where: { email: data.email }
+    });
+    if (userExist) {
+      throw new Error('Usuário já existe');
+    }
+
+    const user = await this.prisma.user.create({
       data,
     });
+    return {
+      nome : user.nome,
+      email: user.email
+    }
   }
 
   async findAll() {
