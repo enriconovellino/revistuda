@@ -15,14 +15,14 @@ import {
   imports: [PrismaModule],
   controllers: [UsersController],
   providers: [
-    // Use Cases
+    // Casos de Uso
     CreateUserUseCase,
     GetAllUsersUseCase,
     GetUserUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
 
-    // Repository
+    // Repositório
     {
       provide: USER_REPOSITORY,
       useClass: UserRepository,
