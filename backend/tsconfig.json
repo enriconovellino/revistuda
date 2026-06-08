@@ -20,8 +20,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "src/users", "src/auth"]
 }
