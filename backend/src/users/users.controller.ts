@@ -1,54 +1,35 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Permissions } from '../auth/permissions.decorator';
-import { PermissionsGuard } from '../auth/permission.guard';
 
 @Controller('users')
-//@UseGuards(PermissionsGuard)
+
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  @Permissions('users.read')
-  findAll() {
-    return this.usersService.findAll();
-  }
+    @Get()
+    findAll() {
+        return this.usersService.findAll();
+    }
 
-  @Get(':id')
-  @Permissions('users.read')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
-  }
+    @Put(':id')
+    updateUser(@Param('id') id: number, @Body() updateUserDto: CreateUserDto) {
+        return this.usersService.updateUser({ where: { id }, data: updateUserDto });
+    }
 
-  @Put(':id')
-  @Permissions('users.update')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.usersService.update(id, updateUserDto);
-  }
+    @Get(':id')
+    findOne(@Param('id') id: number) {
+        return this.usersService.findOne(id);
+    }
 
-  @Delete(':id')
-  @Permissions('users.delete')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
-  }
+    @Delete(':id')
+    deleteUser(@Param('id') id: number) {
+        return this.usersService.deleteUser({ id });
+    }
+
 }

@@ -1,13 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Prisma, User } from '.prisma/client/default.js';
 
 @Injectable()
 export class UsersService {
-
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -32,33 +31,39 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+    const user = this.prisma.user.findUnique({
+      where: { id }
     });
-
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
-
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-
-    await this.findOne(id);
-
+  async updateUser(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }): Promise<User> {
+    const { where, data } = params;
     return this.prisma.user.update({
+      where,
+      data,
+    });
+  }
+
+  /**
+    async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    this.findOne(id);
+    return await this.prisma.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
-
-  async remove(id: number) {
-
-    await this.findOne(id);
-
+   */
+  
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({
-      where: { id },
+      where,
     });
   }
 }
