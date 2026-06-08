@@ -16,12 +16,11 @@ import { Permissions } from '../auth/permissions.decorator';
 import { PermissionsGuard } from '../auth/permission.guard';
 
 @Controller('users')
-@UseGuards(PermissionsGuard)
+//@UseGuards(PermissionsGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Permissions('users.create')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
