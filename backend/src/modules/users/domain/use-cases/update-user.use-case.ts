@@ -1,0 +1,25 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { User } from '../entities/user.entity';
+import type { IUserRepository } from '../ports/user-repository.port';
+import { USER_REPOSITORY } from '../ports/user-repository.port';
+import type { UseCase } from '@/shared/interfaces/use-case.interface';
+
+export interface UpdateUserInput {
+  id: number;
+  nome?: string;
+  email?: string;
+  permissions?: string[];
+}
+
+@Injectable()
+export class UpdateUserUseCase implements UseCase<UpdateUserInput, User> {
+  constructor(
+    @Inject(USER_REPOSITORY)
+    private userRepository: IUserRepository,
+  ) {}
+
+  async execute(input: UpdateUserInput): Promise<User> {
+    const { id, ...updateData } = input;
+    return this.userRepository.update(id, updateData);
+  }
+}
