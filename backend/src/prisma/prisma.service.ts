@@ -10,6 +10,11 @@ export class PrismaService
   implements OnModuleInit
 {
   constructor() {
+    if (!process.env.DATABASE_URL) {
+      throw new Error(
+        'DATABASE_URL não encontrada. Certifique-se de que o arquivo .env está configurado corretamente.',
+      );
+    }
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL ?? '',
     });

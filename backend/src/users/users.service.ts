@@ -1,52 +1,29 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 import { Prisma, User } from '.prisma/client/default.js';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
-  }
-
-  async users(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
-  }
-
-  async createUser(data: Prisma.UserCreateInput): Promise<CreateUserDto> {
-    const userExist = await this.prisma.user.findUnique({
-      where: { email: data.email }
-    });
-    if (userExist) {
-      throw new ConflictException('Usuário já existe');
-    }
-
-    const user = await this.prisma.user.create({
-      data,
-    });
-    return {
-      nome : user.nome,
-      email: user.email,
-      permissions: user.permissions
-    }
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.prisma.user.findFirst({
+      where: { email: createUserDto.email }
+    })
+    if (user) {
+      throw new BadRequestException('usuário já cadastrado!')
+    } 
+    const hashPassword = await bcrypt.hash(createUserDto.senha, 10);
+    return this.prisma.user.create({
+      data: {
+        nome: createUserDto.nome,
+        email: createUserDto.email,
+        senha: hashPassword
+      }
+    })
   }
 
   async findAll() {
