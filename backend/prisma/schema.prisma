@@ -30,3 +30,11 @@ model Turma {
   descricao_turma  String?
   capacidade_maxima Int?
 }
+model Conteudo {
+  conteudo_id    Int     @id @default(autoincrement())
+  nome_conteudo  String
+  tipo_conteudo  String 
+  video_url      String?
+  audio_link     String?
+  texto_conteudo String?
+}
