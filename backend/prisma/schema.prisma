@@ -12,11 +12,12 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  nome        String
-  email       String   @unique
-  senha       String   @default("")
-  permissions String[] @default([])
+  id           Int      @id @default(autoincrement())
+  nome         String
+  email        String   @unique
+  senha        String   @default("")
+  permissions  String[] @default([])
+  refreshToken String?
 }
 model Modulo {
   modulo_id        Int     @id @default(autoincrement())
