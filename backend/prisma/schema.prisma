@@ -38,3 +38,10 @@ model Conteudo {
   audio_link     String?
   texto_conteudo String?
 }
+
+model Licao {
+  licao_id       Int     @id @default(autoincrement())
+  titulo_licao   String
+  comentario     String?
+  modulo_id      Int
+}
