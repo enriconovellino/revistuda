@@ -1,0 +1,153 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Revistuda</h1>
+      <p>{{ isLogin() ? 'Acesse sua conta para continuar' : 'Crie sua conta gratuitamente' }}</p>
+    </div>
+
+    <div class="tab-buttons">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isLogin()" 
+        (click)="setMode(true)">
+        Entrar
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="!isLogin()" 
+        (click)="setMode(false)">
+        Cadastrar
+      </button>
+    </div>
+
+    <!-- Mensagens de Feedback Geral -->
+    @if (error()) {
+      <div class="error-message">
+        <span>⚠️</span> {{ error() }}
+      </div>
+    }
+
+    <!-- Formulário de Login -->
+    @if (isLogin()) {
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label for="login-email">E-mail</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            formControlName="email" 
+            class="form-control" 
+            placeholder="exemplo@email.com" />
+          @if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']) {
+            <span class="field-error">O e-mail é obrigatório</span>
+          }
+          @else if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']) {
+            <span class="field-error">Digite um e-mail válido</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="login-senha">Senha</label>
+          <input 
+            type="password" 
+            id="login-senha" 
+            formControlName="senha" 
+            class="form-control" 
+            placeholder="Sua senha" />
+          @if (loginForm.get('senha')?.touched && loginForm.get('senha')?.errors?.['required']) {
+            <span class="field-error">A senha é obrigatória</span>
+          }
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="loading() || loginForm.invalid">
+          {{ loading() ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+    }
+
+    <!-- Formulário de Registro -->
+    @else {
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <div class="form-group">
+          <label for="reg-nome">Nome Completo</label>
+          <input 
+            type="text" 
+            id="reg-nome" 
+            formControlName="nome" 
+            class="form-control" 
+            placeholder="Seu nome" />
+          @if (registerForm.get('nome')?.touched && registerForm.get('nome')?.errors?.['required']) {
+            <span class="field-error">O nome é obrigatório</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">E-mail</label>
+          <input 
+            type="email" 
+            id="reg-email" 
+            formControlName="email" 
+            class="form-control" 
+            placeholder="exemplo@email.com" />
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['required']) {
+            <span class="field-error">O e-mail é obrigatório</span>
+          }
+          @else if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']) {
+            <span class="field-error">Digite um e-mail válido</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="reg-senha">Senha</label>
+          <input 
+            type="password" 
+            id="reg-senha" 
+            formControlName="senha" 
+            class="form-control" 
+            placeholder="Mínimo 6 caracteres" />
+          @if (registerForm.get('senha')?.touched && registerForm.get('senha')?.errors?.['required']) {
+            <span class="field-error">A senha é obrigatória</span>
+          }
+          @else if (registerForm.get('senha')?.touched && registerForm.get('senha')?.errors?.['minlength']) {
+            <span class="field-error">A senha deve ter no mínimo 6 caracteres</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="reg-permission">Tipo de Usuário (Perfil)</label>
+          <select 
+            id="reg-permission" 
+            formControlName="permission" 
+            class="form-control">
+            <option value="ALUNO_CRIANCA">Aluno Criança</option>
+            <option value="ALUNO_IDOSO">Aluno Idoso</option>
+            <option value="PROFESSOR">Professor</option>
+            <option value="ADM">Administrador</option>
+          </select>
+          @if (registerForm.get('permission')?.touched && registerForm.get('permission')?.errors?.['required']) {
+            <span class="field-error">O tipo de usuário é obrigatório</span>
+          }
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="loading() || registerForm.invalid">
+          {{ loading() ? 'Criando conta...' : 'Cadastrar' }}
+        </button>
+      </form>
+    }
+  </div>
+</div>
+
+<!-- Modal de Sucesso -->
+@if (showSuccessModal()) {
+  <div class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <h2>Cadastro Realizado!</h2>
+      <p>Sua conta foi criada com sucesso no Revistuda.</p>
+      <p class="modal-sub">Estamos preparando tudo e redirecionando você para a tela de login...</p>
+      <div class="spinner"></div>
+    </div>
+  </div>
+}
