@@ -1,0 +1,46 @@
+<div class="dashboard-idoso" [style.font-size.rem]="fontSize()">
+  <div class="wrapper">
+    <div class="top-bar">
+      <h1>Olá, {{ userName() }}!</h1>
+      <div class="font-controls">
+        <span>Tamanho do Texto:</span>
+        <button (click)="changeFontSize(-0.1)">A-</button>
+        <button (click)="changeFontSize(0.1)">A+</button>
+      </div>
+    </div>
+
+    <p style="color: #475569; margin-bottom: 2rem; font-weight: 600;">
+      Bem-vindo ao Revistuda. Escolha uma das opções abaixo para iniciar suas leituras e estudos:
+    </p>
+
+    <div class="menu-options">
+      <button class="option-row">
+        <span class="option-icon">📖</span>
+        <div class="option-text">
+          <h2 [style.font-size.em]="1.2">Minhas Leituras</h2>
+          <p>Clique aqui para acessar seus livros e materiais com letras grandes.</p>
+        </div>
+      </button>
+
+      <button class="option-row">
+        <span class="option-icon">✏️</span>
+        <div class="option-text">
+          <h2 [style.font-size.em]="1.2">Responder Exercícios</h2>
+          <p>Acesse as atividades de estudo criadas especialmente para você.</p>
+        </div>
+      </button>
+
+      <button class="option-row">
+        <span class="option-icon">📞</span>
+        <div class="option-text">
+          <h2 [style.font-size.em]="1.2">Pedir Ajuda ao Professor</h2>
+          <p>Fale diretamente com os professores para tirar suas dúvidas de estudo.</p>
+        </div>
+      </button>
+    </div>
+
+    <button (click)="logout()" class="logout-btn" [style.font-size.em]="1.1">
+      Sair da Conta e Fechar
+    </button>
+  </div>
+</div>
