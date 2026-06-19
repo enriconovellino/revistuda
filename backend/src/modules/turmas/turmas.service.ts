@@ -5,11 +5,12 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class TurmasService {
-constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
   create(createTurmaDto: CreateTurmaDto) {
     return this.prisma.turma.create({ data: createTurmaDto });
   }
+
   findAll() {
      return this.prisma.turma.findMany();
   }
@@ -29,6 +30,7 @@ constructor(private prisma: PrismaService) {}
       data: updateTurmaDto,
     });
   }
+  
   async remove(id: number) {
     await this.findOne(id);
     return this.prisma.turma.delete({
