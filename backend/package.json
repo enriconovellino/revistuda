@@ -12,6 +12,8 @@
     "migration:dev": "prisma migrate dev",
     "migration:deploy": "prisma migrate deploy",
     "migration:reset": "prisma migrate reset",
+    "migration:status": "node scripts/check-migrations.js",
+    "migration:run": "node scripts/run-migrations.js",
     "studio": "prisma studio",
     "start": "nest start",
     "start:dev": "nest start --watch",
