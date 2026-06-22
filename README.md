@@ -112,6 +112,15 @@ cd backend
    ```
    A API estará disponível em `http://localhost:3000`.
 
+#### 🔄 Criando uma Nova Migration
+Caso precise alterar a estrutura do banco (adicionar tabelas, colunas, etc.):
+1. Altere o arquivo `backend/prisma/schema.prisma`.
+2. Gere e aplique a nova migration localmente rodando:
+   ```bash
+   npx prisma migrate dev --name nome_da_sua_migration
+   ```
+3. O Prisma criará os arquivos SQL na pasta `prisma/migrations/` e atualizará automaticamente o seu banco de dados local. Lembre-se de commitar estes arquivos gerados.
+
 ---
 
 ### 3️⃣ Configurando e Iniciando o Frontend
