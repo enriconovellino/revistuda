@@ -95,7 +95,18 @@ cd backend
    npm run migration:status
    ```
 
-5. **Iniciar o Servidor em Modo de Desenvolvimento:**
+5. **Popular o Banco de Dados (Seed):**
+   Para popular o banco com dados de testes (usuários, turmas, módulos e conteúdos iniciais):
+   ```bash
+   npm run seed
+   ```
+   > 👤 *Isso criará os seguintes usuários de teste (todos com a senha padrão `123456`):*
+   > * **Administrador:** `admin@revistuda.com.br`
+   > * **Professor:** `professor@revistuda.com.br`
+   > * **Aluno (Criança):** `lucas@revistuda.com.br`
+   > * **Aluno (Idoso):** `maria@revistuda.com.br`
+
+6. **Iniciar o Servidor em Modo de Desenvolvimento:**
    ```bash
    npm run start:dev
    ```
