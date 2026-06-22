@@ -5,15 +5,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Post,
   Put,
   UseGuards,
-} from '@nestjs/common';
-import { CreateUserDto } from '../../application/dtos/create-user.dto';
+} from '@nestjs/common'; 
 import { UpdateUserDto } from '../../application/dtos/update-user.dto';
 import { UserPresenter } from '../../application/presenters/user.presenter';
 import {
-  CreateUserUseCase,
   DeleteUserUseCase,
   GetAllUsersUseCase,
   GetUserUseCase,
@@ -26,20 +23,12 @@ import { PermissionsGuard } from '@/modules/auth/infrastructure/guards/permissio
 @UseGuards(PermissionsGuard)
 export class UsersController {
   constructor(
-    private createUserUseCase: CreateUserUseCase,
     private getAllUsersUseCase: GetAllUsersUseCase,
     private getUserUseCase: GetUserUseCase,
     private updateUserUseCase: UpdateUserUseCase,
     private deleteUserUseCase: DeleteUserUseCase,
   ) {}
-
-  @Post()
-  @Permissions('users.create')
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserPresenter> {
-    const user = await this.createUserUseCase.execute(createUserDto);
-    return UserPresenter.toPresentation(user);
-  }
-
+  
   @Get()
   @Permissions('users.read')
   async findAll(): Promise<UserPresenter[]> {

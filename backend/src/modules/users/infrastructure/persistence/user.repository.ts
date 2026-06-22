@@ -12,16 +12,17 @@ export class UserRepository implements IUserRepository {
       data: {
         nome: user.nome,
         email: user.email,
+        senha: user.senha,
         permissions: user.permissions,
       },
     });
 
-    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.permissions);
+    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions);
   }
 
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany();
-    return users.map((u) => new User(u.id, u.nome, u.email, u.permissions));
+    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions));
   }
 
   async findById(id: number): Promise<User | null> {
@@ -33,7 +34,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.permissions);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -45,7 +46,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.permissions);
+    return new User(user.id, user.nome, user.email,user.senha, user.permissions);
   }
 
   async update(id: number, data: Partial<User>): Promise<User> {
@@ -58,7 +59,7 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.permissions);
+    return new User(updatedUser.id, updatedUser.nome, updatedUser.email,updatedUser.senha, updatedUser.permissions);
   }
 
   async delete(id: number): Promise<void> {

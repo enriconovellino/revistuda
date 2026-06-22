@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { ApiOperation, ApiTags, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreateModuloDto } from '../../application/dtos/create-modulo.dto';
 import { UpdateModuloDto } from '../../application/dtos/update-modulo.dto';
 import { ModuloPresenter } from '../../application/presenters/modulo.presenter';
@@ -21,30 +22,47 @@ export class ModulosController {
   ) { }
 
   @Post()
+  @ApiOperation({ summary: 'Criar um novo módulo' })
+  @ApiResponse({ status: 201, description: 'Módulo criado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
   async create(@Body() dto: CreateModuloDto): Promise<ModuloPresenter> {
     const modulo = await this.createModuloUseCase.execute(dto);
     return ModuloPresenter.toPresentation(modulo);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar todos os módulos' })
+  @ApiResponse({ status: 200, description: 'Lista de módulos retornada com sucesso' })
   async findAll(): Promise<ModuloPresenter[]> {
     const modulos = await this.getAllModulosUseCase.execute();
     return ModuloPresenter.toCollection(modulos);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar módulo por ID' })
+  @ApiParam({ name: 'id', description: 'ID do módulo', type: Number })
+  @ApiResponse({ status: 200, description: 'Módulo encontrado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Módulo não encontrado' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<ModuloPresenter> {
     const modulo = await this.getModuloUseCase.execute(id);
     return ModuloPresenter.toPresentation(modulo);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Atualizar módulo por ID' })
+  @ApiParam({ name: 'id', description: 'ID do módulo', type: Number })
+  @ApiResponse({ status: 200, description: 'Módulo atualizado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Módulo não encontrado' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateModuloDto): Promise<ModuloPresenter> {
     const modulo = await this.updateModuloUseCase.execute({ id, ...dto });
     return ModuloPresenter.toPresentation(modulo);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Deletar módulo por ID' })
+  @ApiParam({ name: 'id', description: 'ID do módulo', type: Number })
+  @ApiResponse({ status: 200, description: 'Módulo deletado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Módulo não encontrado' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.deleteModuloUseCase.execute(id);
   }

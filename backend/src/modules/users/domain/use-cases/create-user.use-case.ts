@@ -7,6 +7,7 @@ import type { UseCase } from '@/shared/interfaces/use-case.interface';
 export interface CreateUserInput {
   nome: string;
   email: string;
+  senha: string;
   permissions?: string[];
 }
 
@@ -18,7 +19,7 @@ export class CreateUserUseCase implements UseCase<CreateUserInput, User> {
   ) {}
 
   async execute(input: CreateUserInput): Promise<User> {
-    const user = new User(0, input.nome, input.email, input.permissions || []);
+    const user = new User(0, input.nome, input.email, input.senha, input.permissions || []);
     return this.userRepository.create(user);
   }
 }
