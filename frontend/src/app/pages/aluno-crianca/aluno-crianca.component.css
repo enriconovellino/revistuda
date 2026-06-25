@@ -1,0 +1,77 @@
+.dashboard-crianca {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  font-family: 'Outfit', cursive, sans-serif;
+  padding: 2rem;
+  color: #2d3748;
+}
+.card-principal {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  padding: 3rem 2rem;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  border: 8px solid #ffd166;
+  text-align: center;
+}
+.avatar {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+h1 {
+  font-size: 3rem;
+  color: #ff6b6b;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  font-size: 1.5rem;
+  color: #4d908e;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+.grid-atividades {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.atividade-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 4px solid #f28482;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.atividade-card:hover {
+  transform: scale(1.05) rotate(2deg);
+  border-color: #84a59d;
+}
+.atividade-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+.atividade-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #3d5a80;
+}
+.logout-btn {
+  margin-top: 3rem;
+  background: #ff7096;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(255, 112, 150, 0.3);
+  transition: all 0.2s ease;
+}
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background: #ff477e;
+}
