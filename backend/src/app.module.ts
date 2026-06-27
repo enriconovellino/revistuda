@@ -7,10 +7,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ModulosModule } from './modules/modulos/modulos.module';
 import { TurmasModule } from './modules/turmas/turmas.module';
 import { ConteudosModule } from './modules/conteudos/conteudos.module';
-import { AtividadesModule } from './modules/atividades/atividades.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, ModulosModule, TurmasModule, ConteudosModule, AtividadesModule],
+  imports: [PrismaModule, UsersModule, AuthModule, ModulosModule, TurmasModule, ConteudosModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -4,7 +4,6 @@ import { UsersController } from './presentation/controllers/users.controller';
 import { UserRepository } from './infrastructure/persistence/user.repository';
 import { USER_REPOSITORY } from './domain/ports/user-repository.port';
 import {
-  CreateUserUseCase,
   DeleteUserUseCase,
   GetAllUsersUseCase,
   GetUserUseCase,
@@ -16,7 +15,6 @@ import {
   controllers: [UsersController],
   providers: [
     // Casos de Uso
-    CreateUserUseCase,
     GetAllUsersUseCase,
     GetUserUseCase,
     UpdateUserUseCase,
