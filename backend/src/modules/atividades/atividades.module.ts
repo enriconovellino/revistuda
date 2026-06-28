@@ -1,9 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AtividadesService } from './atividades.service';
-import { AtividadesController } from './atividades.controller';
+import { AtividadesController } from './presentation/controllers/atividades.controller';
+import { AtividadeRepository } from './infrastructure/presistence/atividade.repository';
+import { DeleteAtividadeUseCase } from './domain/use-cases/delete-atividade.use-case';
+import { UpdateAtividadeUseCase } from './domain/use-cases/update-atividade.use-case';
+import { GetAtividadeUseCase } from './domain/use-cases/get-atividade.use-casa';
+import { GetAllAtividadesUseCase } from './domain/use-cases/get-all-atividades.use-case';
+import { CreateAtividadeUseCase } from './domain/use-cases/create-atividade.use-case';
+import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule],
   controllers: [AtividadesController],
-  providers: [AtividadesService],
+  providers: [{
+    provide: 'ATIVIDADE_REPOSITORY',
+    useClass: AtividadeRepository,
+  },
+  CreateAtividadeUseCase,
+  GetAllAtividadesUseCase,
+  GetAtividadeUseCase,
+  UpdateAtividadeUseCase,
+  DeleteAtividadeUseCase  
+],
+
 })
 export class AtividadesModule {}

@@ -19,18 +19,21 @@ model User {
   permissions  String[] @default([])
   refreshToken String?
 }
+
 model Modulo {
   modulo_id        Int     @id @default(autoincrement())
   titulo_modulo    String
   descricao_modulo String?
   dificuldade      String
 }
+
 model Turma {
   turma_id         Int     @id @default(autoincrement())
   nome_turma       String
   descricao_turma  String?
   capacidade_maxima Int?
 }
+
 model Conteudo {
   conteudo_id    Int     @id @default(autoincrement())
   nome_conteudo  String
@@ -46,9 +49,11 @@ model Licao {
   comentario     String?
   modulo_id      Int
 }
+
 model Atividade {
   atividade_id         Int      @id @default(autoincrement())
   titulo_atividade     String   
-  descricao_atividade  String
+  descricao_atividade  String?
   tipo_atividade       String
+  licao_id             Int
 }
