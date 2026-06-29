@@ -1,52 +1,253 @@
-<div class="dashboard-prof">
-  <nav class="nav">
-    <div class="logo">Revistuda Professor 🎓</div>
-    <button (click)="logout()" class="logout-link">Sair</button>
-  </nav>
+<div class="d-flex" style="min-height: 100vh;">
 
-  <div class="content">
-    <h1 style="margin-bottom: 2rem;">Painel do Docente: Prof. {{ userName() }}</h1>
+  <!-- SIDEBAR -->
+  <div class="d-flex flex-column bg-primary text-white" style="width: 240px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 100;">
+    <div class="p-3 border-bottom border-primary-subtle">
+      <h5 class="mb-0 fw-bold">ReviEstuda</h5>
+      <small class="text-white-50">Plataforma Educacional</small>
+    </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total de Alunos</div>
-        <div class="stat-val">42</div>
-      </div>
-      <div class="stat-card" style="border-left-color: #38a169;">
-        <div class="stat-label">Exercícios Corrigidos</div>
-        <div class="stat-val">128</div>
-      </div>
-      <div class="stat-card" style="border-left-color: #dd6b20;">
-        <div class="stat-label">Módulos Ativos</div>
-        <div class="stat-val">5</div>
+    <nav class="flex-grow-1 p-3">
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link text-white rounded d-flex align-items-center gap-2"
+            [class.bg-white]="paginaAtual() === 'dashboard'"
+            [class.text-primary]="paginaAtual() === 'dashboard'"
+            (click)="irPara('dashboard')" style="cursor: pointer;">
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white rounded d-flex align-items-center gap-2"
+            [class.bg-white]="paginaAtual() === 'modulos'"
+            [class.text-primary]="paginaAtual() === 'modulos'"
+            (click)="irPara('modulos')" style="cursor: pointer;">
+            Criar Módulo
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white rounded d-flex align-items-center gap-2" style="cursor: pointer;">
+            Conta
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="p-3 border-top border-primary-subtle">
+      <button class="btn btn-outline-light w-100" (click)="logout()">🚪 Sair</button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="flex-grow-1" style="margin-left: 240px;">
+
+    <!-- HEADER -->
+    <div class="bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center sticky-top">
+      <input type="text" class="form-control w-25" placeholder=" Buscar módulos...">
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+            {{ userName().charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Professor</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2 class="section-title">Minhas Turmas e Atividades Recentes</h2>
-    <div class="card-list">
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Lucas Oliveira (Criança)</h3>
-          <p>Completou o quiz de Alfabetização</p>
-        </div>
-        <span class="badge">9/10 Pontos</span>
+    <!-- LOADING / ERRO -->
+    @if (loading()) {
+      <div class="d-flex justify-content-center mt-5">
+        <div class="spinner-border text-primary" role="status"></div>
       </div>
+    } @else if (error()) {
+      <div class="alert alert-danger m-4">{{ error() }}</div>
+    } @else {
 
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Dona Maria Sousa (Idoso)</h3>
-          <p>Enviou uma pergunta sobre o livro de História</p>
-        </div>
-        <span class="badge" style="background:#fefcbf; color:#b7791f;">Pendente</span>
-      </div>
+      <!-- DASHBOARD -->
+      @if (paginaAtual() === 'dashboard') {
+        <div class="p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-0">Painel de Controle</h4>
+              <small class="text-muted">Bem-vindo de volta, Prof. {{ userName() }}!</small>
+            </div>
+            <button class="btn btn-primary" (click)="irPara('modulos')">
+              ➕ Criar Módulo
+            </button>
+          </div>
 
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Antônio Alves (Idoso)</h3>
-          <p>Iniciou o módulo de Leitura Avançada</p>
+          <!-- Stats -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <div class="text-muted small mb-1">Total de Módulos</div>
+                  <div class="fs-2 fw-bold text-primary">{{ modulos().length }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card border-0 shadow-sm h-100 bg-primary text-white">
+                <div class="card-body">
+                  <div class="small mb-1 opacity-75">Módulos Fáceis</div>
+                  <div class="fs-2 fw-bold">{{ contarDificuldade('fácil') }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <div class="text-muted small mb-1">Módulos Difíceis</div>
+                  <div class="fs-2 fw-bold text-danger">{{ contarDificuldade('difícil') }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista resumida de módulos -->
+          <h5 class="mb-3">Meus Módulos</h5>
+          <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+              @if (modulos().length === 0) {
+                <li class="list-group-item text-muted">Nenhum módulo criado ainda.</li>
+              }
+              @for (modulo of modulos().slice(0, 5); track modulo.modulo_id) {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-3">
+                    @if (modulo.imagem_url) {
+                      <img [src]="modulo.imagem_url" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
+                    } @else {
+                      <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">📚</div>
+                    }
+                    <div>
+                      <div class="fw-semibold">{{ modulo.titulo_modulo }}</div>
+                      <small class="text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</small>
+                    </div>
+                  </div>
+                  <span class="badge"
+                    [class.bg-success]="modulo.dificuldade === 'fácil'"
+                    [class.bg-warning]="modulo.dificuldade === 'médio'"
+                    [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                    {{ modulo.dificuldade }}
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+          @if (modulos().length > 5) {
+            <div class="text-center mt-3">
+              <button class="btn btn-link" (click)="irPara('modulos')">Ver todos os módulos</button>
+            </div>
+          }
         </div>
-        <span class="badge" style="background:#e6fffa; color:#319795;">Ativo</span>
-      </div>
-    </div>
+      }
+
+      <!-- MÓDULOS -->
+      @if (paginaAtual() === 'modulos') {
+        <div class="p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-0">Meus Módulos</h4>
+              <small class="text-muted">{{ modulos().length }} módulo(s) criado(s)</small>
+            </div>
+            <button class="btn btn-primary" (click)="toggleFormModulo()">
+              {{ mostrarFormModulo() ? '✕ Cancelar' : '+ Novo Módulo' }}
+            </button>
+          </div>
+
+          <!-- Formulário -->
+          @if (mostrarFormModulo()) {
+            <div class="card mb-4 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  {{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}
+                </h5>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Título <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
+                      placeholder="Ex: Introdução à Informática"
+                      [(ngModel)]="novoTituloModulo" name="tituloModulo"/>
+                    @if (erroModulo()) {
+                      <div class="invalid-feedback">{{ erroModulo() }}</div>
+                    }
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-control" placeholder="Descrição opcional"
+                      [(ngModel)]="novaDescricaoModulo" name="descricaoModulo"/>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Dificuldade</label>
+                    <select class="form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
+                      <option value="fácil">Fácil</option>
+                      <option value="médio">Médio</option>
+                      <option value="difícil">Difícil</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">URL da Imagem</label>
+                    <input type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg"
+                      [(ngModel)]="novaImagemUrl" name="imagemUrl"/>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo()">
+                      {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Cards -->
+          @if (modulos().length === 0) {
+            <div class="text-center mt-5">
+              <p class="text-muted fs-5">Nenhum módulo criado ainda.</p>
+              <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
+            </div>
+          }
+
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            @for (modulo of modulos(); track modulo.modulo_id) {
+              <div class="col">
+                <div class="card h-100 shadow-sm">
+                  @if (modulo.imagem_url) {
+                    <img [src]="modulo.imagem_url" class="card-img-top" alt="{{ modulo.titulo_modulo }}" style="height: 180px; object-fit: cover;">
+                  } @else {
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                      <span class="text-muted">📚 Sem imagem</span>
+                    </div>
+                  }
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5 class="card-title mb-0">{{ modulo.titulo_modulo }}</h5>
+                      <span class="badge"
+                        [class.bg-success]="modulo.dificuldade === 'fácil'"
+                        [class.bg-warning]="modulo.dificuldade === 'médio'"
+                        [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                        {{ modulo.dificuldade }}
+                      </span>
+                    </div>
+                    <p class="card-text text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
+                  </div>
+                  <div class="card-footer d-flex gap-2">
+                  <button class="btn btn-sm btn-primary flex-fill" (click)="verModulo(modulo.modulo_id)">
+                  📚 Ver Lições
+                </button>
+                     <button class="btn btn-sm btn-outline-warning" (click)="editarModulo(modulo)">✏️</button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deletarModulo(modulo.modulo_id)">🗑️</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    }
   </div>
 </div>

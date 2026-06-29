@@ -24,6 +24,7 @@ model Modulo {
   titulo_modulo    String
   descricao_modulo String?
   dificuldade      String
+  imagem_url       String?
 }
 model Turma {
   turma_id         Int     @id @default(autoincrement())
