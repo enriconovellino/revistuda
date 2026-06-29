@@ -5,6 +5,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { resolvePermissions } from '@/shared/constants/roles-permissions';
 
 @Injectable()
 export class AuthService {
@@ -74,12 +75,14 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(registerDto.senha, 10);
 
+    const permissions = resolvePermissions(registerDto.permission);
+
     const createdUser = await this.prisma.user.create({
       data: {
         nome: registerDto.nome,
         email: registerDto.email,
         senha: hashedPassword,
-        permissions: [registerDto.permission],
+        permissions,
       },
     });
 

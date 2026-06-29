@@ -8,6 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '@/shared/decorators/permissions.decorator';
 import { PrismaService } from '@/prisma/prisma.service';
+import { resolvePermissions } from '@/shared/constants/roles-permissions';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -42,9 +43,10 @@ export class PermissionsGuard implements CanActivate {
       throw new UnauthorizedException('Usuário não encontrado');
     }
 
-    const permissions = user.permissions ?? [];
+    const permissions = (user.permissions ?? []).flatMap((permission) => resolvePermissions(permission));
+    const uniquePermissions = [...new Set(permissions)];
     const hasAllPermissions = requiredPermissions.every((permission) =>
-      permissions.includes(permission),
+      uniquePermissions.includes(permission),
     );
 
     if (!hasAllPermissions) {
