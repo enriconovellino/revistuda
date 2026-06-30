@@ -1,20 +1,41 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
 
 export class CreateConteudoDto {
+  @ApiProperty({
+    example: 'Aula de HTML Básico',
+    description: 'Nome do conteúdo',
+  })
   @IsString()
   nome_conteudo!: string;
 
+  @ApiProperty({
+    example: 'video',
+    description: 'Tipo do conteúdo (video, audio ou texto)',
+  })
   @IsString()
   tipo_conteudo!: string;
 
+  @ApiPropertyOptional({
+    example: 'https://youtube.com/video123',
+    description: 'URL do vídeo',
+  })
   @IsString()
   @IsOptional()
   video_url?: string;
 
+  @ApiPropertyOptional({
+    example: 'https://spotify.com/audio123',
+    description: 'Link do áudio',
+  })
   @IsString()
   @IsOptional()
   audio_link?: string;
 
+  @ApiPropertyOptional({
+    example: 'Neste conteúdo vamos aprender HTML...',
+    description: 'Texto do conteúdo',
+  })
   @IsString()
   @IsOptional()
   texto_conteudo?: string;
