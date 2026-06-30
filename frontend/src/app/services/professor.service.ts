@@ -47,16 +47,14 @@ async updateModulo(id: number, modulo: Omit<Modulo, 'modulo_id'>): Promise<Modul
   return data as Modulo;
 }
 
-async deletarModulo(id: number): Promise<void> {
-  const response = await fetch('${this.apiUrl}/modulos/${id}', {
+async deleteModulo(id: number): Promise<void> {
+  const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
     method: 'DELETE',
     headers: this.getHeaders()
   });
   if (!response.ok) {
     const data = await response.json();
-    throw new Error (data.message || 'Erro ao deletar módulo');
+    throw new Error(data.message || 'Erro ao deletar módulo');
   }
-
-  
 }
 }
