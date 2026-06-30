@@ -1,21 +1,26 @@
 import { resolvePermissions } from './roles-permissions';
 
 describe('resolvePermissions', () => {
-  it('should expand admin role to the full permission set', () => {
+  it('should prepend the role name and expand ADM to the full permission set', () => {
     const permissions = resolvePermissions('ADM');
 
+    expect(permissions[0]).toBe('ADM');
     expect(permissions).toEqual(
       expect.arrayContaining(['users.create', 'users.read', 'users.update', 'users.delete']),
     );
     expect(permissions).toEqual(expect.arrayContaining(['modulos.read', 'conteudos.read']));
   });
 
-  it('should assign student permissions for child and elderly roles', () => {
-    expect(resolvePermissions('ALUNO_CRIANCA')).toEqual(
+  it('should include role marker and student permissions for child and elderly roles', () => {
+    const crianca = resolvePermissions('ALUNO_CRIANCA');
+    expect(crianca[0]).toBe('ALUNO_CRIANCA');
+    expect(crianca).toEqual(
       expect.arrayContaining(['modulos.read', 'conteudos.read', 'dashboard.read']),
     );
 
-    expect(resolvePermissions('ALUNO_IDOSO')).toEqual(
+    const idoso = resolvePermissions('ALUNO_IDOSO');
+    expect(idoso[0]).toBe('ALUNO_IDOSO');
+    expect(idoso).toEqual(
       expect.arrayContaining(['modulos.read', 'conteudos.read', 'dashboard.read']),
     );
   });

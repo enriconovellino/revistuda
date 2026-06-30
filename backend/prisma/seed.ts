@@ -3,7 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcryptjs';
 import 'dotenv/config';
-import { ROLE_PERMISSIONS } from '../src/shared/constants/roles-permissions';
+import { resolvePermissions } from '../src/shared/constants/roles-permissions';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL ?? '',
@@ -30,7 +30,7 @@ async function main() {
       nome: 'Administrador ReviStuda',
       email: 'admin@revistuda.com.br',
       senha: defaultPasswordHash,
-      permissions: ROLE_PERMISSIONS.ADM,
+      permissions: resolvePermissions('ADM'),
     },
   });
 
@@ -39,7 +39,7 @@ async function main() {
       nome: 'Professor Carlos',
       email: 'professor@revistuda.com.br',
       senha: defaultPasswordHash,
-      permissions: ROLE_PERMISSIONS.PROFESSOR,
+      permissions: resolvePermissions('PROFESSOR'),
     },
   });
 
@@ -48,7 +48,7 @@ async function main() {
       nome: 'Lucas Silva (Criança)',
       email: 'lucas@revistuda.com.br',
       senha: defaultPasswordHash,
-      permissions: ROLE_PERMISSIONS.ALUNO_CRIANCA,
+      permissions: resolvePermissions('ALUNO_CRIANCA'),
     },
   });
 
@@ -57,7 +57,7 @@ async function main() {
       nome: 'Maria Souza (Idoso)',
       email: 'maria@revistuda.com.br',
       senha: defaultPasswordHash,
-      permissions: ROLE_PERMISSIONS.ALUNO_IDOSO,
+      permissions: resolvePermissions('ALUNO_IDOSO'),
     },
   });
 

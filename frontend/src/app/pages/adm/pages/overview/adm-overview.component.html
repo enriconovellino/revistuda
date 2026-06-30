@@ -1,0 +1,75 @@
+<div class="container-fluid px-4 py-4">
+  <div class="mb-4">
+    <h1 class="h3 fw-bold text-white mb-1">Visão Geral</h1>
+    <p class="text-secondary mb-0">Resumo de todos os recursos da plataforma</p>
+  </div>
+
+  <div class="text-center py-5" *ngIf="loading()">
+    <div class="spinner-border text-info" role="status"></div>
+    <p class="text-secondary mt-2">Carregando dados...</p>
+  </div>
+
+  <ng-container *ngIf="!loading()">
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 border-start border-info border-5 text-white h-100" style="background:#1e293b">
+          <div class="card-body d-flex align-items-center gap-3">
+            <span class="fs-2">👥</span>
+            <div>
+              <div class="fs-2 fw-bold text-info lh-1">{{ users().length }}</div>
+              <div class="text-secondary small text-uppercase fw-semibold">Usuários</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 border-start border-success border-5 text-white h-100" style="background:#1e293b">
+          <div class="card-body d-flex align-items-center gap-3">
+            <span class="fs-2">🏫</span>
+            <div>
+              <div class="fs-2 fw-bold text-success lh-1">{{ turmas().length }}</div>
+              <div class="text-secondary small text-uppercase fw-semibold">Turmas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 border-start border-warning border-5 text-white h-100" style="background:#1e293b">
+          <div class="card-body d-flex align-items-center gap-3">
+            <span class="fs-2">📚</span>
+            <div>
+              <div class="fs-2 fw-bold text-warning lh-1">{{ modulos().length }}</div>
+              <div class="text-secondary small text-uppercase fw-semibold">Módulos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#a78bfa!important">
+          <div class="card-body d-flex align-items-center gap-3">
+            <span class="fs-2">📝</span>
+            <div>
+              <div class="fs-2 fw-bold lh-1" style="color:#a78bfa">{{ conteudos().length }}</div>
+              <div class="text-secondary small text-uppercase fw-semibold">Conteúdos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-secondary text-white" style="background:#1e293b">
+      <div class="card-body">
+        <h5 class="card-title fw-bold mb-4">Distribuição de Usuários por Perfil</h5>
+        <div class="chart-bars">
+          <div class="bar-row" *ngFor="let item of roleDistribution()">
+            <span class="bar-label">{{ item.label }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="item.pct"></div>
+            </div>
+            <span class="bar-count">{{ item.count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

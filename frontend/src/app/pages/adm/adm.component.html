@@ -1,30 +1,37 @@
-<div class="dashboard-adm">
-  <header class="header">
-    <div class="logo">Revistuda Admin ⚙️</div>
-    <button (click)="logout()" class="logout-btn">Sair</button>
-  </header>
+<div class="adm-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">ReviStuda ⚙️</div>
 
-  <div class="container">
-    <div class="welcome-card">
-      <h1>Painel Geral: {{ userName() }}</h1>
-      <p>Gerencie usuários, configure acessos globais e veja relatórios detalhados do sistema.</p>
+    <nav class="sidebar-nav">
+      <a routerLink="overview" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Visão Geral</span>
+      </a>
+      <a routerLink="users" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>Usuários</span>
+      </a>
+      <a routerLink="turmas" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🏫</span>
+        <span>Turmas</span>
+      </a>
+      <a routerLink="modulos" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📚</span>
+        <span>Módulos</span>
+      </a>
+      <a routerLink="conteudos" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📝</span>
+        <span>Conteúdos</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">{{ userName() }}</div>
+      <button class="logout-btn" (click)="logout()">Sair</button>
     </div>
+  </aside>
 
-    <div class="grid-actions">
-      <div class="action-card">
-        <h3>👥 Gerenciar Usuários</h3>
-        <p>Gerencie perfis de alunos e professores, ajuste roles e visualize logs de acessos.</p>
-      </div>
-
-      <div class="action-card">
-        <h3>📑 Controle de Matrículas</h3>
-        <p>Monitore a entrada de novos alunos e crie associações com turmas específicas.</p>
-      </div>
-
-      <div class="action-card">
-        <h3>📊 Logs do Servidor</h3>
-        <p>Verifique o status do sistema de autenticação, erros relatados e requisições HTTP.</p>
-      </div>
-    </div>
-  </div>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>

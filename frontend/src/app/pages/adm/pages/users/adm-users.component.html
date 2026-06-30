@@ -1,0 +1,128 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <h1 class="h3 fw-bold text-white mb-1">Usuários</h1>
+      <p class="text-secondary mb-0">Gerencie todos os usuários da plataforma</p>
+    </div>
+    <button class="btn btn-info text-dark fw-semibold" (click)="openCreateModal()">+ Novo Usuário</button>
+  </div>
+
+  <div class="alert alert-danger py-2" *ngIf="error() && !modalOpen()">{{ error() }}</div>
+
+  <div class="text-center py-5" *ngIf="loading()">
+    <div class="spinner-border text-info" role="status"></div>
+  </div>
+
+  <div class="card border-secondary" style="background:#1e293b" *ngIf="!loading()">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="text-secondary fw-semibold border-secondary">#</th>
+            <th class="text-secondary fw-semibold border-secondary">Nome</th>
+            <th class="text-secondary fw-semibold border-secondary">E-mail</th>
+            <th class="text-secondary fw-semibold border-secondary">Perfil</th>
+            <th class="text-secondary fw-semibold border-secondary">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users()">
+            <td class="text-secondary">{{ user.id }}</td>
+            <td class="text-white">{{ user.nome }}</td>
+            <td class="text-secondary">{{ user.email }}</td>
+            <td><span class="badge bg-info text-dark">{{ getRoleLabel(user.permissions) }}</span></td>
+            <td>
+              <button class="btn btn-outline-warning btn-sm me-1" (click)="openEditModal(user)">Editar</button>
+              <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(user.id)">Excluir</button>
+            </td>
+          </tr>
+          <tr *ngIf="users().length === 0">
+            <td colspan="5" class="text-center text-secondary py-4">Nenhum usuário encontrado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="deleteConfirmId() !== null" (click)="cancelDelete()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">Confirmar exclusão</h5>
+      </div>
+      <div class="modal-body text-secondary">
+        Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="executeDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create / Edit Modal -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="modalOpen()" (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">{{ modalMode() === 'create' ? 'Novo Usuário' : 'Editar Usuário' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="error()">{{ error() }}</div>
+
+        <!-- Create Form -->
+        <form *ngIf="modalMode() === 'create'" (ngSubmit)="saveCreate()" id="createForm">
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Nome</label>
+            <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="createForm.nome" name="nome" placeholder="Nome completo" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">E-mail</label>
+            <input type="email" class="form-control bg-dark text-white border-secondary" [(ngModel)]="createForm.email" name="email" placeholder="email@exemplo.com" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Senha</label>
+            <input type="password" class="form-control bg-dark text-white border-secondary" [(ngModel)]="createForm.senha" name="senha" placeholder="Mínimo 6 caracteres" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Perfil</label>
+            <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="createForm.permission" name="permission">
+              <option *ngFor="let role of ALL_ROLES" [value]="role">{{ ROLE_LABELS[role] }}</option>
+            </select>
+          </div>
+        </form>
+
+        <!-- Edit Form -->
+        <form *ngIf="modalMode() === 'edit'" (ngSubmit)="saveEdit()" id="editForm">
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Nome</label>
+            <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="editForm.nome" name="nome" placeholder="Nome completo" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">E-mail</label>
+            <input type="email" class="form-control bg-dark text-white border-secondary" [(ngModel)]="editForm.email" name="email" placeholder="email@exemplo.com" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Perfil</label>
+            <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="editForm.permission" name="permission">
+              <option *ngFor="let role of ALL_ROLES" [value]="role">{{ ROLE_LABELS[role] }}</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button *ngIf="modalMode() === 'create'" type="submit" form="createForm" class="btn btn-info text-dark fw-semibold" [disabled]="saving()">
+          {{ saving() ? 'Criando...' : 'Criar' }}
+        </button>
+        <button *ngIf="modalMode() === 'edit'" type="submit" form="editForm" class="btn btn-info text-dark fw-semibold" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

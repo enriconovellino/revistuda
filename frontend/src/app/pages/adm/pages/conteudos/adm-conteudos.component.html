@@ -1,0 +1,113 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <h1 class="h3 fw-bold text-white mb-1">Conteúdos</h1>
+      <p class="text-secondary mb-0">Gerencie os materiais disponíveis na plataforma</p>
+    </div>
+    <button class="btn btn-info text-dark fw-semibold" (click)="openCreateModal()">+ Novo Conteúdo</button>
+  </div>
+
+  <div class="alert alert-danger py-2" *ngIf="error() && !modalOpen()">{{ error() }}</div>
+  <div class="text-center py-5" *ngIf="loading()">
+    <div class="spinner-border text-info" role="status"></div>
+  </div>
+
+  <div class="card border-secondary" style="background:#1e293b" *ngIf="!loading()">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="text-secondary fw-semibold border-secondary">#</th>
+            <th class="text-secondary fw-semibold border-secondary">Nome</th>
+            <th class="text-secondary fw-semibold border-secondary">Tipo</th>
+            <th class="text-secondary fw-semibold border-secondary">Mídia</th>
+            <th class="text-secondary fw-semibold border-secondary">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of conteudos()">
+            <td class="text-secondary">{{ c.conteudo_id }}</td>
+            <td class="text-white">{{ c.nome_conteudo }}</td>
+            <td><span class="badge bg-primary">{{ c.tipo_conteudo }}</span></td>
+            <td class="text-secondary">
+              <span *ngIf="c.video_url">🎬 Vídeo</span>
+              <span *ngIf="c.audio_link">🎵 Áudio</span>
+              <span *ngIf="c.texto_conteudo && !c.video_url && !c.audio_link">📄 Texto</span>
+              <span *ngIf="!c.video_url && !c.audio_link && !c.texto_conteudo">—</span>
+            </td>
+            <td>
+              <button class="btn btn-outline-warning btn-sm me-1" (click)="openEditModal(c)">Editar</button>
+              <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(c.conteudo_id)">Excluir</button>
+            </td>
+          </tr>
+          <tr *ngIf="conteudos().length === 0">
+            <td colspan="5" class="text-center text-secondary py-4">Nenhum conteúdo encontrado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="deleteConfirmId() !== null" (click)="cancelDelete()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">Confirmar exclusão</h5>
+      </div>
+      <div class="modal-body text-secondary">
+        Tem certeza que deseja excluir este conteúdo?
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="executeDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create / Edit Modal -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="modalOpen()" (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">{{ modalMode() === 'create' ? 'Novo Conteúdo' : 'Editar Conteúdo' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="error()">{{ error() }}</div>
+        <form (ngSubmit)="save()" id="conteudoForm">
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Nome</label>
+            <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.nome_conteudo" name="nome_conteudo" placeholder="Ex: Vídeo: Soma e Subtração" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Tipo</label>
+            <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="form.tipo_conteudo" name="tipo_conteudo">
+              <option *ngFor="let t of TIPOS" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">URL do Vídeo</label>
+            <input type="url" class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.video_url" name="video_url" placeholder="https://youtube.com/..." />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Link do Áudio</label>
+            <input type="url" class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.audio_link" name="audio_link" placeholder="https://..." />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Texto / Descrição</label>
+            <textarea class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.texto_conteudo" name="texto_conteudo" placeholder="Conteúdo em texto..." rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" form="conteudoForm" class="btn btn-info text-dark fw-semibold" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : (modalMode() === 'create' ? 'Criar' : 'Salvar') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,76 +1,103 @@
-.dashboard-adm {
+.adm-shell {
+  display: flex;
   min-height: 100vh;
   background: #0f172a;
   color: #cbd5e1;
   font-family: 'Outfit', sans-serif;
 }
-.header {
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
   background: #1e293b;
-  padding: 1.2rem 2rem;
+  border-right: 1px solid #334155;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #334155;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
 }
-.logo {
-  font-size: 1.6rem;
+
+.sidebar-logo {
+  padding: 1.6rem 1.5rem 1.2rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #38bdf8;
+  border-bottom: 1px solid #334155;
 }
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background: rgba(56, 189, 248, 0.06);
+  color: #cbd5e1;
+}
+
+.nav-item.active {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border-left-color: #38bdf8;
+}
+
+.nav-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 1.2rem 1.5rem;
+  border-top: 1px solid #334155;
+}
+
+.sidebar-user {
+  color: #64748b;
+  font-size: 0.82rem;
+  margin-bottom: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .logout-btn {
+  width: 100%;
   background: #ef4444;
   border: none;
   color: white;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem;
   font-weight: 700;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 0.88rem;
+  font-family: 'Outfit', sans-serif;
 }
+
 .logout-btn:hover {
   background: #dc2626;
 }
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-.welcome-card {
-  background: linear-gradient(135deg, #1e293b, #0f172a);
-  border: 1px solid #334155;
-  padding: 2.5rem;
-  border-radius: 20px;
-  margin-bottom: 2.5rem;
-}
-.welcome-card h1 {
-  color: #ffffff;
-  margin: 0 0 0.5rem 0;
-}
-.grid-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-.action-card {
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 16px;
-  padding: 2rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.action-card:hover {
-  transform: translateY(-5px);
-  border-color: #38bdf8;
-  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.1);
-}
-.action-card h3 {
-  color: #38bdf8;
-  margin-top: 0;
-  font-size: 1.3rem;
-}
-.action-card p {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  line-height: 1.5;
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
 }

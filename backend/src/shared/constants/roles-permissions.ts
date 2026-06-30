@@ -39,5 +39,9 @@ export function resolvePermissions(roleOrPermission: string): string[] {
     return [];
   }
 
-  return ROLE_PERMISSIONS[normalizedValue] ?? [normalizedValue];
+  if (ROLE_PERMISSIONS[normalizedValue]) {
+    return [normalizedValue, ...ROLE_PERMISSIONS[normalizedValue]];
+  }
+
+  return [normalizedValue];
 }
