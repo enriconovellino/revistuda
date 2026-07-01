@@ -1,46 +1,160 @@
-<div class="dashboard-idoso" [style.font-size.rem]="fontSize()">
-  <div class="wrapper">
-    <div class="top-bar">
-      <h1>Olá, {{ userName() }}!</h1>
+<div class="dashboard" [style.font-size.rem]="fontSize()">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-name">Revistuda</span>
+    </div>
+
+    <nav class="topbar-nav">
+      <button class="nav-btn" [class.nav-btn--active]="currentView() === 'home'" (click)="setView('home')" id="nav-home">Início</button>
+      <button class="nav-btn" [class.nav-btn--active]="currentView() === 'modulos'" (click)="setView('modulos')" id="nav-modulos">Módulos</button>
+      <button class="nav-btn" [class.nav-btn--active]="currentView() === 'atividades'" (click)="setView('atividades')" id="nav-atividades">Atividades</button>
+    </nav>
+
+    <div class="topbar-right">
       <div class="font-controls">
-        <span>Tamanho do Texto:</span>
-        <button (click)="changeFontSize(-0.1)">A-</button>
-        <button (click)="changeFontSize(0.1)">A+</button>
+        <span>Texto:</span>
+        <button class="font-btn" (click)="changeFontSize(-0.1)" id="font-decrease">A-</button>
+        <button class="font-btn" (click)="changeFontSize(0.1)" id="font-increase">A+</button>
+      </div>
+      <button class="btn-logout" (click)="logout()" id="btn-logout">Sair</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Loading -->
+    <div class="loading" *ngIf="isLoading()">
+      <p>Carregando...</p>
+    </div>
+
+    <!-- Erro -->
+    <div class="error-bar" *ngIf="hasError() && !isLoading()">
+      Erro ao carregar dados.
+      <button (click)="loadData()" id="btn-retry">Tentar novamente</button>
+    </div>
+
+    <!-- ===== HOME ===== -->
+    <div class="view" *ngIf="currentView() === 'home' && !isLoading()">
+
+      <!-- Saudação -->
+      <div class="greeting">
+        <div>
+          <h1 id="greeting-title">{{ greetingTime() }}, {{ userName() }}!</h1>
+          <p>Seja bem-vindo de volta.</p>
+        </div>
+      </div>
+
+      <!-- Módulo atual -->
+      <div class="card" *ngIf="moduloAtual()">
+        <h2 class="card-title">Onde você está</h2>
+        <div class="modulo-atual">
+          <div>
+            <span class="modulo-label">Módulo atual</span>
+            <p class="modulo-nome">{{ moduloAtual()!.titulo_modulo }}</p>
+            <p class="modulo-desc" *ngIf="moduloAtual()!.descricao_modulo">{{ moduloAtual()!.descricao_modulo }}</p>
+            <span class="badge" [ngClass]="getDificuldadeClass(moduloAtual()!.dificuldade)">
+              {{ getDificuldadeLabel(moduloAtual()!.dificuldade) }}
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="licoesDoModuloAtual().length > 0">
+          <p class="licoes-titulo">Lições deste módulo:</p>
+          <div class="licoes-list">
+            <div class="licao-item" *ngFor="let licao of licoesDoModuloAtual(); let i = index">
+              <span class="licao-num">{{ i + 1 }}</span>
+              <span>{{ licao.titulo_licao }}</span>
+            </div>
+          </div>
+        </div>
+        <p class="muted" *ngIf="licoesDoModuloAtual().length === 0">Sem lições cadastradas neste módulo.</p>
+      </div>
+
+      <div class="empty-state" *ngIf="!moduloAtual() && !isLoading()">
+        <p>Nenhum módulo disponível no momento.</p>
+      </div>
+
+      <!-- Atividades -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Atividades</h2>
+          <button class="link-btn" (click)="setView('atividades')" id="btn-ver-atividades">Ver todas</button>
+        </div>
+
+        <div *ngIf="atividades().length > 0">
+          <div class="atividade-row" *ngFor="let atv of atividades().slice(0, 5)">
+            <div class="atv-info">
+              <span class="atv-titulo">{{ atv.titulo_atividade }}</span>
+              <span class="atv-tipo">{{ atv.tipo_atividade }}</span>
+            </div>
+            <button class="btn-primary btn-sm" [id]="'btn-iniciar-' + atv.atividade_id">Iniciar</button>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="atividades().length === 0 && !isLoading()">
+          <p>Sem atividades pendentes.</p>
+        </div>
       </div>
     </div>
 
-    <p style="color: #475569; margin-bottom: 2rem; font-weight: 600;">
-      Bem-vindo ao Revistuda. Escolha uma das opções abaixo para iniciar suas leituras e estudos:
-    </p>
+    <!-- ===== MÓDULOS ===== -->
+    <div class="view" *ngIf="currentView() === 'modulos' && !isLoading()">
+      <div class="view-header">
+        <button class="back-btn" (click)="setView('home')" id="btn-back-modulos">Voltar</button>
+        <h1>Módulos de Estudo</h1>
+      </div>
 
-    <div class="menu-options">
-      <button class="option-row">
-        <span class="option-icon">📖</span>
-        <div class="option-text">
-          <h2 [style.font-size.em]="1.2">Minhas Leituras</h2>
-          <p>Clique aqui para acessar seus livros e materiais com letras grandes.</p>
+      <div class="modulos-grid" *ngIf="modulos().length > 0">
+        <div class="modulo-card" *ngFor="let modulo of modulos(); let i = index" [id]="'modulo-' + modulo.modulo_id">
+          <div class="modulo-card-top">
+            <span class="muted">Módulo {{ i + 1 }}</span>
+            <span class="badge" [ngClass]="getDificuldadeClass(modulo.dificuldade)">{{ getDificuldadeLabel(modulo.dificuldade) }}</span>
+          </div>
+          <h3>{{ modulo.titulo_modulo }}</h3>
+          <p class="muted" *ngIf="modulo.descricao_modulo">{{ modulo.descricao_modulo }}</p>
+          <p class="muted italic" *ngIf="!modulo.descricao_modulo">Sem descrição.</p>
+          <span class="muted small">{{ licoes().filter(l => l.modulo_id === modulo.modulo_id).length }} lições</span>
+          <button class="btn-primary" [id]="'btn-acessar-' + modulo.modulo_id">Acessar</button>
         </div>
-      </button>
+      </div>
 
-      <button class="option-row">
-        <span class="option-icon">✏️</span>
-        <div class="option-text">
-          <h2 [style.font-size.em]="1.2">Responder Exercícios</h2>
-          <p>Acesse as atividades de estudo criadas especialmente para você.</p>
-        </div>
-      </button>
-
-      <button class="option-row">
-        <span class="option-icon">📞</span>
-        <div class="option-text">
-          <h2 [style.font-size.em]="1.2">Pedir Ajuda ao Professor</h2>
-          <p>Fale diretamente com os professores para tirar suas dúvidas de estudo.</p>
-        </div>
-      </button>
+      <div class="empty-state" *ngIf="modulos().length === 0">
+        <p>Nenhum módulo cadastrado.</p>
+      </div>
     </div>
 
-    <button (click)="logout()" class="logout-btn" [style.font-size.em]="1.1">
-      Sair da Conta e Fechar
-    </button>
-  </div>
+    <!-- ===== ATIVIDADES ===== -->
+    <div class="view" *ngIf="currentView() === 'atividades' && !isLoading()">
+      <div class="view-header">
+        <button class="back-btn" (click)="setView('home')" id="btn-back-atividades">Voltar</button>
+        <h1>Atividades</h1>
+      </div>
+
+      <div class="atividades-list" *ngIf="atividades().length > 0">
+        <div class="atividade-full" *ngFor="let atv of atividades()" [id]="'atv-' + atv.atividade_id">
+          <div class="atv-full-body">
+            <h3>{{ atv.titulo_atividade }}</h3>
+            <p class="muted" *ngIf="atv.descricao_atividade">{{ atv.descricao_atividade }}</p>
+            <span class="tag">{{ atv.tipo_atividade }}</span>
+          </div>
+          <button class="btn-primary btn-sm" [id]="'btn-fazer-' + atv.atividade_id">Fazer</button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="atividades().length === 0">
+        <p>Nenhuma atividade cadastrada.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span>Revistuda</span>
+    <button class="link-btn" (click)="logout()" id="btn-footer-logout">Sair da conta</button>
+  </footer>
+
 </div>
