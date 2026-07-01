@@ -5,27 +5,33 @@ import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
 import { authGuard, roleGuard } from './guards/auth.guard';
+import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: 'auth', component: AuthComponent },
-  { 
-    path: 'aluno-crianca', 
+  {
+    path: 'aluno-crianca',
     component: AlunoCriancaComponent,
-    canActivate: [authGuard, roleGuard(['ALUNO_CRIANCA'])] 
+    canActivate: [authGuard, roleGuard(['ALUNO_CRIANCA'])]
   },
-  { 
-    path: 'aluno-idoso', 
+  {
+    path: 'aluno-idoso',
     component: AlunoIdosoComponent,
     canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
   },
-  { 
-    path: 'professor', 
+  {
+    path: 'professor',
     component: ProfessorComponent,
     canActivate: [authGuard, roleGuard(['PROFESSOR'])]
   },
-  { 
-    path: 'adm', 
+  {
+    path: 'professor/modulo/:id',
+    component: ModuloDetalheComponent,
+    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
+  },
+  {
+    path: 'adm',
     component: AdmComponent,
     canActivate: [authGuard, roleGuard(['ADM'])]
   },
