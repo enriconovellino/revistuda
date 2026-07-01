@@ -1,52 +1,252 @@
-<div class="dashboard-prof">
-  <nav class="nav">
-    <div class="logo">Revistuda Professor 🎓</div>
-    <button (click)="logout()" class="logout-link">Sair</button>
-  </nav>
-
-  <div class="content">
-    <h1 style="margin-bottom: 2rem;">Painel do Docente: Prof. {{ userName() }}</h1>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total de Alunos</div>
-        <div class="stat-val">42</div>
-      </div>
-      <div class="stat-card" style="border-left-color: #38a169;">
-        <div class="stat-label">Exercícios Corrigidos</div>
-        <div class="stat-val">128</div>
-      </div>
-      <div class="stat-card" style="border-left-color: #dd6b20;">
-        <div class="stat-label">Módulos Ativos</div>
-        <div class="stat-val">5</div>
-      </div>
+<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h5>ReviEstuda</h5>
+      <small>Plataforma Educacional</small>
     </div>
 
-    <h2 class="section-title">Minhas Turmas e Atividades Recentes</h2>
-    <div class="card-list">
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Lucas Oliveira (Criança)</h3>
-          <p>Completou o quiz de Alfabetização</p>
-        </div>
-        <span class="badge">9/10 Pontos</span>
-      </div>
+    <nav class="sidebar-nav">
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="paginaAtual() === 'dashboard'" (click)="irPara('dashboard')">
+             Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="paginaAtual() === 'modulos'" (click)="irPara('modulos')">
+            Turmas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">  Conta</a>
+        </li>
+      </ul>
+    </nav>
 
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Dona Maria Sousa (Idoso)</h3>
-          <p>Enviou uma pergunta sobre o livro de História</p>
-        </div>
-        <span class="badge" style="background:#fefcbf; color:#b7791f;">Pendente</span>
-      </div>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()"> Sair</button>
+    </div>
+  </div>
 
-      <div class="list-item">
-        <div class="student-info">
-          <h3>Antônio Alves (Idoso)</h3>
-          <p>Iniciou o módulo de Leitura Avançada</p>
+  <!-- CONTEÚDO -->
+  <div class="flex-grow-1" style="margin-left: 240px;">
+
+    <!-- HEADER -->
+    <div class="main-header d-flex justify-content-between align-items-center">
+      <input type="text" class="form-control w-25" placeholder=" Buscar módulos...">
+      <div class="d-flex align-items-center gap-3">
+        <span style="cursor:pointer;"></span>
+        <span style="cursor:pointer;"></span>
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 36px; height: 36px; background: #0f2744 !important;">
+            {{ userName().charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Professor</div>
+          </div>
         </div>
-        <span class="badge" style="background:#e6fffa; color:#319795;">Ativo</span>
       </div>
     </div>
+    @if (loading()) {
+      <div class="d-flex justify-content-center mt-5">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    } @else if (error()) {
+      <div class="alert alert-danger m-4">{{ error() }}</div>
+    } @else {
+
+      <!-- DASHBOARD -->
+      @if (paginaAtual() === 'dashboard') {
+        <div class="p-4">
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-0 fw-bold">Painel de Controle</h4>
+              <small class="text-muted">Bem-vindo de volta, Prof. {{ userName() }}!</small>
+            </div>
+            <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="irPara('modulos')">
+               Criar Módulo
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="text-muted small mb-1">Total de Módulos</div>
+                <div class="fs-2 fw-bold" style="color: #0f2744;">{{ modulos().length }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card primary">
+                <div class="small mb-1 opacity-75">Módulos Fáceis</div>
+                <div class="fs-2 fw-bold">{{ contarDificuldade('fácil') }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="text-muted small mb-1">Módulos Difíceis</div>
+                <div class="fs-2 fw-bold text-danger">{{ contarDificuldade('difícil') }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+
+            <!-- Gráfico -->
+            <div class="col-md-7">
+              <div class="chart-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold mb-0">Desempenho Geral</h6>
+                  <select class="form-select form-select-sm w-auto">
+                    <option>Últimos 30 dias</option>
+                    <option>Últimos 7 dias</option>
+                  </select>
+                </div>
+                
+                <canvas id="graficoDesempenho" height="200"></canvas>
+              </div>
+            </div>
+
+            <!-- Módulos recentes -->
+            <div class="col-md-5">
+              <div class="chart-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold mb-0">Meus Módulos</h6>
+                  <a class="text-primary small" style="cursor:pointer;" (click)="irPara('modulos')">Ver todos</a>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                  @if (modulos().length === 0) {
+                    <p class="text-muted small">Nenhum módulo criado ainda.</p>
+                  }
+                  @for (modulo of modulos().slice(0, 4); track modulo.modulo_id) {
+                    <div class="turma-card" (click)="verModulo(modulo.modulo_id)">
+                      <div class="turma-icon">
+                        @if (modulo.imagem_url) {
+                          <img [src]="modulo.imagem_url" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                        } @else {
+                          
+                        }
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold small">{{ modulo.titulo_modulo }}</div>
+                        <div class="text-muted" style="font-size: 11px;">{{ modulo.descricao_modulo || 'Sem descrição' }}</div>
+                      </div>
+                      <span class="badge"
+                        [class.bg-success]="modulo.dificuldade === 'fácil'"
+                        [class.bg-warning]="modulo.dificuldade === 'médio'"
+                        [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                        {{ modulo.dificuldade }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- MÓDULOS -->
+      @if (paginaAtual() === 'modulos') {
+        <div class="p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-0 fw-bold">Meus Módulos</h4>
+              <small class="text-muted">{{ modulos().length }} módulo(s) criado(s)</small>
+            </div>
+            <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="toggleFormModulo()">
+              {{ mostrarFormModulo() ? '✕ Cancelar' : '+ Novo Módulo' }}
+            </button>
+          </div>
+
+          @if (mostrarFormModulo()) {
+            <div class="card mb-4 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-3">{{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}</h5>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Título <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
+                      placeholder="Ex: Introdução à Informática"
+                      [(ngModel)]="novoTituloModulo" name="tituloModulo"/>
+                    @if (erroModulo()) {
+                      <div class="invalid-feedback">{{ erroModulo() }}</div>
+                    }
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-control" placeholder="Descrição opcional"
+                      [(ngModel)]="novaDescricaoModulo" name="descricaoModulo"/>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Dificuldade</label>
+                    <select class="form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
+                      <option value="fácil">Fácil</option>
+                      <option value="médio">Médio</option>
+                      <option value="difícil">Difícil</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">URL da Imagem</label>
+                    <input type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg"
+                      [(ngModel)]="novaImagemUrl" name="imagemUrl"/>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo()">
+                      {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (modulos().length === 0) {
+            <div class="text-center mt-5">
+              <p class="text-muted fs-5">Nenhum módulo criado ainda.</p>
+              <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
+            </div>
+          }
+
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            @for (modulo of modulos(); track modulo.modulo_id) {
+              <div class="col">
+                <div class="card h-100 shadow-sm">
+                  @if (modulo.imagem_url) {
+                    <img [src]="modulo.imagem_url" class="card-img-top" alt="{{ modulo.titulo_modulo }}" style="height: 180px; object-fit: cover;">
+                  } @else {
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                      <span class="text-muted">Sem imagem</span>
+                    </div>
+                  }
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5 class="card-title mb-0">{{ modulo.titulo_modulo }}</h5>
+                      <span class="badge"
+                        [class.bg-success]="modulo.dificuldade === 'fácil'"
+                        [class.bg-warning]="modulo.dificuldade === 'médio'"
+                        [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                        {{ modulo.dificuldade }}
+                      </span>
+                    </div>
+                    <p class="card-text text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
+                  </div>
+                  <div class="card-footer d-flex gap-2">
+                    <button class="btn btn-sm btn-primary flex-fill" (click)="verModulo(modulo.modulo_id)"> Ver Lições</button>
+                    <button class="btn btn-sm btn-outline-warning" (click)="editarModulo(modulo)">Editar</button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deletarModulo(modulo.modulo_id)">Deletar</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    }
   </div>
 </div>

@@ -25,6 +25,7 @@ model Modulo {
   titulo_modulo    String
   descricao_modulo String?
   dificuldade      String
+  imagem_url       String?
 }
 
 model Turma {

@@ -14,4 +14,9 @@ export class CreateModuloDto {
   @ApiProperty({example: 'facil', description: 'Nível de dificuldade: fácil, médio ou dificil'})
   @IsString()
   dificuldade!: string;
+
+  @ApiProperty({ example: 'https://exemplo.com/imagem.jpg', required: false })
+  @IsString()
+  @IsOptional()
+  imagem_url?: string;
 }
