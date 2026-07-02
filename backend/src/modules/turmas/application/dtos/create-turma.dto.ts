@@ -24,4 +24,11 @@ export class CreateTurmaDto {
   @IsInt()
   @IsOptional()
   capacidade_maxima?: number;
+
+  @ApiProperty({
+    example: 2,
+    description: 'ID do professor responsável pela turma',
+  })
+  @IsInt()
+  professor_id!: number;
 }

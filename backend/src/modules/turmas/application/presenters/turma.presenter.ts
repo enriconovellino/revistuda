@@ -5,6 +5,7 @@ export class TurmaPresenter {
   nome_turma!: string;
   descricao_turma?: string;
   capacidade_maxima?: number;
+  professor_id!: number;
 
   static toPresentation(turma: Turma): TurmaPresenter {
     const presenter = new TurmaPresenter();
@@ -12,6 +13,7 @@ export class TurmaPresenter {
     presenter.nome_turma = turma.nome_turma;
     presenter.descricao_turma = turma.descricao_turma;
     presenter.capacidade_maxima = turma.capacidade_maxima;
+    presenter.professor_id = turma.professor_id;
     return presenter;
   }
 

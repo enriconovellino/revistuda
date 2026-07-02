@@ -18,6 +18,7 @@ model User {
   senha        String   @default("")
   permissions  String[] @default([])
   refreshToken String?
+  turmas       Turma[]
 }
 
 model Modulo {
@@ -26,6 +27,8 @@ model Modulo {
   descricao_modulo String?
   dificuldade      String
   imagem_url       String?
+  turma_id         Int
+  turma            Turma   @relation(fields: [turma_id], references: [turma_id])
 }
 
 model Turma {
@@ -33,6 +36,9 @@ model Turma {
   nome_turma       String
   descricao_turma  String?
   capacidade_maxima Int?
+  professor_id     Int
+  professor        User    @relation(fields: [professor_id], references: [id])
+  modulos          Modulo[]
 }
 
 model Conteudo {
@@ -42,6 +48,8 @@ model Conteudo {
   video_url      String?
   audio_link     String?
   texto_conteudo String?
+  licao_id       Int
+  licao          Licao   @relation(fields: [licao_id], references: [licao_id])
 }
 
 model Licao {
@@ -49,6 +57,8 @@ model Licao {
   titulo_licao   String
   comentario     String?
   modulo_id      Int
+  conteudos      Conteudo[]
+  atividades     Atividade[]
 }
 
 model Atividade {
@@ -57,4 +67,5 @@ model Atividade {
   descricao_atividade  String?
   tipo_atividade       String
   licao_id             Int
+  licao                Licao    @relation(fields: [licao_id], references: [licao_id])
 }

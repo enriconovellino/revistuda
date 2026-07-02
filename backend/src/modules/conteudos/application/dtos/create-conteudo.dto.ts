@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsInt } from 'class-validator';
 
 export class CreateConteudoDto {
   @ApiProperty({
@@ -39,4 +39,11 @@ export class CreateConteudoDto {
   @IsString()
   @IsOptional()
   texto_conteudo?: string;
+
+  @ApiProperty({
+    example: 1,
+    description: 'ID da lição à qual o conteúdo pertence',
+  })
+  @IsInt()
+  licao_id!: number;
 }
