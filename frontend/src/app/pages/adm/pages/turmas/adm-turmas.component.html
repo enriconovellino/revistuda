@@ -1,0 +1,98 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <h1 class="h3 fw-bold text-white mb-1">Turmas</h1>
+      <p class="text-secondary mb-0">Gerencie as turmas da plataforma</p>
+    </div>
+    <button class="btn btn-info text-dark fw-semibold" (click)="openCreateModal()">+ Nova Turma</button>
+  </div>
+
+  <div class="alert alert-danger py-2" *ngIf="error() && !modalOpen()">{{ error() }}</div>
+  <div class="text-center py-5" *ngIf="loading()">
+    <div class="spinner-border text-info" role="status"></div>
+  </div>
+
+  <div class="card border-secondary" style="background:#1e293b" *ngIf="!loading()">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="text-secondary fw-semibold border-secondary">#</th>
+            <th class="text-secondary fw-semibold border-secondary">Nome</th>
+            <th class="text-secondary fw-semibold border-secondary">Descrição</th>
+            <th class="text-secondary fw-semibold border-secondary">Capacidade</th>
+            <th class="text-secondary fw-semibold border-secondary">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of turmas()">
+            <td class="text-secondary">{{ t.turma_id }}</td>
+            <td class="text-white">{{ t.nome_turma }}</td>
+            <td class="text-secondary">{{ t.descricao_turma || '—' }}</td>
+            <td class="text-white">{{ t.capacidade_maxima ?? '—' }}</td>
+            <td>
+              <button class="btn btn-outline-warning btn-sm me-1" (click)="openEditModal(t)">Editar</button>
+              <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(t.turma_id)">Excluir</button>
+            </td>
+          </tr>
+          <tr *ngIf="turmas().length === 0">
+            <td colspan="5" class="text-center text-secondary py-4">Nenhuma turma encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="deleteConfirmId() !== null" (click)="cancelDelete()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">Confirmar exclusão</h5>
+      </div>
+      <div class="modal-body text-secondary">
+        Tem certeza que deseja excluir esta turma?
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="executeDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create / Edit Modal -->
+<div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,.65)" *ngIf="modalOpen()" (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-secondary" style="background:#1e293b">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white">{{ modalMode() === 'create' ? 'Nova Turma' : 'Editar Turma' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="error()">{{ error() }}</div>
+        <form (ngSubmit)="save()" id="turmaForm">
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Nome da Turma</label>
+            <input type="text" class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.nome_turma" name="nome_turma" placeholder="Ex: Turma A — 5º Ano" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Descrição</label>
+            <textarea class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.descricao_turma" name="descricao_turma" placeholder="Descrição opcional..." rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary small fw-semibold text-uppercase">Capacidade Máxima</label>
+            <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="form.capacidade_maxima" name="capacidade_maxima" placeholder="Ex: 30" min="1" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" form="turmaForm" class="btn btn-info text-dark fw-semibold" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : (modalMode() === 'create' ? 'Criar' : 'Salvar') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

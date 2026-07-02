@@ -1,0 +1,52 @@
+<div class="dashboard-prof">
+  <nav class="nav">
+    <div class="logo">Revistuda Professor 🎓</div>
+    <button (click)="logout()" class="logout-link">Sair</button>
+  </nav>
+
+  <div class="content">
+    <h1 style="margin-bottom: 2rem;">Painel do Docente: Prof. {{ userName() }}</h1>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total de Alunos</div>
+        <div class="stat-val">42</div>
+      </div>
+      <div class="stat-card" style="border-left-color: #38a169;">
+        <div class="stat-label">Exercícios Corrigidos</div>
+        <div class="stat-val">128</div>
+      </div>
+      <div class="stat-card" style="border-left-color: #dd6b20;">
+        <div class="stat-label">Módulos Ativos</div>
+        <div class="stat-val">5</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Minhas Turmas e Atividades Recentes</h2>
+    <div class="card-list">
+      <div class="list-item">
+        <div class="student-info">
+          <h3>Lucas Oliveira (Criança)</h3>
+          <p>Completou o quiz de Alfabetização</p>
+        </div>
+        <span class="badge">9/10 Pontos</span>
+      </div>
+
+      <div class="list-item">
+        <div class="student-info">
+          <h3>Dona Maria Sousa (Idoso)</h3>
+          <p>Enviou uma pergunta sobre o livro de História</p>
+        </div>
+        <span class="badge" style="background:#fefcbf; color:#b7791f;">Pendente</span>
+      </div>
+
+      <div class="list-item">
+        <div class="student-info">
+          <h3>Antônio Alves (Idoso)</h3>
+          <p>Iniciou o módulo de Leitura Avançada</p>
+        </div>
+        <span class="badge" style="background:#e6fffa; color:#319795;">Ativo</span>
+      </div>
+    </div>
+  </div>
+</div>

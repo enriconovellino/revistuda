@@ -12,9 +12,30 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  nome        String
-  email       String   @unique
-  senha       String   @default("")
-  permissions String[] @default([])
+  id           Int      @id @default(autoincrement())
+  nome         String
+  email        String   @unique
+  senha        String   @default("")
+  permissions  String[] @default([])
+  refreshToken String?
+}
+model Modulo {
+  modulo_id        Int     @id @default(autoincrement())
+  titulo_modulo    String
+  descricao_modulo String?
+  dificuldade      String
+}
+model Turma {
+  turma_id         Int     @id @default(autoincrement())
+  nome_turma       String
+  descricao_turma  String?
+  capacidade_maxima Int?
+}
+model Conteudo {
+  conteudo_id    Int     @id @default(autoincrement())
+  nome_conteudo  String
+  tipo_conteudo  String 
+  video_url      String?
+  audio_link     String?
+  texto_conteudo String?
 }
