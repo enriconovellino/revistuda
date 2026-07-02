@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'styles/variables' as *;
+
+@import "bootstrap/scss/bootstrap";
+
+:root {
+  --revi-azul-escuro: #{$azul-escuro};
+  --revi-azul-medio: #{$azul-medio};
+  --revi-azul-claro: #{$azul-claro};
+}

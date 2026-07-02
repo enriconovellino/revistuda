@@ -10,7 +10,7 @@ import { Modulo, Usuario } from '../../model/professor.models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './professor.component.html',
-  styleUrl: './professor.component.css'
+  styleUrl: './professor.component.scss'
 })
 export class ProfessorComponent implements OnInit {
   userName = signal<string>('Professor');
