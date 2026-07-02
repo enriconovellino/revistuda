@@ -14,20 +14,21 @@ export class ModuloRepository implements IModuloRepository {
         descricao_modulo: modulo.descricao_modulo,
         dificuldade: modulo.dificuldade,
         imagem_url: modulo.imagem_url,
+        turma_id: modulo.turma_id,
       },
     });
-    return new Modulo(created.modulo_id, created.titulo_modulo, created.dificuldade, created.descricao_modulo ?? undefined, created.imagem_url ?? undefined);
+    return new Modulo(created.modulo_id, created.titulo_modulo, created.dificuldade, created.turma_id, created.descricao_modulo ?? undefined, created.imagem_url ?? undefined);
   }
 
   async findAll(): Promise<Modulo[]> {
     const modulos = await this.prisma.modulo.findMany();
-    return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
+    return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
   }
 
   async findById(id: number): Promise<Modulo | null> {
     const m = await this.prisma.modulo.findUnique({ where: { modulo_id: id } });
     if (!m) return null;
-    return new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined);
+    return new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined);
   }
 
   async update(id: number, data: Partial<Modulo>): Promise<Modulo> {
@@ -38,9 +39,10 @@ export class ModuloRepository implements IModuloRepository {
         descricao_modulo: data.descricao_modulo,
         dificuldade: data.dificuldade,
         imagem_url: data.imagem_url,
+        turma_id: data.turma_id,
       },
     });
-    return new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined);
+    return new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined);
   }
 
   async delete(id: number): Promise<void> {

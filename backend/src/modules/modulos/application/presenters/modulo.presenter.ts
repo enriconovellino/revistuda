@@ -5,7 +5,8 @@ export class ModuloPresenter{
   titulo_modulo!: string;
   descricao_modulo?: string;
   dificuldade!: string ;
-  imagem_url?: string
+  imagem_url?: string;
+  turma_id!: number;
 
   static toPresentation(modulo: Modulo): ModuloPresenter{
     const presenter = new ModuloPresenter();
@@ -14,6 +15,7 @@ export class ModuloPresenter{
     presenter.descricao_modulo= modulo.descricao_modulo;
     presenter.dificuldade= modulo.dificuldade;
     presenter.imagem_url= modulo.imagem_url;
+    presenter.turma_id= modulo.turma_id;
     return presenter;
   }
  static toCollection(modulos: Modulo[]): ModuloPresenter[]{

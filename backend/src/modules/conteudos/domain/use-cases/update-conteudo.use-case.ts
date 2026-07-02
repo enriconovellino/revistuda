@@ -10,6 +10,7 @@ export interface UpdateConteudoInput {
   video_url?: string;
   audio_link?: string;
   texto_conteudo?: string;
+  licao_id?: number;
 }
 
 @Injectable()

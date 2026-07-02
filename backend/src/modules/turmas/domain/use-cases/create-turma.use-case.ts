@@ -7,6 +7,7 @@ export interface CreateTurmaInput {
   nome_turma: string;
   descricao_turma?: string;
   capacidade_maxima?: number;
+  professor_id: number;
 }
 
 @Injectable()
@@ -14,7 +15,7 @@ export class CreateTurmaUseCase {
   constructor(@Inject(TURMA_REPOSITORY) private turmaRepository: ITurmaRepository) {}
 
   async execute(input: CreateTurmaInput): Promise<Turma> {
-    const turma = new Turma(0, input.nome_turma, input.descricao_turma, input.capacidade_maxima);
+    const turma = new Turma(0, input.nome_turma, input.professor_id, input.descricao_turma, input.capacidade_maxima);
     return this.turmaRepository.create(turma);
   }
 }

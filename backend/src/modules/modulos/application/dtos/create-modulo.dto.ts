@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateModuloDto {
@@ -19,4 +19,8 @@ export class CreateModuloDto {
   @IsString()
   @IsOptional()
   imagem_url?: string;
+
+  @ApiProperty({ example: 1, description: 'ID da turma à qual o módulo pertence' })
+  @IsInt()
+  turma_id!: number;
 }
