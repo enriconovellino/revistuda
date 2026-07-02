@@ -1,5 +1,6 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
 import { Modulo, Licao, Atividade } from '../../model/aluno.model';
@@ -9,14 +10,15 @@ type DashboardView = 'home' | 'modulos' | 'atividades';
 @Component({
   selector: 'app-aluno-idoso',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './aluno-idoso.component.html',
-  styleUrl: './aluno-idoso.component.css'
+  styleUrl: './aluno-idoso.component.scss'
 })
 export class AlunoIdosoComponent implements OnInit {
   userName = signal('Aluno');
   fontSize = signal(1.2);
   currentView = signal<DashboardView>('home');
+  searchQuery = signal<string>('');
 
   modulos = signal<Modulo[]>([]);
   licoes = signal<Licao[]>([]);
@@ -25,6 +27,24 @@ export class AlunoIdosoComponent implements OnInit {
   hasError = signal(false);
 
   moduloAtual = computed(() => this.modulos()[0] ?? null);
+
+  filteredModulos = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.modulos();
+    return this.modulos().filter(m => 
+      m.titulo_modulo.toLowerCase().includes(query) || 
+      (m.descricao_modulo && m.descricao_modulo.toLowerCase().includes(query))
+    );
+  });
+
+  filteredAtividades = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.atividades();
+    return this.atividades().filter(a => 
+      a.titulo_atividade.toLowerCase().includes(query) || 
+      (a.descricao_atividade && a.descricao_atividade.toLowerCase().includes(query))
+    );
+  });
 
   licoesDoModuloAtual = computed(() => {
     const mod = this.moduloAtual();
