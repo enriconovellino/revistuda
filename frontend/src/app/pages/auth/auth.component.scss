@@ -56,7 +56,7 @@
     padding: .55rem;
 
     &.active {
-      background: linear-gradient(90deg, $azul-escuro, $azul-medio);
+      background:$azul-escuro;
       color: #fff;
     }
   }
@@ -80,7 +80,6 @@
 
   &:focus {
     border-color: $azul-medio;
-    box-shadow: 0 0 0 3px rgba(30, 144, 255, .15);
     background: #fff;
   }
 }
@@ -94,7 +93,7 @@
 }
 
 .btn-auth {
-  background: linear-gradient(90deg, $azul-escuro, $azul-medio);
+  background:$azul-escuro;
   border: none;
   padding: .8rem;
   border-radius: 12px;
@@ -116,7 +115,7 @@
 }
 
 .link-accent {
-  color: color.adjust($azul-medio, $lightness: 10%);
+  color: $azul-medio;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
