@@ -12,44 +12,44 @@
   <ng-container *ngIf="!loading()">
     <div class="row g-3 mb-4">
       <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 border-start border-info border-5 text-white h-100" style="background:#1e293b">
+        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#0066b3!important">
           <div class="card-body d-flex align-items-center gap-3">
-            <span class="fs-2">👥</span>
+            <i class="bi bi-people-fill fs-2" style="color:#41b6e6"></i>
             <div>
-              <div class="fs-2 fw-bold text-info lh-1">{{ users().length }}</div>
+              <div class="fs-2 fw-bold lh-1" style="color:#41b6e6">{{ users().length }}</div>
               <div class="text-secondary small text-uppercase fw-semibold">Usuários</div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 border-start border-success border-5 text-white h-100" style="background:#1e293b">
+        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#22c55e!important">
           <div class="card-body d-flex align-items-center gap-3">
-            <span class="fs-2">🏫</span>
+            <i class="bi bi-building fs-2" style="color:#22c55e"></i>
             <div>
-              <div class="fs-2 fw-bold text-success lh-1">{{ turmas().length }}</div>
+              <div class="fs-2 fw-bold lh-1" style="color:#22c55e">{{ turmas().length }}</div>
               <div class="text-secondary small text-uppercase fw-semibold">Turmas</div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 border-start border-warning border-5 text-white h-100" style="background:#1e293b">
+        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#f59e0b!important">
           <div class="card-body d-flex align-items-center gap-3">
-            <span class="fs-2">📚</span>
+            <i class="bi bi-book-fill fs-2" style="color:#f59e0b"></i>
             <div>
-              <div class="fs-2 fw-bold text-warning lh-1">{{ modulos().length }}</div>
+              <div class="fs-2 fw-bold lh-1" style="color:#f59e0b">{{ modulos().length }}</div>
               <div class="text-secondary small text-uppercase fw-semibold">Módulos</div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#a78bfa!important">
+        <div class="card border-0 border-start border-5 text-white h-100" style="background:#1e293b;border-color:#41b6e6!important">
           <div class="card-body d-flex align-items-center gap-3">
-            <span class="fs-2">📝</span>
+            <i class="bi bi-file-text-fill fs-2" style="color:#41b6e6"></i>
             <div>
-              <div class="fs-2 fw-bold lh-1" style="color:#a78bfa">{{ conteudos().length }}</div>
+              <div class="fs-2 fw-bold lh-1" style="color:#41b6e6">{{ conteudos().length }}</div>
               <div class="text-secondary small text-uppercase fw-semibold">Conteúdos</div>
             </div>
           </div>

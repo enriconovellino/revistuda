@@ -23,7 +23,7 @@
   padding: 1.6rem 1.5rem 1.2rem;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #38bdf8;
+  color: #41b6e6;
   border-bottom: 1px solid #334155;
 }
 
@@ -48,14 +48,14 @@
 }
 
 .nav-item:hover {
-  background: rgba(56, 189, 248, 0.06);
+  background: rgba(0, 102, 179, 0.08);
   color: #cbd5e1;
 }
 
 .nav-item.active {
-  background: rgba(56, 189, 248, 0.1);
-  color: #38bdf8;
-  border-left-color: #38bdf8;
+  background: rgba(0, 102, 179, 0.15);
+  color: #41b6e6;
+  border-left-color: #0066b3;
 }
 
 .nav-icon {
