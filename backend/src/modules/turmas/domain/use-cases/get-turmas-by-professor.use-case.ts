@@ -4,7 +4,7 @@ import { TURMA_REPOSITORY } from '../ports/turma-repository.port';
 import { Turma } from '../entities/turma.entity';
 
 @Injectable()
-export class GetTurmasProfessorUseCase {
+export class GetTurmasByProfessorUseCase {
   constructor(@Inject(TURMA_REPOSITORY) private turmaRepository: ITurmaRepository) {}
 
   async execute(professorId: number): Promise<Turma[]> {
