@@ -4,13 +4,15 @@ export class User {
   email!: string;
   senha!: string;
   permissions!: string[];
+  approved!: boolean;
 
-  constructor(id: number, nome: string, email: string, senha: string, permissions: string[] = []) {
+  constructor(id: number, nome: string, email: string, senha: string, permissions: string[] = [], approved: boolean = true) {
     this.id = id;
     this.nome = nome;
     this.email = email;
     this.senha = senha;
     this.permissions = permissions;
+    this.approved = approved;
   }
 
   hasPermission(permission: string): boolean {

@@ -52,6 +52,10 @@ export class AuthService {
       throw new UnauthorizedException('E-mail ou senha incorretos');
     }
 
+    if (!user.approved) {
+      throw new UnauthorizedException('Aguarde a aprovação do administrador para acessar o sistema');
+    }
+
     const tokens = await this.generateTokens(user.id, user.email);
 
     // Omitir a senha e refresh token ao retornar os dados do usuário
@@ -73,6 +77,7 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.senha, 10);
+    const approved = registerDto.permission !== 'PROFESSOR';
 
     const createdUser = await this.prisma.user.create({
       data: {
@@ -80,6 +85,7 @@ export class AuthService {
         email: registerDto.email,
         senha: hashedPassword,
         permissions: [registerDto.permission],
+        approved,
       },
     });
 

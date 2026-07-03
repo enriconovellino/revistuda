@@ -18,6 +18,7 @@ model User {
   senha        String   @default("")
   permissions  String[] @default([])
   refreshToken String?
+  approved     Boolean  @default(true)
   turmas       Turma[]
 }
 
