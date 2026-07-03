@@ -10,6 +10,31 @@
       <p>Gerencie usuários, configure acessos globais e veja relatórios detalhados do sistema.</p>
     </div>
 
+    <div class="pending-section" *ngIf="pendingProfessors().length > 0">
+      <h2>🔔 Solicitações de Professores Pendentes ({{ pendingProfessors().length }})</h2>
+
+      <div class="error-banner" *ngIf="actionError()">
+        {{ actionError() }}
+      </div>
+
+      <div class="pending-list">
+        <div class="pending-item" *ngFor="let prof of pendingProfessors()">
+          <div class="prof-info">
+            <div class="prof-name">{{ prof.nome }}</div>
+            <div class="prof-email">{{ prof.email }}</div>
+          </div>
+          <div class="action-buttons">
+            <button (click)="approveProfessor(prof.id)" class="approve-btn">
+              Aprovar
+            </button>
+            <button (click)="rejectProfessor(prof.id)" class="reject-btn">
+              Recusar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="grid-actions">
       <div class="action-card">
         <h3>👥 Gerenciar Usuários</h3>

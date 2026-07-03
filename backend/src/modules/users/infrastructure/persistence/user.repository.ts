@@ -14,15 +14,16 @@ export class UserRepository implements IUserRepository {
         email: user.email,
         senha: user.senha,
         permissions: user.permissions,
+        approved: user.approved,
       },
     });
 
-    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions);
+    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions, createdUser.approved);
   }
 
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany();
-    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions));
+    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions, u.approved));
   }
 
   async findById(id: number): Promise<User | null> {
@@ -34,7 +35,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.senha, user.permissions);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -46,7 +47,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email,user.senha, user.permissions);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved);
   }
 
   async update(id: number, data: Partial<User>): Promise<User> {
@@ -56,10 +57,11 @@ export class UserRepository implements IUserRepository {
         nome: data.nome,
         email: data.email,
         permissions: data.permissions,
+        approved: data.approved,
       },
     });
 
-    return new User(updatedUser.id, updatedUser.nome, updatedUser.email,updatedUser.senha, updatedUser.permissions);
+    return new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved);
   }
 
   async delete(id: number): Promise<void> {

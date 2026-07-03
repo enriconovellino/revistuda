@@ -5,6 +5,7 @@ export class UserPresenter {
   nome!: string;
   email!: string;
   permissions!: string[];
+  approved!: boolean;
 
   static toPresentation(user: User): UserPresenter {
     const presenter = new UserPresenter();
@@ -12,6 +13,7 @@ export class UserPresenter {
     presenter.nome = user.nome;
     presenter.email = user.email;
     presenter.permissions = user.permissions;
+    presenter.approved = user.approved;
     return presenter;
   }
 

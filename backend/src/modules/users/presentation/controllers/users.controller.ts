@@ -53,6 +53,17 @@ export class UsersController {
     return UserPresenter.toPresentation(user);
   }
 
+  @Put(':id/approve')
+  @Permissions('users.update')
+  @ApiOperation({ summary: 'Aprovar cadastro de professor' })
+  @ApiParam({ name: 'id', description: 'ID do usuário', type: Number })
+  @ApiResponse({ status: 200, description: 'Usuário aprovado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async approve(@Param('id', ParseIntPipe) id: number): Promise<UserPresenter> {
+    const user = await this.updateUserUseCase.execute({ id, approved: true });
+    return UserPresenter.toPresentation(user);
+  }
+
   @Delete(':id')
   @Permissions('users.delete')
   @ApiOperation({ summary: 'Deletar usuário por ID' })
