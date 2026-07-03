@@ -7,6 +7,7 @@ export class ConteudoPresenter {
   video_url?: string;
   audio_link?: string;
   texto_conteudo?: string;
+  licao_id!: number;
 
   static toPresentation(conteudo: Conteudo): ConteudoPresenter {
     const presenter = new ConteudoPresenter();
@@ -16,6 +17,7 @@ export class ConteudoPresenter {
     presenter.video_url = conteudo.video_url;
     presenter.audio_link = conteudo.audio_link;
     presenter.texto_conteudo = conteudo.texto_conteudo;
+    presenter.licao_id = conteudo.licao_id;
     return presenter;
   }
 

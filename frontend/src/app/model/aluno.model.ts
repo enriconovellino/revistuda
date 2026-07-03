@@ -3,6 +3,7 @@ export interface Modulo {
   titulo_modulo: string;
   descricao_modulo?: string;
   dificuldade: string;
+  imagem_url?: string;
 }
 
 export interface Licao {

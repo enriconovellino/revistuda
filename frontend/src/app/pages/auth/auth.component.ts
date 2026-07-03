@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './auth.component.html',
-  styleUrl: './auth.component.css'
+  styleUrl: './auth.component.scss'
 })
 export class AuthComponent {
   private fb = inject(FormBuilder);
@@ -20,6 +20,8 @@ export class AuthComponent {
   loading = signal(false);
   error = signal<string | null>(null);
   showSuccessModal = signal(false);
+  mostrarSenhaLogin = false;
+  mostrarSenhaCadastro = false;
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],

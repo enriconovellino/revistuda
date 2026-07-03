@@ -6,6 +6,7 @@ import { Conteudo } from '../entities/conteudo.entity';
 export interface CreateConteudoInput {
   nome_conteudo: string;
   tipo_conteudo: string;
+  licao_id: number;
   video_url?: string;
   audio_link?: string;
   texto_conteudo?: string;
@@ -20,6 +21,7 @@ export class CreateConteudoUseCase {
       0,
       input.nome_conteudo,
       input.tipo_conteudo,
+      input.licao_id,
       input.video_url,
       input.audio_link,
       input.texto_conteudo,
