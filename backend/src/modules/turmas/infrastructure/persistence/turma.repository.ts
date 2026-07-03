@@ -46,4 +46,15 @@ export class TurmaRepository implements ITurmaRepository {
   async delete(id: number): Promise<void> {
     await this.prisma.turma.delete({ where: { turma_id: id } });
   }
+
+  async findByProfessorId(professorId: number): Promise<Turma[]> {
+    const turmas = await this.prisma.turma.findMany({
+    where: {
+      professor_id: professorId
+    },
+  });
+  return turmas.map((t) => 
+    new Turma(t.turma_id, t.nome_turma, t.professor_id, t.descricao_turma ?? undefined, t.capacidade_maxima ?? undefined)
+  );
+}
 }

@@ -4,6 +4,7 @@ export interface Modulo {
   descricao_modulo?: string;
   dificuldade: string;
   imagem_url?: string; 
+  turma_id?: number; 
 }
 
 export interface Usuario {
@@ -18,4 +19,5 @@ export interface Turma {
   nome_turma: string;
   descricao_turma?: string;
   capacidade_maxima?: number;
+  professor_id: number;
 }

@@ -1,9 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
-import { Modulo } from '../model/professor.models';
-import { promises } from 'dns';
-import { Turma } from '../model/professor.models';
+import { Modulo, Turma } from '../model/professor.models';
 
 @Injectable({
   providedIn: 'root'
@@ -19,78 +17,71 @@ export class ProfessorService {
       'Authorization': `Bearer ${token}`
     };
   }
+
   async getModulos(): Promise<Modulo[]> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       headers: this.getHeaders()
     });
+
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Erro ao buscar Modulos');
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar Modulos');
+    }
     return data as Modulo[];
   }
-   async createModulo(modulo: Omit<Modulo, 'modulo_id'>): Promise<Modulo> {
+
+   async createModulo(modulo: Omit<Modulo, 'modulo_id'> & { turma_id: number }): Promise<Modulo> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(modulo)
     });
+
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Erro ao criar módulo');
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao criar módulo');
+    }
     return data as Modulo;
   }
-async updateModulo(id: number, modulo: Omit<Modulo, 'modulo_id'>): Promise<Modulo> {
-  const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
-    method: 'PUT',
-    headers: this.getHeaders(),
-    body: JSON.stringify(modulo)
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || 'Erro ao atualizar módulo');
-  return data as Modulo;
-}
 
-async deleteModulo(id: number): Promise<void> {
-  const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
-    method: 'DELETE',
-    headers: this.getHeaders()
-  });
-  if (!response.ok) {
-    const data = await response.json();
-    throw new Error(data.message || 'Erro ao deletar módulo');
-  }
-}
-
-  async getTurmas(): Promise<Turma[]> {
-    const response = await fetch(`${this.apiUrl}/turmas`, {
-      headers: this.getHeaders()
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Erro ao buscar Turmas');
-    }
-    return data as Turma[];
-  }
-
-  async createTurma(turma: Omit<Turma, 'turma_id'>): Promise<Turma> {
-    const response = await fetch(`${this.apiUrl}/turmas`, {
-      method: 'POST',
+  async updateModulo(id: number, modulo: Partial<Omit<Modulo, 'modulo_id'>>): Promise<Modulo> {
+    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+      method: 'PUT',
       headers: this.getHeaders(),
-      body: JSON.stringify(turma)
+      body: JSON.stringify(modulo)
     });
+
     const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(data.message || 'Erro ao criar turma');
+      throw new Error(data.message || 'Erro ao atualizar módulo');
     }
-    return data as Turma;
+    return data as Modulo;
   }
 
-  async deleteTurma(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/turmas/${id}`, {
+  async deleteModulo(id: number): Promise<void> {
+    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
       method: 'DELETE',
       headers: this.getHeaders()
     });
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.message || 'Erro ao deletar turma');
+      throw new Error(data.message || 'Erro ao deletar módulo');
     }
+  }
+
+  async getTurmasByProfessor(professorId: number): Promise<Turma[]> {
+    const response = await fetch(`${this.apiUrl}/turmas/professor/${professorId}`, {
+      headers: this.getHeaders()
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar turmas do professor');
+    }
+    return data as Turma[];
   }
 }
