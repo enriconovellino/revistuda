@@ -1,55 +1,149 @@
-<div class="dashboard-adm">
-  <header class="header">
-    <div class="logo">Revistuda Admin ⚙️</div>
-    <button (click)="logout()" class="logout-btn">Sair</button>
-  </header>
-
-  <div class="container">
-    <div class="welcome-card">
-      <h1>Painel Geral: {{ userName() }}</h1>
-      <p>Gerencie usuários, configure acessos globais e veja relatórios detalhados do sistema.</p>
+<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h5>ReviEstuda</h5>
+      <small>Plataforma Educacional</small>
     </div>
 
-    <div class="pending-section" *ngIf="pendingProfessors().length > 0">
-      <h2>🔔 Solicitações de Professores Pendentes ({{ pendingProfessors().length }})</h2>
+    <nav class="sidebar-nav">
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link active">
+            Dashboard
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-      <div class="error-banner" *ngIf="actionError()">
-        {{ actionError() }}
+    <div class="sidebar-footer">
+      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div class="flex-grow-1" style="margin-left: 240px;">
+    <!-- HEADER -->
+    <div class="main-header d-flex justify-content-between align-items-center">
+      <div>
+        <span class="text-muted fw-semibold small">Administração</span>
       </div>
-
-      <div class="pending-list">
-        <div class="pending-item" *ngFor="let prof of pendingProfessors()">
-          <div class="prof-info">
-            <div class="prof-name">{{ prof.nome }}</div>
-            <div class="prof-email">{{ prof.email }}</div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 36px; height: 36px; background: #0f2744 !important;">
+            {{ userName().charAt(0).toUpperCase() }}
           </div>
-          <div class="action-buttons">
-            <button (click)="approveProfessor(prof.id)" class="approve-btn">
-              Aprovar
-            </button>
-            <button (click)="rejectProfessor(prof.id)" class="reject-btn">
-              Recusar
-            </button>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Administrador</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="grid-actions">
-      <div class="action-card">
-        <h3>👥 Gerenciar Usuários</h3>
-        <p>Gerencie perfis de alunos e professores, ajuste roles e visualize logs de acessos.</p>
+    <!-- MAIN BODY -->
+    <div class="p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="mb-0 fw-bold">Painel Geral</h4>
+          <small class="text-muted">Bem-vindo ao painel administrativo, {{ userName() }}! Gerencie usuários, configure acessos e monitore o status do sistema.</small>
+        </div>
       </div>
 
-      <div class="action-card">
-        <h3>📑 Controle de Matrículas</h3>
-        <p>Monitore a entrada de novos alunos e crie associações com turmas específicas.</p>
+      <!-- Stats / Cards -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="text-muted small mb-1">Solicitações Pendentes</div>
+            <div class="fs-2 fw-bold" [class.text-danger]="pendingProfessors().length > 0" [class.text-dark]="pendingProfessors().length === 0">
+              {{ pendingProfessors().length }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card primary">
+            <div class="small mb-1 opacity-75">Status do Sistema</div>
+            <div class="fs-4 fw-bold">Operacional</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="text-muted small mb-1">Ambiente</div>
+            <div class="fs-2 fw-bold text-success">Produção</div>
+          </div>
+        </div>
       </div>
 
-      <div class="action-card">
-        <h3>📊 Logs do Servidor</h3>
-        <p>Verifique o status do sistema de autenticação, erros relatados e requisições HTTP.</p>
+      <!-- Columns layout for pending and actions -->
+      <div class="row g-4">
+        <!-- Main Actions grid on the left (col-md-7) -->
+        <div class="col-md-7">
+          <div class="chart-card">
+            <h5 class="fw-bold mb-4">Ações do Administrador</h5>
+            <div class="d-flex flex-column gap-3">
+              <div class="turma-card">
+                <div class="turma-icon">👥</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold small">Gerenciar Usuários</div>
+                  <div class="text-muted" style="font-size: 11px;">Gerencie perfis de alunos e professores, ajuste roles e visualize logs de acessos.</div>
+                </div>
+              </div>
+
+              <div class="turma-card">
+                <div class="turma-icon">📑</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold small">Controle de Matrículas</div>
+                  <div class="text-muted" style="font-size: 11px;">Monitore a entrada de novos alunos e crie associações com turmas específicas.</div>
+                </div>
+              </div>
+
+              <div class="turma-card">
+                <div class="turma-icon">📊</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold small">Logs do Servidor</div>
+                  <div class="text-muted" style="font-size: 11px;">Verifique o status do sistema de autenticação, erros relatados e requisições HTTP.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending professors list on the right (col-md-5) -->
+        <div class="col-md-5">
+          <div class="chart-card">
+            <h5 class="fw-bold mb-4">🔔 Solicitações Pendentes</h5>
+            
+            <div class="error-banner alert alert-danger" *ngIf="actionError()">
+              {{ actionError() }}
+            </div>
+
+            <div class="d-flex flex-column gap-3" *ngIf="pendingProfessors().length > 0; else noPending">
+              <div class="p-3 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center" *ngFor="let prof of pendingProfessors()">
+                <div class="prof-info">
+                  <div class="fw-semibold small text-dark">{{ prof.nome }}</div>
+                  <div class="text-muted" style="font-size: 11px;">{{ prof.email }}</div>
+                </div>
+                <div class="action-buttons d-flex gap-2">
+                  <button (click)="approveProfessor(prof.id)" class="btn btn-sm btn-success">
+                    Aprovar
+                  </button>
+                  <button (click)="rejectProfessor(prof.id)" class="btn btn-sm btn-danger">
+                    Recusar
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #noPending>
+              <div class="empty-state">
+                <p class="mb-0">Nenhuma solicitação de professor pendente.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
