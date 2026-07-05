@@ -37,8 +37,8 @@ model Turma {
   nome_turma       String
   descricao_turma  String?
   capacidade_maxima Int?
-  professor_id     Int
-  professor        User    @relation(fields: [professor_id], references: [id])
+  professor_id     Int?
+  professor        User?    @relation(fields: [professor_id], references: [id])
   modulos          Modulo[]
 }
 

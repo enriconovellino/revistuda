@@ -9,16 +9,17 @@
       <ul class="nav flex-column gap-1">
         <li class="nav-item">
           <a class="nav-link" [class.active]="paginaAtual() === 'dashboard'" (click)="irPara('dashboard')">
-             Dashboard
+            Dashboard
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'" (click)="irParaTurmas()">
+          <a class="nav-link" [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'"
+            (click)="irParaTurmas()">
             Turmas
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link">  Conta</a>
+          <a class="nav-link"> Conta</a>
         </li>
       </ul>
     </nav>
@@ -28,10 +29,7 @@
     </div>
   </div>
 
-  <!-- CONTEÚDO -->
   <div class="flex-grow-1" style="margin-left: 240px;">
-
-    <!-- HEADER -->
     <div class="main-header d-flex justify-content-between align-items-center">
       <input type="text" class="form-control w-25" placeholder=" Buscar módulos...">
       <div class="d-flex align-items-center gap-3">
@@ -50,227 +48,223 @@
       </div>
     </div>
     @if (loading()) {
-      <div class="d-flex justify-content-center mt-5">
-        <div class="spinner-border text-primary" role="status"></div>
-      </div>
+    <div class="d-flex justify-content-center mt-5">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
     } @else if (error()) {
-      <div class="alert alert-danger m-4">{{ error() }}</div>
+    <div class="alert alert-danger m-4">{{ error() }}</div>
     } @else {
 
-      <!-- DASHBOARD -->
-      @if (paginaAtual() === 'dashboard') {
-        <div class="p-4">
+    @if (paginaAtual() === 'dashboard') {
+    <div class="p-4">
 
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h4 class="mb-0 fw-bold">Painel de Controle</h4>
-              <small class="text-muted">Bem-vindo de volta, Prof. {{ userName() }}!</small>
-            </div>
-            <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="irParaTurmas()">
-               Selecionar Turma
-            </button>
-          </div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="mb-0 fw-bold">Painel de Controle</h4>
+          <small class="text-muted">Bem-vindo de volta, Prof. {{ userName() }}!</small>
+        </div>
+        <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="irParaTurmas()">
+          Selecionar Turma
+        </button>
+      </div>
 
-          <!-- Stats -->
-          <div class="row g-3 mb-4">
-            <div class="col-md-4">
-              <div class="stat-card">
-                <div class="text-muted small mb-1">Total de Módulos</div>
-                <div class="fs-2 fw-bold" style="color: #0f2744;">{{ modulos().length }}</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="stat-card primary">
-                <div class="small mb-1 opacity-75">Módulos Fáceis</div>
-                <div class="fs-2 fw-bold">{{ contarDificuldade('fácil') }}</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="stat-card">
-                <div class="text-muted small mb-1">Módulos Difíceis</div>
-                <div class="fs-2 fw-bold text-danger">{{ contarDificuldade('difícil') }}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row g-4">
-
-            <!-- Gráfico -->
-            <div class="col-md-7">
-              <div class="chart-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h6 class="fw-bold mb-0">Desempenho Geral</h6>
-                  <select class="form-select form-select-sm w-auto">
-                    <option>Últimos 30 dias</option>
-                    <option>Últimos 7 dias</option>
-                  </select>
-                </div>
-                
-                <canvas id="graficoDesempenho" height="200"></canvas>
-              </div>
-            </div>
-
-            <!-- Módulos recentes -->
-            <div class="col-md-5">
-              <div class="chart-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h6 class="fw-bold mb-0">Meus Módulos</h6>
-                  <a class="text-primary small" style="cursor:pointer;" (click)="irParaTurmas()">Ver turmas</a>
-                </div>
-                <div class="d-flex flex-column gap-2">
-                  @if (modulos().length === 0) {
-                    <p class="text-muted small">Nenhum módulo criado ainda.</p>
-                  }
-                  @for (modulo of modulos().slice(0, 4); track modulo.modulo_id) {
-                    <div class="turma-card" (click)="verModulo(modulo.modulo_id)">
-                      <div class="turma-icon">
-                        @if (modulo.imagem_url) {
-                          <img [src]="modulo.imagem_url" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                        } @else {
-                          
-                        }
-                      </div>
-                      <div class="flex-grow-1">
-                        <div class="fw-semibold small">{{ modulo.titulo_modulo }}</div>
-                        <div class="text-muted" style="font-size: 11px;">{{ modulo.descricao_modulo || 'Sem descrição' }}</div>
-                      </div>
-                      <span class="badge"
-                        [class.bg-success]="modulo.dificuldade === 'fácil'"
-                        [class.bg-warning]="modulo.dificuldade === 'médio'"
-                        [class.bg-danger]="modulo.dificuldade === 'difícil'">
-                        {{ modulo.dificuldade }}
-                      </span>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="text-muted small mb-1">Total de Módulos</div>
+            <div class="fs-2 fw-bold" style="color: #0f2744;">{{ modulos().length }}</div>
           </div>
         </div>
-      }
+        <div class="col-md-4">
+          <div class="stat-card primary">
+            <div class="small mb-1 opacity-75">Módulos Fáceis</div>
+            <div class="fs-2 fw-bold">{{ contarDificuldade('fácil') }}</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="text-muted small mb-1">Módulos Difíceis</div>
+            <div class="fs-2 fw-bold text-danger">{{ contarDificuldade('difícil') }}</div>
+          </div>
+        </div>
+      </div>
 
-      <!-- MÓDULOS -->
-      @if (paginaAtual() === 'modulos') {
-        <div class="p-4">
-          @if (turmaSelecionada()) {
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <div>
-                <button class="btn btn-link btn-sm px-0 mb-2 text-decoration-none" (click)="irParaTurmas()">
-                  Voltar para turmas
-                </button>
-                <h4 class="mb-0 fw-bold">{{ turmaSelecionada()!.nome_turma }}</h4>
-                <small class="text-muted">{{ modulosDaTurmaSelecionada().length }} módulo(s) nesta turma</small>
-              </div>
-              <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="toggleFormModulo()">
-                {{ mostrarFormModulo() ? 'Cancelar' : '+ Novo Módulo' }}
-              </button>
+      <div class="row g-4">
+
+        <div class="col-md-7">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0">Desempenho Geral</h6>
+              <select class="form-select form-select-sm w-auto">
+                <option>Últimos 30 dias</option>
+                <option>Últimos 7 dias</option>
+              </select>
             </div>
 
-            @if (turmaSelecionada()!.descricao_turma || turmaSelecionada()!.capacidade_maxima) {
-              <div class="alert alert-light border mb-4">
-                @if (turmaSelecionada()!.descricao_turma) {
-                  <div>{{ turmaSelecionada()!.descricao_turma }}</div>
-                }
-                @if (turmaSelecionada()!.capacidade_maxima) {
-                  <small class="text-muted">Capacidade máxima: {{ turmaSelecionada()!.capacidade_maxima }} alunos</small>
-                }
-              </div>
-            }
+            <canvas id="graficoDesempenho" height="200"></canvas>
+          </div>
+        </div>
 
-            @if (mostrarFormModulo()) {
-              <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                  <h5 class="card-title mb-1">{{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}</h5>
-                  <small class="text-muted d-block mb-3">Turma selecionada: {{ turmaSelecionada()!.nome_turma }}</small>
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label">Título <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
-                        placeholder="Ex: Introdução à Informática"
-                        [(ngModel)]="novoTituloModulo" name="tituloModulo"/>
-                      @if (erroModulo()) {
-                        <div class="invalid-feedback">{{ erroModulo() }}</div>
-                      }
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label">Descrição</label>
-                      <input type="text" class="form-control" placeholder="Descrição opcional"
-                        [(ngModel)]="novaDescricaoModulo" name="descricaoModulo"/>
-                    </div>
-                    <div class="col-md-2">
-                      <label class="form-label">Dificuldade</label>
-                      <select class="form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
-                        <option value="fácil">Fácil</option>
-                        <option value="médio">Médio</option>
-                        <option value="difícil">Difícil</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">URL da Imagem</label>
-                      <input type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg"
-                        [(ngModel)]="novaImagemUrl" name="imagemUrl"/>
-                    </div>
-                    <div class="col-12">
-                      <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo()">
-                        {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
-                      </button>
-                    </div>
+        <div class="col-md-5">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0">Meus Módulos</h6>
+              <a class="text-primary small" style="cursor:pointer;" (click)="irParaTurmas()">Ver turmas</a>
+            </div>
+            <div class="d-flex flex-column gap-2">
+              @if (modulos().length === 0) {
+              <p class="text-muted small">Nenhum módulo criado ainda.</p>
+              }
+              @for (modulo of modulos().slice(0, 4); track modulo.modulo_id) {
+              <div class="turma-card" (click)="verModulo(modulo.modulo_id)">
+                <div class="turma-icon">
+                  @if (modulo.imagem_url) {
+                  <img [src]="modulo.imagem_url"
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                  } @else {
+
+                  }
+                </div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold small">{{ modulo.titulo_modulo }}</div>
+                  <div class="text-muted" style="font-size: 11px;">{{ modulo.descricao_modulo || 'Sem descrição' }}
                   </div>
                 </div>
+                <span class="badge" [class.bg-success]="modulo.dificuldade === 'fácil'"
+                  [class.bg-warning]="modulo.dificuldade === 'médio'"
+                  [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                  {{ modulo.dificuldade }}
+                </span>
               </div>
-            }
-
-            @if (modulosDaTurmaSelecionada().length === 0 && !mostrarFormModulo()) {
-              <div class="text-center mt-5">
-                <p class="text-muted fs-5">Nenhum módulo criado para esta turma ainda.</p>
-                <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
-              </div>
-            }
-
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-              @for (modulo of modulosDaTurmaSelecionada(); track modulo.modulo_id) {
-                <div class="col">
-                  <div class="card h-100 shadow-sm">
-                    @if (modulo.imagem_url) {
-                      <img [src]="modulo.imagem_url" class="card-img-top" alt="{{ modulo.titulo_modulo }}" style="height: 180px; object-fit: cover;">
-                    } @else {
-                      <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                        <span class="text-muted">Sem imagem</span>
-                      </div>
-                    }
-                    <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-0">{{ modulo.titulo_modulo }}</h5>
-                        <span class="badge"
-                          [class.bg-success]="modulo.dificuldade === 'fácil'"
-                          [class.bg-warning]="modulo.dificuldade === 'médio'"
-                          [class.bg-danger]="modulo.dificuldade === 'difícil'">
-                          {{ modulo.dificuldade }}
-                        </span>
-                      </div>
-                      <p class="card-text text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
-                    </div>
-                    <div class="card-footer d-flex gap-2">
-                      <button class="btn btn-sm btn-primary flex-fill" (click)="verModulo(modulo.modulo_id)"> Ver Lições</button>
-                      <button class="btn btn-sm btn-outline-warning" (click)="editarModulo(modulo)">Editar</button>
-                      <button class="btn btn-sm btn-outline-danger" (click)="deletarModulo(modulo.modulo_id)">Deletar</button>
-                    </div>
-                  </div>
-                </div>
               }
             </div>
-          } @else {
-            <div class="alert alert-info d-flex justify-content-between align-items-center">
-              <span>Selecione uma turma para visualizar os módulos.</span>
-              <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
-            </div>
-          }
+          </div>
         </div>
+
+      </div>
+    </div>
+    }
+
+    @if (paginaAtual() === 'modulos') {
+    <div class="p-4">
+      @if (turmaSelecionada()) {
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <button class="btn btn-link btn-sm px-0 mb-2 text-decoration-none" (click)="irParaTurmas()">
+            Voltar para turmas
+          </button>
+          <h4 class="mb-0 fw-bold">{{ turmaSelecionada()!.nome_turma }}</h4>
+          <small class="text-muted">{{ modulosDaTurmaSelecionada().length }} módulo(s) nesta turma</small>
+        </div>
+        <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="toggleFormModulo()">
+          {{ mostrarFormModulo() ? 'Cancelar' : '+ Novo Módulo' }}
+        </button>
+      </div>
+
+      @if (turmaSelecionada()!.descricao_turma || turmaSelecionada()!.capacidade_maxima) {
+      <div class="alert alert-light border mb-4">
+        @if (turmaSelecionada()!.descricao_turma) {
+        <div>{{ turmaSelecionada()!.descricao_turma }}</div>
+        }
+        @if (turmaSelecionada()!.capacidade_maxima) {
+        <small class="text-muted">Capacidade máxima: {{ turmaSelecionada()!.capacidade_maxima }} alunos</small>
+        }
+      </div>
       }
-      @if (paginaAtual() === 'turmas') {
-        <app-dashboard-turmas (turmaSelecionada)="selecionarTurma($event)"></app-dashboard-turmas>
+
+      @if (mostrarFormModulo()) {
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-1">{{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}</h5>
+          <small class="text-muted d-block mb-3">Turma selecionada: {{ turmaSelecionada()!.nome_turma }}</small>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Título <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
+                placeholder="Ex: Introdução à Informática" [(ngModel)]="novoTituloModulo" name="tituloModulo" />
+              @if (erroModulo()) {
+              <div class="invalid-feedback">{{ erroModulo() }}</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Descrição</label>
+              <input type="text" class="form-control" placeholder="Descrição opcional" [(ngModel)]="novaDescricaoModulo"
+                name="descricaoModulo" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Dificuldade</label>
+              <select class="form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
+                <option value="fácil">Fácil</option>
+                <option value="médio">Médio</option>
+                <option value="difícil">Difícil</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">URL da Imagem</label>
+              <input type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg"
+                [(ngModel)]="novaImagemUrl" name="imagemUrl" />
+            </div>
+            <div class="col-12">
+              <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo()">
+                {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       }
-  }
+
+      @if (modulosDaTurmaSelecionada().length === 0 && !mostrarFormModulo()) {
+      <div class="text-center mt-5">
+        <p class="text-muted fs-5">Nenhum módulo criado para esta turma ainda.</p>
+        <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
+      </div>
+      }
+
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        @for (modulo of modulosDaTurmaSelecionada(); track modulo.modulo_id) {
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            @if (modulo.imagem_url) {
+            <img [src]="modulo.imagem_url" class="card-img-top" alt="{{ modulo.titulo_modulo }}"
+              style="height: 180px; object-fit: cover;">
+            } @else {
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+              <span class="text-muted">Sem imagem</span>
+            </div>
+            }
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">{{ modulo.titulo_modulo }}</h5>
+                <span class="badge" [class.bg-success]="modulo.dificuldade === 'fácil'"
+                  [class.bg-warning]="modulo.dificuldade === 'médio'"
+                  [class.bg-danger]="modulo.dificuldade === 'difícil'">
+                  {{ modulo.dificuldade }}
+                </span>
+              </div>
+              <p class="card-text text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
+            </div>
+            <div class="card-footer d-flex gap-2">
+              <button class="btn btn-sm btn-primary flex-fill" (click)="verModulo(modulo.modulo_id)"> Ver
+                Lições</button>
+              <button class="btn btn-sm btn-outline-warning" (click)="editarModulo(modulo)">Editar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deletarModulo(modulo.modulo_id)">Deletar</button>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Selecione uma turma para visualizar os módulos.</span>
+        <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
+      </div>
+      }
+    </div>
+    }
+    @if (paginaAtual() === 'turmas') {
+    <app-dashboard-turmas (turmaSelecionada)="selecionarTurma($event)"></app-dashboard-turmas>
+    }
+    }
   </div>
 </div>
