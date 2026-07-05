@@ -43,7 +43,7 @@ export class UserService {
     return await response.json();
   }
 
-  async rejectUser(id: number): Promise<any> {
+  async rejectUser(id: number): Promise<void> {
     const response = await fetch(`${this.apiUrl}/users/${id}`, {
       method: 'DELETE',
       headers: this.getHeaders()
@@ -51,6 +51,5 @@ export class UserService {
     if (!response.ok) {
       throw new Error('Falha ao recusar usuário');
     }
-    return response.status === 204 ? null : await response.json();
   }
 }
