@@ -7,8 +7,7 @@ export interface CreateConteudoInput {
   nome_conteudo: string;
   tipo_conteudo: string;
   licao_id: number;
-  video_url?: string;
-  audio_link?: string;
+  url_conteudo?: string;
   texto_conteudo?: string;
 }
 
@@ -22,8 +21,7 @@ export class CreateConteudoUseCase {
       input.nome_conteudo,
       input.tipo_conteudo,
       input.licao_id,
-      input.video_url,
-      input.audio_link,
+      input.url_conteudo,
       input.texto_conteudo,
     );
     return this.conteudoRepository.create(conteudo);

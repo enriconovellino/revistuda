@@ -7,8 +7,7 @@ export interface UpdateConteudoInput {
   id: number;
   nome_conteudo?: string;
   tipo_conteudo?: string;
-  video_url?: string;
-  audio_link?: string;
+  url_conteudo?: string;
   texto_conteudo?: string;
   licao_id?: number;
 }
