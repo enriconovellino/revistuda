@@ -12,8 +12,7 @@ export class ConteudoRepository implements IConteudoRepository {
       data: {
         nome_conteudo: conteudo.nome_conteudo,
         tipo_conteudo: conteudo.tipo_conteudo,
-        video_url: conteudo.video_url,
-        audio_link: conteudo.audio_link,
+        url_conteudo: conteudo.url_conteudo,
         texto_conteudo: conteudo.texto_conteudo,
         licao_id: conteudo.licao_id,
       },
@@ -23,8 +22,7 @@ export class ConteudoRepository implements IConteudoRepository {
       created.nome_conteudo,
       created.tipo_conteudo,
       created.licao_id,
-      created.video_url ?? undefined,
-      created.audio_link ?? undefined,
+      created.url_conteudo ?? undefined,
       created.texto_conteudo ?? undefined,
     );
   }
@@ -36,8 +34,7 @@ export class ConteudoRepository implements IConteudoRepository {
       c.nome_conteudo,
       c.tipo_conteudo,
       c.licao_id,
-      c.video_url ?? undefined,
-      c.audio_link ?? undefined,
+      c.url_conteudo ?? undefined,
       c.texto_conteudo ?? undefined,
     ));
   }
@@ -50,8 +47,7 @@ export class ConteudoRepository implements IConteudoRepository {
       c.nome_conteudo,
       c.tipo_conteudo,
       c.licao_id,
-      c.video_url ?? undefined,
-      c.audio_link ?? undefined,
+      c.url_conteudo ?? undefined,
       c.texto_conteudo ?? undefined,
     );
   }
@@ -62,8 +58,7 @@ export class ConteudoRepository implements IConteudoRepository {
       data: {
         nome_conteudo: data.nome_conteudo,
         tipo_conteudo: data.tipo_conteudo,
-        video_url: data.video_url,
-        audio_link: data.audio_link,
+        url_conteudo: data.url_conteudo,
         texto_conteudo: data.texto_conteudo,
         licao_id: data.licao_id,
       },
@@ -73,8 +68,7 @@ export class ConteudoRepository implements IConteudoRepository {
       c.nome_conteudo,
       c.tipo_conteudo,
       c.licao_id,
-      c.video_url ?? undefined,
-      c.audio_link ?? undefined,
+      c.url_conteudo ?? undefined,
       c.texto_conteudo ?? undefined,
     );
   }

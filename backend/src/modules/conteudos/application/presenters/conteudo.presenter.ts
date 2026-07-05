@@ -4,8 +4,7 @@ export class ConteudoPresenter {
   conteudo_id!: number;
   nome_conteudo!: string;
   tipo_conteudo!: string;
-  video_url?: string;
-  audio_link?: string;
+  url_conteudo?: string;
   texto_conteudo?: string;
   licao_id!: number;
 
@@ -14,8 +13,7 @@ export class ConteudoPresenter {
     presenter.conteudo_id = conteudo.conteudo_id;
     presenter.nome_conteudo = conteudo.nome_conteudo;
     presenter.tipo_conteudo = conteudo.tipo_conteudo;
-    presenter.video_url = conteudo.video_url;
-    presenter.audio_link = conteudo.audio_link;
+    presenter.url_conteudo = conteudo.url_conteudo;
     presenter.texto_conteudo = conteudo.texto_conteudo;
     presenter.licao_id = conteudo.licao_id;
     return presenter;
