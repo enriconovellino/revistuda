@@ -27,7 +27,6 @@
         {{ error() }}
       </div>
 
-      <!-- LOGIN -->
       <form class="row g-3" *ngIf="isLogin()" [formGroup]="loginForm" (ngSubmit)="onLogin()">
         <h1 class="h4 fw-bold titulo col-12 mb-0">Bem-vindo </h1>
         <p class="text-muted col-12 mb-0">Acesse sua plataforma educacional personalizada.</p>
@@ -70,7 +69,6 @@
         </div>
       </form>
 
-      <!-- CADASTRO -->
       <form class="row g-3" *ngIf="!isLogin()" [formGroup]="registerForm" (ngSubmit)="onRegister()">
         <h1 class="h4 fw-bold titulo col-12 mb-0">Criar Conta</h1>
         <p class="text-muted col-12 mb-0">Comece sua jornada educacional personalizada.</p>

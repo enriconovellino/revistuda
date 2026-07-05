@@ -28,7 +28,10 @@ export class CreateTurmaDto {
   @ApiProperty({
     example: 2,
     description: 'ID do professor responsável pela turma',
+    required: false,
+    nullable: true,
   })
   @IsInt()
-  professor_id!: number;
+  @IsOptional()
+  professor_id?: number | null;
 }
