@@ -8,7 +8,7 @@ import { UserService } from '../../services/user.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './adm.component.html',
-  styleUrl: './adm.component.css'
+  styleUrl: './adm.component.scss'
 })
 export class AdmComponent implements OnInit {
   userName = signal('Administrador');
