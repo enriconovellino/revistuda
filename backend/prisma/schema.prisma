@@ -30,6 +30,7 @@ model Modulo {
   imagem_url       String?
   turma_id         Int
   turma            Turma   @relation(fields: [turma_id], references: [turma_id])
+  licoes           Licao[]
 }
 
 model Turma {
@@ -58,6 +59,7 @@ model Licao {
   titulo_licao   String
   comentario     String?
   modulo_id      Int
+  modulo         Modulo  @relation(fields: [modulo_id], references: [modulo_id])
   conteudos      Conteudo[]
   atividades     Atividade[]
 }
