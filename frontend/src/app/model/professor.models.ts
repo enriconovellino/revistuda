@@ -21,3 +21,19 @@ export interface Turma {
   capacidade_maxima?: number | null;
   professor_id?: number | null;
 }
+
+export interface Licao {
+  licao_id: number;
+  titulo_licao: string;
+  comentario?: string;
+  modulo_id: number;
+}
+
+export interface Conteudo {
+  conteudo_id: number;
+  nome_conteudo: string;
+  tipo_conteudo: string;
+  url_conteudo?: string | null;
+  texto_conteudo?: string | null;
+  licao_id: number;
+}
