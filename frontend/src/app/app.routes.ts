@@ -1,15 +1,19 @@
 import { Routes } from '@angular/router';
-import { AuthComponent } from './pages/auth/auth.component';
+import { TelaLoginComponent } from './pages/tela-login/tela-login.component';
 import { AlunoCriancaComponent } from './pages/aluno-crianca/aluno-crianca.component';
 import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
+import { TelaInicialComponent} from './pages/tela-inicial/tela-inicial.component';
 import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
+import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'auth', pathMatch: 'full' },
-  { path: 'auth', component: AuthComponent },
+  { path: '', component: TelaInicialComponent },
+  { path: 'login', component: TelaLoginComponent },
+  {path: 'login-idoso', component: LoginIdosoComponent},
+  
   {
     path: 'aluno-crianca',
     component: AlunoCriancaComponent,
@@ -35,5 +39,5 @@ export const routes: Routes = [
     component: AdmComponent,
     canActivate: [authGuard, roleGuard(['ADM'])]
   },
-  { path: '**', redirectTo: 'auth' }
+  { path: '**', redirectTo: 'login' }
 ];

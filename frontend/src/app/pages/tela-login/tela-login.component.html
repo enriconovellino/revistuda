@@ -1,39 +1,25 @@
-<div class="auth-wrapper d-flex align-items-center justify-content-center min-vh-100 py-4">
-  <div class="card auth-card">
+<div class="tela-login-page">
+  <div class="painel-esquerdo">
+  <img src="/img/login.jpg" alt="Estudantes" class="bg-imagem">
+  <div class="overlay"></div>
 
-    <img src="/img/login.png" class="card-img-top" alt="Avô e neto estudando juntos com um tablet">
-
-    <div class="card-body">
-
-      <div class="brand">
-        <i class="bi bi-mortarboard-fill"></i>
-        ReviStuda
-      </div>
-
-      <ul class="nav nav-pills nav-fill abas-auth mb-4">
-        <li class="nav-item">
-          <button type="button" class="nav-link" [class.active]="isLogin()" (click)="setMode(true)">
-            Entrar
-          </button>
-        </li>
-        <li class="nav-item">
-          <button type="button" class="nav-link" [class.active]="!isLogin()" (click)="setMode(false)">
-            Cadastrar
-          </button>
-        </li>
-      </ul>
+  <div class="logo-centro">
+    <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
+    <span class="nome-marca">ReviStuda</span>
+  </div>
+</div>
+  <div class="painel-direito">
+    <div class="formulario-bloco">
 
       <div class="alert alert-danger py-2 small" *ngIf="error()">
         {{ error() }}
       </div>
-
-      <!-- LOGIN -->
       <form class="row g-3" *ngIf="isLogin()" [formGroup]="loginForm" (ngSubmit)="onLogin()">
-        <h1 class="h4 fw-bold titulo col-12 mb-0">Bem-vindo </h1>
-        <p class="text-muted col-12 mb-0">Acesse sua plataforma educacional personalizada.</p>
+        <h2 class="titulo-form col-12 mb-0">Bem-vindo</h2>
+        <p class="subtitulo-form col-12 mb-0">Acesse sua plataforma educacional personalizada.</p>
 
         <div class="col-12">
-          <label for="loginEmail" class="form-label"><i class="bi bi-envelope me-1"></i>Endereço de e-mail</label>
+          <label for="loginEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>Endereço de e-mail</label>
           <input
             type="email"
             class="form-control"
@@ -45,7 +31,7 @@
         </div>
 
         <div class="col-12">
-          <label for="loginSenha" class="form-label"><i class="bi bi-lock me-1"></i>Sua senha</label>
+          <label for="loginSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Sua senha</label>
           <div class="position-relative">
             <input
               [type]="mostrarSenhaLogin ? 'text' : 'password'"
@@ -55,19 +41,22 @@
               placeholder="••••••••"
               [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
             <i
-              class="bi position-absolute icone-olho"
-              [class.bi-eye]="!mostrarSenhaLogin"
-              [class.bi-eye-slash]="mostrarSenhaLogin"
+              class="fi position-absolute icone-olho"
+              [class.fi-rr-eye]="!mostrarSenhaLogin"
+              [class.fi-rr-eye-crossed]="mostrarSenhaLogin"
               (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
           </div>
           <div class="invalid-feedback d-block" *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
             A senha é obrigatória.
           </div>
+          <div class="text-end mt-1">
+    <a href="#" class="link-accent" style="font-size: .85rem;">Esqueci minha senha</a>
+  </div>
         </div>
 
         <div class="col-12">
           <button type="submit" class="btn-auth w-100" [disabled]="loading()">
-            <span *ngIf="!loading()">Acessar Plataforma <i class="bi bi-box-arrow-in-right"></i></span>
+            <span *ngIf="!loading()">Acessar Plataforma <i class="fi fi-rr-arrow-right"></i></span>
             <span *ngIf="loading()" class="spinner-border spinner-border-sm"></span>
           </button>
         </div>
@@ -78,14 +67,12 @@
           </p>
         </div>
       </form>
-
-      <!-- CADASTRO -->
       <form class="row g-3" *ngIf="!isLogin()" [formGroup]="registerForm" (ngSubmit)="onRegister()">
-        <h1 class="h4 fw-bold titulo col-12 mb-0">Criar Conta</h1>
-        <p class="text-muted col-12 mb-0">Comece sua jornada educacional personalizada.</p>
+        <h2 class="titulo-form col-12 mb-0">Criar Conta</h2>
+        <p class="subtitulo-form col-12 mb-0">Comece sua jornada educacional personalizada.</p>
 
         <div class="col-12">
-          <label for="regNome" class="form-label"><i class="bi bi-person me-1"></i>Nome completo</label>
+          <label for="regNome" class="form-label"><i class="fi fi-rr-user me-1"></i>Nome completo</label>
           <input
             type="text"
             class="form-control"
@@ -97,7 +84,7 @@
         </div>
 
         <div class="col-12">
-          <label for="regEmail" class="form-label"><i class="bi bi-envelope me-1"></i>E-mail</label>
+          <label for="regEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>E-mail</label>
           <input
             type="email"
             class="form-control"
@@ -109,7 +96,7 @@
         </div>
 
         <div class="col-12">
-          <label for="regSenha" class="form-label"><i class="bi bi-lock me-1"></i>Senha</label>
+          <label for="regSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Senha</label>
           <div class="position-relative">
             <input
               [type]="mostrarSenhaCadastro ? 'text' : 'password'"
@@ -119,29 +106,18 @@
               placeholder="Mínimo 6 caracteres"
               [class.is-invalid]="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
             <i
-              class="bi position-absolute icone-olho"
-              [class.bi-eye]="!mostrarSenhaCadastro"
-              [class.bi-eye-slash]="mostrarSenhaCadastro"
+              class="fi position-absolute icone-olho"
+              [class.fi-rr-eye]="!mostrarSenhaCadastro"
+              [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"
               (click)="mostrarSenhaCadastro = !mostrarSenhaCadastro"></i>
           </div>
           <div class="invalid-feedback d-block" *ngIf="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
             A senha precisa de no mínimo 6 caracteres.
           </div>
-        </div>
-
-        <div class="col-12">
-          <label for="regPerfil" class="form-label"><i class="bi bi-person-badge me-1"></i>Eu sou</label>
-          <select class="form-select" id="regPerfil" formControlName="permission">
-            <option value="ALUNO_CRIANCA">Aluno (Criança)</option>
-            <option value="ALUNO_IDOSO">Aluno (Idoso)</option>
-            <option value="PROFESSOR">Professor</option>
-            <option value="ADMIN">Administrador</option>
-          </select>
-        </div>
-
+          </div>
         <div class="col-12">
           <button type="submit" class="btn-auth w-100" [disabled]="loading()">
-            <span *ngIf="!loading()">Cadastrar Agora <i class="bi bi-arrow-right"></i></span>
+            <span *ngIf="!loading()">Cadastrar Agora <i class="fi fi-rr-arrow-right"></i></span>
             <span *ngIf="loading()" class="spinner-border spinner-border-sm"></span>
           </button>
         </div>
@@ -155,11 +131,9 @@
 
     </div>
   </div>
-
-  <!-- MODAL DE SUCESSO -->
   <div class="modal-sucesso-overlay" *ngIf="showSuccessModal()">
     <div class="modal-sucesso">
-      <i class="bi bi-check-circle-fill"></i>
+      <i class="fi fi-rr-check-circle"></i>
       <p class="mb-0 fw-semibold">Cadastro realizado com sucesso!</p>
     </div>
   </div>

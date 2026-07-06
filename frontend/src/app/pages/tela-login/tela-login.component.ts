@@ -5,13 +5,13 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-auth',
+  selector: 'app-tela-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss'
+  templateUrl: './tela-login.component.html',
+  styleUrl: './tela-login.component.scss'
 })
-export class AuthComponent {
+export class TelaLoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
