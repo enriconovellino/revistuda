@@ -8,7 +8,7 @@ export interface UpdateTurmaInput {
   nome_turma?: string;
   descricao_turma?: string;
   capacidade_maxima?: number;
-  professor_id?: number;
+  professor_id?: number | null;
 }
 
 @Injectable()

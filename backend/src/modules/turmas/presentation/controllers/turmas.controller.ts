@@ -8,6 +8,7 @@ import {
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
   GetTurmaUseCase,
+  GetTurmasByProfessorUseCase,
   UpdateTurmaUseCase,
 } from '../../domain/use-cases';
 
@@ -19,6 +20,7 @@ export class TurmasController {
     private getTurmaUseCase: GetTurmaUseCase,
     private updateTurmaUseCase: UpdateTurmaUseCase,
     private deleteTurmaUseCase: DeleteTurmaUseCase,
+    private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase
   ) {}
 
   @Post()
@@ -35,6 +37,13 @@ export class TurmasController {
   @ApiResponse({ status: 200, description: 'Lista de turmas retornada com sucesso' })
   async findAll(): Promise<TurmaPresenter[]> {
     const turmas = await this.getAllTurmasUseCase.execute();
+    return TurmaPresenter.toCollection(turmas);
+  }
+
+  @Get('professor/:professorId')
+  @ApiOperation({ summary: 'Buscar turmas de um professor' })
+  async findByProfessor(@Param('professorId', ParseIntPipe) professorId: number): Promise<TurmaPresenter[]> {
+    const turmas = await this.getTurmasByProfessorUseCase.execute(professorId);
     return TurmaPresenter.toCollection(turmas);
   }
 
@@ -66,4 +75,5 @@ export class TurmasController {
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.deleteTurmaUseCase.execute(id);
   }
+
 }

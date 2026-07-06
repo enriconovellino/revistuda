@@ -18,19 +18,11 @@ export class CreateConteudoDto {
 
   @ApiPropertyOptional({
     example: 'https://youtube.com/video123',
-    description: 'URL do vídeo',
+    description: 'URL/Link do conteúdo (vídeo ou áudio)',
   })
   @IsString()
   @IsOptional()
-  video_url?: string;
-
-  @ApiPropertyOptional({
-    example: 'https://spotify.com/audio123',
-    description: 'Link do áudio',
-  })
-  @IsString()
-  @IsOptional()
-  audio_link?: string;
+  url_conteudo?: string;
 
   @ApiPropertyOptional({
     example: 'Neste conteúdo vamos aprender HTML...',

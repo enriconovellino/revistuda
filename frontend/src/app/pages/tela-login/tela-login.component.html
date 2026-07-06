@@ -1,13 +1,13 @@
 <div class="tela-login-page">
   <div class="painel-esquerdo">
-  <img src="/img/login.jpg" alt="Estudantes" class="bg-imagem">
-  <div class="overlay"></div>
+    <img src="/img/login.jpg" alt="Estudantes" class="bg-imagem">
+    <div class="overlay"></div>
 
-  <div class="logo-centro">
-    <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
-    <span class="nome-marca">ReviStuda</span>
+    <div class="logo-centro">
+      <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
+      <span class="nome-marca">ReviStuda</span>
+    </div>
   </div>
-</div>
   <div class="painel-direito">
     <div class="formulario-bloco">
 
@@ -20,11 +20,7 @@
 
         <div class="col-12">
           <label for="loginEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>Endereço de e-mail</label>
-          <input
-            type="email"
-            class="form-control"
-            id="loginEmail"
-            formControlName="email"
+          <input type="email" class="form-control" id="loginEmail" formControlName="email"
             placeholder="nome@exemplo.com"
             [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           <div class="invalid-feedback">Digite um e-mail válido.</div>
@@ -33,25 +29,19 @@
         <div class="col-12">
           <label for="loginSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Sua senha</label>
           <div class="position-relative">
-            <input
-              [type]="mostrarSenhaLogin ? 'text' : 'password'"
-              class="form-control"
-              id="loginSenha"
-              formControlName="senha"
-              placeholder="••••••••"
+            <input [type]="mostrarSenhaLogin ? 'text' : 'password'" class="form-control" id="loginSenha"
+              formControlName="senha" placeholder="••••••••"
               [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
-            <i
-              class="fi position-absolute icone-olho"
-              [class.fi-rr-eye]="!mostrarSenhaLogin"
-              [class.fi-rr-eye-crossed]="mostrarSenhaLogin"
-              (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
+            <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaLogin"
+              [class.fi-rr-eye-crossed]="mostrarSenhaLogin" (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
           </div>
-          <div class="invalid-feedback d-block" *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
+          <div class="invalid-feedback d-block"
+            *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
             A senha é obrigatória.
           </div>
           <div class="text-end mt-1">
-    <a href="#" class="link-accent" style="font-size: .85rem;">Esqueci minha senha</a>
-  </div>
+            <a href="#" class="link-accent" style="font-size: .85rem;">Esqueci minha senha</a>
+          </div>
         </div>
 
         <div class="col-12">
@@ -63,7 +53,8 @@
 
         <div class="col-12 text-center">
           <p class="text-muted mb-0 small">
-            Não tem uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(false)">Cadastre-se gratuitamente</a>
+            Não tem uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(false)">Cadastre-se
+              gratuitamente</a>
           </p>
         </div>
       </form>
@@ -73,11 +64,7 @@
 
         <div class="col-12">
           <label for="regNome" class="form-label"><i class="fi fi-rr-user me-1"></i>Nome completo</label>
-          <input
-            type="text"
-            class="form-control"
-            id="regNome"
-            formControlName="nome"
+          <input type="text" class="form-control" id="regNome" formControlName="nome"
             placeholder="Como devemos te chamar?"
             [class.is-invalid]="registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched">
           <div class="invalid-feedback">O nome é obrigatório.</div>
@@ -85,11 +72,7 @@
 
         <div class="col-12">
           <label for="regEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>E-mail</label>
-          <input
-            type="email"
-            class="form-control"
-            id="regEmail"
-            formControlName="email"
+          <input type="email" class="form-control" id="regEmail" formControlName="email"
             placeholder="exemplo@estudo.com"
             [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
           <div class="invalid-feedback">Digite um e-mail válido.</div>
@@ -98,23 +81,18 @@
         <div class="col-12">
           <label for="regSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Senha</label>
           <div class="position-relative">
-            <input
-              [type]="mostrarSenhaCadastro ? 'text' : 'password'"
-              class="form-control"
-              id="regSenha"
-              formControlName="senha"
-              placeholder="Mínimo 6 caracteres"
+            <input [type]="mostrarSenhaCadastro ? 'text' : 'password'" class="form-control" id="regSenha"
+              formControlName="senha" placeholder="Mínimo 6 caracteres"
               [class.is-invalid]="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
-            <i
-              class="fi position-absolute icone-olho"
-              [class.fi-rr-eye]="!mostrarSenhaCadastro"
+            <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaCadastro"
               [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"
               (click)="mostrarSenhaCadastro = !mostrarSenhaCadastro"></i>
           </div>
-          <div class="invalid-feedback d-block" *ngIf="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
+          <div class="invalid-feedback d-block"
+            *ngIf="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
             A senha precisa de no mínimo 6 caracteres.
           </div>
-          </div>
+        </div>
         <div class="col-12">
           <button type="submit" class="btn-auth w-100" [disabled]="loading()">
             <span *ngIf="!loading()">Cadastrar Agora <i class="fi fi-rr-arrow-right"></i></span>
@@ -124,7 +102,8 @@
 
         <div class="col-12 text-center">
           <p class="text-muted mb-0 small">
-            Já possui uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(true)">Fazer Login</a>
+            Já possui uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(true)">Fazer
+              Login</a>
           </p>
         </div>
       </form>

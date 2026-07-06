@@ -3,12 +3,12 @@ export class Turma {
   nome_turma!: string;
   descricao_turma?: string;
   capacidade_maxima?: number;
-  professor_id!: number;
+  professor_id?: number | null;
 
   constructor(
     turma_id: number,
     nome_turma: string,
-    professor_id: number,
+    professor_id?: number | null,
     descricao_turma?: string,
     capacidade_maxima?: number,
   ) {

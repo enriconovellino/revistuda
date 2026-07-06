@@ -7,6 +7,7 @@ import {
   CreateTurmaUseCase,
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
+  GetTurmasByProfessorUseCase,
   GetTurmaUseCase,
   UpdateTurmaUseCase,
 } from './domain/use-cases';
@@ -21,6 +22,7 @@ import {
     GetTurmaUseCase,
     UpdateTurmaUseCase,
     DeleteTurmaUseCase,
+    GetTurmasByProfessorUseCase
   ],
 })
 export class TurmasModule {}

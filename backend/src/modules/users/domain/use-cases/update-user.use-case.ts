@@ -9,6 +9,7 @@ export interface UpdateUserInput {
   nome?: string;
   email?: string;
   permissions?: string[];
+  approved?: boolean;
 }
 
 @Injectable()

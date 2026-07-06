@@ -1,30 +1,267 @@
-<div class="dashboard-adm">
-  <header class="header">
-    <div class="logo">Revistuda Admin ⚙️</div>
-    <button (click)="logout()" class="logout-btn">Sair</button>
-  </header>
-
-  <div class="container">
-    <div class="welcome-card">
-      <h1>Painel Geral: {{ userName() }}</h1>
-      <p>Gerencie usuários, configure acessos globais e veja relatórios detalhados do sistema.</p>
+<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h5>ReviEstuda</h5>
+      <small>Plataforma Educacional</small>
     </div>
 
-    <div class="grid-actions">
-      <div class="action-card">
-        <h3>👥 Gerenciar Usuários</h3>
-        <p>Gerencie perfis de alunos e professores, ajuste roles e visualize logs de acessos.</p>
+    <nav class="sidebar-nav">
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="currentView() === 'dashboard'" (click)="currentView.set('dashboard')">
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="currentView() === 'turmas'" (click)="currentView.set('turmas')">
+            Turmas
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="flex-grow-1" style="margin-left: 240px;">
+    <div class="main-header d-flex justify-content-between align-items-center">
+      <div>
+        <span class="text-muted fw-semibold small">Administração</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 36px; height: 36px; background: #0f2744 !important;">
+            {{ userName().charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4">
+
+      <div *ngIf="currentView() === 'dashboard'">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-0 fw-bold">Painel Geral</h4>
+            <small class="text-muted">Bem-vindo ao painel administrativo, {{ userName() }}! Gerencie usuários, configure
+              acessos e monitore o status do sistema.</small>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="text-muted small mb-1">Solicitações de Cadastro</div>
+              <div class="fs-2 fw-bold" [class.text-danger]="pendingProfessors().length > 0"
+                [class.text-dark]="pendingProfessors().length === 0">
+                {{ pendingProfessors().length }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="text-muted small mb-1">Turmas Sem Professor</div>
+              <div class="fs-2 fw-bold" [class.text-danger]="turmasSemProfessor().length > 0"
+                [class.text-dark]="turmasSemProfessor().length === 0">
+                {{ turmasSemProfessor().length }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card primary">
+              <div class="small mb-1 opacity-75">Total de Turmas</div>
+              <div class="fs-2 fw-bold text-white">{{ turmas().length }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="chart-card">
+              <h5 class="fw-bold mb-4">🔔 Solicitações de Cadastro</h5>
+
+              <div class="error-banner alert alert-danger" *ngIf="actionError()">
+                {{ actionError() }}
+              </div>
+
+              <div class="d-flex flex-column gap-3" *ngIf="pendingProfessors().length > 0; else noPending">
+                <div class="p-3 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center"
+                  *ngFor="let prof of pendingProfessors()">
+                  <div class="prof-info">
+                    <div class="fw-semibold small text-dark">{{ prof.nome }}</div>
+                    <div class="text-muted" style="font-size: 11px;">{{ prof.email }}</div>
+                  </div>
+                  <div class="action-buttons d-flex gap-2">
+                    <button (click)="approveProfessor(prof.id)" class="btn btn-sm btn-success">
+                      Aprovar
+                    </button>
+                    <button (click)="rejectProfessor(prof.id)" class="btn btn-sm btn-danger">
+                      Recusar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #noPending>
+                <div class="empty-state py-3">
+                  <p class="mb-0 text-muted small">Nenhuma solicitação de professor pendente.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="chart-card">
+              <h5 class="fw-bold mb-4 text-warning">⚠️ Alocação Necessária</h5>
+
+              <div class="d-flex flex-column gap-3" *ngIf="turmasSemProfessor().length > 0; else noTurmasSemProf">
+                <div class="p-3 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center"
+                  *ngFor="let turma of turmasSemProfessor()">
+                  <div>
+                    <div class="fw-semibold small text-dark">{{ turma.nome_turma }}</div>
+                    <div class="text-muted" style="font-size: 11px;">Sem professor alocado</div>
+                  </div>
+                  <button class="btn btn-sm btn-outline-warning" (click)="currentView.set('turmas')">
+                    Alocar
+                  </button>
+                </div>
+              </div>
+
+              <ng-template #noTurmasSemProf>
+                <div class="empty-state py-3">
+                  <p class="mb-0 text-muted small">Todas as turmas têm professor alocado.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="action-card">
-        <h3>📑 Controle de Matrículas</h3>
-        <p>Monitore a entrada de novos alunos e crie associações com turmas específicas.</p>
+      <div *ngIf="currentView() === 'turmas'">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-0 fw-bold">Gerenciar Alocação de Turmas</h4>
+            <small class="text-muted">Aloque ou desaloque professores e altere a capacidade das turmas
+              registradas.</small>
+          </div>
+          <button class="btn btn-sm btn-primary px-3" (click)="showCreateForm.set(!showCreateForm())">
+            {{ showCreateForm() ? 'Cancelar' : '+ Nova Turma' }}
+          </button>
+        </div>
+
+        <div class="card mb-4 shadow-sm border-0" *ngIf="showCreateForm()"
+          style="border-radius: 12px; background: white;">
+          <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-3 text-dark">Cadastrar Nova Turma</h5>
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Nome da Turma <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" placeholder="Ex: Turma C - Melhor Idade"
+                  [value]="newTurmaNome()" (input)="newTurmaNome.set($any($event.target).value)" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Descrição</label>
+                <input type="text" class="form-control form-control-sm" placeholder="Descrição opcional"
+                  [value]="newTurmaDescricao()" (input)="newTurmaDescricao.set($any($event.target).value)" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Capacidade Máxima</label>
+                <input type="number" class="form-control form-control-sm" placeholder="Ex: 30 (Ilimitada se vazio)"
+                  [value]="newTurmaCapacidade() || ''"
+                  (input)="newTurmaCapacidade.set($any($event.target).value === '' ? null : +$any($event.target).value)" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Professor Inicial</label>
+                <select class="form-select form-select-sm" (change)="onNewTurmaProfessorSelect($event)">
+                  <option [value]="0">-- Sem Professor --</option>
+                  <option *ngFor="let prof of professors()" [value]="prof.id">{{ prof.nome }}</option>
+                </select>
+              </div>
+              <div class="col-12 mt-3 d-flex justify-content-end">
+                <button class="btn btn-sm btn-success px-4" (click)="createTurma()">
+                  Criar Turma
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="chart-card">
+              <h5 class="fw-bold mb-4">Lista de Turmas</h5>
+
+              <div class="error-banner alert alert-danger" *ngIf="actionError()">
+                {{ actionError() }}
+              </div>
+
+              <div class="d-flex flex-column gap-3" *ngIf="turmas().length > 0; else noTurmas">
+                <div
+                  class="p-3 border rounded bg-white shadow-sm d-flex flex-wrap justify-content-between align-items-center"
+                  *ngFor="let turma of turmas()">
+                  <div class="turma-info">
+                    <h6 class="fw-bold mb-1 text-dark">{{ turma.nome_turma }}</h6>
+                    <p class="text-muted mb-2" style="font-size: 13px;">{{ turma.descricao_turma || 'Sem descrição' }}
+                    </p>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted" style="font-size: 12px;">
+                      <div class="d-flex align-items-center gap-2">
+                        <strong>Capacidade:</strong>
+                        <input type="number" class="form-control form-control-sm"
+                          style="max-width: 90px; padding: 0.15rem 0.35rem; font-size: 12px; border-radius: 4px; border: 1px solid #ced4da;"
+                          [value]="selectedCapacityForTurma[turma.turma_id] || ''" placeholder="Ilimitada"
+                          (input)="onCapacityInput(turma.turma_id, $event)" />
+                      </div>
+
+                      <span>
+                        <strong>Professor Atual:</strong>
+                        <span class="badge bg-secondary text-white" *ngIf="!turma.professor_id">Não alocado</span>
+                        <span class="badge bg-primary text-white" *ngIf="turma.professor_id">{{
+                          getProfessorName(turma.professor_id) }}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+                    <select class="form-select form-select-sm"
+                      style="max-width: 200px; padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid #ced4da;"
+                      (change)="onProfessorSelect(turma.turma_id, $event)">
+                      <option [value]="0">-- Sem Professor --</option>
+                      <option *ngFor="let prof of professors()" [value]="prof.id"
+                        [selected]="prof.id === turma.professor_id">
+                        {{ prof.nome }}
+                      </option>
+                    </select>
+
+                    <button class="btn btn-sm btn-primary px-3" (click)="saveAllocation(turma.turma_id)">
+                      Salvar
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-danger" *ngIf="turma.professor_id"
+                      (click)="deallocateProfessor(turma.turma_id)">
+                      Desalocar
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #noTurmas>
+                <div class="empty-state">
+                  <p class="mb-0">Nenhuma turma cadastrada no sistema.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="action-card">
-        <h3>📊 Logs do Servidor</h3>
-        <p>Verifique o status do sistema de autenticação, erros relatados e requisições HTTP.</p>
-      </div>
     </div>
   </div>
 </div>

@@ -144,7 +144,7 @@ async function main() {
       {
         nome_conteudo: 'Vídeo: Somar e Subtrair',
         tipo_conteudo: 'Vídeo',
-        video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        url_conteudo: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         texto_conteudo: 'Neste vídeo vamos aprender os conceitos fundamentais de soma e subtração.',
         licao_id: licaoMatematica.licao_id,
       },
@@ -157,7 +157,7 @@ async function main() {
       {
         nome_conteudo: 'Podcast: A Revolução de 1930',
         tipo_conteudo: 'Áudio',
-        audio_link: 'https://exemplo.com/podcast-revolucao-1930.mp3',
+        url_conteudo: 'https://exemplo.com/podcast-revolucao-1930.mp3',
         texto_conteudo: 'Áudio explicativo sobre os antecedentes e consequências do movimento de 1930 no Brasil.',
         licao_id: licaoHistoria.licao_id,
       },

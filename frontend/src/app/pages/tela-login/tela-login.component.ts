@@ -35,6 +35,8 @@ export class TelaLoginComponent {
     permission: ['ALUNO_CRIANCA', [Validators.required]]
   });
 
+  successMessage = signal('Cadastro realizado com sucesso!');
+
   setMode(loginMode: boolean) {
     this.isLogin.set(loginMode);
     this.error.set(null);
@@ -71,8 +73,16 @@ export class TelaLoginComponent {
     this.error.set(null);
 
     try {
+      const isProfessor = this.registerForm.value.permission === 'PROFESSOR';
+      if (isProfessor) {
+        this.successMessage.set('Cadastro realizado com sucesso! Aguarde a aprovação do administrador.');
+      } else {
+        this.successMessage.set('Cadastro realizado com sucesso!');
+      }
+
       await this.authService.register(this.registerForm.value);
       this.showSuccessModal.set(true);
+
       setTimeout(() => {
         this.showSuccessModal.set(false);
         const registeredEmail = this.registerForm.value.email;
