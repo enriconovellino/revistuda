@@ -14,10 +14,17 @@ export class TelaInicialComponent {
   private router = inject(Router);
 
   escolherPerfil(perfil: Perfil): void {
-    if (perfil === 'idoso') {
-      this.router.navigate(['/login-idoso']);
-    } else {
-      this.router.navigate(['/auth']);
-    }
+  if (perfil === 'idoso') {
+    this.router.navigate(['/login-idoso']);
+  } else {
+    const permissionMap: Record<string, string> = {
+      crianca: 'ALUNO_CRIANCA',
+      professor: 'PROFESSOR',
+      adm: 'ADM'
+    };
+    this.router.navigate(['/auth'], {
+      queryParams: { permission: permissionMap[perfil] }
+    });
   }
+}
 }
