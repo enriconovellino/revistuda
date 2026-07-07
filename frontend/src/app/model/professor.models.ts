@@ -38,3 +38,19 @@ export interface Conteudo {
   licao_id: number;
   safeUrl?: any;
 }
+
+export interface OpcaoAtividade {
+  opcao_id?: number;
+  texto_opcao: string;
+  letra: 'a' | 'b' | 'c' | 'd';
+  correta: boolean;
+}
+
+export interface Atividade {
+  atividade_id: number;
+  titulo_atividade: string;
+  tipo_atividade: string;
+  enunciado?: string | null;
+  opcoes?: OpcaoAtividade[];
+  licao_id: number;
+}

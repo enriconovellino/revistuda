@@ -4,7 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
-import { Modulo, Licao, Conteudo } from '../../../model/professor.models';
+import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade } from '../../../model/professor.models';
+
+type OpcaoId = 'a' | 'b' | 'c' | 'd';
+
+interface AtividadeFormOpcoes {
+  a: string;
+  b: string;
+  c: string;
+  d: string;
+}
 
 @Component({
   selector: 'app-modulo-detalhe',
@@ -19,6 +28,10 @@ export class ModuloDetalheComponent implements OnInit {
   modulo = signal<Modulo | null>(null);
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
+  atividadesForLicao = signal<{ [key: number]: Atividade[] }>({});
+
+  readonly opcaoIds: OpcaoId[] = ['a', 'b', 'c', 'd'];
+  readonly opcaoLabels = ['A', 'B', 'C', 'D'];
 
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
@@ -40,6 +53,18 @@ export class ModuloDetalheComponent implements OnInit {
   editContentTexto = '';
   editContentUrl = '';
   editContentMidiaType = 'Texto';
+
+  activeAddAtividadeLicaoId = signal<number | null>(null);
+  addAtividadeTitulo = '';
+  addAtividadeEnunciado = '';
+  addAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
+  addAtividadeRespostaCorreta: OpcaoId = 'a';
+
+  activeEditAtividadeId = signal<number | null>(null);
+  editAtividadeTitulo = '';
+  editAtividadeEnunciado = '';
+  editAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
+  editAtividadeRespostaCorreta: OpcaoId = 'a';
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -88,6 +113,16 @@ export class ModuloDetalheComponent implements OnInit {
         mappedConteudos[c.licao_id].push(c);
       });
       this.conteudosForLicao.set(mappedConteudos);
+
+      const allAtividades = await this.professorService.getAtividades();
+      const mappedAtividades: { [key: number]: Atividade[] } = {};
+      allAtividades.forEach(a => {
+        if (!mappedAtividades[a.licao_id]) {
+          mappedAtividades[a.licao_id] = [];
+        }
+        mappedAtividades[a.licao_id].push(a);
+      });
+      this.atividadesForLicao.set(mappedAtividades);
 
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao carregar os dados do módulo.');
@@ -245,6 +280,180 @@ export class ModuloDetalheComponent implements OnInit {
     }
   }
 
+  private emptyAtividadeOpcoes(): AtividadeFormOpcoes {
+    return { a: '', b: '', c: '', d: '' };
+  }
+
+  private buildOpcoesFromForm(
+    opcoes: AtividadeFormOpcoes,
+    respostaCorreta: OpcaoId,
+  ): OpcaoAtividade[] | null {
+    const opcoesPreenchidas = this.opcaoIds
+      .filter(id => opcoes[id].trim().length > 0)
+      .map(id => ({
+        letra: id,
+        texto_opcao: opcoes[id].trim(),
+        correta: id === respostaCorreta
+      }));
+
+    if (opcoesPreenchidas.length < 2) {
+      this.actionError.set('Preencha pelo menos 2 opções de resposta.');
+      return null;
+    }
+
+    if (!opcoesPreenchidas.some(o => o.letra === respostaCorreta)) {
+      this.actionError.set('A resposta correta deve ser uma das opções preenchidas.');
+      return null;
+    }
+
+    return opcoesPreenchidas;
+  }
+
+  private fillFormFromAtividade(atividade: Atividade): {
+    enunciado: string;
+    opcoes: AtividadeFormOpcoes;
+    respostaCorreta: OpcaoId;
+  } {
+    const opcoes = this.emptyAtividadeOpcoes();
+    let respostaCorreta: OpcaoId = 'a';
+
+    atividade.opcoes?.forEach(opcao => {
+      opcoes[opcao.letra] = opcao.texto_opcao;
+      if (opcao.correta) {
+        respostaCorreta = opcao.letra;
+      }
+    });
+
+    return {
+      enunciado: atividade.enunciado || '',
+      opcoes,
+      respostaCorreta,
+    };
+  }
+
+  getTipoAtividadeLabel(tipo: string): string {
+    if (tipo === 'multipla_escolha') return 'Múltipla Escolha';
+    return tipo;
+  }
+
+  toggleAddAtividadeForm(licaoId: number) {
+    if (this.activeAddAtividadeLicaoId() === licaoId) {
+      this.activeAddAtividadeLicaoId.set(null);
+    } else {
+      this.activeAddAtividadeLicaoId.set(licaoId);
+      this.addAtividadeTitulo = '';
+      this.addAtividadeEnunciado = '';
+      this.addAtividadeOpcoes = this.emptyAtividadeOpcoes();
+      this.addAtividadeRespostaCorreta = 'a';
+    }
+  }
+
+  async addAtividade(licaoId: number) {
+    this.actionError.set(null);
+
+    if (!this.addAtividadeTitulo.trim()) {
+      this.actionError.set('O título da atividade é obrigatório.');
+      return;
+    }
+
+    if (!this.addAtividadeEnunciado.trim()) {
+      this.actionError.set('O enunciado da atividade é obrigatório.');
+      return;
+    }
+
+    const opcoes = this.buildOpcoesFromForm(
+      this.addAtividadeOpcoes,
+      this.addAtividadeRespostaCorreta,
+    );
+    if (!opcoes) return;
+
+    try {
+      this.saving.set(true);
+      await this.professorService.createAtividade({
+        titulo_atividade: this.addAtividadeTitulo.trim(),
+        tipo_atividade: 'multipla_escolha',
+        enunciado: this.addAtividadeEnunciado.trim(),
+        opcoes: opcoes,
+        licao_id: licaoId,
+      });
+
+      this.activeAddAtividadeLicaoId.set(null);
+      await this.loadData();
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao adicionar atividade.');
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  startEditAtividade(atividade: Atividade) {
+    this.activeEditAtividadeId.set(atividade.atividade_id);
+    this.editAtividadeTitulo = atividade.titulo_atividade;
+
+    const form = this.fillFormFromAtividade(atividade);
+    this.editAtividadeEnunciado = form.enunciado;
+    this.editAtividadeOpcoes = form.opcoes;
+    this.editAtividadeRespostaCorreta = form.respostaCorreta;
+  }
+
+  cancelEditAtividade() {
+    this.activeEditAtividadeId.set(null);
+  }
+
+  async saveEditAtividade(atividadeId: number) {
+    this.actionError.set(null);
+
+    if (!this.editAtividadeTitulo.trim()) {
+      this.actionError.set('O título da atividade é obrigatório.');
+      return;
+    }
+
+    if (!this.editAtividadeEnunciado.trim()) {
+      this.actionError.set('O enunciado da atividade é obrigatório.');
+      return;
+    }
+
+    const opcoes = this.buildOpcoesFromForm(
+      this.editAtividadeOpcoes,
+      this.editAtividadeRespostaCorreta,
+    );
+    if (!opcoes) return;
+
+    try {
+      this.saving.set(true);
+      await this.professorService.updateAtividade(atividadeId, {
+        titulo_atividade: this.editAtividadeTitulo.trim(),
+        tipo_atividade: 'multipla_escolha',
+        enunciado: this.editAtividadeEnunciado.trim(),
+        opcoes: opcoes,
+      });
+
+      this.activeEditAtividadeId.set(null);
+      await this.loadData();
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao atualizar atividade.');
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  async deleteAtividade(atividadeId: number) {
+    if (!confirm('Deseja realmente excluir esta atividade?')) {
+      return;
+    }
+
+    this.actionError.set(null);
+    try {
+      this.saving.set(true);
+      await this.professorService.deleteAtividade(atividadeId);
+      await this.loadData();
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao excluir atividade.');
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
   async deleteConteudo(conteudoId: number) {
     if (!confirm('Deseja realmente excluir este conteúdo específico?')) {
       return;
@@ -263,7 +472,7 @@ export class ModuloDetalheComponent implements OnInit {
   }
 
   async deleteLicao(licaoId: number) {
-    if (!confirm('Tem certeza que deseja excluir esta lição? Todos os seus conteúdos associados serão apagados.')) {
+    if (!confirm('Tem certeza que deseja excluir esta lição? Todos os conteúdos e atividades associados serão apagados.')) {
       return;
     }
 
@@ -274,6 +483,11 @@ export class ModuloDetalheComponent implements OnInit {
       const assocContents = this.conteudosForLicao()[licaoId] || [];
       for (const content of assocContents) {
         await this.professorService.deleteConteudo(content.conteudo_id);
+      }
+
+      const assocAtividades = this.atividadesForLicao()[licaoId] || [];
+      for (const atividade of assocAtividades) {
+        await this.professorService.deleteAtividade(atividade.atividade_id);
       }
 
       await this.professorService.deleteLicao(licaoId);

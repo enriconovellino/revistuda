@@ -164,23 +164,38 @@ async function main() {
     ],
   });
 
-  // Criar Atividades de Teste
   console.log('🎯 Criando atividades...');
-  await prisma.atividade.createMany({
-    data: [
-      {
-        titulo_atividade: 'Prática de Adição',
-        descricao_atividade: 'Exercícios práticos de soma simples.',
-        tipo_atividade: 'Prática',
-        licao_id: licaoMatematica.licao_id,
-      },
-      {
-        titulo_atividade: 'Exercício de Interpretação',
-        descricao_atividade: 'Questões baseadas na leitura realizada.',
-        tipo_atividade: 'Questionário',
-        licao_id: licaoLeitura.licao_id,
-      },
-    ],
+  await prisma.atividade.create({
+    data: {
+      titulo_atividade: 'Prática de Adição',
+      tipo_atividade: 'multipla_escolha',
+      enunciado: 'Quanto é 2 + 2?',
+      licao_id: licaoMatematica.licao_id,
+      opcoes: {
+        create: [
+          { letra: 'a', texto_opcao: '3', correta: false },
+          { letra: 'b', texto_opcao: '4', correta: true },
+          { letra: 'c', texto_opcao: '5', correta: false },
+          { letra: 'd', texto_opcao: '6', correta: false },
+        ]
+      }
+    }
+  });
+
+  await prisma.atividade.create({
+    data: {
+      titulo_atividade: 'Exercício de Interpretação',
+      tipo_atividade: 'multipla_escolha',
+      enunciado: 'Quem escreveu O Sítio do Pica-Pau Amarelo?',
+      licao_id: licaoLeitura.licao_id,
+      opcoes: {
+        create: [
+          { letra: 'a', texto_opcao: 'Monteiro Lobato', correta: true },
+          { letra: 'b', texto_opcao: 'Machado de Assis', correta: false },
+          { letra: 'c', texto_opcao: 'Clarice Lispector', correta: false },
+        ]
+      }
+    }
   });
 
   console.log('✅ Semeadura concluída com sucesso!');

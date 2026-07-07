@@ -26,7 +26,8 @@ export class AtividadesController {
   async create(@Body() createAtividadeDto: CreateAtividadeDto) {
     const atividade = await this.createAtividadeUseCase.execute({
       ...createAtividadeDto,
-      descricao_atividade: createAtividadeDto.descricao_atividade ?? null,
+      enunciado: createAtividadeDto.enunciado ?? null,
+      opcoes: createAtividadeDto.opcoes ?? [],
     });
     return AtividadePresenter.toPresentation(atividade);
   }
@@ -54,7 +55,8 @@ export class AtividadesController {
   @ApiResponse({ status: 200, description: 'Atividade atualizada com sucesso' })
   @ApiResponse({ status: 404, description: 'Atividade não encontrada' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateAtividadeDto: UpdateAtividadeDto) {
-    return await this.updateAtividadeUseCase.execute(id, updateAtividadeDto);
+    const atividade = await this.updateAtividadeUseCase.execute(id, updateAtividadeDto);
+    return AtividadePresenter.toPresentation(atividade);
   }
 
   @Delete(':id')
