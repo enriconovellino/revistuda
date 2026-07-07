@@ -36,4 +36,5 @@ export interface Conteudo {
   url_conteudo?: string | null;
   texto_conteudo?: string | null;
   licao_id: number;
+  safeUrl?: any;
 }
