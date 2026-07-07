@@ -234,6 +234,141 @@
                     </div>
                   </div>
 
+                  <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold text-dark mb-3 small">Atividades</h6>
+
+                    <div class="d-flex flex-column gap-3">
+                      <div class="content-box p-3 border rounded position-relative"
+                        *ngFor="let atividade of atividadesForLicao()[licao.licao_id]">
+
+                        <div *ngIf="activeEditAtividadeId() !== atividade.atividade_id">
+                          <div class="position-absolute top-0 end-0 m-2 d-flex gap-2">
+                            <button class="btn btn-link text-primary p-0 small"
+                              style="text-decoration: none; font-size: 11px; font-weight: 500;"
+                              (click)="startEditAtividade(atividade)">
+                              Editar
+                            </button>
+                            <button class="btn btn-link text-danger p-0 small"
+                              style="text-decoration: none; font-size: 11px; font-weight: 500;"
+                              (click)="deleteAtividade(atividade.atividade_id)">
+                              Excluir
+                            </button>
+                          </div>
+
+                          <span class="badge bg-primary text-white mb-2" style="font-size: 10px;">
+                            {{ getTipoAtividadeLabel(atividade.tipo_atividade) }}
+                          </span>
+
+                          <h6 class="fw-semibold text-dark mb-1" style="font-size: 14px;">{{ atividade.titulo_atividade }}</h6>
+                          <p class="text-muted small mb-2" *ngIf="atividade.descricao_atividade">{{ atividade.descricao_atividade }}</p>
+
+                          <p class="mb-2 text-dark small fw-medium" *ngIf="atividade.dados_atividade?.enunciado">
+                            {{ atividade.dados_atividade?.enunciado }}
+                          </p>
+
+                          <ul class="mb-0 ps-3 small text-muted" *ngIf="atividade.dados_atividade?.opcoes?.length">
+                            <li *ngFor="let opcao of atividade.dados_atividade?.opcoes">
+                              <span class="fw-semibold text-uppercase">{{ opcao.id }})</span> {{ opcao.texto }}
+                              <span class="badge bg-success ms-1" style="font-size: 9px;"
+                                *ngIf="opcao.id === atividade.dados_atividade?.resposta_correta">Correta</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div *ngIf="activeEditAtividadeId() === atividade.atividade_id">
+                          <h6 class="fw-bold mb-3 small text-dark">Editar Atividade</h6>
+
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="editAtividadeTitulo" />
+                          </div>
+
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Descrição</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="editAtividadeDescricao" />
+                          </div>
+
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Enunciado <span class="text-danger">*</span></label>
+                            <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editAtividadeEnunciado"></textarea>
+                          </div>
+
+                          <div class="mb-2">
+                            <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
+                            <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
+                              <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>
+                              <input type="text" class="form-control form-control-sm flex-grow-1"
+                                [placeholder]="'Opção ' + opcaoLabels[i]"
+                                [(ngModel)]="editAtividadeOpcoes[id]" />
+                              <input type="radio" class="form-check-input mt-0" name="editRespostaCorreta"
+                                [value]="id" [(ngModel)]="editAtividadeRespostaCorreta" title="Marcar como correta" />
+                            </div>
+                            <small class="text-muted">Selecione o radio da opção correta.</small>
+                          </div>
+
+                          <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" (click)="cancelEditAtividade()">Cancelar</button>
+                            <button class="btn btn-sm btn-success" (click)="saveEditAtividade(atividade.atividade_id)"
+                              [disabled]="saving()">Salvar</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p class="text-muted small mb-0" *ngIf="!(atividadesForLicao()[licao.licao_id]?.length)">
+                        Nenhuma atividade cadastrada nesta lição.
+                      </p>
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-end">
+                      <button class="btn btn-sm btn-outline-success" (click)="toggleAddAtividadeForm(licao.licao_id)">
+                        {{ activeAddAtividadeLicaoId() === licao.licao_id ? 'Cancelar' : '+ Adicionar Atividade' }}
+                      </button>
+                    </div>
+
+                    <div class="card mt-3 p-3 bg-light border border-dashed"
+                      *ngIf="activeAddAtividadeLicaoId() === licao.licao_id" style="border-radius: 8px;">
+                      <h6 class="fw-bold mb-3 small text-dark">Nova Atividade — Múltipla Escolha</h6>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Ex: Quiz de revisão"
+                          [(ngModel)]="addAtividadeTitulo" />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Descrição</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Opcional"
+                          [(ngModel)]="addAtividadeDescricao" />
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Enunciado <span class="text-danger">*</span></label>
+                        <textarea class="form-control form-control-sm" rows="2"
+                          placeholder="Digite a pergunta da atividade..." [(ngModel)]="addAtividadeEnunciado"></textarea>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
+                        <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
+                          <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>
+                          <input type="text" class="form-control form-control-sm flex-grow-1"
+                            [placeholder]="'Opção ' + opcaoLabels[i]"
+                            [(ngModel)]="addAtividadeOpcoes[id]" />
+                          <input type="radio" class="form-check-input mt-0" name="addRespostaCorreta"
+                            [value]="id" [(ngModel)]="addAtividadeRespostaCorreta" title="Marcar como correta" />
+                        </div>
+                        <small class="text-muted">Selecione o radio da opção correta.</small>
+                      </div>
+
+                      <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"
+                          (click)="toggleAddAtividadeForm(licao.licao_id)">Cancelar</button>
+                        <button class="btn btn-sm btn-success" (click)="addAtividade(licao.licao_id)"
+                          [disabled]="saving()">Salvar Atividade</button>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
 

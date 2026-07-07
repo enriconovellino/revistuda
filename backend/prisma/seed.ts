@@ -171,13 +171,32 @@ async function main() {
       {
         titulo_atividade: 'Prática de Adição',
         descricao_atividade: 'Exercícios práticos de soma simples.',
-        tipo_atividade: 'Prática',
+        tipo_atividade: 'multipla_escolha',
+        dados_atividade: {
+          enunciado: 'Quanto é 2 + 2?',
+          opcoes: [
+            { id: 'a', texto: '3' },
+            { id: 'b', texto: '4' },
+            { id: 'c', texto: '5' },
+            { id: 'd', texto: '6' },
+          ],
+          resposta_correta: 'b',
+        },
         licao_id: licaoMatematica.licao_id,
       },
       {
         titulo_atividade: 'Exercício de Interpretação',
         descricao_atividade: 'Questões baseadas na leitura realizada.',
-        tipo_atividade: 'Questionário',
+        tipo_atividade: 'multipla_escolha',
+        dados_atividade: {
+          enunciado: 'Quem escreveu O Sítio do Pica-Pau Amarelo?',
+          opcoes: [
+            { id: 'a', texto: 'Monteiro Lobato' },
+            { id: 'b', texto: 'Machado de Assis' },
+            { id: 'c', texto: 'Clarice Lispector' },
+          ],
+          resposta_correta: 'a',
+        },
         licao_id: licaoLeitura.licao_id,
       },
     ],

@@ -90,6 +90,11 @@
   border-radius: 8px;
 }
 
+.atividade-box {
+  background: #f0fdf4;
+  border-color: #bbf7d0 !important;
+}
+
 .form-control,
 .form-select {
   border-radius: 8px;

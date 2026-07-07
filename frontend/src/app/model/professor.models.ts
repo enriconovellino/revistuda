@@ -37,3 +37,23 @@ export interface Conteudo {
   texto_conteudo?: string | null;
   licao_id: number;
 }
+
+export interface OpcaoMultiplaEscolha {
+  id: 'a' | 'b' | 'c' | 'd';
+  texto: string;
+}
+
+export interface DadosMultiplaEscolha {
+  enunciado: string;
+  opcoes: OpcaoMultiplaEscolha[];
+  resposta_correta: 'a' | 'b' | 'c' | 'd';
+}
+
+export interface Atividade {
+  atividade_id: number;
+  titulo_atividade: string;
+  descricao_atividade?: string;
+  tipo_atividade: string;
+  dados_atividade?: DadosMultiplaEscolha;
+  licao_id: number;
+}

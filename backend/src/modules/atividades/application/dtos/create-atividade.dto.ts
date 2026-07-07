@@ -1,16 +1,31 @@
-import { IsNumber, IsString, IsOptional } from "class-validator";
+import {
+  IsNumber,
+  IsString,
+  IsOptional,
+  IsIn,
+  ValidateNested,
+  ValidateIf,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { MultiplaEscolhaDadosDto } from './multipla-escolha-dados.dto';
 
 export class CreateAtividadeDto {
-    @IsString()
-    titulo_atividade!: string;
+  @IsString()
+  titulo_atividade!: string;
 
-    @IsOptional()
-    @IsString()
-    descricao_atividade?: string | null;
+  @IsOptional()
+  @IsString()
+  descricao_atividade?: string | null;
 
-    @IsString()
-    tipo_atividade!: string;
+  @IsString()
+  @IsIn(['multipla_escolha'])
+  tipo_atividade!: string;
 
-    @IsNumber()
-    licao_id!: number;
+  @ValidateIf((o) => o.tipo_atividade === 'multipla_escolha')
+  @ValidateNested()
+  @Type(() => MultiplaEscolhaDadosDto)
+  dados_atividade!: MultiplaEscolhaDadosDto;
+
+  @IsNumber()
+  licao_id!: number;
 }

@@ -68,6 +68,7 @@ model Atividade {
   titulo_atividade     String   
   descricao_atividade  String?
   tipo_atividade       String
+  dados_atividade      Json?
   licao_id             Int
   licao                Licao    @relation(fields: [licao_id], references: [licao_id])
 }

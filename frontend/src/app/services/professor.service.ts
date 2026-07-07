@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Modulo, Turma, Licao, Conteudo } from '../model/professor.models';
+import { Modulo, Turma, Licao, Conteudo, Atividade } from '../model/professor.models';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -183,5 +183,59 @@ export class ProfessorService {
       throw new Error(resData.message || 'Erro ao atualizar conteúdo');
     }
     return resData as Conteudo;
+  }
+
+  async getAtividades(): Promise<Atividade[]> {
+    const response = await fetch(`${this.apiUrl}/atividades`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar atividades');
+    }
+    return data as Atividade[];
+  }
+
+  async createAtividade(data: {
+    titulo_atividade: string;
+    descricao_atividade?: string;
+    tipo_atividade: string;
+    dados_atividade: Atividade['dados_atividade'];
+    licao_id: number;
+  }): Promise<Atividade> {
+    const response = await fetch(`${this.apiUrl}/atividades`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const resData = await response.json();
+    if (!response.ok) {
+      throw new Error(resData.message || 'Erro ao criar atividade');
+    }
+    return resData as Atividade;
+  }
+
+  async updateAtividade(id: number, data: Partial<Atividade>): Promise<Atividade> {
+    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const resData = await response.json();
+    if (!response.ok) {
+      throw new Error(resData.message || 'Erro ao atualizar atividade');
+    }
+    return resData as Atividade;
+  }
+
+  async deleteAtividade(id: number): Promise<void> {
+    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || 'Erro ao deletar atividade');
+    }
   }
 }
