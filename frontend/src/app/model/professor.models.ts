@@ -54,14 +54,3 @@ export interface Atividade {
   opcoes?: OpcaoAtividade[];
   licao_id: number;
 }
-
-export interface OpcaoMultiplaEscolha {
-  id: 'a' | 'b' | 'c' | 'd';
-  texto: string;
-}
-
-export interface DadosMultiplaEscolha {
-  enunciado: string;
-  opcoes: OpcaoMultiplaEscolha[];
-  resposta_correta: 'a' | 'b' | 'c' | 'd';
-}
