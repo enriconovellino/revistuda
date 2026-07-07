@@ -13,6 +13,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+     console.error('Exceção capturada:', exception);
+
     const status =
       exception instanceof HttpException
         ? exception.getStatus()

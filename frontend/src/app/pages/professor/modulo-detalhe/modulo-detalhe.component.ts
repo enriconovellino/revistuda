@@ -480,7 +480,6 @@ export class ModuloDetalheComponent implements OnInit {
     try {
       this.saving.set(true);
 
-      // Delete all associated Conteudos sequentially
       const assocContents = this.conteudosForLicao()[licaoId] || [];
       for (const content of assocContents) {
         await this.professorService.deleteConteudo(content.conteudo_id);

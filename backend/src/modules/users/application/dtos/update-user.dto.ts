@@ -15,4 +15,8 @@ export class UpdateUserDto {
   @IsBoolean()
   @IsOptional()
   approved?: boolean;
+
+  @IsString()
+  @IsOptional()
+  senha?: string;
 }

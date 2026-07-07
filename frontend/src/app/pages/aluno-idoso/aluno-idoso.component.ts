@@ -5,17 +5,20 @@ import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
 import { Modulo, Licao, Atividade } from '../../model/aluno.model';
 
+import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
+
 type DashboardView = 'home' | 'modulos' | 'atividades';
 
 @Component({
   selector: 'app-aluno-idoso',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditarPerfilComponent],
   templateUrl: './aluno-idoso.component.html',
   styleUrl: './aluno-idoso.component.scss'
 })
 export class AlunoIdosoComponent implements OnInit {
   userName = signal('Aluno');
+  isEditProfileOpen = signal<boolean>(false);
   fontSize = signal(1.2);
   currentView = signal<DashboardView>('home');
   searchQuery = signal<string>('');
@@ -102,6 +105,18 @@ export class AlunoIdosoComponent implements OnInit {
   getDificuldadeClass(dificuldade: string): string {
     const map: Record<string, string> = { FACIL: 'badge-facil', MEDIO: 'badge-medio', DIFICIL: 'badge-dificil' };
     return map[dificuldade?.toUpperCase()] ?? 'badge-facil';
+  }
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 
   logout() {
