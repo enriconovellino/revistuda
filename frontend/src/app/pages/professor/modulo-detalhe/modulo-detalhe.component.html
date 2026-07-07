@@ -131,8 +131,8 @@
                           <div
                             *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'vídeo' || conteudo.tipo_conteudo.toLowerCase() === 'video'">
                             <div class="w-100"
-                              *ngIf="getSafeYouTubeUrl(conteudo.url_conteudo) as safeUrl; else normalLink">
-                              <iframe [src]="safeUrl" allowfullscreen
+                              *ngIf="conteudo.safeUrl; else normalLink">
+                              <iframe [src]="conteudo.safeUrl" allowfullscreen
                                 style="border-radius: 8px; border: none; width: 100%; aspect-ratio: 16/9;"></iframe>
                             </div>
                             <ng-template #normalLink>

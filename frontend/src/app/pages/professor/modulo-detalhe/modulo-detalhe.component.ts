@@ -82,6 +82,9 @@ export class ModuloDetalheComponent implements OnInit {
         if (!mappedConteudos[c.licao_id]) {
           mappedConteudos[c.licao_id] = [];
         }
+        if (c.url_conteudo) {
+          c.safeUrl = this.getSafeYouTubeUrl(c.url_conteudo);
+        }
         mappedConteudos[c.licao_id].push(c);
       });
       this.conteudosForLicao.set(mappedConteudos);
@@ -268,13 +271,11 @@ export class ModuloDetalheComponent implements OnInit {
     try {
       this.saving.set(true);
 
-      // Delete all associated Conteudos sequentially
       const assocContents = this.conteudosForLicao()[licaoId] || [];
       for (const content of assocContents) {
         await this.professorService.deleteConteudo(content.conteudo_id);
       }
 
-      // Delete the Licao itself
       await this.professorService.deleteLicao(licaoId);
 
       await this.loadData();
