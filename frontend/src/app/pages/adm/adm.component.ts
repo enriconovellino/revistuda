@@ -4,15 +4,18 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { TurmaService } from '../../services/turma.service';
 
+import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
+
 @Component({
   selector: 'app-adm',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EditarPerfilComponent],
   templateUrl: './adm.component.html',
   styleUrl: './adm.component.scss'
 })
 export class AdmComponent implements OnInit {
   userName = signal('Administrador');
+  isEditProfileOpen = signal<boolean>(false);
   pendingProfessors = signal<any[]>([]);
   professors = signal<any[]>([]);
   turmas = signal<any[]>([]);
@@ -20,7 +23,6 @@ export class AdmComponent implements OnInit {
   loading = signal<boolean>(false);
   actionError = signal<string | null>(null);
 
-  // Class creation form state signals
   showCreateForm = signal<boolean>(false);
   newTurmaNome = signal<string>('');
   newTurmaDescricao = signal<string>('');
@@ -30,7 +32,6 @@ export class AdmComponent implements OnInit {
   selectedProfessorForTurma: { [key: number]: number } = {};
   selectedCapacityForTurma: { [key: number]: number | null } = {};
 
-  // Computed alert for classes without professors
   turmasSemProfessor = computed(() => {
     return this.turmas().filter(t => !t.professor_id);
   });
@@ -54,20 +55,20 @@ export class AdmComponent implements OnInit {
     this.loading.set(true);
     try {
       const users = await this.userService.getUsers();
-      
-      const pending = users.filter(user => 
+
+      const pending = users.filter(user =>
         user.permissions.includes('PROFESSOR') && !user.approved
       );
       this.pendingProfessors.set(pending);
 
-      const approved = users.filter(user => 
+      const approved = users.filter(user =>
         user.permissions.includes('PROFESSOR') && user.approved
       );
       this.professors.set(approved);
 
       const allTurmas = await this.turmaService.getTurmas();
       this.turmas.set(allTurmas);
-      
+
       allTurmas.forEach(t => {
         this.selectedProfessorForTurma[t.turma_id] = t.professor_id || 0;
         this.selectedCapacityForTurma[t.turma_id] = t.capacidade_maxima || null;
@@ -159,7 +160,7 @@ export class AdmComponent implements OnInit {
       this.actionError.set('O nome da turma é obrigatório.');
       return;
     }
-    
+
     try {
       this.loading.set(true);
       await this.turmaService.createTurma({
@@ -168,8 +169,7 @@ export class AdmComponent implements OnInit {
         capacidade_maxima: this.newTurmaCapacidade(),
         professor_id: this.newTurmaProfessorId()
       });
-      
-      // Clear form inputs
+
       this.newTurmaNome.set('');
       this.newTurmaDescricao.set('');
       this.newTurmaCapacidade.set(null);
@@ -182,6 +182,18 @@ export class AdmComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 
   logout() {

@@ -5,16 +5,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Modulo, Turma, Usuario } from '../../model/professor.models';
 import { ProfessorService } from '../../services/professor.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
+import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, DashboardTurmas],
+  imports: [CommonModule, FormsModule, DashboardTurmas, EditarPerfilComponent],
   templateUrl: './professor.component.html',
   styleUrl: './professor.component.scss',
 })
 export class ProfessorComponent implements OnInit {
   userName = signal<string>('Professor');
+  isEditProfileOpen = signal<boolean>(false);
   modulos = signal<Modulo[]>([]);
   modulosDaTurmaSelecionada = computed<Modulo[]>(() => {
     const turma = this.turmaSelecionada();
@@ -207,6 +209,18 @@ export class ProfessorComponent implements OnInit {
 
   verModulo(id: number) {
     this.router.navigate(['/professor/modulo', id]);
+  }
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 
   logout() {
