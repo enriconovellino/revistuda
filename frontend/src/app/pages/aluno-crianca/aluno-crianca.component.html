@@ -1,7 +1,7 @@
 <div class="dashboard-crianca">
   <div class="card-principal">
     <div class="avatar">🎈🧸🎒</div>
-    <h1>Olá, {{ userName() }}!</h1>
+    <h1 (click)="abrirEditarPerfil()" style="cursor: pointer;" title="Editar Perfil">Olá, {{ userName() }}!</h1>
     <p class="subtitle">Bem-vindo(a) à sua sala do Revistuda! Vamos aprender brincando? 🌟</p>
     
     <div class="grid-atividades">
@@ -26,3 +26,5 @@
     <button (click)="logout()" class="logout-btn">Sair da Conta 👋</button>
   </div>
 </div>
+
+<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()" (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>

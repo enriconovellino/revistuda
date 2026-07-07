@@ -52,4 +52,17 @@ export class UserService {
       throw new Error('Falha ao recusar usuário');
     }
   }
+
+  async updateUser(id: number, userData: any): Promise<any> {
+    const response = await fetch(`${this.apiUrl}/users/${id}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(userData)
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Falha ao atualizar usuário');
+    }
+    return data;
+  }
 }

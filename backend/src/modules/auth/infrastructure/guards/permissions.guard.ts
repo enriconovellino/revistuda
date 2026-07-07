@@ -33,6 +33,13 @@ export class PermissionsGuard implements CanActivate {
       throw new UnauthorizedException('Usuário não autenticado');
     }
 
+    if (request.params && request.params.id) {
+      const paramId = Number(request.params.id);
+      if (Number.isInteger(paramId) && paramId === userId) {
+        return true;
+      }
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { permissions: true },
