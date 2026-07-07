@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ATIVIDADE_REPOSITORY } from '../ports/atividade-repository.port';
 import type { IAtividadeRepository } from '../ports/atividade-repository.port';
-import { Atividade, MultiplaEscolhaDados } from '../entities/atividade.entity';
+import { Atividade, Opcao } from '../entities/atividade.entity';
 
 export interface CreateAtividadeInput {
   titulo_atividade: string;
-  descricao_atividade: string | null;
   tipo_atividade: string;
-  dados_atividade: MultiplaEscolhaDados | null;
+  enunciado: string | null;
   licao_id: number;
+  opcoes?: { texto_opcao: string; letra: string; correta: boolean }[];
 }
 
 @Injectable()
@@ -19,13 +19,21 @@ export class CreateAtividadeUseCase {
   ) {}
 
   async execute(input: CreateAtividadeInput): Promise<Atividade> {
+    const opcoes = (input.opcoes ?? []).map(o => new Opcao(
+      0,
+      o.texto_opcao,
+      o.letra,
+      o.correta,
+      0
+    ));
+
     const atividade = new Atividade(
       0,
       input.titulo_atividade,
-      input.descricao_atividade,
       input.tipo_atividade,
       input.licao_id,
-      input.dados_atividade,
+      input.enunciado,
+      opcoes,
     );
 
     return this.atividadeRepository.create(atividade);

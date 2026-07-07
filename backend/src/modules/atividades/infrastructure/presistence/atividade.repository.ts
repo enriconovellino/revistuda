@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { Atividade, MultiplaEscolhaDados } from '../../domain/entities/atividade.entity';
+import { Atividade, Opcao } from '../../domain/entities/atividade.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IAtividadeRepository } from '../../domain/ports/atividade-repository.port';
 
@@ -8,21 +7,22 @@ import { IAtividadeRepository } from '../../domain/ports/atividade-repository.po
 export class AtividadeRepository implements IAtividadeRepository {
   constructor(private prisma: PrismaService) {}
 
-  private mapToEntity(record: {
-    atividade_id: number;
-    titulo_atividade: string;
-    descricao_atividade: string | null;
-    tipo_atividade: string;
-    dados_atividade?: unknown | null;
-    licao_id: number;
-  }): Atividade {
+  private mapToEntity(record: any): Atividade {
+    const opcoes = record.opcoes ? record.opcoes.map((o: any) => new Opcao(
+      o.opcao_id,
+      o.texto_opcao,
+      o.letra,
+      o.correta,
+      o.atividade_id
+    )) : [];
+
     return new Atividade(
       record.atividade_id,
       record.titulo_atividade,
-      record.descricao_atividade,
       record.tipo_atividade,
       record.licao_id,
-      (record.dados_atividade as MultiplaEscolhaDados | null) ?? null,
+      record.enunciado,
+      opcoes,
     );
   }
 
@@ -30,41 +30,70 @@ export class AtividadeRepository implements IAtividadeRepository {
     const created = await this.prisma.atividade.create({
       data: {
         titulo_atividade: atividade.titulo_atividade,
-        descricao_atividade: atividade.descricao_atividade,
         tipo_atividade: atividade.tipo_atividade,
-        dados_atividade: (atividade.dados_atividade ?? undefined) as
-          | Prisma.InputJsonValue
-          | undefined,
+        enunciado: atividade.enunciado,
         licao_id: atividade.licao_id,
+        opcoes: {
+          create: (atividade.opcoes ?? []).map((o) => ({
+            texto_opcao: o.texto_opcao,
+            letra: o.letra,
+            correta: o.correta,
+          })),
+        },
+      },
+      include: {
+        opcoes: true,
       },
     });
     return this.mapToEntity(created);
   }
 
   async findAll(): Promise<Atividade[]> {
-    const records = await this.prisma.atividade.findMany();
+    const records = await this.prisma.atividade.findMany({
+      include: {
+        opcoes: true,
+      },
+    });
     return records.map((record) => this.mapToEntity(record));
   }
 
   async findById(id: number): Promise<Atividade | null> {
-    const atividade = await this.prisma.atividade.findUnique({
+    const record = await this.prisma.atividade.findUnique({
       where: { atividade_id: id },
+      include: {
+        opcoes: true,
+      },
     });
-    if (!atividade) {
+    if (!record) {
       return null;
     }
-    return this.mapToEntity(atividade);
+    return this.mapToEntity(record);
   }
 
   async update(id: number, atividade: Partial<Atividade>): Promise<Atividade> {
+    const dataUpdate: any = {
+      titulo_atividade: atividade.titulo_atividade,
+      tipo_atividade: atividade.tipo_atividade,
+      enunciado: atividade.enunciado,
+      licao_id: atividade.licao_id,
+    };
+
+    if (atividade.opcoes) {
+      dataUpdate.opcoes = {
+        deleteMany: {},
+        create: atividade.opcoes.map((o) => ({
+          texto_opcao: o.texto_opcao,
+          letra: o.letra,
+          correta: o.correta,
+        })),
+      };
+    }
+
     const updated = await this.prisma.atividade.update({
       where: { atividade_id: id },
-      data: {
-        titulo_atividade: atividade.titulo_atividade,
-        descricao_atividade: atividade.descricao_atividade,
-        tipo_atividade: atividade.tipo_atividade,
-        dados_atividade: atividade.dados_atividade as Prisma.InputJsonValue | undefined,
-        licao_id: atividade.licao_id,
+      data: dataUpdate,
+      include: {
+        opcoes: true,
       },
     });
     return this.mapToEntity(updated);

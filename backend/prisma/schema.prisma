@@ -66,9 +66,18 @@ model Licao {
 model Atividade {
   atividade_id         Int      @id @default(autoincrement())
   titulo_atividade     String   
-  descricao_atividade  String?
   tipo_atividade       String
-  dados_atividade      Json?
+  enunciado            String?
   licao_id             Int
-  licao                Licao    @relation(fields: [licao_id], references: [licao_id])
+  licao                Licao    @relation(fields: [licao_id], references: [licao_id], onDelete: Cascade)
+  opcoes               Opcao[]
+}
+
+model Opcao {
+  opcao_id     Int       @id @default(autoincrement())
+  texto_opcao  String
+  letra        String
+  correta      Boolean
+  atividade_id Int
+  atividade    Atividade @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
 }

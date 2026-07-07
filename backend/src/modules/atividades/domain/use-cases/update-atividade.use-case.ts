@@ -1,13 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Atividade, MultiplaEscolhaDados } from '../entities/atividade.entity';
+import { Atividade, Opcao } from '../entities/atividade.entity';
 import type { IAtividadeRepository } from '../ports/atividade-repository.port';
 import { ATIVIDADE_REPOSITORY } from '../ports/atividade-repository.port';
 
 export interface UpdateAtividadeInput {
   titulo_atividade?: string;
-  descricao_atividade?: string | null;
   tipo_atividade?: string;
-  dados_atividade?: MultiplaEscolhaDados | null;
+  enunciado?: string | null;
+  opcoes?: { texto_opcao: string; letra: string; correta: boolean }[];
   licao_id?: number;
 }
 
@@ -23,6 +23,24 @@ export class UpdateAtividadeUseCase {
     if (!atividade) {
       throw new Error(`Atividade com ID ${id} não encontrada`);
     }
-    return this.atividadeRepository.update(id, input);
+
+    const domainOpcoes = input.opcoes ? input.opcoes.map(o => new Opcao(
+      0,
+      o.texto_opcao,
+      o.letra,
+      o.correta,
+      id
+    )) : undefined;
+
+    const updatedAtividade = new Atividade(
+      id,
+      input.titulo_atividade ?? atividade.titulo_atividade,
+      input.tipo_atividade ?? atividade.tipo_atividade,
+      input.licao_id ?? atividade.licao_id,
+      input.enunciado !== undefined ? input.enunciado : atividade.enunciado,
+      domainOpcoes ?? atividade.opcoes
+    );
+
+    return this.atividadeRepository.update(id, updatedAtividade);
   }
 }

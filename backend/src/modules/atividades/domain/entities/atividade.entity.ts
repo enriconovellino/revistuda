@@ -1,30 +1,46 @@
-export interface MultiplaEscolhaDados {
-  enunciado: string;
-  opcoes: { id: string; texto: string }[];
-  resposta_correta: string;
+export class Opcao {
+  opcao_id: number;
+  texto_opcao: string;
+  letra: string;
+  correta: boolean;
+  atividade_id: number;
+
+  constructor(
+    opcao_id: number,
+    texto_opcao: string,
+    letra: string,
+    correta: boolean,
+    atividade_id: number,
+  ) {
+    this.opcao_id = opcao_id;
+    this.texto_opcao = texto_opcao;
+    this.letra = letra;
+    this.correta = correta;
+    this.atividade_id = atividade_id;
+  }
 }
 
 export class Atividade {
   atividade_id: number;
   titulo_atividade: string;
-  descricao_atividade: string | null;
   tipo_atividade: string;
-  dados_atividade: MultiplaEscolhaDados | null;
+  enunciado: string | null;
+  opcoes: Opcao[];
   licao_id: number;
 
   constructor(
     atividade_id: number,
     titulo_atividade: string,
-    descricao_atividade: string | null,
     tipo_atividade: string,
     licao_id: number,
-    dados_atividade: MultiplaEscolhaDados | null = null,
+    enunciado: string | null = null,
+    opcoes: Opcao[] = [],
   ) {
     this.atividade_id = atividade_id;
     this.titulo_atividade = titulo_atividade;
-    this.descricao_atividade = descricao_atividade;
     this.tipo_atividade = tipo_atividade;
-    this.dados_atividade = dados_atividade;
+    this.enunciado = enunciado;
+    this.opcoes = opcoes;
     this.licao_id = licao_id;
   }
 }

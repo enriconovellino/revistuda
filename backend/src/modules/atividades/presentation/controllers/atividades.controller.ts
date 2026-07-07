@@ -26,8 +26,8 @@ export class AtividadesController {
   async create(@Body() createAtividadeDto: CreateAtividadeDto) {
     const atividade = await this.createAtividadeUseCase.execute({
       ...createAtividadeDto,
-      descricao_atividade: createAtividadeDto.descricao_atividade ?? null,
-      dados_atividade: createAtividadeDto.dados_atividade ?? null,
+      enunciado: createAtividadeDto.enunciado ?? null,
+      opcoes: createAtividadeDto.opcoes ?? [],
     });
     return AtividadePresenter.toPresentation(atividade);
   }

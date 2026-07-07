@@ -36,6 +36,23 @@ export interface Conteudo {
   url_conteudo?: string | null;
   texto_conteudo?: string | null;
   licao_id: number;
+  safeUrl?: any;
+}
+
+export interface OpcaoAtividade {
+  opcao_id?: number;
+  texto_opcao: string;
+  letra: 'a' | 'b' | 'c' | 'd';
+  correta: boolean;
+}
+
+export interface Atividade {
+  atividade_id: number;
+  titulo_atividade: string;
+  tipo_atividade: string;
+  enunciado?: string | null;
+  opcoes?: OpcaoAtividade[];
+  licao_id: number;
 }
 
 export interface OpcaoMultiplaEscolha {
@@ -47,13 +64,4 @@ export interface DadosMultiplaEscolha {
   enunciado: string;
   opcoes: OpcaoMultiplaEscolha[];
   resposta_correta: 'a' | 'b' | 'c' | 'd';
-}
-
-export interface Atividade {
-  atividade_id: number;
-  titulo_atividade: string;
-  descricao_atividade?: string;
-  tipo_atividade: string;
-  dados_atividade?: DadosMultiplaEscolha;
-  licao_id: number;
 }

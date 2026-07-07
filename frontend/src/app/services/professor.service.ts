@@ -198,9 +198,9 @@ export class ProfessorService {
 
   async createAtividade(data: {
     titulo_atividade: string;
-    descricao_atividade?: string;
     tipo_atividade: string;
-    dados_atividade: Atividade['dados_atividade'];
+    enunciado?: string | null;
+    opcoes?: Atividade['opcoes'];
     licao_id: number;
   }): Promise<Atividade> {
     const response = await fetch(`${this.apiUrl}/atividades`, {

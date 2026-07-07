@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
-import { Modulo, Licao, Conteudo, Atividade, DadosMultiplaEscolha, OpcaoMultiplaEscolha } from '../../../model/professor.models';
+import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade } from '../../../model/professor.models';
 
-type OpcaoId = OpcaoMultiplaEscolha['id'];
+type OpcaoId = 'a' | 'b' | 'c' | 'd';
 
 interface AtividadeFormOpcoes {
   a: string;
@@ -56,14 +56,12 @@ export class ModuloDetalheComponent implements OnInit {
 
   activeAddAtividadeLicaoId = signal<number | null>(null);
   addAtividadeTitulo = '';
-  addAtividadeDescricao = '';
   addAtividadeEnunciado = '';
   addAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   addAtividadeRespostaCorreta: OpcaoId = 'a';
 
   activeEditAtividadeId = signal<number | null>(null);
   editAtividadeTitulo = '';
-  editAtividadeDescricao = '';
   editAtividadeEnunciado = '';
   editAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   editAtividadeRespostaCorreta: OpcaoId = 'a';
@@ -108,6 +106,9 @@ export class ModuloDetalheComponent implements OnInit {
       allConteudos.forEach(c => {
         if (!mappedConteudos[c.licao_id]) {
           mappedConteudos[c.licao_id] = [];
+        }
+        if (c.url_conteudo) {
+          c.safeUrl = this.getSafeYouTubeUrl(c.url_conteudo);
         }
         mappedConteudos[c.licao_id].push(c);
       });
@@ -283,51 +284,50 @@ export class ModuloDetalheComponent implements OnInit {
     return { a: '', b: '', c: '', d: '' };
   }
 
-  private buildDadosFromForm(
-    enunciado: string,
+  private buildOpcoesFromForm(
     opcoes: AtividadeFormOpcoes,
     respostaCorreta: OpcaoId,
-  ): DadosMultiplaEscolha | null {
+  ): OpcaoAtividade[] | null {
     const opcoesPreenchidas = this.opcaoIds
       .filter(id => opcoes[id].trim().length > 0)
-      .map(id => ({ id, texto: opcoes[id].trim() }));
-
-    if (!enunciado.trim()) {
-      this.actionError.set('O enunciado da atividade é obrigatório.');
-      return null;
-    }
+      .map(id => ({
+        letra: id,
+        texto_opcao: opcoes[id].trim(),
+        correta: id === respostaCorreta
+      }));
 
     if (opcoesPreenchidas.length < 2) {
       this.actionError.set('Preencha pelo menos 2 opções de resposta.');
       return null;
     }
 
-    if (!opcoesPreenchidas.some(o => o.id === respostaCorreta)) {
+    if (!opcoesPreenchidas.some(o => o.letra === respostaCorreta)) {
       this.actionError.set('A resposta correta deve ser uma das opções preenchidas.');
       return null;
     }
 
-    return {
-      enunciado: enunciado.trim(),
-      opcoes: opcoesPreenchidas,
-      resposta_correta: respostaCorreta,
-    };
+    return opcoesPreenchidas;
   }
 
-  private fillFormFromDados(dados?: DadosMultiplaEscolha): {
+  private fillFormFromAtividade(atividade: Atividade): {
     enunciado: string;
     opcoes: AtividadeFormOpcoes;
     respostaCorreta: OpcaoId;
   } {
     const opcoes = this.emptyAtividadeOpcoes();
-    dados?.opcoes.forEach(opcao => {
-      opcoes[opcao.id] = opcao.texto;
+    let respostaCorreta: OpcaoId = 'a';
+
+    atividade.opcoes?.forEach(opcao => {
+      opcoes[opcao.letra] = opcao.texto_opcao;
+      if (opcao.correta) {
+        respostaCorreta = opcao.letra;
+      }
     });
 
     return {
-      enunciado: dados?.enunciado || '',
+      enunciado: atividade.enunciado || '',
       opcoes,
-      respostaCorreta: dados?.resposta_correta || 'a',
+      respostaCorreta,
     };
   }
 
@@ -342,7 +342,6 @@ export class ModuloDetalheComponent implements OnInit {
     } else {
       this.activeAddAtividadeLicaoId.set(licaoId);
       this.addAtividadeTitulo = '';
-      this.addAtividadeDescricao = '';
       this.addAtividadeEnunciado = '';
       this.addAtividadeOpcoes = this.emptyAtividadeOpcoes();
       this.addAtividadeRespostaCorreta = 'a';
@@ -357,20 +356,24 @@ export class ModuloDetalheComponent implements OnInit {
       return;
     }
 
-    const dados = this.buildDadosFromForm(
-      this.addAtividadeEnunciado,
+    if (!this.addAtividadeEnunciado.trim()) {
+      this.actionError.set('O enunciado da atividade é obrigatório.');
+      return;
+    }
+
+    const opcoes = this.buildOpcoesFromForm(
       this.addAtividadeOpcoes,
       this.addAtividadeRespostaCorreta,
     );
-    if (!dados) return;
+    if (!opcoes) return;
 
     try {
       this.saving.set(true);
       await this.professorService.createAtividade({
         titulo_atividade: this.addAtividadeTitulo.trim(),
-        descricao_atividade: this.addAtividadeDescricao.trim() || undefined,
         tipo_atividade: 'multipla_escolha',
-        dados_atividade: dados,
+        enunciado: this.addAtividadeEnunciado.trim(),
+        opcoes: opcoes,
         licao_id: licaoId,
       });
 
@@ -386,9 +389,8 @@ export class ModuloDetalheComponent implements OnInit {
   startEditAtividade(atividade: Atividade) {
     this.activeEditAtividadeId.set(atividade.atividade_id);
     this.editAtividadeTitulo = atividade.titulo_atividade;
-    this.editAtividadeDescricao = atividade.descricao_atividade || '';
 
-    const form = this.fillFormFromDados(atividade.dados_atividade);
+    const form = this.fillFormFromAtividade(atividade);
     this.editAtividadeEnunciado = form.enunciado;
     this.editAtividadeOpcoes = form.opcoes;
     this.editAtividadeRespostaCorreta = form.respostaCorreta;
@@ -406,20 +408,24 @@ export class ModuloDetalheComponent implements OnInit {
       return;
     }
 
-    const dados = this.buildDadosFromForm(
-      this.editAtividadeEnunciado,
+    if (!this.editAtividadeEnunciado.trim()) {
+      this.actionError.set('O enunciado da atividade é obrigatório.');
+      return;
+    }
+
+    const opcoes = this.buildOpcoesFromForm(
       this.editAtividadeOpcoes,
       this.editAtividadeRespostaCorreta,
     );
-    if (!dados) return;
+    if (!opcoes) return;
 
     try {
       this.saving.set(true);
       await this.professorService.updateAtividade(atividadeId, {
         titulo_atividade: this.editAtividadeTitulo.trim(),
-        descricao_atividade: this.editAtividadeDescricao.trim() || undefined,
         tipo_atividade: 'multipla_escolha',
-        dados_atividade: dados,
+        enunciado: this.editAtividadeEnunciado.trim(),
+        opcoes: opcoes,
       });
 
       this.activeEditAtividadeId.set(null);
