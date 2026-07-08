@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
 import { Modulo, Licao, Atividade } from '../../model/aluno.model';
+import { Router } from '@angular/router';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
@@ -64,7 +65,8 @@ export class AlunoIdosoComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private alunoService: AlunoService
+    private alunoService: AlunoService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -91,6 +93,10 @@ export class AlunoIdosoComponent implements OnInit {
   setView(view: DashboardView) {
     this.currentView.set(view);
   }
+
+  acessarModulo(moduloId: number) {
+  this.router.navigate(['/aluno-idoso/modulo', moduloId]);
+}
 
   changeFontSize(offset: number) {
     const next = parseFloat((this.fontSize() + offset).toFixed(1));
