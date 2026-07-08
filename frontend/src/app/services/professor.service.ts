@@ -201,6 +201,7 @@ export class ProfessorService {
     tipo_atividade: string;
     enunciado?: string | null;
     opcoes?: Atividade['opcoes'];
+    pares_associacao?: Atividade['pares_associacao'];
     licao_id: number;
   }): Promise<Atividade> {
     const response = await fetch(`${this.apiUrl}/atividades`, {
