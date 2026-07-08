@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens } from '../../domain/entities/atividade.entity';
+import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens, ItemAssociacao, AssociacaoCorreta } from '../../domain/entities/atividade.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IAtividadeRepository } from '../../domain/ports/atividade-repository.port';
 
@@ -26,49 +26,149 @@ export class AtividadeRepository implements IAtividadeRepository {
         opcoes,
       );
     } else if (record.tipo_atividade === 'associacao_imagens') {
+      const dbItens = record.associacao_imagens?.itens ?? [];
+      const itens = dbItens.map((i: any) => new ItemAssociacao(
+        i.item_associacao_id,
+        i.tipo,
+        i.texto,
+        i.imagem_url,
+        i.lado,
+        i.associacao_id
+      ));
+
+      const associacoesCorretas: AssociacaoCorreta[] = [];
+      dbItens.forEach((i: any) => {
+        if (i.associacoes_corretas_1 && i.associacoes_corretas_1.length > 0) {
+          i.associacoes_corretas_1.forEach((ac: any) => {
+            associacoesCorretas.push(new AssociacaoCorreta(ac.item_1_id, ac.item_2_id));
+          });
+        }
+      });
+
       return new AssociacaoImagens(
         record.atividade_id,
         record.titulo_atividade,
         record.licao_id,
         record.enunciado,
+        itens,
+        associacoesCorretas,
       );
     }
     throw new Error(`Tipo de atividade desconhecido: ${record.tipo_atividade}`);
   }
 
   async create(atividade: Atividade): Promise<Atividade> {
-    const data: any = {
-      titulo_atividade: atividade.titulo_atividade,
-      tipo_atividade: atividade.tipo_atividade,
-      enunciado: atividade.enunciado,
-      licao_id: atividade.licao_id,
-    };
-
     if (atividade instanceof MultiplaEscolha) {
-      data.multipla_escolha = {
-        create: {
-          opcoes: {
-            create: (atividade.opcoes ?? []).map((o) => ({
-              texto_opcao: o.texto_opcao,
-              letra: o.letra,
-              correta: o.correta,
-            })),
+      const data: any = {
+        titulo_atividade: atividade.titulo_atividade,
+        tipo_atividade: atividade.tipo_atividade,
+        enunciado: atividade.enunciado,
+        licao_id: atividade.licao_id,
+        multipla_escolha: {
+          create: {
+            opcoes: {
+              create: (atividade.opcoes ?? []).map((o) => ({
+                texto_opcao: o.texto_opcao,
+                letra: o.letra,
+                correta: o.correta,
+              })),
+            },
           },
         },
       };
-    }
 
-    const created = await this.prisma.atividade.create({
-      data,
-      include: {
-        multipla_escolha: {
-          include: {
-            opcoes: true,
+      const created = await this.prisma.atividade.create({
+        data,
+        include: {
+          multipla_escolha: {
+            include: {
+              opcoes: true,
+            },
+          },
+          associacao_imagens: {
+            include: {
+              itens: {
+                include: {
+                  associacoes_corretas_1: true,
+                },
+              },
+            },
           },
         },
-      },
-    });
-    return this.mapToEntity(created);
+      });
+      return this.mapToEntity(created);
+    }
+
+    if (atividade instanceof AssociacaoImagens) {
+      const createdAtividade = await this.prisma.atividade.create({
+        data: {
+          titulo_atividade: atividade.titulo_atividade,
+          tipo_atividade: atividade.tipo_atividade,
+          enunciado: atividade.enunciado,
+          licao_id: atividade.licao_id,
+        }
+      });
+
+      const createdAssociacao = await this.prisma.associacaoImagens.create({
+        data: {
+          atividade_id: createdAtividade.atividade_id,
+        }
+      });
+
+      if (atividade.pares && atividade.pares.length > 0) {
+        for (const par of atividade.pares) {
+          const leftItem = await this.prisma.itemAssociacao.create({
+            data: {
+              tipo: par.esquerdo.tipo,
+              texto: par.esquerdo.texto,
+              imagem_url: par.esquerdo.imagem_url,
+              lado: 'esquerdo',
+              associacao_id: createdAssociacao.associacao_id,
+            }
+          });
+
+          const rightItem = await this.prisma.itemAssociacao.create({
+            data: {
+              tipo: par.direito.tipo,
+              texto: par.direito.texto,
+              imagem_url: par.direito.imagem_url,
+              lado: 'direito',
+              associacao_id: createdAssociacao.associacao_id,
+            }
+          });
+
+          await this.prisma.associacaoCorreta.create({
+            data: {
+              item_1_id: leftItem.item_associacao_id,
+              item_2_id: rightItem.item_associacao_id,
+            }
+          });
+        }
+      }
+
+      const fullyCreated = await this.prisma.atividade.findUnique({
+        where: { atividade_id: createdAtividade.atividade_id },
+        include: {
+          multipla_escolha: {
+            include: {
+              opcoes: true,
+            },
+          },
+          associacao_imagens: {
+            include: {
+              itens: {
+                include: {
+                  associacoes_corretas_1: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return this.mapToEntity(fullyCreated);
+    }
+
+    throw new Error('Unsupported activity type');
   }
 
   async findAll(): Promise<Atividade[]> {
@@ -77,6 +177,15 @@ export class AtividadeRepository implements IAtividadeRepository {
         multipla_escolha: {
           include: {
             opcoes: true,
+          },
+        },
+        associacao_imagens: {
+          include: {
+            itens: {
+              include: {
+                associacoes_corretas_1: true,
+              },
+            },
           },
         },
       },
@@ -91,6 +200,15 @@ export class AtividadeRepository implements IAtividadeRepository {
         multipla_escolha: {
           include: {
             opcoes: true,
+          },
+        },
+        associacao_imagens: {
+          include: {
+            itens: {
+              include: {
+                associacoes_corretas_1: true,
+              },
+            },
           },
         },
       },
@@ -138,6 +256,49 @@ export class AtividadeRepository implements IAtividadeRepository {
       }
     }
 
+    if (atividade instanceof AssociacaoImagens || ('pares' in atividade)) {
+      const atvAI = atividade as any;
+      if (atvAI.pares) {
+        const assoc = await this.prisma.associacaoImagens.findUnique({
+          where: { atividade_id: id }
+        });
+        if (assoc) {
+          await this.prisma.itemAssociacao.deleteMany({
+            where: { associacao_id: assoc.associacao_id }
+          });
+
+          for (const par of atvAI.pares) {
+            const leftItem = await this.prisma.itemAssociacao.create({
+              data: {
+                tipo: par.esquerdo.tipo,
+                texto: par.esquerdo.texto,
+                imagem_url: par.esquerdo.imagem_url,
+                lado: 'esquerdo',
+                associacao_id: assoc.associacao_id,
+              }
+            });
+
+            const rightItem = await this.prisma.itemAssociacao.create({
+              data: {
+                tipo: par.direito.tipo,
+                texto: par.direito.texto,
+                imagem_url: par.direito.imagem_url,
+                lado: 'direito',
+                associacao_id: assoc.associacao_id,
+              }
+            });
+
+            await this.prisma.associacaoCorreta.create({
+              data: {
+                item_1_id: leftItem.item_associacao_id,
+                item_2_id: rightItem.item_associacao_id,
+              }
+            });
+          }
+        }
+      }
+    }
+
     const updated = await this.prisma.atividade.update({
       where: { atividade_id: id },
       data: dataUpdate,
@@ -145,6 +306,15 @@ export class AtividadeRepository implements IAtividadeRepository {
         multipla_escolha: {
           include: {
             opcoes: true,
+          },
+        },
+        associacao_imagens: {
+          include: {
+            itens: {
+              include: {
+                associacoes_corretas_1: true,
+              },
+            },
           },
         },
       },

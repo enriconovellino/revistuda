@@ -21,6 +21,7 @@ model User {
   approved     Boolean  @default(true)
   turmas       Turma[]
   tentativasAssociacao TentativaAssociacao[]
+  respostasMultiplaEscolha RespostaMultiplaEscolha[]
 }
 
 model Modulo {
@@ -89,6 +90,16 @@ model Opcao {
   correta             Boolean
   multipla_escolha_id Int
   multipla_escolha    MultiplaEscolha @relation(fields: [multipla_escolha_id], references: [multipla_escolha_id], onDelete: Cascade)
+  respostasAlunos     RespostaMultiplaEscolha[]
+}
+
+model RespostaMultiplaEscolha {
+  resposta_me_id    Int      @id @default(autoincrement())
+  aluno_id          Int
+  aluno             User     @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  resposta_aluno_id Int
+  opcao             Opcao    @relation(fields: [resposta_aluno_id], references: [opcao_id], onDelete: Cascade)
+  data_resposta     DateTime @default(now())
 }
 
 model AssociacaoImagens {

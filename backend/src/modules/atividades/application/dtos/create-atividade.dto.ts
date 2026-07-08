@@ -21,6 +21,30 @@ export class CreateOpcaoDto {
   correta!: boolean;
 }
 
+export class CreateItemAssociacaoDto {
+  @IsString()
+  @IsIn(['texto', 'imagem'])
+  tipo!: string;
+
+  @IsOptional()
+  @IsString()
+  texto?: string;
+
+  @IsOptional()
+  @IsString()
+  imagem_url?: string;
+}
+
+export class CreateParAssociacaoDto {
+  @ValidateNested()
+  @Type(() => CreateItemAssociacaoDto)
+  esquerdo!: CreateItemAssociacaoDto;
+
+  @ValidateNested()
+  @Type(() => CreateItemAssociacaoDto)
+  direito!: CreateItemAssociacaoDto;
+}
+
 export class CreateAtividadeDto {
   @IsString()
   titulo_atividade!: string;
@@ -38,6 +62,12 @@ export class CreateAtividadeDto {
   @ValidateNested({ each: true })
   @Type(() => CreateOpcaoDto)
   opcoes?: CreateOpcaoDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateParAssociacaoDto)
+  pares_associacao?: CreateParAssociacaoDto[];
 
   @IsNumber()
   licao_id!: number;

@@ -1,10 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `atividade_id` on the `Opcao` table. All the data in the column will be lost.
-  - Added the required column `multipla_escolha_id` to the `Opcao` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- DropForeignKey
 ALTER TABLE "Opcao" DROP CONSTRAINT "Opcao_atividade_id_fkey";
 

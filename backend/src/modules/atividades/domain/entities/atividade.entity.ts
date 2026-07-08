@@ -57,13 +57,80 @@ export class MultiplaEscolha extends Atividade {
   }
 }
 
+export class ItemAssociacao {
+  item_associacao_id: number;
+  tipo: string;
+  texto: string | null;
+  imagem_url: string | null;
+  lado: string;
+  associacao_id: number;
+
+  constructor(
+    item_associacao_id: number,
+    tipo: string,
+    texto: string | null,
+    imagem_url: string | null,
+    lado: string,
+    associacao_id: number,
+  ) {
+    this.item_associacao_id = item_associacao_id;
+    this.tipo = tipo;
+    this.texto = texto;
+    this.imagem_url = imagem_url;
+    this.lado = lado;
+    this.associacao_id = associacao_id;
+  }
+}
+
+export class AssociacaoCorreta {
+  item_1_id: number;
+  item_2_id: number;
+
+  constructor(item_1_id: number, item_2_id: number) {
+    this.item_1_id = item_1_id;
+    this.item_2_id = item_2_id;
+  }
+}
+
+export class ItemPar {
+  tipo: string;
+  texto: string | null;
+  imagem_url: string | null;
+
+  constructor(tipo: string, texto: string | null = null, imagem_url: string | null = null) {
+    this.tipo = tipo;
+    this.texto = texto;
+    this.imagem_url = imagem_url;
+  }
+}
+
+export class ParAssociacao {
+  esquerdo: ItemPar;
+  direito: ItemPar;
+
+  constructor(esquerdo: ItemPar, direito: ItemPar) {
+    this.esquerdo = esquerdo;
+    this.direito = direito;
+  }
+}
+
 export class AssociacaoImagens extends Atividade {
+  itens: ItemAssociacao[];
+  associacoes_corretas: AssociacaoCorreta[];
+  pares?: ParAssociacao[];
+
   constructor(
     atividade_id: number,
     titulo_atividade: string,
     licao_id: number,
     enunciado: string | null = null,
+    itens: ItemAssociacao[] = [],
+    associacoes_corretas: AssociacaoCorreta[] = [],
+    pares?: ParAssociacao[],
   ) {
     super(atividade_id, titulo_atividade, 'associacao_imagens', licao_id, enunciado);
+    this.itens = itens;
+    this.associacoes_corretas = associacoes_corretas;
+    this.pares = pares;
   }
 }

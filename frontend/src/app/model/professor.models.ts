@@ -46,12 +46,34 @@ export interface OpcaoAtividade {
   correta: boolean;
 }
 
+export interface ItemPar {
+  tipo: 'texto' | 'imagem';
+  texto?: string;
+  imagem_url?: string;
+}
+
+export interface ParAssociacao {
+  esquerdo: ItemPar;
+  direito: ItemPar;
+}
+
+export interface ItemAssociacao {
+  item_associacao_id: number;
+  tipo: 'texto' | 'imagem';
+  texto?: string;
+  imagem_url?: string;
+}
+
 export interface Atividade {
   atividade_id: number;
   titulo_atividade: string;
   tipo_atividade: string;
   enunciado?: string | null;
   opcoes?: OpcaoAtividade[];
+  pares_associacao?: ParAssociacao[];
+  itens_esquerdos?: ItemAssociacao[];
+  itens_direitos?: ItemAssociacao[];
+  relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
   licao_id: number;
 }
 
@@ -62,4 +84,8 @@ export interface MultiplaEscolha extends Atividade {
 
 export interface AssociacaoImagens extends Atividade {
   tipo_atividade: 'associacao_imagens';
+  pares_associacao?: ParAssociacao[];
+  itens_esquerdos?: ItemAssociacao[];
+  itens_direitos?: ItemAssociacao[];
+  relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
 }
