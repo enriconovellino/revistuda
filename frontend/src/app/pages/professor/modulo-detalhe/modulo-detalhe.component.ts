@@ -56,12 +56,14 @@ export class ModuloDetalheComponent implements OnInit {
 
   activeAddAtividadeLicaoId = signal<number | null>(null);
   addAtividadeTitulo = '';
+  addAtividadeTipo = 'multipla_escolha';
   addAtividadeEnunciado = '';
   addAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   addAtividadeRespostaCorreta: OpcaoId = 'a';
 
   activeEditAtividadeId = signal<number | null>(null);
   editAtividadeTitulo = '';
+  editAtividadeTipo = 'multipla_escolha';
   editAtividadeEnunciado = '';
   editAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   editAtividadeRespostaCorreta: OpcaoId = 'a';
@@ -333,6 +335,7 @@ export class ModuloDetalheComponent implements OnInit {
 
   getTipoAtividadeLabel(tipo: string): string {
     if (tipo === 'multipla_escolha') return 'Múltipla Escolha';
+    if (tipo === 'associacao_imagens') return 'Associação de Imagens';
     return tipo;
   }
 
@@ -342,6 +345,7 @@ export class ModuloDetalheComponent implements OnInit {
     } else {
       this.activeAddAtividadeLicaoId.set(licaoId);
       this.addAtividadeTitulo = '';
+      this.addAtividadeTipo = 'multipla_escolha';
       this.addAtividadeEnunciado = '';
       this.addAtividadeOpcoes = this.emptyAtividadeOpcoes();
       this.addAtividadeRespostaCorreta = 'a';
@@ -361,17 +365,21 @@ export class ModuloDetalheComponent implements OnInit {
       return;
     }
 
-    const opcoes = this.buildOpcoesFromForm(
-      this.addAtividadeOpcoes,
-      this.addAtividadeRespostaCorreta,
-    );
-    if (!opcoes) return;
+    let opcoes: OpcaoAtividade[] | undefined = undefined;
+    if (this.addAtividadeTipo === 'multipla_escolha') {
+      const result = this.buildOpcoesFromForm(
+        this.addAtividadeOpcoes,
+        this.addAtividadeRespostaCorreta,
+      );
+      if (!result) return;
+      opcoes = result;
+    }
 
     try {
       this.saving.set(true);
       await this.professorService.createAtividade({
         titulo_atividade: this.addAtividadeTitulo.trim(),
-        tipo_atividade: 'multipla_escolha',
+        tipo_atividade: this.addAtividadeTipo,
         enunciado: this.addAtividadeEnunciado.trim(),
         opcoes: opcoes,
         licao_id: licaoId,
@@ -389,6 +397,7 @@ export class ModuloDetalheComponent implements OnInit {
   startEditAtividade(atividade: Atividade) {
     this.activeEditAtividadeId.set(atividade.atividade_id);
     this.editAtividadeTitulo = atividade.titulo_atividade;
+    this.editAtividadeTipo = atividade.tipo_atividade;
 
     const form = this.fillFormFromAtividade(atividade);
     this.editAtividadeEnunciado = form.enunciado;
@@ -413,17 +422,21 @@ export class ModuloDetalheComponent implements OnInit {
       return;
     }
 
-    const opcoes = this.buildOpcoesFromForm(
-      this.editAtividadeOpcoes,
-      this.editAtividadeRespostaCorreta,
-    );
-    if (!opcoes) return;
+    let opcoes: OpcaoAtividade[] | undefined = undefined;
+    if (this.editAtividadeTipo === 'multipla_escolha') {
+      const result = this.buildOpcoesFromForm(
+        this.editAtividadeOpcoes,
+        this.editAtividadeRespostaCorreta,
+      );
+      if (!result) return;
+      opcoes = result;
+    }
 
     try {
       this.saving.set(true);
       await this.professorService.updateAtividade(atividadeId, {
         titulo_atividade: this.editAtividadeTitulo.trim(),
-        tipo_atividade: 'multipla_escolha',
+        tipo_atividade: this.editAtividadeTipo,
         enunciado: this.editAtividadeEnunciado.trim(),
         opcoes: opcoes,
       });

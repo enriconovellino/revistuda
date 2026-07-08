@@ -26,7 +26,7 @@ export class CreateAtividadeDto {
   titulo_atividade!: string;
 
   @IsString()
-  @IsIn(['multipla_escolha'])
+  @IsIn(['multipla_escolha', 'associacao_imagens'])
   tipo_atividade!: string;
 
   @IsOptional()

@@ -25,7 +25,6 @@ export class Atividade {
   titulo_atividade: string;
   tipo_atividade: string;
   enunciado: string | null;
-  opcoes: Opcao[];
   licao_id: number;
 
   constructor(
@@ -34,13 +33,37 @@ export class Atividade {
     tipo_atividade: string,
     licao_id: number,
     enunciado: string | null = null,
-    opcoes: Opcao[] = [],
   ) {
     this.atividade_id = atividade_id;
     this.titulo_atividade = titulo_atividade;
     this.tipo_atividade = tipo_atividade;
     this.enunciado = enunciado;
-    this.opcoes = opcoes;
     this.licao_id = licao_id;
+  }
+}
+
+export class MultiplaEscolha extends Atividade {
+  opcoes: Opcao[];
+
+  constructor(
+    atividade_id: number,
+    titulo_atividade: string,
+    licao_id: number,
+    enunciado: string | null = null,
+    opcoes: Opcao[] = [],
+  ) {
+    super(atividade_id, titulo_atividade, 'multipla_escolha', licao_id, enunciado);
+    this.opcoes = opcoes;
+  }
+}
+
+export class AssociacaoImagens extends Atividade {
+  constructor(
+    atividade_id: number,
+    titulo_atividade: string,
+    licao_id: number,
+    enunciado: string | null = null,
+  ) {
+    super(atividade_id, titulo_atividade, 'associacao_imagens', licao_id, enunciado);
   }
 }

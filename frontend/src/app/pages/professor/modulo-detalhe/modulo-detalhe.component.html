@@ -278,6 +278,14 @@
                           <h6 class="fw-bold mb-3 small text-dark">Editar Atividade</h6>
 
                           <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Tipo de Atividade <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-sm" [(ngModel)]="editAtividadeTipo">
+                              <option value="multipla_escolha">Múltipla Escolha</option>
+                              <option value="associacao_imagens">Associação de Imagens</option>
+                            </select>
+                          </div>
+
+                          <div class="mb-3">
                             <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-sm" [(ngModel)]="editAtividadeTitulo" />
                           </div>
@@ -287,7 +295,7 @@
                             <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editAtividadeEnunciado"></textarea>
                           </div>
 
-                          <div class="mb-2">
+                          <div class="mb-2" *ngIf="editAtividadeTipo === 'multipla_escolha'">
                             <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
                             <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
                               <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>
@@ -321,7 +329,15 @@
 
                     <div class="card mt-3 p-3 bg-light border border-dashed"
                       *ngIf="activeAddAtividadeLicaoId() === licao.licao_id" style="border-radius: 8px;">
-                      <h6 class="fw-bold mb-3 small text-dark">Nova Atividade — Múltipla Escolha</h6>
+                      <h6 class="fw-bold mb-3 small text-dark">Nova Atividade</h6>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Tipo de Atividade <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-sm" [(ngModel)]="addAtividadeTipo">
+                          <option value="multipla_escolha">Múltipla Escolha</option>
+                          <option value="associacao_imagens">Associação de Imagens</option>
+                        </select>
+                      </div>
 
                       <div class="mb-3">
                         <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
@@ -335,7 +351,7 @@
                           placeholder="Digite a pergunta da atividade..." [(ngModel)]="addAtividadeEnunciado"></textarea>
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-3" *ngIf="addAtividadeTipo === 'multipla_escolha'">
                         <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
                         <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
                           <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>

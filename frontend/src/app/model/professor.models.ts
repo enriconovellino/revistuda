@@ -54,3 +54,12 @@ export interface Atividade {
   opcoes?: OpcaoAtividade[];
   licao_id: number;
 }
+
+export interface MultiplaEscolha extends Atividade {
+  tipo_atividade: 'multipla_escolha';
+  opcoes: OpcaoAtividade[];
+}
+
+export interface AssociacaoImagens extends Atividade {
+  tipo_atividade: 'associacao_imagens';
+}
