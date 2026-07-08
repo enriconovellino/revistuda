@@ -8,6 +8,7 @@ import { TelaInicialComponent} from './pages/tela-inicial/tela-inicial.component
 import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
+import { AlunoModuloDetalheComponent } from './pages/aluno-idoso/tela-conteudo/modulo-detalhe.component';
 
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
@@ -22,6 +23,11 @@ export const routes: Routes = [
   {
     path: 'aluno-idoso',
     component: AlunoIdosoComponent,
+    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
+  },
+  {
+    path: 'aluno-idoso/modulo/:id',
+    component: AlunoModuloDetalheComponent,
     canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
   },
   {

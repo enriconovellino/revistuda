@@ -228,7 +228,8 @@
                   {{ licoes().filter(l => l.modulo_id === modulo.modulo_id).length }} lições
                 </span>
                 <button class="btn-primary-custom btn-sm-custom"
-                  [id]="'btn-acessar-' + modulo.modulo_id">Acessar</button>
+               [id]="'btn-acessar-' + modulo.modulo_id"
+              (click)="acessarModulo(modulo.modulo_id)">Acessar</button>
               </div>
             </div>
 
