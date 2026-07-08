@@ -3,20 +3,20 @@ export class Opcao {
   texto_opcao: string;
   letra: string;
   correta: boolean;
-  atividade_id: number;
+  multipla_escolha_id: number;
 
   constructor(
     opcao_id: number,
     texto_opcao: string,
     letra: string,
     correta: boolean,
-    atividade_id: number,
+    multipla_escolha_id: number,
   ) {
     this.opcao_id = opcao_id;
     this.texto_opcao = texto_opcao;
     this.letra = letra;
     this.correta = correta;
-    this.atividade_id = atividade_id;
+    this.multipla_escolha_id = multipla_escolha_id;
   }
 }
 

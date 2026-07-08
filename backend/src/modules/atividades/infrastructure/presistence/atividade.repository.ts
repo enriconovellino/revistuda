@@ -9,13 +9,14 @@ export class AtividadeRepository implements IAtividadeRepository {
 
   private mapToEntity(record: any): Atividade {
     if (record.tipo_atividade === 'multipla_escolha') {
-      const opcoes = record.opcoes ? record.opcoes.map((o: any) => new Opcao(
+      const dbOpcoes = record.multipla_escolha?.opcoes ?? [];
+      const opcoes = dbOpcoes.map((o: any) => new Opcao(
         o.opcao_id,
         o.texto_opcao,
         o.letra,
         o.correta,
-        o.atividade_id
-      )) : [];
+        o.multipla_escolha_id
+      ));
 
       return new MultiplaEscolha(
         record.atividade_id,
@@ -44,19 +45,27 @@ export class AtividadeRepository implements IAtividadeRepository {
     };
 
     if (atividade instanceof MultiplaEscolha) {
-      data.opcoes = {
-        create: (atividade.opcoes ?? []).map((o) => ({
-          texto_opcao: o.texto_opcao,
-          letra: o.letra,
-          correta: o.correta,
-        })),
+      data.multipla_escolha = {
+        create: {
+          opcoes: {
+            create: (atividade.opcoes ?? []).map((o) => ({
+              texto_opcao: o.texto_opcao,
+              letra: o.letra,
+              correta: o.correta,
+            })),
+          },
+        },
       };
     }
 
     const created = await this.prisma.atividade.create({
       data,
       include: {
-        opcoes: true,
+        multipla_escolha: {
+          include: {
+            opcoes: true,
+          },
+        },
       },
     });
     return this.mapToEntity(created);
@@ -65,7 +74,11 @@ export class AtividadeRepository implements IAtividadeRepository {
   async findAll(): Promise<Atividade[]> {
     const records = await this.prisma.atividade.findMany({
       include: {
-        opcoes: true,
+        multipla_escolha: {
+          include: {
+            opcoes: true,
+          },
+        },
       },
     });
     return records.map((record) => this.mapToEntity(record));
@@ -75,7 +88,11 @@ export class AtividadeRepository implements IAtividadeRepository {
     const record = await this.prisma.atividade.findUnique({
       where: { atividade_id: id },
       include: {
-        opcoes: true,
+        multipla_escolha: {
+          include: {
+            opcoes: true,
+          },
+        },
       },
     });
     if (!record) {
@@ -95,13 +112,28 @@ export class AtividadeRepository implements IAtividadeRepository {
     if (atividade instanceof MultiplaEscolha || ('opcoes' in atividade)) {
       const atvME = atividade as any;
       if (atvME.opcoes) {
-        dataUpdate.opcoes = {
-          deleteMany: {},
-          create: atvME.opcoes.map((o: any) => ({
-            texto_opcao: o.texto_opcao,
-            letra: o.letra,
-            correta: o.correta,
-          })),
+        dataUpdate.multipla_escolha = {
+          upsert: {
+            create: {
+              opcoes: {
+                create: atvME.opcoes.map((o: any) => ({
+                  texto_opcao: o.texto_opcao,
+                  letra: o.letra,
+                  correta: o.correta,
+                })),
+              },
+            },
+            update: {
+              opcoes: {
+                deleteMany: {},
+                create: atvME.opcoes.map((o: any) => ({
+                  texto_opcao: o.texto_opcao,
+                  letra: o.letra,
+                  correta: o.correta,
+                })),
+              },
+            },
+          },
         };
       }
     }
@@ -110,7 +142,11 @@ export class AtividadeRepository implements IAtividadeRepository {
       where: { atividade_id: id },
       data: dataUpdate,
       include: {
-        opcoes: true,
+        multipla_escolha: {
+          include: {
+            opcoes: true,
+          },
+        },
       },
     });
     return this.mapToEntity(updated);

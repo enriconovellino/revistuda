@@ -171,13 +171,17 @@ async function main() {
       tipo_atividade: 'multipla_escolha',
       enunciado: 'Quanto é 2 + 2?',
       licao_id: licaoMatematica.licao_id,
-      opcoes: {
-        create: [
-          { letra: 'a', texto_opcao: '3', correta: false },
-          { letra: 'b', texto_opcao: '4', correta: true },
-          { letra: 'c', texto_opcao: '5', correta: false },
-          { letra: 'd', texto_opcao: '6', correta: false },
-        ]
+      multipla_escolha: {
+        create: {
+          opcoes: {
+            create: [
+              { letra: 'a', texto_opcao: '3', correta: false },
+              { letra: 'b', texto_opcao: '4', correta: true },
+              { letra: 'c', texto_opcao: '5', correta: false },
+              { letra: 'd', texto_opcao: '6', correta: false },
+            ]
+          }
+        }
       }
     }
   });
@@ -188,12 +192,16 @@ async function main() {
       tipo_atividade: 'multipla_escolha',
       enunciado: 'Quem escreveu O Sítio do Pica-Pau Amarelo?',
       licao_id: licaoLeitura.licao_id,
-      opcoes: {
-        create: [
-          { letra: 'a', texto_opcao: 'Monteiro Lobato', correta: true },
-          { letra: 'b', texto_opcao: 'Machado de Assis', correta: false },
-          { letra: 'c', texto_opcao: 'Clarice Lispector', correta: false },
-        ]
+      multipla_escolha: {
+        create: {
+          opcoes: {
+            create: [
+              { letra: 'a', texto_opcao: 'Monteiro Lobato', correta: true },
+              { letra: 'b', texto_opcao: 'Machado de Assis', correta: false },
+              { letra: 'c', texto_opcao: 'Clarice Lispector', correta: false },
+            ]
+          }
+        }
       }
     }
   });
