@@ -103,6 +103,14 @@ export class TelaAtividade implements OnInit {
     return letra.toUpperCase();
   }
 
+  getTipoAtividadeLabel(tipo: string): string {
+    const map: Record<string, string> = { 
+      'multipla_escolha': 'Múltipla Escolha', 
+      'associacao_imagens': 'Associação de Imagens' 
+    };
+    return map[tipo] ?? tipo;
+  }
+
   isOpcaoCorreta(opcao: OpcaoAtividade): boolean {
     return this.respostaEnviada() && opcao.correta;
   }
