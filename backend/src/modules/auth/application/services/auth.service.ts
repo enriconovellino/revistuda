@@ -82,6 +82,24 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(registerDto.senha, 10);
     const approved = registerDto.permission !== 'PROFESSOR';
 
+    let connection: any = {};
+    if (registerDto.permission === 'ALUNO_IDOSO' || registerDto.permission === 'ALUNO_CRIANCA') {
+      let defaultTurma = await this.prisma.turma.findFirst();
+      if (!defaultTurma) {
+        defaultTurma = await this.prisma.turma.create({
+          data: {
+            nome_turma: 'Turma Geral',
+            descricao_turma: 'Turma de entrada para novos alunos',
+          },
+        });
+      }
+      connection = {
+        turmas: {
+          connect: { turma_id: defaultTurma.turma_id },
+        },
+      };
+    }
+
     const createdUser = await this.prisma.user.create({
       data: {
         nome: registerDto.nome,
@@ -89,6 +107,7 @@ export class AuthService {
         senha: hashedPassword,
         permissions: [registerDto.permission],
         approved,
+        ...connection,
       },
     });
 
