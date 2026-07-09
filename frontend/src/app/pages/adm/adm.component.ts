@@ -200,6 +200,6 @@ export class AdmComponent implements OnInit {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.clear();
     }
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/']);
   }
 }
