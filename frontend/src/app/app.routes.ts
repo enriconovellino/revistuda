@@ -9,6 +9,7 @@ import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
 import { AlunoModuloDetalheComponent } from './pages/aluno-idoso/tela-conteudo/modulo-detalhe.component';
+import { TelaAtividade } from './pages/tela-atividade/tela-atividade';
 
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
@@ -28,6 +29,11 @@ export const routes: Routes = [
   {
     path: 'aluno-idoso/modulo/:id',
     component: AlunoModuloDetalheComponent,
+    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
+  },
+  {
+    path: 'aluno-idoso/atividade/:id',
+    component: TelaAtividade,
     canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
   },
   {
