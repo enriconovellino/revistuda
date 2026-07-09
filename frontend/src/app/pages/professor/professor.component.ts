@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Modulo, Turma, Usuario } from '../../model/professor.models';
 import { ProfessorService } from '../../services/professor.service';
-import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
+import { DashboardTurmasComponent } from './dashboard-turmas/dashboard-turmas.component';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, DashboardTurmas, EditarPerfilComponent],
+  imports: [CommonModule, FormsModule, DashboardTurmasComponent, EditarPerfilComponent],
   templateUrl: './professor.component.html',
   styleUrl: './professor.component.scss',
 })

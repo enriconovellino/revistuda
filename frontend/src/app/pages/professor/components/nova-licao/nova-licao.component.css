@@ -1,0 +1,31 @@
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 2px rgba(15, 39, 68, 0.1);
+}
+
+.btn-success {
+  background-color: #10b981;
+  border-color: #10b981;
+  border-radius: 8px;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
