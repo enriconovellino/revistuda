@@ -134,3 +134,22 @@ export class AssociacaoImagens extends Atividade {
     this.pares = pares;
   }
 }
+
+export class RespostaMultiplaEscolha {
+  resposta_me_id: number;
+  aluno_id: number;
+  resposta_aluno_id: number;
+  data_resposta: Date;
+
+  constructor(
+    resposta_me_id: number,
+    aluno_id: number,
+    resposta_aluno_id: number,
+    data_resposta: Date,
+  ) {
+    this.resposta_me_id = resposta_me_id;
+    this.aluno_id = aluno_id;
+    this.resposta_aluno_id = resposta_aluno_id;
+    this.data_resposta = data_resposta;
+  }
+}
