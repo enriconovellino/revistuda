@@ -199,7 +199,7 @@
         <div class="col">
           <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background: white;">
 
-            <img *ngIf="modulo.imagem_url" [src]="modulo.imagem_url" class="card-img-top"
+            <img *ngIf="modulo.imagem_url" [src]="getImageUrl(modulo.imagem_url)" class="card-img-top"
               alt="{{ modulo.titulo_modulo }}" style="height: 180px; object-fit: cover;">
 
             @if (!modulo.imagem_url) {

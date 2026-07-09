@@ -281,7 +281,9 @@
                                   <span *ngFor="let left of atividade.itens_esquerdos">
                                     <span *ngIf="left.item_associacao_id === rel.item_1_id">
                                       <span *ngIf="left.tipo === 'texto'">"{{ left.texto }}"</span>
-                                      <span *ngIf="left.tipo === 'imagem'">🖼️ Imagem (URL: {{ left.imagem_url }})</span>
+                                      <span *ngIf="left.tipo === 'imagem'" class="d-inline-flex align-items-center gap-1">
+                                        🖼️ Imagem <img [src]="getImageUrl(left.imagem_url)" style="height: 24px; max-width: 40px; object-fit: contain; border-radius: 2px;" />
+                                      </span>
                                     </span>
                                   </span>
                                 </span>
@@ -290,7 +292,9 @@
                                   <span *ngFor="let right of atividade.itens_direitos">
                                     <span *ngIf="right.item_associacao_id === rel.item_2_id">
                                       <span *ngIf="right.tipo === 'texto'">"{{ right.texto }}"</span>
-                                      <span *ngIf="right.tipo === 'imagem'">🖼️ Imagem (URL: {{ right.imagem_url }})</span>
+                                      <span *ngIf="right.tipo === 'imagem'" class="d-inline-flex align-items-center gap-1">
+                                        🖼️ Imagem <img [src]="getImageUrl(right.imagem_url)" style="height: 24px; max-width: 40px; object-fit: contain; border-radius: 2px;" />
+                                      </span>
                                     </span>
                                   </span>
                                 </span>
@@ -351,20 +355,34 @@
                                     <label class="small text-muted mb-1 d-block">Esquerdo</label>
                                     <select class="form-select form-select-xs mb-1" [(ngModel)]="par.esquerdo.tipo">
                                       <option value="texto">Texto</option>
-                                      <option value="imagem">Imagem (URL)</option>
+                                      <option value="imagem">Imagem</option>
                                     </select>
                                     <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" />
-                                    <input *ngIf="par.esquerdo.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.esquerdo.imagem_url" />
+                                    <div *ngIf="par.esquerdo.tipo === 'imagem'">
+                                      <input type="file" class="form-control form-control-xs" (change)="onFileSelected($event, par.esquerdo)" accept="image/*" />
+                                      <div *ngIf="par.esquerdo.uploading" class="mt-1 small text-muted"><span class="spinner-border spinner-border-xs" role="status" style="width: 12px; height: 12px;"></span> Enviando...</div>
+                                      <div *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading" class="mt-1 d-flex align-items-center gap-1">
+                                        <img [src]="getImageUrl(par.esquerdo.imagem_url)" style="height: 20px; max-width: 30px; object-fit: contain;" />
+                                        <span class="small text-muted text-truncate" style="max-width: 80px;">{{ par.esquerdo.imagem_url }}</span>
+                                      </div>
+                                    </div>
                                   </div>
                                   
                                   <div class="col-6 ps-2">
                                     <label class="small text-muted mb-1 d-block">Direito</label>
                                     <select class="form-select form-select-xs mb-1" [(ngModel)]="par.direito.tipo">
                                       <option value="texto">Texto</option>
-                                      <option value="imagem">Imagem (URL)</option>
+                                      <option value="imagem">Imagem</option>
                                     </select>
                                     <input *ngIf="par.direito.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto direito" [(ngModel)]="par.direito.texto" />
-                                    <input *ngIf="par.direito.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.direito.imagem_url" />
+                                    <div *ngIf="par.direito.tipo === 'imagem'">
+                                      <input type="file" class="form-control form-control-xs" (change)="onFileSelected($event, par.direito)" accept="image/*" />
+                                      <div *ngIf="par.direito.uploading" class="mt-1 small text-muted"><span class="spinner-border spinner-border-xs" role="status" style="width: 12px; height: 12px;"></span> Enviando...</div>
+                                      <div *ngIf="par.direito.imagem_url && !par.direito.uploading" class="mt-1 d-flex align-items-center gap-1">
+                                        <img [src]="getImageUrl(par.direito.imagem_url)" style="height: 20px; max-width: 30px; object-fit: contain;" />
+                                        <span class="small text-muted text-truncate" style="max-width: 80px;">{{ par.direito.imagem_url }}</span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -445,20 +463,34 @@
                                 <label class="small text-muted mb-1 d-block">Esquerdo</label>
                                 <select class="form-select form-select-xs mb-1" [(ngModel)]="par.esquerdo.tipo">
                                   <option value="texto">Texto</option>
-                                  <option value="imagem">Imagem (URL)</option>
+                                  <option value="imagem">Imagem</option>
                                 </select>
                                 <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" />
-                                <input *ngIf="par.esquerdo.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.esquerdo.imagem_url" />
+                                <div *ngIf="par.esquerdo.tipo === 'imagem'">
+                                  <input type="file" class="form-control form-control-xs" (change)="onFileSelected($event, par.esquerdo)" accept="image/*" />
+                                  <div *ngIf="par.esquerdo.uploading" class="mt-1 small text-muted"><span class="spinner-border spinner-border-xs" role="status" style="width: 12px; height: 12px;"></span> Enviando...</div>
+                                  <div *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading" class="mt-1 d-flex align-items-center gap-1">
+                                    <img [src]="getImageUrl(par.esquerdo.imagem_url)" style="height: 20px; max-width: 30px; object-fit: contain;" />
+                                    <span class="small text-muted text-truncate" style="max-width: 80px;">{{ par.esquerdo.imagem_url }}</span>
+                                  </div>
+                                </div>
                               </div>
                               
                               <div class="col-6 ps-2">
                                 <label class="small text-muted mb-1 d-block">Direito</label>
                                 <select class="form-select form-select-xs mb-1" [(ngModel)]="par.direito.tipo">
                                   <option value="texto">Texto</option>
-                                  <option value="imagem">Imagem (URL)</option>
+                                  <option value="imagem">Imagem</option>
                                 </select>
                                 <input *ngIf="par.direito.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto direito" [(ngModel)]="par.direito.texto" />
-                                <input *ngIf="par.direito.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.direito.imagem_url" />
+                                <div *ngIf="par.direito.tipo === 'imagem'">
+                                  <input type="file" class="form-control form-control-xs" (change)="onFileSelected($event, par.direito)" accept="image/*" />
+                                  <div *ngIf="par.direito.uploading" class="mt-1 small text-muted"><span class="spinner-border spinner-border-xs" role="status" style="width: 12px; height: 12px;"></span> Enviando...</div>
+                                  <div *ngIf="par.direito.imagem_url && !par.direito.uploading" class="mt-1 d-flex align-items-center gap-1">
+                                    <img [src]="getImageUrl(par.direito.imagem_url)" style="height: 20px; max-width: 30px; object-fit: contain;" />
+                                    <span class="small text-muted text-truncate" style="max-width: 80px;">{{ par.direito.imagem_url }}</span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>

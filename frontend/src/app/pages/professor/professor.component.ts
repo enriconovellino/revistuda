@@ -6,6 +6,7 @@ import { Modulo, Turma, Usuario } from '../../model/professor.models';
 import { ProfessorService } from '../../services/professor.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professor',
@@ -34,6 +35,7 @@ export class ProfessorComponent implements OnInit {
   salvandoModulo = signal<boolean>(false);
   erroModulo = signal<string | null>(null);
   moduloEmEdicao = signal<Modulo | null>(null);
+  uploadingImage = signal<boolean>(false);
 
   novoTituloModulo = '';
   novaDescricaoModulo = '';
@@ -228,6 +230,30 @@ export class ProfessorComponent implements OnInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
+  }
+
+  async onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    try {
+      this.uploadingImage.set(true);
+      this.erroModulo.set(null);
+      const res = await this.professorService.uploadImage(file);
+      this.novaImagemUrl = res.url;
+    } catch (err: any) {
+      this.erroModulo.set(err.message || 'Erro ao enviar imagem');
+    } finally {
+      this.uploadingImage.set(false);
+    }
   }
 
   private limparCamposModulo() {

@@ -239,4 +239,24 @@ export class ProfessorService {
       throw new Error(data.message || 'Erro ao deletar atividade');
     }
   }
+
+  async uploadImage(file: File): Promise<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = this.authService.getAccessToken();
+    const response = await fetch(`${this.apiUrl}/uploads`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao fazer upload da imagem');
+    }
+    return data;
+  }
 }

@@ -50,6 +50,7 @@ export interface ItemPar {
   tipo: 'texto' | 'imagem';
   texto?: string;
   imagem_url?: string;
+  uploading?: boolean;
 }
 
 export interface ParAssociacao {
@@ -62,6 +63,7 @@ export interface ItemAssociacao {
   tipo: 'texto' | 'imagem';
   texto?: string;
   imagem_url?: string;
+  uploading?: boolean;
 }
 
 export interface Atividade {
