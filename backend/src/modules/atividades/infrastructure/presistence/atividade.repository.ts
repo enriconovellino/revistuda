@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens, ItemAssociacao, AssociacaoCorreta } from '../../domain/entities/atividade.entity';
+import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens, ItemAssociacao, AssociacaoCorreta, RespostaMultiplaEscolha } from '../../domain/entities/atividade.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IAtividadeRepository } from '../../domain/ports/atividade-repository.port';
 
@@ -326,5 +326,20 @@ export class AtividadeRepository implements IAtividadeRepository {
     await this.prisma.atividade.delete({
       where: { atividade_id: id },
     });
+  }
+
+  async saveRespostaMultiplaEscolha(alunoId: number, opcaoId: number): Promise<RespostaMultiplaEscolha> {
+    const record = await this.prisma.respostaMultiplaEscolha.create({
+      data: {
+        aluno_id: alunoId,
+        resposta_aluno_id: opcaoId,
+      },
+    });
+    return new RespostaMultiplaEscolha(
+      record.resposta_me_id,
+      record.aluno_id,
+      record.resposta_aluno_id,
+      record.data_resposta,
+    );
   }
 }

@@ -102,6 +102,21 @@ export class AlunoService {
     }
   }
 
+  async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
+    try {
+      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ opcao_id: opcaoId })
+      });
+      if (!response.ok) throw new Error('Falha ao registrar resposta.');
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getDashboardData(): Promise<DashboardData> {
     const [modulos, licoes, atividades] = await Promise.all([
       this.getModulos(),

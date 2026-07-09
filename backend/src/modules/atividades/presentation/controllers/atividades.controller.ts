@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Put, UseGuards, Request } from '@nestjs/common';
 import { CreateAtividadeDto } from '../../application/dtos/create-atividade.dto';
 import { UpdateAtividadeDto } from '../../application/dtos/update-atividade.dto';
 import { CreateAtividadeUseCase } from '../../domain/use-cases/create-atividade.use-case';
@@ -6,8 +6,10 @@ import { GetAllAtividadesUseCase } from '../../domain/use-cases/get-all-atividad
 import { GetAtividadeUseCase } from '../../domain/use-cases/get-atividade.use-casa';
 import { UpdateAtividadeUseCase } from '../../domain/use-cases/update-atividade.use-case';
 import { DeleteAtividadeUseCase } from '../../domain/use-cases/delete-atividade.use-case';
+import { ResponderAtividadeUseCase } from '../../domain/use-cases/responder-atividade.use-case';
 import { AtividadePresenter } from '../../application/presenters/atividade.presenter';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 
 @Controller('atividades')
 export class AtividadesController {
@@ -16,7 +18,8 @@ export class AtividadesController {
     private getAllAtividadesUseCase: GetAllAtividadesUseCase,
     private getAtividadeUseCase: GetAtividadeUseCase,
     private updateAtividadeUseCase: UpdateAtividadeUseCase,
-    private deleteAtividadeUseCase: DeleteAtividadeUseCase
+    private deleteAtividadeUseCase: DeleteAtividadeUseCase,
+    private responderAtividadeUseCase: ResponderAtividadeUseCase
   ) {}
 
   @Post()
@@ -66,5 +69,22 @@ export class AtividadesController {
   @ApiResponse({ status: 404, description: 'Atividade não encontrada' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.deleteAtividadeUseCase.execute(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/responder')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Responder a uma atividade de múltipla escolha' })
+  @ApiParam({ name: 'id', description: 'ID da atividade', type: Number })
+  @ApiResponse({ status: 201, description: 'Resposta salva com sucesso' })
+  @ApiResponse({ status: 401, description: 'Token inválido ou não informado' })
+  async responder(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('opcao_id') opcaoId: number,
+    @Request() req
+  ) {
+    const alunoId = req.user.sub;
+    const resposta = await this.responderAtividadeUseCase.execute(alunoId, opcaoId);
+    return resposta;
   }
 }

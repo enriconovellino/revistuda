@@ -68,7 +68,7 @@ export class TelaAtividade implements OnInit {
     this.opcaoSelecionadaId.set(opcao.opcao_id);
   }
 
-  enviarResposta() {
+  async enviarResposta() {
     const atividade = this.atividade();
     const selecionadaId = this.opcaoSelecionadaId();
     if (!atividade || selecionadaId === null) return;
@@ -78,6 +78,12 @@ export class TelaAtividade implements OnInit {
 
     this.respostaEnviada.set(true);
     this.resultado.set(opcaoEscolhida.correta ? 'acerto' : 'erro');
+
+    try {
+      await this.alunoService.responderAtividadeMultiplaEscolha(atividade.atividade_id, selecionadaId);
+    } catch (error) {
+      console.error('Erro ao salvar resposta no banco:', error);
+    }
   }
 
   tentarNovamente() {
