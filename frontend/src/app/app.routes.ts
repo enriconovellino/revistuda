@@ -4,17 +4,19 @@ import { AlunoCriancaComponent } from './pages/aluno-crianca/aluno-crianca.compo
 import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
-import { TelaInicialComponent} from './pages/tela-inicial/tela-inicial.component';
+import { TelaInicialComponent } from './pages/tela-inicial/tela-inicial.component';
 import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
 import { EsqueciSenhaComponent } from './pages/tela-senha/esqueci-senha.component';
 import { RedefinirSenhaComponent } from './pages/redefinir-senha/redefinir-senha.component';
+import { AlunoModuloDetalheComponent } from './pages/aluno-idoso/tela-conteudo/modulo-detalhe.component';
+import { TelaAtividade } from './pages/tela-atividade/tela-atividade';
 
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
   { path: 'login', component: TelaLoginComponent },
-  {path: 'login-idoso', component: LoginIdosoComponent},
+  { path: 'login-idoso', component: LoginIdosoComponent },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
 
@@ -26,6 +28,16 @@ export const routes: Routes = [
   {
     path: 'aluno-idoso',
     component: AlunoIdosoComponent,
+    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
+  },
+  {
+    path: 'aluno-idoso/modulo/:id',
+    component: AlunoModuloDetalheComponent,
+    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
+  },
+  {
+    path: 'aluno-idoso/atividade/:id',
+    component: TelaAtividade,
     canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])]
   },
   {

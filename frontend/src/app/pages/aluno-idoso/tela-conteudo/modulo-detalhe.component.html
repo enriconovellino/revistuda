@@ -1,0 +1,196 @@
+<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h5>ReviEstuda</h5>
+      <small>Plataforma Educacional</small>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link" (click)="irParaDashboard()">
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active">
+            Meus Módulos
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="flex-grow-1" style="margin-left: 240px;">
+    <div class="main-header d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-3" (click)="voltar()">
+        <span>←</span> Voltar para Módulos
+      </button>
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 36px; height: 36px; background: #0f2744 !important;">
+            {{ userName().charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Aluno</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4">
+      <div *ngIf="loading()" class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+
+      <div *ngIf="error()" class="alert alert-danger mb-4">
+        {{ error() }}
+      </div>
+
+      <div *ngIf="!loading() && !error() && modulo()">
+        <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 12px; background: white;">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <h3 class="fw-bold text-dark mb-0">{{ modulo()?.titulo_modulo }}</h3>
+                <span class="badge" [class.bg-success]="modulo()?.dificuldade === 'fácil'"
+                  [class.bg-warning]="modulo()?.dificuldade === 'médio'"
+                  [class.bg-danger]="modulo()?.dificuldade === 'difícil'">
+                  {{ modulo()?.dificuldade | titlecase }}
+                </span>
+              </div>
+              <p class="text-muted mb-0" style="font-size: 14px;">{{ modulo()?.descricao_modulo || 'Sem descrição
+                cadastrada' }}</p>
+            </div>
+
+            <div class="text-md-end">
+              <span class="text-muted small">Progresso</span>
+              <h4 class="fw-bold mb-0" style="color: #0f2744 !important;">
+                {{ totalConcluidas }}/{{ licoes().length }}
+              </h4>
+              <div class="progress mt-1" style="height: 6px; width: 140px;">
+                <div class="progress-bar" role="progressbar"
+                  [style.width.%]="licoes().length ? (totalConcluidas / licoes().length) * 100 : 0"
+                  style="background: #10b981;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h5 class="fw-bold mb-4 text-dark"><i class="fi fi-rr-book-alt"></i> Lições do Módulo</h5>
+
+          <div class="d-flex flex-column gap-4" *ngIf="licoes().length > 0; else noLicoes">
+            <div class="licao-card p-4 border rounded bg-white shadow-sm" *ngFor="let licao of licoes()">
+              <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span *ngIf="isConcluida(licao.licao_id)" class="badge bg-success">✓ Concluída</span>
+                  <div>
+                    <h6 class="fw-bold text-dark mb-1" style="font-size: 17px;">{{ licao.titulo_licao }}</h6>
+                    <p class="text-muted small mb-0" *ngIf="licao.comentario">{{ licao.comentario }}</p>
+                  </div>
+                </div>
+
+                <button class="btn btn-sm"
+                  [class.btn-outline-success]="!isConcluida(licao.licao_id)"
+                  [class.btn-success]="isConcluida(licao.licao_id)"
+                  (click)="toggleConcluida(licao.licao_id)">
+                  {{ isConcluida(licao.licao_id) ? 'Marcada como concluída' : 'Marcar como concluída' }}
+                </button>
+              </div>
+
+              <div class="d-flex flex-column gap-3 mt-3">
+                <div class="content-box p-3 border rounded" *ngFor="let conteudo of conteudosForLicao()[licao.licao_id]">
+
+                  <span class="badge bg-secondary text-white mb-2" style="font-size: 10px;">{{
+                    conteudo.tipo_conteudo | titlecase }}</span>
+
+                  <div class="mb-2" *ngIf="conteudo.texto_conteudo">
+                    <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.6; font-size: 14px;">{{
+                      conteudo.texto_conteudo }}</p>
+                  </div>
+
+                  <div class="mt-2" *ngIf="conteudo.url_conteudo">
+                    <div
+                      *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'vídeo' || conteudo.tipo_conteudo.toLowerCase() === 'video'">
+                      <div class="w-100" *ngIf="conteudo.safeUrl; else normalLink">
+                        <iframe [src]="conteudo.safeUrl" allowfullscreen
+                          style="border-radius: 8px; border: none; width: 100%; aspect-ratio: 16/9;"></iframe>
+                      </div>
+                      <ng-template #normalLink>
+                        <a [href]="conteudo.url_conteudo" target="_blank"
+                          class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                          Assistir Vídeo (Link Externo) ↗
+                        </a>
+                      </ng-template>
+                    </div>
+
+                    <div
+                      *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'áudio' || conteudo.tipo_conteudo.toLowerCase() === 'audio'">
+                      <audio controls class="w-100" *ngIf="conteudo.url_conteudo">
+                        <source [src]="conteudo.url_conteudo" type="audio/mpeg">
+                        Seu navegador não suporta o player de áudio.
+                      </audio>
+                      <a [href]="conteudo.url_conteudo" target="_blank"
+                        class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 mt-1"
+                        *ngIf="!conteudo.url_conteudo.endsWith('.mp3') && !conteudo.url_conteudo.endsWith('.wav')">
+                        Ouvir Áudio (Link Externo) ↗
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="comentario-box mt-3 pt-3 border-top">
+                    <label class="form-label small fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você entendeu?</label>
+
+                    <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvo">
+                      <textarea class="form-control" rows="4"
+                        placeholder="Escreva aqui o que você entendeu sobre esse conteúdo..."
+                        style="resize: vertical; min-height: 90px;"
+                        [ngModel]="getComentario(conteudo.conteudo_id)"
+                        (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)"></textarea>
+                      <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
+                        <span class="text-success small fw-semibold" *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
+                          ✓ Comentário salvo!
+                        </span>
+                        <button class="btn btn-sm btn-outline-primary" (click)="salvarComentario(conteudo.conteudo_id)">
+                          Salvar comentário
+                        </button>
+                      </div>
+                    </div>
+
+                    <ng-template #comentarioSalvo>
+                      <div class="comentario-salvo-box p-3 rounded" style="background: #f8fafc;">
+                        <p class="mb-2 text-dark small" style="white-space: pre-wrap;">{{ getComentario(conteudo.conteudo_id) }}</p>
+                        <div class="d-flex justify-content-end">
+                          <button class="btn btn-link btn-sm p-0 text-primary" style="text-decoration: none; font-size: 12px;"
+                            (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
+                            ✏️ Editar comentário
+                          </button>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noLicoes>
+            <div class="empty-state py-5 text-center">
+              <p class="mb-0 text-muted">Nenhuma lição cadastrada neste módulo ainda.</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

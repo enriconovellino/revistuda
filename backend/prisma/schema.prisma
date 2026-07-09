@@ -22,6 +22,8 @@ model User {
   turmas       Turma[]
   resetPasswordToken    String?
   resetPasswordExpires  DateTime?
+  tentativasAssociacao TentativaAssociacao[]
+  respostasMultiplaEscolha RespostaMultiplaEscolha[]
 }
 
 model Modulo {
@@ -72,14 +74,91 @@ model Atividade {
   enunciado            String?
   licao_id             Int
   licao                Licao    @relation(fields: [licao_id], references: [licao_id], onDelete: Cascade)
-  opcoes               Opcao[]
+  multipla_escolha     MultiplaEscolha?
+  associacao_imagens   AssociacaoImagens?
+}
+
+model MultiplaEscolha {
+  multipla_escolha_id Int       @id @default(autoincrement())
+  atividade_id        Int       @unique
+  atividade           Atividade @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
+  opcoes              Opcao[]
 }
 
 model Opcao {
-  opcao_id     Int       @id @default(autoincrement())
-  texto_opcao  String
-  letra        String
-  correta      Boolean
-  atividade_id Int
-  atividade    Atividade @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
+  opcao_id            Int             @id @default(autoincrement())
+  texto_opcao         String
+  letra               String
+  correta             Boolean
+  multipla_escolha_id Int
+  multipla_escolha    MultiplaEscolha @relation(fields: [multipla_escolha_id], references: [multipla_escolha_id], onDelete: Cascade)
+  respostasAlunos     RespostaMultiplaEscolha[]
+}
+
+model RespostaMultiplaEscolha {
+  resposta_me_id    Int      @id @default(autoincrement())
+  aluno_id          Int
+  aluno             User     @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  resposta_aluno_id Int
+  opcao             Opcao    @relation(fields: [resposta_aluno_id], references: [opcao_id], onDelete: Cascade)
+  data_resposta     DateTime @default(now())
+}
+
+model AssociacaoImagens {
+  associacao_id       Int                  @id @default(autoincrement())
+  atividade_id        Int                  @unique
+  atividade           Atividade            @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
+  
+  itens               ItemAssociacao[]
+  tentativas          TentativaAssociacao[]
+}
+
+model ItemAssociacao {
+  item_associacao_id  Int                  @id @default(autoincrement())
+  tipo                String               
+  texto               String?
+  imagem_url          String?
+  lado                String               
+  
+  associacao_id       Int
+  associacao          AssociacaoImagens    @relation(fields: [associacao_id], references: [associacao_id], onDelete: Cascade)
+
+  associacoes_corretas_1 AssociacaoCorreta[] @relation("Item1")
+  associacoes_corretas_2 AssociacaoCorreta[] @relation("Item2")
+  respostas_1            RespostaAssociacao[] @relation("RespItem1")
+  respostas_2            RespostaAssociacao[] @relation("RespItem2")
+}
+
+model AssociacaoCorreta {
+  item_1_id           Int
+  item_2_id           Int
+
+  item_1              ItemAssociacao       @relation("Item1", fields: [item_1_id], references: [item_associacao_id], onDelete: Cascade)
+  item_2              ItemAssociacao       @relation("Item2", fields: [item_2_id], references: [item_associacao_id], onDelete: Cascade)
+
+  @@id([item_1_id, item_2_id])
+}
+
+model TentativaAssociacao {
+  tentativa_associacao_id Int              @id @default(autoincrement())
+  user_id                 Int
+  user                    User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  associacao_id           Int
+  associacao              AssociacaoImagens @relation(fields: [associacao_id], references: [associacao_id], onDelete: Cascade)
+  
+  data_tentativa          DateTime         @default(now())
+  respostas               RespostaAssociacao[]
+}
+
+model RespostaAssociacao {
+  tentativa_associacao_id Int
+  item_1_id               Int
+  item_2_id               Int
+
+  tentativa               TentativaAssociacao @relation(fields: [tentativa_associacao_id], references: [tentativa_associacao_id], onDelete: Cascade)
+  item_1                  ItemAssociacao       @relation("RespItem1", fields: [item_1_id], references: [item_associacao_id], onDelete: Cascade)
+  item_2                  ItemAssociacao       @relation("RespItem2", fields: [item_2_id], references: [item_associacao_id], onDelete: Cascade)
+
+  @@id([tentativa_associacao_id, item_1_id, item_2_id])
 }

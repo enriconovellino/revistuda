@@ -13,12 +13,29 @@ export interface Licao {
   modulo_id: number;
 }
 
+export interface OpcaoAtividade {
+  opcao_id: number;
+  texto_opcao: string;
+  letra: string;
+  correta: boolean;
+}
+
 export interface Atividade {
   atividade_id: number;
   titulo_atividade: string;
   descricao_atividade?: string;
   tipo_atividade: string;
+  enunciado?: string | null;
+  opcoes?: OpcaoAtividade[];
   licao_id: number;
+}
+
+export interface MultiplaEscolha extends Atividade {
+  tipo_atividade: 'multipla_escolha';
+}
+
+export interface AssociacaoImagens extends Atividade {
+  tipo_atividade: 'associacao_imagens';
 }
 
 export interface DashboardData {
