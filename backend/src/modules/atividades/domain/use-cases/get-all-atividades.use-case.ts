@@ -7,7 +7,7 @@ import { Atividade } from '../entities/atividade.entity';
 export class GetAllAtividadesUseCase {
     constructor(@Inject(ATIVIDADE_REPOSITORY) private atividadeRepository: IAtividadeRepository) {}
     
-    async execute(): Promise<Atividade[]> {
-        return this.atividadeRepository.findAll();
+    async execute(userId?: number): Promise<Atividade[]> {
+        return this.atividadeRepository.findAll(userId);
     }
 }

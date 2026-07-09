@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { CreateModuloDto } from '../../application/dtos/create-modulo.dto';
 import { UpdateModuloDto } from '../../application/dtos/update-modulo.dto';
 import { ModuloPresenter } from '../../application/presenters/modulo.presenter';
@@ -30,11 +31,14 @@ export class ModulosController {
     return ModuloPresenter.toPresentation(modulo);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Listar todos os módulos' })
   @ApiResponse({ status: 200, description: 'Lista de módulos retornada com sucesso' })
-  async findAll(): Promise<ModuloPresenter[]> {
-    const modulos = await this.getAllModulosUseCase.execute();
+  async findAll(@Request() req): Promise<ModuloPresenter[]> {
+    const userId = req.user.sub;
+    const modulos = await this.getAllModulosUseCase.execute(userId);
     return ModuloPresenter.toCollection(modulos);
   }
 

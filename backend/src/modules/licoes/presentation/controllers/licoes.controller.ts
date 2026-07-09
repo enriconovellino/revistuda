@@ -1,5 +1,6 @@
-import { Controller, Post, Get, Put, Delete, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { CreateLicaoUseCase } from '../../domain/use-cases/create-licao.use-case';
 import { GetAllLicoes } from '../../domain/use-cases/get-all-licoes.use-case';
 import { GetLicaoUseCase } from '../../domain/use-cases/get-licao.use-case';
@@ -28,11 +29,14 @@ export class LicioesController {
     return LicaoPresenter.toPresentation(licao);
   }
 
+@UseGuards(JwtAuthGuard)
 @Get()
+@ApiBearerAuth()
 @ApiOperation({ summary: 'Listar todas as lições' })
 @ApiResponse({ status: 200, description: 'Lista de lições retornada com sucesso' })
-  async findAll() {
-    const licoes = await this.getAllLicoes.execute();
+  async findAll(@Request() req) {
+    const userId = req.user.sub;
+    const licoes = await this.getAllLicoes.execute(userId);
     return LicaoPresenter.toCollection(licoes);
   }
 

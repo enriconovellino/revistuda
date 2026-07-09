@@ -20,7 +20,24 @@ export class ModuloRepository implements IModuloRepository {
     return new Modulo(created.modulo_id, created.titulo_modulo, created.dificuldade, created.turma_id, created.descricao_modulo ?? undefined, created.imagem_url ?? undefined);
   }
 
-  async findAll(): Promise<Modulo[]> {
+  async findAll(userId?: number): Promise<Modulo[]> {
+    if (userId) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { turmas: true }
+      });
+
+      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+        const turmaIds = user.turmas.map(t => t.turma_id);
+        const modulos = await this.prisma.modulo.findMany({
+          where: {
+            turma_id: { in: turmaIds }
+          }
+        });
+        return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
+      }
+    }
+
     const modulos = await this.prisma.modulo.findMany();
     return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
   }

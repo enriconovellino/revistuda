@@ -7,7 +7,7 @@ import { Modulo } from '../entities/modulo.entity';
 export class GetAllModulosUseCase {
   constructor(@Inject(MODULO_REPOSITORY) private moduloRepository: IModuloRepository) {}
 
-  async execute(): Promise<Modulo[]> {
-    return this.moduloRepository.findAll();
+  async execute(userId?: number): Promise<Modulo[]> {
+    return this.moduloRepository.findAll(userId);
   }
 }

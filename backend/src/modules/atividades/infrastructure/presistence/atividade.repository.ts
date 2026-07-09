@@ -5,7 +5,7 @@ import { IAtividadeRepository } from '../../domain/ports/atividade-repository.po
 
 @Injectable()
 export class AtividadeRepository implements IAtividadeRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   private mapToEntity(record: any): Atividade {
     if (record.tipo_atividade === 'multipla_escolha') {
@@ -171,8 +171,28 @@ export class AtividadeRepository implements IAtividadeRepository {
     throw new Error('Unsupported activity type');
   }
 
-  async findAll(): Promise<Atividade[]> {
+  async findAll(userId?: number): Promise<Atividade[]> {
+    let whereCondicao = {};
+    if (userId) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { turmas: true }
+      });
+
+      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+        const turmaIds = user.turmas.map(t => t.turma_id);
+        whereCondicao = {
+          licao: {
+            modulo: {
+              turma_id: { in: turmaIds }
+            }
+          }
+        };
+      }
+    }
+
     const records = await this.prisma.atividade.findMany({
+      where: whereCondicao,
       include: {
         multipla_escolha: {
           include: {
