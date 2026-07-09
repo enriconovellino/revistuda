@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -80,6 +80,7 @@ export class ModuloDetalheComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private professorService = inject(ProfessorService);
   private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -626,6 +627,7 @@ export class ModuloDetalheComponent implements OnInit {
 
     try {
       item.uploading = true;
+      this.cdr.detectChanges();
       this.actionError.set(null);
       const res = await this.professorService.uploadImage(file);
       item.imagem_url = res.url;
@@ -633,6 +635,7 @@ export class ModuloDetalheComponent implements OnInit {
       this.actionError.set(err.message || 'Erro ao enviar imagem');
     } finally {
       item.uploading = false;
+      this.cdr.detectChanges();
     }
   }
 
