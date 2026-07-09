@@ -145,7 +145,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   }
 
   voltar() {
-    this.router.navigate(['/aluno-idoso']);
+    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
   }
 
   irParaView(view: string) {
