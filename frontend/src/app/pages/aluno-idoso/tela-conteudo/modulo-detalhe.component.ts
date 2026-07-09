@@ -148,8 +148,8 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.router.navigate(['/aluno-idoso']);
   }
 
-  irParaDashboard() {
-    this.router.navigate(['/aluno-idoso']);
+  irParaView(view: string) {
+    this.router.navigate(['/aluno-idoso'], { queryParams: { view } });
   }
 
   logout() {
