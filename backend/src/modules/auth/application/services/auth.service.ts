@@ -1,21 +1,26 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 import { PrismaService } from '@/prisma/prisma.service';
+import { MailerService } from '@/shared/infrastructure/mailer/mailer.service';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
   ) {}
 
   async generateTokens(userId: number, email: string) {
     const payload = { sub: userId, email };
-    
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         expiresIn: '15m',
@@ -25,7 +30,6 @@ export class AuthService {
       }),
     ]);
 
-    // Hashear o refresh token antes de salvar no banco de dados
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.prisma.user.update({
       where: { id: userId },
@@ -58,7 +62,6 @@ export class AuthService {
 
     const tokens = await this.generateTokens(user.id, user.email);
 
-    // Omitir a senha e refresh token ao retornar os dados do usuário
     const { senha: _, refreshToken: __, ...userWithoutPassword } = user;
 
     return {
@@ -102,7 +105,7 @@ export class AuthService {
   async refresh(refreshTokenDto: RefreshTokenDto) {
     try {
       const payload = await this.jwtService.verifyAsync(refreshTokenDto.refreshToken);
-      
+
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
       });
@@ -111,7 +114,6 @@ export class AuthService {
         throw new UnauthorizedException('Acesso negado');
       }
 
-      // Comparar o refresh token enviado com o que está no banco de dados
       const isRefreshTokenMatching = await bcrypt.compare(
         refreshTokenDto.refreshToken,
         user.refreshToken,
@@ -139,5 +141,60 @@ export class AuthService {
     const { senha: _, refreshToken: __, ...userWithoutSecrets } = user;
     return userWithoutSecrets;
   }
-}
 
+  // --- Recuperação de senha ---
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: forgotPasswordDto.email },
+    });
+
+    // Por segurança, sempre retorna a mesma mensagem, exista ou não o e-mail.
+    // Isso evita que alguém descubra quais e-mails estão cadastrados no sistema.
+    if (!user) {
+      return { message: 'Se este e-mail estiver cadastrado, você receberá um link de recuperação.' };
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // expira em 1 hora
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: resetToken,
+        resetPasswordExpires: resetExpires,
+      },
+    });
+
+    await this.mailerService.sendPasswordResetEmail(user.email, user.nome, resetToken);
+
+    return { message: 'Se este e-mail estiver cadastrado, você receberá um link de recuperação.' };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        resetPasswordToken: resetPasswordDto.token,
+        resetPasswordExpires: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Token inválido ou expirado. Solicite uma nova recuperação de senha.');
+    }
+
+    const hashedPassword = await bcrypt.hash(resetPasswordDto.novaSenha, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        senha: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+        refreshToken: null, // invalida sessões antigas por segurança
+      },
+    });
+
+    return { message: 'Senha redefinida com sucesso. Você já pode fazer login.' };
+  }
+}

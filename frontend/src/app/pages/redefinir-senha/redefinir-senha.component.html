@@ -1,0 +1,50 @@
+<div class="page-wrapper d-flex align-items-center justify-content-center">
+  <div class="card-box">
+
+    <div *ngIf="tokenAusente()" class="text-center">
+      <div class="mb-3" style="font-size: 48px;">⚠️</div>
+      <h4 class="fw-bold mb-2 text-dark">Link inválido</h4>
+      <p class="text-muted mb-4" style="font-size: 14px;">
+        Este link de redefinição está incompleto ou inválido. Solicite um novo link de recuperação.
+      </p>
+      <button class="btn btn-primary w-100" (click)="solicitarNovoLink()">Solicitar novo link</button>
+    </div>
+
+    <div *ngIf="!tokenAusente() && !sucesso()">
+      <h3 class="fw-bold mb-2 text-dark">Criar nova senha</h3>
+      <p class="text-muted mb-4" style="font-size: 14px;">
+        Digite sua nova senha abaixo. Ela precisa ter no mínimo 6 caracteres.
+      </p>
+
+      <div class="alert alert-danger" *ngIf="error()">{{ error() }}</div>
+
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Nova senha</label>
+        <input type="password" class="form-control" placeholder="Digite a nova senha"
+          [(ngModel)]="novaSenha" name="novaSenha" />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label small fw-semibold">Confirmar nova senha</label>
+        <input type="password" class="form-control" placeholder="Digite a senha novamente"
+          [(ngModel)]="confirmarSenha" name="confirmarSenha" (keyup.enter)="redefinir()" />
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 d-flex justify-content-center align-items-center gap-2"
+        (click)="redefinir()" [disabled]="loading()">
+        <div class="spinner-border spinner-border-sm" role="status" *ngIf="loading()"></div>
+        {{ loading() ? 'Salvando...' : 'Redefinir senha' }}
+      </button>
+    </div>
+
+    <div *ngIf="sucesso()" class="text-center">
+      <div class="mb-3" style="font-size: 48px;">✅</div>
+      <h4 class="fw-bold mb-2 text-dark">Senha redefinida!</h4>
+      <p class="text-muted mb-4" style="font-size: 14px;">
+        Sua senha foi alterada com sucesso. Agora você já pode fazer login com a nova senha.
+      </p>
+      <button class="btn btn-primary w-100" (click)="irParaLogin()">Ir para o login</button>
+    </div>
+
+  </div>
+</div>

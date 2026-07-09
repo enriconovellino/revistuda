@@ -26,9 +26,7 @@ export class TelaLoginComponent implements OnInit {
 
   mostrarSenhaLogin = false;
   mostrarSenhaCadastro = false;
-
-  perfilSelecionado = 'ALUNO_CRIANCA';
-
+  perfilSelecionado: string = 'ALUNO_CRIANCA';
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     senha: ['', [Validators.required]]
@@ -70,9 +68,13 @@ export class TelaLoginComponent implements OnInit {
 
     this.registerForm.reset({
       permission: this.perfilSelecionado
-    });
 
+      
+    });
   }
+  irParaEsqueciSenha() {
+  this.router.navigate(['/esqueci-senha']);
+}
 
   async onLogin() {
 

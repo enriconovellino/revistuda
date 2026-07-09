@@ -6,6 +6,7 @@ import { PermissionsGuard } from './infrastructure/guards/permissions.guard';
 import { RolesInterceptor } from './infrastructure/interceptors/roles.interceptor';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { AuthService } from './application/services/auth.service';
+import { MailerService } from '@/shared/infrastructure/mailer/mailer.service';
 
 @Global()
 @Module({
@@ -20,6 +21,7 @@ import { AuthService } from './application/services/auth.service';
   controllers: [AuthController],
   providers: [
     AuthService,
+    MailerService,
     PermissionsGuard,
     {
       provide: APP_INTERCEPTOR,

@@ -20,6 +20,8 @@ model User {
   refreshToken String?
   approved     Boolean  @default(true)
   turmas       Turma[]
+  resetPasswordToken    String?
+  resetPasswordExpires  DateTime?
 }
 
 model Modulo {
