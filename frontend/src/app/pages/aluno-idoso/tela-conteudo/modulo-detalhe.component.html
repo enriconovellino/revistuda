@@ -9,13 +9,18 @@
     <nav class="sidebar-nav">
       <ul class="nav flex-column gap-1">
         <li class="nav-item">
-          <a class="nav-link" (click)="irParaDashboard()">
+          <a class="nav-link" (click)="irParaView('home')">
             Dashboard
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active">
-            Meus Módulos
+          <a class="nav-link active" (click)="irParaView('modulos')">
+            Módulos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="irParaView('atividades')">
+            Atividades
           </a>
         </li>
       </ul>
