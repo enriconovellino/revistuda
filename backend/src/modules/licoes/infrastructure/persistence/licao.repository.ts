@@ -5,7 +5,7 @@ import { Licao } from '../../domain/entities/licao.entity';
 
 @Injectable()
 export class LicaoRepository implements ILicaoRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(licao: Licao): Promise<Licao> {
     const created = await this.prisma.licao.create({
@@ -23,8 +23,27 @@ export class LicaoRepository implements ILicaoRepository {
     );
   }
 
-  async findAll(): Promise<Licao[]> {
-    const licoes = await this.prisma.licao.findMany();
+  async findAll(userId?: number): Promise<Licao[]> {
+    let whereCondicao = {};
+    if (userId) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { turmas: true }
+      });
+
+      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+        const turmaIds = user.turmas.map(t => t.turma_id);
+        whereCondicao = {
+          modulo: {
+            turma_id: { in: turmaIds }
+          }
+        };
+      }
+    }
+
+    const licoes = await this.prisma.licao.findMany({
+      where: whereCondicao
+    });
     return licoes.map((l) => new Licao(
       l.licao_id,
       l.titulo_licao,

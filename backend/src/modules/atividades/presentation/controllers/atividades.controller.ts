@@ -35,11 +35,14 @@ export class AtividadesController {
     return AtividadePresenter.toPresentation(atividade);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Listar todas as atividades' })
   @ApiResponse({ status: 200, description: 'Atividades listadas com sucesso' })
-  async findAll() {
-    const atividades = await this.getAllAtividadesUseCase.execute();
+  async findAll(@Request() req) {
+    const userId = req.user.sub;
+    const atividades = await this.getAllAtividadesUseCase.execute(userId);
     return AtividadePresenter.toCollection(atividades);
   }
 

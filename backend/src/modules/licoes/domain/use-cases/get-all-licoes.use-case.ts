@@ -7,7 +7,7 @@ import { LICAO_REPOSITORY } from '../ports/licao-repository.port';
 export class GetAllLicoes {
   constructor(@Inject(LICAO_REPOSITORY) private repository: ILicaoRepository) {}
 
-  async execute(): Promise<Licao[]> {
-    return this.repository.findAll();
+  async execute(userId?: number): Promise<Licao[]> {
+    return this.repository.findAll(userId);
   }
 }

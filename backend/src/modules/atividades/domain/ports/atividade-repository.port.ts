@@ -2,7 +2,7 @@ import { Atividade, RespostaMultiplaEscolha } from '../entities/atividade.entity
 
 export interface IAtividadeRepository {
     create(atividade: Atividade): Promise<Atividade>;
-    findAll(): Promise<Atividade[]>;
+    findAll(userId?: number): Promise<Atividade[]>;
     findById(id: number): Promise<Atividade | null>;
     update(id: number, atividade: Partial<Atividade>): Promise<Atividade>;
     delete(id: number): Promise<void>;
