@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
 import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/professor.models';
+import { environment } from '../../../../environments/environment';
 
 type OpcaoId = 'a' | 'b' | 'c' | 'd';
 
@@ -79,6 +80,7 @@ export class ModuloDetalheComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private professorService = inject(ProfessorService);
   private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -608,6 +610,32 @@ export class ModuloDetalheComponent implements OnInit {
       this.actionError.set(getErrorMessage(err, 'Erro ao excluir lição.'));
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
+  }
+
+  async onFileSelected(event: any, item: ItemPar) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    try {
+      item.uploading = true;
+      this.cdr.detectChanges();
+      this.actionError.set(null);
+      const res = await this.professorService.uploadImage(file);
+      item.imagem_url = res.url;
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao enviar imagem');
+    } finally {
+      item.uploading = false;
+      this.cdr.detectChanges();
     }
   }
 

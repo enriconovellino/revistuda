@@ -197,12 +197,18 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label">URL da Imagem</label>
-              <input type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg"
-                [(ngModel)]="novaImagemUrl" name="imagemUrl" />
+              <label class="form-label">Imagem de Capa</label>
+              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" name="imagemUrl" />
+              <div *ngIf="uploadingImage()" class="mt-2 d-flex align-items-center gap-2 text-muted small">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                Enviando imagem...
+              </div>
+              <div *ngIf="novaImagemUrl && !uploadingImage()" class="mt-2 text-muted small text-truncate">
+                Imagem selecionada: <a [href]="getImageUrl(novaImagemUrl)" target="_blank">{{ novaImagemUrl }}</a>
+              </div>
             </div>
             <div class="col-12">
-              <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo()">
+              <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo() || uploadingImage()">
                 {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
               </button>
             </div>
@@ -223,7 +229,7 @@
         <div class="col">
           <div class="card h-100 shadow-sm">
             @if (modulo.imagem_url) {
-            <img [src]="modulo.imagem_url" class="card-img-top" alt="{{ modulo.titulo_modulo }}"
+            <img [src]="getImageUrl(modulo.imagem_url)" class="card-img-top" alt="{{ modulo.titulo_modulo }}"
               style="height: 180px; object-fit: cover;">
             } @else {
             <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
