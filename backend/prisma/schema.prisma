@@ -19,7 +19,9 @@ model User {
   permissions  String[] @default([])
   refreshToken String?
   approved     Boolean  @default(true)
-  turmas       Turma[]
+  turma_id     Int?
+  turma        Turma?   @relation("AlunosDaTurma", fields: [turma_id], references: [turma_id])
+  turmasComoProfessor Turma[] @relation("ProfessorDaTurma")
   resetPasswordToken    String?
   resetPasswordExpires  DateTime?
   tentativasAssociacao TentativaAssociacao[]
@@ -43,7 +45,8 @@ model Turma {
   descricao_turma  String?
   capacidade_maxima Int?
   professor_id     Int?
-  professor        User?    @relation(fields: [professor_id], references: [id])
+  professor        User?    @relation("ProfessorDaTurma", fields: [professor_id], references: [id])
+  alunos           User[]   @relation("AlunosDaTurma")
   modulos          Modulo[]
 }
 

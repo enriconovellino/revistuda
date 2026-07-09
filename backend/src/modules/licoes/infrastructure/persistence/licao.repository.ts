@@ -28,15 +28,13 @@ export class LicaoRepository implements ILicaoRepository {
     if (userId) {
       const user = await this.prisma.user.findUnique({
         where: { id: userId },
-        include: { turmas: true }
       });
 
       if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
-        const turmaIds = user.turmas.map(t => t.turma_id);
         whereCondicao = {
           modulo: {
-            turma_id: { in: turmaIds }
-          }
+            turma_id: user.turma_id ?? -1,
+          },
         };
       }
     }

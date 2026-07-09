@@ -94,7 +94,7 @@ export class AuthService {
         });
       }
       connection = {
-        turmas: {
+        turma: {
           connect: { turma_id: defaultTurma.turma_id },
         },
       };
