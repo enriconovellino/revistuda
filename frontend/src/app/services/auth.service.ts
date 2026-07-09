@@ -162,7 +162,7 @@ export class AuthService {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.clear();
     }
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/']);
   }
 
   redirectUserBasedOnRole(user: User) {

@@ -22,7 +22,7 @@ export class TelaInicialComponent {
       professor: 'PROFESSOR',
       adm: 'ADM'
     };
-    this.router.navigate(['/auth'], {
+    this.router.navigate(['/login'], {
       queryParams: { permission: permissionMap[perfil] }
     });
   }

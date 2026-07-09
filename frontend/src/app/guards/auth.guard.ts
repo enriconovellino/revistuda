@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/auth']);
+  router.navigate(['/']);
   return false;
 };
 
@@ -32,7 +32,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const user = authService.getUser();
 
     if (!authService.isAuthenticated() || !user) {
-      router.navigate(['/auth']);
+      router.navigate(['/']);
       return false;
     }
 
