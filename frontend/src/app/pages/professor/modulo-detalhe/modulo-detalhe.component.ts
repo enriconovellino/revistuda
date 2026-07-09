@@ -15,6 +15,10 @@ interface AtividadeFormOpcoes {
   d: string;
 }
 
+function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
 @Component({
   selector: 'app-modulo-detalhe',
   standalone: true,
@@ -129,8 +133,8 @@ export class ModuloDetalheComponent implements OnInit {
       });
       this.atividadesForLicao.set(mappedAtividades);
 
-    } catch (err: any) {
-      this.error.set(err.message || 'Erro ao carregar os dados do módulo.');
+    } catch (err: unknown) {
+      this.error.set(getErrorMessage(err, 'Erro ao carregar os dados do módulo.'));
     } finally {
       this.loading.set(false);
     }
@@ -187,8 +191,8 @@ export class ModuloDetalheComponent implements OnInit {
       this.newLicaoMidiaType = 'Texto';
 
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao criar lição.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao criar lição.'));
     } finally {
       this.saving.set(false);
     }
@@ -234,8 +238,8 @@ export class ModuloDetalheComponent implements OnInit {
 
       this.activeAddContentLicaoId.set(null);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao adicionar conteúdo.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao adicionar conteúdo.'));
     } finally {
       this.saving.set(false);
     }
@@ -278,8 +282,8 @@ export class ModuloDetalheComponent implements OnInit {
 
       this.activeEditContentId.set(null);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao atualizar conteúdo.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao atualizar conteúdo.'));
     } finally {
       this.saving.set(false);
     }
@@ -440,8 +444,8 @@ export class ModuloDetalheComponent implements OnInit {
 
       this.activeAddAtividadeLicaoId.set(null);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao adicionar atividade.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao adicionar atividade.'));
     } finally {
       this.saving.set(false);
     }
@@ -537,8 +541,8 @@ export class ModuloDetalheComponent implements OnInit {
 
       this.activeEditAtividadeId.set(null);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao atualizar atividade.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao atualizar atividade.'));
     } finally {
       this.saving.set(false);
     }
@@ -554,8 +558,8 @@ export class ModuloDetalheComponent implements OnInit {
       this.saving.set(true);
       await this.professorService.deleteAtividade(atividadeId);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao excluir atividade.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao excluir atividade.'));
     } finally {
       this.saving.set(false);
     }
@@ -571,8 +575,8 @@ export class ModuloDetalheComponent implements OnInit {
       this.saving.set(true);
       await this.professorService.deleteConteudo(conteudoId);
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao excluir conteúdo.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
     } finally {
       this.saving.set(false);
     }
@@ -600,8 +604,8 @@ export class ModuloDetalheComponent implements OnInit {
       await this.professorService.deleteLicao(licaoId);
 
       await this.loadData();
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao excluir lição.');
+    } catch (err: unknown) {
+      this.actionError.set(getErrorMessage(err, 'Erro ao excluir lição.'));
     } finally {
       this.saving.set(false);
     }
