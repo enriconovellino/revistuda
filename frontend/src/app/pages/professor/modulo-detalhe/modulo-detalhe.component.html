@@ -272,10 +272,43 @@
                                 *ngIf="opcao.correta">Correta</span>
                             </li>
                           </ul>
+
+                          <div *ngIf="atividade.tipo_atividade === 'associacao_imagens' && atividade.relacoes_corretas?.length" class="mt-2 small text-muted">
+                            <div class="fw-semibold text-dark mb-1">Pares de Associação:</div>
+                            <ul class="mb-0 ps-3">
+                              <li *ngFor="let rel of atividade.relacoes_corretas">
+                                <span *ngIf="atividade.itens_esquerdos">
+                                  <span *ngFor="let left of atividade.itens_esquerdos">
+                                    <span *ngIf="left.item_associacao_id === rel.item_1_id">
+                                      <span *ngIf="left.tipo === 'texto'">"{{ left.texto }}"</span>
+                                      <span *ngIf="left.tipo === 'imagem'">🖼️ Imagem (URL: {{ left.imagem_url }})</span>
+                                    </span>
+                                  </span>
+                                </span>
+                                &nbsp;↔&nbsp;
+                                <span *ngIf="atividade.itens_direitos">
+                                  <span *ngFor="let right of atividade.itens_direitos">
+                                    <span *ngIf="right.item_associacao_id === rel.item_2_id">
+                                      <span *ngIf="right.tipo === 'texto'">"{{ right.texto }}"</span>
+                                      <span *ngIf="right.tipo === 'imagem'">🖼️ Imagem (URL: {{ right.imagem_url }})</span>
+                                    </span>
+                                  </span>
+                                </span>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
 
                         <div *ngIf="activeEditAtividadeId() === atividade.atividade_id">
                           <h6 class="fw-bold mb-3 small text-dark">Editar Atividade</h6>
+
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Tipo de Atividade <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-sm" [(ngModel)]="editAtividadeTipo">
+                              <option value="multipla_escolha">Múltipla Escolha</option>
+                              <option value="associacao_imagens">Associação de Imagens</option>
+                            </select>
+                          </div>
 
                           <div class="mb-3">
                             <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
@@ -287,7 +320,7 @@
                             <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editAtividadeEnunciado"></textarea>
                           </div>
 
-                          <div class="mb-2">
+                          <div class="mb-2" *ngIf="editAtividadeTipo === 'multipla_escolha'">
                             <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
                             <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
                               <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>
@@ -298,6 +331,44 @@
                                 [value]="id" [(ngModel)]="editAtividadeRespostaCorreta" title="Marcar como correta" />
                             </div>
                             <small class="text-muted">Selecione o radio da opção correta.</small>
+                          </div>
+
+                          <div class="mb-3" *ngIf="editAtividadeTipo === 'associacao_imagens'">
+                            <label class="form-label small fw-semibold text-dark d-flex justify-content-between align-items-center">
+                              Pares de Associação (mín. 2)
+                              <button type="button" class="btn btn-xs btn-outline-primary" (click)="addParToEditForm()">+ Par</button>
+                            </label>
+                            
+                            <div class="d-flex flex-column gap-2">
+                              <div class="p-2 border rounded bg-light" *ngFor="let par of editAtividadePares; let i = index">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                  <span class="small fw-bold text-dark">Par #{{ i + 1 }}</span>
+                                  <button type="button" class="btn btn-link text-danger p-0" style="font-size: 11px;" (click)="removeParFromEditForm(i)">Remover</button>
+                                </div>
+                                
+                                <div class="row g-2">
+                                  <div class="col-6 border-end pe-2">
+                                    <label class="small text-muted mb-1 d-block">Esquerdo</label>
+                                    <select class="form-select form-select-xs mb-1" [(ngModel)]="par.esquerdo.tipo">
+                                      <option value="texto">Texto</option>
+                                      <option value="imagem">Imagem (URL)</option>
+                                    </select>
+                                    <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" />
+                                    <input *ngIf="par.esquerdo.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.esquerdo.imagem_url" />
+                                  </div>
+                                  
+                                  <div class="col-6 ps-2">
+                                    <label class="small text-muted mb-1 d-block">Direito</label>
+                                    <select class="form-select form-select-xs mb-1" [(ngModel)]="par.direito.tipo">
+                                      <option value="texto">Texto</option>
+                                      <option value="imagem">Imagem (URL)</option>
+                                    </select>
+                                    <input *ngIf="par.direito.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto direito" [(ngModel)]="par.direito.texto" />
+                                    <input *ngIf="par.direito.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.direito.imagem_url" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
 
                           <div class="d-flex justify-content-end gap-2">
@@ -321,7 +392,15 @@
 
                     <div class="card mt-3 p-3 bg-light border border-dashed"
                       *ngIf="activeAddAtividadeLicaoId() === licao.licao_id" style="border-radius: 8px;">
-                      <h6 class="fw-bold mb-3 small text-dark">Nova Atividade — Múltipla Escolha</h6>
+                      <h6 class="fw-bold mb-3 small text-dark">Nova Atividade</h6>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Tipo de Atividade <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-sm" [(ngModel)]="addAtividadeTipo">
+                          <option value="multipla_escolha">Múltipla Escolha</option>
+                          <option value="associacao_imagens">Associação de Imagens</option>
+                        </select>
+                      </div>
 
                       <div class="mb-3">
                         <label class="form-label small fw-semibold text-dark">Título <span class="text-danger">*</span></label>
@@ -335,7 +414,7 @@
                           placeholder="Digite a pergunta da atividade..." [(ngModel)]="addAtividadeEnunciado"></textarea>
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-3" *ngIf="addAtividadeTipo === 'multipla_escolha'">
                         <label class="form-label small fw-semibold text-dark">Opções (mín. 2, máx. 4)</label>
                         <div class="d-flex align-items-center gap-2 mb-2" *ngFor="let id of opcaoIds; let i = index">
                           <span class="fw-bold text-muted" style="width: 16px;">{{ opcaoLabels[i] }}</span>
@@ -346,6 +425,44 @@
                             [value]="id" [(ngModel)]="addAtividadeRespostaCorreta" title="Marcar como correta" />
                         </div>
                         <small class="text-muted">Selecione o radio da opção correta.</small>
+                      </div>
+
+                      <div class="mb-3" *ngIf="addAtividadeTipo === 'associacao_imagens'">
+                        <label class="form-label small fw-semibold text-dark d-flex justify-content-between align-items-center">
+                          Pares de Associação (mín. 2)
+                          <button type="button" class="btn btn-xs btn-outline-primary" (click)="addParToAddForm()">+ Par</button>
+                        </label>
+                        
+                        <div class="d-flex flex-column gap-2">
+                          <div class="p-2 border rounded bg-light" *ngFor="let par of addAtividadePares; let i = index">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <span class="small fw-bold text-dark">Par #{{ i + 1 }}</span>
+                              <button type="button" class="btn btn-link text-danger p-0" style="font-size: 11px;" (click)="removeParFromAddForm(i)">Remover</button>
+                            </div>
+                            
+                            <div class="row g-2">
+                              <div class="col-6 border-end pe-2">
+                                <label class="small text-muted mb-1 d-block">Esquerdo</label>
+                                <select class="form-select form-select-xs mb-1" [(ngModel)]="par.esquerdo.tipo">
+                                  <option value="texto">Texto</option>
+                                  <option value="imagem">Imagem (URL)</option>
+                                </select>
+                                <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" />
+                                <input *ngIf="par.esquerdo.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.esquerdo.imagem_url" />
+                              </div>
+                              
+                              <div class="col-6 ps-2">
+                                <label class="small text-muted mb-1 d-block">Direito</label>
+                                <select class="form-select form-select-xs mb-1" [(ngModel)]="par.direito.tipo">
+                                  <option value="texto">Texto</option>
+                                  <option value="imagem">Imagem (URL)</option>
+                                </select>
+                                <input *ngIf="par.direito.tipo === 'texto'" type="text" class="form-control form-control-xs" placeholder="Texto direito" [(ngModel)]="par.direito.texto" />
+                                <input *ngIf="par.direito.tipo === 'imagem'" type="text" class="form-control form-control-xs" placeholder="URL da imagem" [(ngModel)]="par.direito.imagem_url" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <div class="d-flex justify-content-end gap-2">

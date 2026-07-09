@@ -30,6 +30,14 @@ export interface Atividade {
   licao_id: number;
 }
 
+export interface MultiplaEscolha extends Atividade {
+  tipo_atividade: 'multipla_escolha';
+}
+
+export interface AssociacaoImagens extends Atividade {
+  tipo_atividade: 'associacao_imagens';
+}
+
 export interface DashboardData {
   modulos: Modulo[];
   licoes: Licao[];
