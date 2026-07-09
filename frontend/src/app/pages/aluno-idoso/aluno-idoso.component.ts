@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
 import { Modulo, Licao, Atividade } from '../../model/aluno.model';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
@@ -66,12 +66,21 @@ export class AlunoIdosoComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private alunoService: AlunoService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
     const user = this.authService.getUser();
     if (user) this.userName.set(user.nome);
+
+    this.route.queryParamMap.subscribe(params => {
+      const view = params.get('view');
+      if (view === 'atividades' || view === 'modulos' || view === 'home') {
+        this.currentView.set(view);
+      }
+    });
+
     await this.loadData();
   }
 
@@ -95,8 +104,12 @@ export class AlunoIdosoComponent implements OnInit {
   }
 
   acessarModulo(moduloId: number) {
-  this.router.navigate(['/aluno-idoso/modulo', moduloId]);
-}
+    this.router.navigate(['/aluno-idoso/modulo', moduloId]);
+  }
+
+  fazerAtividade(atividadeId: number) {
+    this.router.navigate(['/aluno-idoso/atividade', atividadeId]);
+  }
 
   changeFontSize(offset: number) {
     const next = parseFloat((this.fontSize() + offset).toFixed(1));

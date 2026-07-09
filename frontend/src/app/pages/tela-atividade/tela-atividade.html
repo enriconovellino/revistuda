@@ -1,0 +1,117 @@
+<div class="tela-atividade" [style.font-size.rem]="fontSize()">
+
+  <header class="atividade-header">
+    <button class="btn-voltar" (click)="voltarParaAtividades()" id="btn-voltar">
+      ← Voltar
+    </button>
+
+    <div class="header-titulo">
+      <h1 class="mb-0">Atividade</h1>
+      @if (atividade()) {
+        <small class="text-muted">{{ atividade()!.titulo_atividade }}</small>
+      }
+    </div>
+
+    <div class="font-controls">
+      <span class="text-muted small fw-semibold">Texto:</span>
+      <button class="font-btn" (click)="changeFontSize(-0.1)" title="Diminuir Texto">A-</button>
+      <button class="font-btn" (click)="changeFontSize(0.1)" title="Aumentar Texto">A+</button>
+    </div>
+  </header>
+
+  <main class="atividade-conteudo">
+
+    @if (isLoading()) {
+      <div class="estado-centro">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3 text-muted">Carregando atividade...</p>
+      </div>
+    }
+
+    @if (hasError() && !isLoading()) {
+      <div class="estado-centro">
+        <div class="alert alert-danger">
+          Não foi possível carregar esta atividade.
+        </div>
+        <button class="btn-primary-custom mt-3" (click)="voltarParaAtividades()">
+          Voltar para atividades
+        </button>
+      </div>
+    }
+
+    @if (!isLoading() && !hasError() && atividade()) {
+      <div class="atividade-card">
+
+        <div class="atividade-meta">
+          <span class="badge-tipo">{{ atividade()!.tipo_atividade }}</span>
+        </div>
+
+        <h2 class="atividade-titulo">{{ atividade()!.titulo_atividade }}</h2>
+
+        @if (atividade()!.enunciado) {
+          <div class="enunciado-box">
+            <p class="enunciado-texto">{{ atividade()!.enunciado }}</p>
+          </div>
+        }
+
+        @if (opcoesOrdenadas().length > 0) {
+          <p class="instrucao">Selecione a alternativa correta:</p>
+
+          <div class="opcoes-lista">
+            @for (opcao of opcoesOrdenadas(); track opcao.opcao_id) {
+              <button
+                type="button"
+                class="opcao-item"
+                [class.selecionada]="isOpcaoSelecionada(opcao)"
+                [class.correta]="isOpcaoCorreta(opcao)"
+                [class.errada]="isOpcaoErrada(opcao)"
+                [disabled]="respostaEnviada()"
+                (click)="selecionarOpcao(opcao)"
+                [id]="'opcao-' + opcao.letra">
+                <span class="opcao-letra">{{ getLetraLabel(opcao.letra) }}</span>
+                <span class="opcao-texto">{{ opcao.texto_opcao }}</span>
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>Esta atividade ainda não possui alternativas cadastradas.</p>
+          </div>
+        }
+
+        @if (respostaEnviada()) {
+          <div class="feedback-box"
+            [class.feedback-acerto]="resultado() === 'acerto'"
+            [class.feedback-erro]="resultado() === 'erro'">
+            @if (resultado() === 'acerto') {
+              <strong>Parabéns!</strong> Você acertou a resposta.
+            } @else {
+              <strong>Quase lá!</strong> Essa não era a resposta correta. A alternativa certa está destacada em verde.
+            }
+          </div>
+        }
+
+        <div class="acoes-rodape">
+          @if (!respostaEnviada()) {
+            <button
+              class="btn-primary-custom btn-grande"
+              [disabled]="opcaoSelecionadaId() === null || opcoesOrdenadas().length === 0"
+              (click)="enviarResposta()"
+              id="btn-enviar">
+              Enviar resposta
+            </button>
+          } @else {
+            <button class="btn-outline-custom btn-grande" (click)="tentarNovamente()" id="btn-tentar">
+              Tentar novamente
+            </button>
+            <button class="btn-primary-custom btn-grande" (click)="voltarParaAtividades()" id="btn-concluir">
+              Voltar para atividades
+            </button>
+          }
+        </div>
+
+      </div>
+    }
+
+  </main>
+</div>

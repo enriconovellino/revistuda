@@ -90,6 +90,18 @@ export class AlunoService {
     }
   }
 
+  async getAtividadeById(id: number): Promise<Atividade | null> {
+    try {
+      const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
+        headers: this.getHeaders()
+      });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+
   async getDashboardData(): Promise<DashboardData> {
     const [modulos, licoes, atividades] = await Promise.all([
       this.getModulos(),
