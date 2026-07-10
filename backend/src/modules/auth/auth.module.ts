@@ -1,9 +1,8 @@
 import { Global, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '@/prisma/prisma.module';
 import { PermissionsGuard } from './infrastructure/guards/permissions.guard';
-import { RolesInterceptor } from './infrastructure/interceptors/roles.interceptor';
+import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { AuthService } from './application/services/auth.service';
 import { MailerService } from '@/shared/infrastructure/mailer/mailer.service';
@@ -19,15 +18,7 @@ import { MailerService } from '@/shared/infrastructure/mailer/mailer.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    MailerService,
-    PermissionsGuard,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: RolesInterceptor,
-    },
-  ],
-  exports: [PermissionsGuard, AuthService],
+  providers: [AuthService, MailerService, PermissionsGuard, JwtAuthGuard],
+  exports: [PermissionsGuard, JwtAuthGuard, AuthService],
 })
 export class AuthModule {}

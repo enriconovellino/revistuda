@@ -12,6 +12,8 @@ export interface Usuario {
   nome: string;
   email: string;
   permissions: string[];
+  approved?: boolean;
+  turmaId?: number | null;
 }
 
 export interface Turma {
@@ -20,6 +22,7 @@ export interface Turma {
   descricao_turma?: string;
   capacidade_maxima?: number | null;
   professor_id?: number | null;
+  totalAlunos?: number;
 }
 
 export interface Licao {

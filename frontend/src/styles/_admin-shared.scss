@@ -1,0 +1,90 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+/* Classes de card compartilhadas entre as telas do painel admin
+   (dashboard, usuários, turmas, relatórios). Ficam num parcial global
+   porque cada tela é um componente Angular separado — o encapsulamento
+   de estilo por componente não deixaria essas classes cruzarem entre eles. */
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card.primary {
+  background: $azul-escuro;
+  color: white;
+}
+
+.stat-card.accent {
+  background: $azul-medio;
+  color: white;
+}
+
+.turma-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid $azul-claro;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.turma-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.turma-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #ebf4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state {
+  padding: 2.5rem;
+  text-align: center;
+  color: #64748b;
+  background: white;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+}
+
+.occ-bar {
+  height: 8px;
+  background: #eef2f7;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.occ-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: $azul-medio;
+}
+
+.occ-bar-fill.warn {
+  background: #d97706;
+}
+
+.occ-bar-fill.full {
+  background: #dc2626;
+}

@@ -3,3 +3,4 @@ export { GetUserUseCase } from './get-user.use-case';
 export { GetAllUsersUseCase } from './get-all-users.use-case';
 export { UpdateUserUseCase } from './update-user.use-case';
 export { DeleteUserUseCase } from './delete-user.use-case';
+export { RevokeProfessorAccessUseCase } from './revoke-professor-access.use-case';

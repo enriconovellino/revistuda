@@ -1,0 +1,61 @@
+@use 'variables' as *;
+
+/* Centraliza o conteúdo do dashboard e evita que estique de ponta
+   a ponta em telas largas. */
+.dash-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  border: 1px solid #eef2f7;
+}
+
+.stat-num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: $azul-escuro;
+  line-height: 1.1;
+}
+
+.stat-num.sm {
+  font-size: 1.5rem;
+}
+
+/* Selos de ícone coloridos */
+.icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-badge svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.badge-teal { background: #0e8a80; }
+.badge-navy { background: $azul-escuro; }
+.badge-purple { background: #7c4a9c; }
+.badge-orange { background: #cf6a0e; }
+.badge-danger { background: #c62b2b; }
+
+/* Estados de atenção */
+.stat-card.attn {
+  border-color: #d97706;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 3px 0 0 #d97706;
+}
+
+.stat-card.attn-danger {
+  border-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 3px 0 0 #dc2626;
+}
