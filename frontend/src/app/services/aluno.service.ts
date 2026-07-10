@@ -117,6 +117,21 @@ export class AlunoService {
     }
   }
 
+  async responderAtividadeAssociacao(atividadeId: number, respostas: { item_1_id: number, item_2_id: number }[]): Promise<any> {
+    try {
+      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ respostas })
+      });
+      if (!response.ok) throw new Error('Falha ao registrar resposta de associação.');
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getDashboardData(): Promise<DashboardData> {
     const [modulos, licoes, atividades] = await Promise.all([
       this.getModulos(),

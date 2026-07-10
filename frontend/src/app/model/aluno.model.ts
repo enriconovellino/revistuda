@@ -20,6 +20,18 @@ export interface OpcaoAtividade {
   correta: boolean;
 }
 
+export interface ItemAssociacao {
+  item_associacao_id: number;
+  tipo: 'texto' | 'imagem';
+  texto?: string;
+  imagem_url?: string;
+}
+
+export interface RelacaoCorreta {
+  item_1_id: number;
+  item_2_id: number;
+}
+
 export interface Atividade {
   atividade_id: number;
   titulo_atividade: string;
@@ -27,6 +39,9 @@ export interface Atividade {
   tipo_atividade: string;
   enunciado?: string | null;
   opcoes?: OpcaoAtividade[];
+  itens_esquerdos?: ItemAssociacao[];
+  itens_direitos?: ItemAssociacao[];
+  relacoes_corretas?: RelacaoCorreta[];
   licao_id: number;
 }
 

@@ -300,3 +300,243 @@
     width: 100%;
   }
 }
+
+/* ==========================================
+   Estilos da Associação de Imagens/Textos
+   ========================================== */
+
+.associacao-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.associacao-coluna {
+  display: flex;
+  flex-direction: column;
+}
+
+.coluna-titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: #334155;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.itens-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.item-associacao-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.item-associacao-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 110px;
+  position: relative;
+  transition: all 0.25s ease;
+  font-size: inherit;
+  box-sizing: border-box;
+}
+
+.item-associacao-btn:hover:not(:disabled) {
+  border-color: #0f2744;
+  background: #ebf4ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.item-associacao-btn.selecionado {
+  border-color: #0f2744;
+  background: #ebf4ff;
+  box-shadow: 0 0 0 3px rgba(15, 39, 68, 0.2);
+  transform: translateY(-2px);
+}
+
+.item-associacao-btn.conectado {
+  border-color: #4f46e5;
+  background: #f5f3ff;
+}
+
+.item-associacao-btn.correto {
+  border-color: #198754;
+  background: #d1e7dd;
+}
+
+.item-associacao-btn.incorreto {
+  border-color: #dc3545;
+  background: #f8d7da;
+}
+
+.item-associacao-btn.possivel-destino {
+  border-style: dashed;
+  border-color: #3b82f6;
+  background: #f0f7ff;
+}
+
+.item-associacao-btn.possivel-destino:hover:not(:disabled) {
+  background: #dbeafe;
+  border-color: #2563eb;
+}
+
+.item-associacao-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.btn-remover-conexao {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+  font-size: 11px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  z-index: 2;
+  transition: background-color 0.2s;
+}
+
+.btn-remover-conexao:hover {
+  background-color: #dc2626;
+}
+
+.par-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: white;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.par-badge.badge-correto {
+  background: #198754;
+}
+
+.par-badge.badge-incorreto {
+  background: #dc3545;
+}
+
+.img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-height: 80px;
+  overflow: hidden;
+}
+
+.associacao-img {
+  max-height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.associacao-texto {
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* --- Feedback Gabarito --- */
+.correcao-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.correcao-titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f2744;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.correcao-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.correcao-par {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.correcao-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  min-height: 60px;
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.correcao-seta {
+  font-weight: bold;
+  color: #64748b;
+  font-size: 1.3rem;
+}
+
+.correcao-img {
+  max-height: 50px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Responsividade adicional */
+@media (max-width: 576px) {
+  .associacao-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .item-associacao-btn {
+    min-height: 90px;
+  }
+}
+

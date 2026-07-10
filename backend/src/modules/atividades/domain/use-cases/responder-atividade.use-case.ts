@@ -21,4 +21,16 @@ export class ResponderAtividadeUseCase {
       throw error;
     }
   }
+
+  async executeAssociacao(
+    alunoId: number,
+    atividadeId: number,
+    respostas: { item_1_id: number; item_2_id: number }[]
+  ): Promise<any> {
+    try {
+      return await this.atividadeRepository.saveRespostaAssociacao(alunoId, atividadeId, respostas);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
