@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
-import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/professor.models';
+import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao, ComentarioAlunoProfessor } from '../../../model/professor.models';
 
 type OpcaoId = 'a' | 'b' | 'c' | 'd';
 
@@ -33,6 +33,9 @@ export class ModuloDetalheComponent implements OnInit {
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   atividadesForLicao = signal<{ [key: number]: Atividade[] }>({});
+
+  // Comentários dos alunos, agrupados por conteúdo (igual conteudosForLicao)
+  comentariosForConteudo = signal<{ [conteudoId: number]: ComentarioAlunoProfessor[] }>({});
 
   readonly opcaoIds: OpcaoId[] = ['a', 'b', 'c', 'd'];
   readonly opcaoLabels = ['A', 'B', 'C', 'D'];
@@ -74,6 +77,9 @@ export class ModuloDetalheComponent implements OnInit {
 
   addAtividadePares: ParAssociacao[] = [];
   editAtividadePares: ParAssociacao[] = [];
+
+  // Controla qual conteúdo tem a lista de comentários expandida
+  expandedComentariosId = signal<number | null>(null);
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -133,6 +139,17 @@ export class ModuloDetalheComponent implements OnInit {
       });
       this.atividadesForLicao.set(mappedAtividades);
 
+      // Comentários dos alunos sobre os conteúdos deste módulo
+      const comentarios = await this.professorService.getComentariosPorModulo(this.moduloId);
+      const mappedComentarios: { [conteudoId: number]: ComentarioAlunoProfessor[] } = {};
+      comentarios.forEach(c => {
+        if (!mappedComentarios[c.conteudoId]) {
+          mappedComentarios[c.conteudoId] = [];
+        }
+        mappedComentarios[c.conteudoId].push(c);
+      });
+      this.comentariosForConteudo.set(mappedComentarios);
+
     } catch (err: unknown) {
       this.error.set(getErrorMessage(err, 'Erro ao carregar os dados do módulo.'));
     } finally {
@@ -148,6 +165,18 @@ export class ModuloDetalheComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${match[2]}`);
     }
     return null;
+  }
+
+  // --- Comentários dos alunos (visão do professor) ---
+
+  getComentarios(conteudoId: number): ComentarioAlunoProfessor[] {
+    return this.comentariosForConteudo()[conteudoId] || [];
+  }
+
+  toggleComentarios(conteudoId: number) {
+    this.expandedComentariosId.set(
+      this.expandedComentariosId() === conteudoId ? null : conteudoId
+    );
   }
 
   async createLicao() {
@@ -618,6 +647,10 @@ export class ModuloDetalheComponent implements OnInit {
     } else {
       this.router.navigate(['/professor'], { queryParams: { tab: 'turmas' } });
     }
+  }
+
+  verComentariosGerais() {
+    this.router.navigate(['/professor/comentarios']);
   }
 
   irParaDashboard() {

@@ -7,12 +7,14 @@ import {
   CreateTurmaUseCase,
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
+  GetDesempenhoMensalUseCase,
+  GetEstatisticasProfessorUseCase,
   GetTurmaUseCase,
   GetTurmasByProfessorUseCase,
   UpdateTurmaUseCase,
 } from '../../domain/use-cases';
 
-  @Controller('turmas')
+@Controller('turmas')
 export class TurmasController {
   constructor(
     private createTurmaUseCase: CreateTurmaUseCase,
@@ -20,7 +22,9 @@ export class TurmasController {
     private getTurmaUseCase: GetTurmaUseCase,
     private updateTurmaUseCase: UpdateTurmaUseCase,
     private deleteTurmaUseCase: DeleteTurmaUseCase,
-    private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase
+    private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase,
+    private getEstatisticasProfessorUseCase: GetEstatisticasProfessorUseCase,
+    private getDesempenhoMensalUseCase: GetDesempenhoMensalUseCase,
   ) {}
 
   @Post()
@@ -38,6 +42,18 @@ export class TurmasController {
   async findAll(): Promise<TurmaPresenter[]> {
     const turmas = await this.getAllTurmasUseCase.execute();
     return TurmaPresenter.toCollection(turmas);
+  }
+
+  @Get('estatisticas/:professorId')
+  @ApiOperation({ summary: 'Buscar estatísticas gerais do professor' })
+  async getEstatisticas(@Param('professorId', ParseIntPipe) professorId: number) {
+    return this.getEstatisticasProfessorUseCase.execute(professorId);
+  }
+
+  @Get('desempenho/:professorId')
+  @ApiOperation({ summary: 'Desempenho mensal (acertos x erros) dos alunos do professor' })
+  async getDesempenho(@Param('professorId', ParseIntPipe) professorId: number) {
+    return this.getDesempenhoMensalUseCase.execute(professorId);
   }
 
   @Get('professor/:professorId')
@@ -75,5 +91,4 @@ export class TurmasController {
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.deleteTurmaUseCase.execute(id);
   }
-
 }

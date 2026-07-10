@@ -3,8 +3,7 @@ import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 import { DashboardData, Modulo, Licao, Atividade } from '../model/aluno.model';
 
-// Conteudo não existia em aluno.model — adicionei aqui.
-// Se preferir, mova essa interface pra dentro de aluno.model.ts junto das outras.
+
 export interface Conteudo {
   conteudo_id: number;
   nome_conteudo: string;
@@ -28,6 +27,13 @@ export class AlunoService {
       'Content-Type': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     };
+  }
+
+  private getUserId(): number | null {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    const user = JSON.parse(userStr);
+    return user.id ?? user.usuario_id ?? null;
   }
 
   async getModulos(): Promise<Modulo[]> {
@@ -126,13 +132,8 @@ export class AlunoService {
     return { modulos, licoes, atividades };
   }
 
-  // --- Progresso (front-end only por enquanto, via localStorage) ---
-  // Quando existir endpoint de progresso no backend, troca essas duas
-  // funções por chamadas fetch reais mantendo a mesma assinatura.
-
   private progressKey(moduloId: number): string {
-    const userStr = localStorage.getItem('user');
-    const userId = userStr ? (JSON.parse(userStr).id ?? JSON.parse(userStr).usuario_id) : 'anon';
+    const userId = this.getUserId() ?? 'anon';
     return `progresso_modulo_${moduloId}_user_${userId}`;
   }
 
@@ -153,25 +154,38 @@ export class AlunoService {
     return atuais;
   }
 
-  // --- Comentários dos alunos sobre cada conteúdo (front-end only por enquanto) ---
-  // Igual ao progresso: quando existir endpoint no backend, troca por fetch real
-  // mantendo a mesma assinatura (get/save por conteudoId).
-
-  private commentKey(conteudoId: number): string {
-    const userStr = localStorage.getItem('user');
-    const userId = userStr ? (JSON.parse(userStr).id ?? JSON.parse(userStr).usuario_id) : 'anon';
-    return `comentario_conteudo_${conteudoId}_user_${userId}`;
-  }
-
-  getComentario(conteudoId: number): string {
-    return localStorage.getItem(this.commentKey(conteudoId)) || '';
-  }
-
-  saveComentario(conteudoId: number, texto: string): void {
-    if (texto.trim()) {
-      localStorage.setItem(this.commentKey(conteudoId), texto.trim());
-    } else {
-      localStorage.removeItem(this.commentKey(conteudoId));
+  async saveComentario(conteudoId: number, texto: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.apiUrl}/comentarios`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ conteudoId, texto: texto.trim() })
+      });
+      if (!response.ok) throw new Error('Falha ao salvar comentário.');
+    } catch (error) {
+      console.error('Erro ao salvar comentário:', error);
+      throw error;
     }
+  }
+
+  async getComentariosDoAluno(conteudoIds: number[]): Promise<{ [conteudoId: number]: string }> {
+    const resultado: { [conteudoId: number]: string } = {};
+    const userId = this.getUserId();
+    if (!userId) return resultado;
+
+    await Promise.all(conteudoIds.map(async (conteudoId) => {
+      try {
+        const response = await fetch(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`, {
+          headers: this.getHeaders()
+        });
+        if (!response.ok) return;
+        const comentarios: Array<{ texto: string; aluno: { id: number } }> = await response.json();
+        const meuComentario = comentarios.find(c => c.aluno.id === userId);
+        if (meuComentario) resultado[conteudoId] = meuComentario.texto;
+      } catch {
+      }
+    }));
+
+    return resultado;
   }
 }

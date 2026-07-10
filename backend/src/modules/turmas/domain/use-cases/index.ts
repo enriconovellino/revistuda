@@ -4,3 +4,5 @@ export * from './get-turmas-by-professor.use-case';
 export * from './get-turma.use-case';
 export * from './update-turma.use-case';
 export * from './delete-turma.use-case';
+export * from './get-estatisticas-professor.use-case';
+export * from './get-desempenho-mensal.use-case';

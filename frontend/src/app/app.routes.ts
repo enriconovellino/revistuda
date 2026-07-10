@@ -7,6 +7,7 @@ import { AdmComponent } from './pages/adm/adm.component';
 import { TelaInicialComponent } from './pages/tela-inicial/tela-inicial.component';
 import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
+import { ComentariosAlunosComponent } from './pages/professor/comentario-alunos/comentarios-alunos.component';
 import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
 import { EsqueciSenhaComponent } from './pages/tela-senha/esqueci-senha.component';
 import { RedefinirSenhaComponent } from './pages/redefinir-senha/redefinir-senha.component';
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'login-idoso', component: LoginIdosoComponent },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
+  
 
   {
     path: 'aluno-crianca',
@@ -48,6 +50,11 @@ export const routes: Routes = [
   {
     path: 'professor/modulo/:id',
     component: ModuloDetalheComponent,
+    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
+  },
+  {
+    path: 'professor/comentarios',
+    component: ComentariosAlunosComponent,
     canActivate: [authGuard, roleGuard(['PROFESSOR'])]
   },
   {
