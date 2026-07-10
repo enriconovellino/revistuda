@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-type Perfil = 'idoso' | 'crianca' | 'professor' | 'adm';
+type Perfil = 'idoso' | 'professor' | 'adm';
 
 @Component({
   selector: 'app-tela-inicial',
@@ -18,7 +18,6 @@ export class TelaInicialComponent {
     this.router.navigate(['/login-idoso']);
   } else {
     const permissionMap: Record<string, string> = {
-      crianca: 'ALUNO_CRIANCA',
       professor: 'PROFESSOR',
       adm: 'ADM'
     };

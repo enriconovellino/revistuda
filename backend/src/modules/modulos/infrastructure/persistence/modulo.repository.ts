@@ -26,7 +26,7 @@ export class ModuloRepository implements IModuloRepository {
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+      if (user && user.permissions.includes('ALUNO_IDOSO') && !user.permissions.includes('ADM')) {
         const modulos = user.turma_id
           ? await this.prisma.modulo.findMany({
               where: { turma_id: user.turma_id },

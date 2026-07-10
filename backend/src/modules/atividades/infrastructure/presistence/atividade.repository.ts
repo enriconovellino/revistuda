@@ -178,7 +178,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+      if (user && user.permissions.includes('ALUNO_IDOSO') && !user.permissions.includes('ADM')) {
         whereCondicao = {
           licao: {
             modulo: {

@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { TelaLoginComponent } from './pages/tela-login/tela-login.component';
-import { AlunoCriancaComponent } from './pages/aluno-crianca/aluno-crianca.component';
 import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
@@ -20,11 +19,6 @@ export const routes: Routes = [
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
 
-  {
-    path: 'aluno-crianca',
-    component: AlunoCriancaComponent,
-    canActivate: [authGuard, roleGuard(['ALUNO_CRIANCA'])]
-  },
   {
     path: 'aluno-idoso',
     component: AlunoIdosoComponent,

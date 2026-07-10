@@ -26,7 +26,7 @@ export class TelaLoginComponent implements OnInit {
 
   mostrarSenhaLogin = false;
   mostrarSenhaCadastro = false;
-  perfilSelecionado: string = 'ALUNO_CRIANCA';
+  perfilSelecionado: string = 'ALUNO_IDOSO';
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     senha: ['', [Validators.required]]
@@ -36,7 +36,7 @@ export class TelaLoginComponent implements OnInit {
     nome: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     senha: ['', [Validators.required, Validators.minLength(6)]],
-    permission: ['ALUNO_CRIANCA', Validators.required]
+    permission: ['ALUNO_IDOSO', Validators.required]
   });
 
   successMessage = signal('Cadastro realizado com sucesso!');

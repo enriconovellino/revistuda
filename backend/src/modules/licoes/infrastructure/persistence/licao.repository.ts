@@ -30,7 +30,7 @@ export class LicaoRepository implements ILicaoRepository {
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
+      if (user && user.permissions.includes('ALUNO_IDOSO') && !user.permissions.includes('ADM')) {
         whereCondicao = {
           modulo: {
             turma_id: user.turma_id ?? -1,
