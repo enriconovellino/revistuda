@@ -69,6 +69,10 @@ export class CreateAtividadeDto {
   @Type(() => CreateParAssociacaoDto)
   pares_associacao?: CreateParAssociacaoDto[];
 
+  @IsOptional()
+  @IsString()
+  explicacao?: string;
+
   @IsNumber()
   licao_id!: number;
 }

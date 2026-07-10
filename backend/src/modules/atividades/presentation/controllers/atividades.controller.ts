@@ -10,6 +10,7 @@ import { ResponderAtividadeUseCase } from '../../domain/use-cases/responder-ativ
 import { AtividadePresenter } from '../../application/presenters/atividade.presenter';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
+import { PrismaService } from '@/prisma/prisma.service';
 
 @Controller('atividades')
 export class AtividadesController {
@@ -19,7 +20,8 @@ export class AtividadesController {
     private getAtividadeUseCase: GetAtividadeUseCase,
     private updateAtividadeUseCase: UpdateAtividadeUseCase,
     private deleteAtividadeUseCase: DeleteAtividadeUseCase,
-    private responderAtividadeUseCase: ResponderAtividadeUseCase
+    private responderAtividadeUseCase: ResponderAtividadeUseCase,
+    private prisma: PrismaService,
   ) {}
 
   @Post()
@@ -46,13 +48,66 @@ export class AtividadesController {
     return AtividadePresenter.toCollection(atividades);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Buscar atividade por ID' })
   @ApiResponse({ status: 200, description: 'Atividade encontrada com sucesso' })
   @ApiResponse({ status: 404, description: 'Atividade não encontrada' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    const userId = req.user.sub;
     const atividade = await this.getAtividadeUseCase.execute(id);
-    return AtividadePresenter.toPresentation(atividade);
+
+    let respondidaInfo = { respondida: false, resposta: null as any };
+
+    if (atividade.tipo_atividade === 'multipla_escolha') {
+      const resposta = await this.prisma.respostaMultiplaEscolha.findFirst({
+        where: {
+          aluno_id: userId,
+          opcao: {
+            multipla_escolha: {
+              atividade_id: id,
+            },
+          },
+        },
+      });
+      if (resposta) {
+        respondidaInfo = {
+          respondida: true,
+          resposta: {
+            resposta_aluno_id: resposta.resposta_aluno_id,
+          },
+        };
+      }
+    } else if (atividade.tipo_atividade === 'associacao_imagens') {
+      const assoc = await this.prisma.associacaoImagens.findUnique({
+        where: { atividade_id: id },
+      });
+      if (assoc) {
+        const tentativa = await this.prisma.tentativaAssociacao.findFirst({
+          where: {
+            user_id: userId,
+            associacao_id: assoc.associacao_id,
+          },
+          include: {
+            respostas: true,
+          },
+        });
+        if (tentativa) {
+          respondidaInfo = {
+            respondida: true,
+            resposta: {
+              respostas: tentativa.respostas.map(r => ({
+                item_1_id: r.item_1_id,
+                item_2_id: r.item_2_id,
+              })),
+            },
+          };
+        }
+      }
+    }
+
+    return AtividadePresenter.toPresentation(atividade, respondidaInfo);
   }
 
   @Put(':id')

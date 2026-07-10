@@ -208,8 +208,15 @@
           }
         }
 
+        @if (respostaEnviada() && atividade()!.explicacao) {
+          <div class="explicacao-box mt-3 p-3 bg-light border rounded" style="margin-top: 1rem; padding: 1rem; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+            <h5 class="fw-bold mb-2 text-dark" style="font-weight: bold; margin-bottom: 0.5rem;">💡 Explicação da Resposta Correta:</h5>
+            <p class="mb-0 text-dark" style="margin-bottom: 0;">{{ atividade()!.explicacao }}</p>
+          </div>
+        }
+
         <div class="acoes-rodape">
-          @if (!respostaEnviada()) {
+          @if (!isConcluido()) {
             <button
               class="btn-primary-custom btn-grande"
               [disabled]="
@@ -221,11 +228,8 @@
               Enviar resposta
             </button>
           } @else {
-            <button class="btn-outline-custom btn-grande" (click)="tentarNovamente()" id="btn-tentar">
-              Tentar novamente
-            </button>
-            <button class="btn-primary-custom btn-grande" (click)="voltarParaAtividades()" id="btn-concluir">
-              Voltar para atividades
+            <button class="btn-primary-custom btn-grande" (click)="concluir()" id="btn-concluir">
+              Concluir
             </button>
           }
         </div>

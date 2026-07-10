@@ -223,6 +223,7 @@ export class ProfessorService {
     opcoes?: Atividade['opcoes'];
     pares_associacao?: Atividade['pares_associacao'];
     licao_id: number;
+    explicacao?: string | null;
   }): Promise<Atividade> {
     const response = await fetch(`${this.apiUrl}/atividades`, {
       method: 'POST',

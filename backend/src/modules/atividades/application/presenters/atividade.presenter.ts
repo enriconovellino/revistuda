@@ -5,7 +5,7 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export class AtividadePresenter {
-  static toPresentation(atividade: Atividade) {
+  static toPresentation(atividade: Atividade, respondidaInfo?: { respondida: boolean; resposta?: any }) {
     const isMultiplaEscolha = atividade instanceof MultiplaEscolha;
     const isAssociacaoImagens = atividade instanceof AssociacaoImagens;
 
@@ -14,7 +14,10 @@ export class AtividadePresenter {
       titulo_atividade: atividade.titulo_atividade,
       tipo_atividade: atividade.tipo_atividade,
       enunciado: atividade.enunciado || undefined,
+      explicacao: atividade.explicacao || undefined,
       licao_id: atividade.licao_id,
+      respondida: respondidaInfo?.respondida ?? false,
+      resposta_aluno: respondidaInfo?.resposta ?? null,
     };
 
     if (isMultiplaEscolha) {

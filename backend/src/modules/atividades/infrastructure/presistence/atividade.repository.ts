@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens, ItemAssociacao, AssociacaoCorreta, RespostaMultiplaEscolha } from '../../domain/entities/atividade.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IAtividadeRepository } from '../../domain/ports/atividade-repository.port';
@@ -24,6 +24,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         record.licao_id,
         record.enunciado,
         opcoes,
+        record.explicacao,
       );
     } else if (record.tipo_atividade === 'associacao_imagens') {
       const dbItens = record.associacao_imagens?.itens ?? [];
@@ -52,6 +53,8 @@ export class AtividadeRepository implements IAtividadeRepository {
         record.enunciado,
         itens,
         associacoesCorretas,
+        undefined,
+        record.explicacao,
       );
     }
     throw new Error(`Tipo de atividade desconhecido: ${record.tipo_atividade}`);
@@ -63,6 +66,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         titulo_atividade: atividade.titulo_atividade,
         tipo_atividade: atividade.tipo_atividade,
         enunciado: atividade.enunciado,
+        explicacao: atividade.explicacao,
         licao_id: atividade.licao_id,
         multipla_escolha: {
           create: {
@@ -105,6 +109,7 @@ export class AtividadeRepository implements IAtividadeRepository {
           titulo_atividade: atividade.titulo_atividade,
           tipo_atividade: atividade.tipo_atividade,
           enunciado: atividade.enunciado,
+          explicacao: atividade.explicacao,
           licao_id: atividade.licao_id,
         }
       });
@@ -258,6 +263,7 @@ export class AtividadeRepository implements IAtividadeRepository {
       titulo_atividade: atividade.titulo_atividade,
       tipo_atividade: atividade.tipo_atividade,
       enunciado: atividade.enunciado,
+      explicacao: atividade.explicacao,
       licao_id: atividade.licao_id,
     };
 
@@ -363,6 +369,24 @@ export class AtividadeRepository implements IAtividadeRepository {
   }
 
   async saveRespostaMultiplaEscolha(alunoId: number, opcaoId: number): Promise<RespostaMultiplaEscolha> {
+    const targetOpcao = await this.prisma.opcao.findUnique({
+      where: { opcao_id: opcaoId },
+      select: { multipla_escolha_id: true },
+    });
+    if (!targetOpcao) throw new NotFoundException('Opção não encontrada');
+
+    const existing = await this.prisma.respostaMultiplaEscolha.findFirst({
+      where: {
+        aluno_id: alunoId,
+        opcao: {
+          multipla_escolha_id: targetOpcao.multipla_escolha_id,
+        },
+      },
+    });
+    if (existing) {
+      throw new BadRequestException('Você já respondeu a esta atividade');
+    }
+
     const record = await this.prisma.respostaMultiplaEscolha.create({
       data: {
         aluno_id: alunoId,
@@ -382,6 +406,16 @@ export class AtividadeRepository implements IAtividadeRepository {
       where: { atividade_id: atividadeId },
     });
     if (!associacao) throw new NotFoundException('Associação de imagens não encontrada');
+
+    const existing = await this.prisma.tentativaAssociacao.findFirst({
+      where: {
+        user_id: alunoId,
+        associacao_id: associacao.associacao_id,
+      },
+    });
+    if (existing) {
+      throw new BadRequestException('Você já respondeu a esta atividade');
+    }
 
     return await this.prisma.tentativaAssociacao.create({
       data: {

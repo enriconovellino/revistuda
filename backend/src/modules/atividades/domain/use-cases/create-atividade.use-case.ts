@@ -7,6 +7,7 @@ export interface CreateAtividadeInput {
   titulo_atividade: string;
   tipo_atividade: string;
   enunciado: string | null;
+  explicacao?: string;
   licao_id: number;
   opcoes?: { texto_opcao: string; letra: string; correta: boolean }[];
   pares_associacao?: {
@@ -39,6 +40,7 @@ export class CreateAtividadeUseCase {
         input.licao_id,
         input.enunciado,
         opcoes,
+        input.explicacao,
       );
     } else if (input.tipo_atividade === 'associacao_imagens') {
       const pares = (input.pares_associacao ?? []).map(
@@ -56,6 +58,7 @@ export class CreateAtividadeUseCase {
         [],
         [],
         pares,
+        input.explicacao,
       );
     } else {
       throw new Error(`Tipo de atividade desconhecido: ${input.tipo_atividade}`);

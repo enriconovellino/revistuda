@@ -67,6 +67,7 @@ export class ModuloDetalheComponent implements OnInit {
   addAtividadeTitulo = '';
   addAtividadeTipo: string = 'multipla_escolha';
   addAtividadeEnunciado = '';
+  addAtividadeExplicacao = '';
   addAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   addAtividadeRespostaCorreta: OpcaoId = 'a';
 
@@ -74,6 +75,7 @@ export class ModuloDetalheComponent implements OnInit {
   editAtividadeTitulo = '';
   editAtividadeTipo: string = 'multipla_escolha';
   editAtividadeEnunciado = '';
+  editAtividadeExplicacao = '';
   editAtividadeOpcoes: AtividadeFormOpcoes = { a: '', b: '', c: '', d: '' };
   editAtividadeRespostaCorreta: OpcaoId = 'a';
 
@@ -388,6 +390,7 @@ export class ModuloDetalheComponent implements OnInit {
       this.addAtividadeTitulo = '';
       this.addAtividadeTipo = 'multipla_escolha';
       this.addAtividadeEnunciado = '';
+      this.addAtividadeExplicacao = '';
       this.addAtividadeOpcoes = this.emptyAtividadeOpcoes();
       this.addAtividadeRespostaCorreta = 'a';
       this.addAtividadePares = [];
@@ -482,6 +485,7 @@ export class ModuloDetalheComponent implements OnInit {
         titulo_atividade: this.addAtividadeTitulo.trim(),
         tipo_atividade: this.addAtividadeTipo,
         enunciado: this.addAtividadeEnunciado.trim(),
+        explicacao: this.addAtividadeExplicacao.trim(),
         opcoes: opcoes,
         pares_associacao: pares_associacao,
         licao_id: licaoId,
@@ -500,6 +504,7 @@ export class ModuloDetalheComponent implements OnInit {
     this.activeEditAtividadeId.set(atividade.atividade_id);
     this.editAtividadeTitulo = atividade.titulo_atividade;
     this.editAtividadeTipo = atividade.tipo_atividade;
+    this.editAtividadeExplicacao = atividade.explicacao || '';
 
     const form = this.fillFormFromAtividade(atividade);
     this.editAtividadeEnunciado = form.enunciado;
@@ -591,6 +596,7 @@ export class ModuloDetalheComponent implements OnInit {
         titulo_atividade: this.editAtividadeTitulo.trim(),
         tipo_atividade: this.editAtividadeTipo,
         enunciado: this.editAtividadeEnunciado.trim(),
+        explicacao: this.editAtividadeExplicacao.trim(),
         opcoes: opcoes,
         pares_associacao: pares_associacao,
       });

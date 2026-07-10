@@ -7,6 +7,7 @@ export interface UpdateAtividadeInput {
   titulo_atividade?: string;
   tipo_atividade?: string;
   enunciado?: string | null;
+  explicacao?: string | null;
   opcoes?: { texto_opcao: string; letra: string; correta: boolean }[];
   pares_associacao?: {
     esquerdo: { tipo: string; texto?: string; imagem_url?: string };
@@ -45,7 +46,8 @@ export class UpdateAtividadeUseCase {
         input.titulo_atividade ?? atividade.titulo_atividade,
         input.licao_id ?? atividade.licao_id,
         input.enunciado !== undefined ? input.enunciado : atividade.enunciado,
-        domainOpcoes
+        domainOpcoes,
+        input.explicacao !== undefined ? input.explicacao : atividade.explicacao,
       );
     } else if (tipo === 'associacao_imagens') {
       const pares = input.pares_associacao
@@ -64,7 +66,8 @@ export class UpdateAtividadeUseCase {
         input.enunciado !== undefined ? input.enunciado : atividade.enunciado,
         (atividade instanceof AssociacaoImagens ? atividade.itens : []),
         (atividade instanceof AssociacaoImagens ? atividade.associacoes_corretas : []),
-        pares
+        pares,
+        input.explicacao !== undefined ? input.explicacao : atividade.explicacao,
       );
     } else {
       throw new Error(`Tipo de atividade desconhecido: ${tipo}`);

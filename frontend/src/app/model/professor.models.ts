@@ -77,6 +77,7 @@ export interface Atividade {
   itens_direitos?: ItemAssociacao[];
   relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
   licao_id: number;
+  explicacao?: string;
 }
 
 export interface MultiplaEscolha extends Atividade {

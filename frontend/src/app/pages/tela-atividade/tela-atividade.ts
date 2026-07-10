@@ -29,6 +29,7 @@ export class TelaAtividade implements OnInit {
 
   respostaEnviada = signal(false);
   resultado = signal<ResultadoAtividade>(null);
+  isConcluido = signal(false);
 
   opcoesOrdenadas = computed(() => {
     const opcoes = this.atividade()?.opcoes ?? [];
@@ -65,7 +66,36 @@ export class TelaAtividade implements OnInit {
         return;
       }
       this.atividade.set(atividade);
-    } catch {
+
+      if (atividade.respondida) {
+        this.respostaEnviada.set(true);
+        this.isConcluido.set(true);
+
+        if (atividade.tipo_atividade === 'multipla_escolha' && atividade.resposta_aluno) {
+          const respOpcaoId = atividade.resposta_aluno.resposta_aluno_id;
+          this.opcaoSelecionadaId.set(respOpcaoId);
+          const opcao = atividade.opcoes?.find(o => o.opcao_id === respOpcaoId);
+          this.resultado.set(opcao?.correta ? 'acerto' : 'erro');
+        } else if (atividade.tipo_atividade === 'associacao_imagens' && atividade.resposta_aluno) {
+          const conexoesMap = new Map<number, number>();
+          const respRespostas = atividade.resposta_aluno.respostas || [];
+          respRespostas.forEach((r: any) => {
+            conexoesMap.set(r.item_1_id, r.item_2_id);
+          });
+          this.conexoes.set(conexoesMap);
+
+          const relacoes = atividade.relacoes_corretas ?? [];
+          let totalCorretas = 0;
+          for (const [leftId, rightId] of conexoesMap.entries()) {
+            const correta = relacoes.some(r => r.item_1_id === leftId && r.item_2_id === rightId);
+            if (correta) totalCorretas++;
+          }
+          const acertoCompleto = totalCorretas === relacoes.length;
+          this.resultado.set(acertoCompleto ? 'acerto' : 'erro');
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao carregar atividade:', e);
       this.hasError.set(true);
     } finally {
       this.isLoading.set(false);
@@ -196,6 +226,7 @@ export class TelaAtividade implements OnInit {
 
       try {
         await this.alunoService.responderAtividadeMultiplaEscolha(atividade.atividade_id, selecionadaId);
+        this.isConcluido.set(true);
       } catch (error) {
         console.error('Erro ao salvar resposta no banco:', error);
       }
@@ -221,6 +252,7 @@ export class TelaAtividade implements OnInit {
 
       try {
         await this.alunoService.responderAtividadeAssociacao(atividade.atividade_id, respostasFormatadas);
+        this.isConcluido.set(true);
       } catch (error) {
         console.error('Erro ao salvar resposta de associação no banco:', error);
       }
@@ -233,6 +265,14 @@ export class TelaAtividade implements OnInit {
 
   voltarParaAtividades() {
     this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'atividades' } });
+  }
+
+  concluir() {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    } else {
+      this.router.navigate(['/aluno-idoso']);
+    }
   }
 
   changeFontSize(offset: number) {
@@ -282,5 +322,6 @@ export class TelaAtividade implements OnInit {
     this.conexoes.set(new Map());
     this.respostaEnviada.set(false);
     this.resultado.set(null);
+    this.isConcluido.set(false);
   }
 }

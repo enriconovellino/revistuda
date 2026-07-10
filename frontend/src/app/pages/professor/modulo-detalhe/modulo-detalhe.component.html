@@ -458,6 +458,12 @@
                             </div>
                           </div>
 
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Explicação da Resposta Correta <span class="text-muted">(Aparecerá para o aluno após a conclusão)</span></label>
+                            <textarea class="form-control form-control-sm" rows="2"
+                              placeholder="Explique por que esta resposta é a correta..." [(ngModel)]="editAtividadeExplicacao" name="editAtividadeExplicacao"></textarea>
+                          </div>
+
                           <div class="d-flex justify-content-end gap-2">
                             <button class="btn btn-sm btn-outline-secondary"
                               (click)="cancelEditAtividade()">Cancelar</button>
@@ -587,6 +593,12 @@
                             </div>
                           </div>
                         </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-dark">Explicação da Resposta Correta <span class="text-muted">(Aparecerá para o aluno após a conclusão)</span></label>
+                        <textarea class="form-control form-control-sm" rows="2"
+                          placeholder="Explique por que esta resposta é a correta..." [(ngModel)]="addAtividadeExplicacao" name="addAtividadeExplicacao"></textarea>
                       </div>
 
                       <div class="d-flex justify-content-end gap-2">

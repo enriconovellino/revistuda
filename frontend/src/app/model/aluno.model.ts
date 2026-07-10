@@ -43,6 +43,9 @@ export interface Atividade {
   itens_direitos?: ItemAssociacao[];
   relacoes_corretas?: RelacaoCorreta[];
   licao_id: number;
+  explicacao?: string;
+  respondida?: boolean;
+  resposta_aluno?: any;
 }
 
 export interface MultiplaEscolha extends Atividade {
