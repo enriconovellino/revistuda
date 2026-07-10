@@ -26,6 +26,7 @@ model User {
   resetPasswordExpires  DateTime?
   tentativasAssociacao TentativaAssociacao[]
   respostasMultiplaEscolha RespostaMultiplaEscolha[]
+  comentarios  ComentarioAluno[]   
 }
 
 model Modulo {
@@ -58,6 +59,7 @@ model Conteudo {
   texto_conteudo String?
   licao_id       Int
   licao          Licao   @relation(fields: [licao_id], references: [licao_id])
+  comentarios    ComentarioAluno[] 
 }
 
 model Licao {
@@ -164,4 +166,18 @@ model RespostaAssociacao {
   item_2                  ItemAssociacao       @relation("RespItem2", fields: [item_2_id], references: [item_associacao_id], onDelete: Cascade)
 
   @@id([tentativa_associacao_id, item_1_id, item_2_id])
+}
+
+model ComentarioAluno {
+  id           Int      @id @default(autoincrement())
+  texto        String
+  alunoId      Int
+  conteudoId   Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  aluno        User     @relation(fields: [alunoId], references: [id])
+  conteudo     Conteudo @relation(fields: [conteudoId], references: [conteudo_id])
+
+  @@unique([alunoId, conteudoId]) 
 }

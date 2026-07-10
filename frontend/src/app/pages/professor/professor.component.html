@@ -6,20 +6,28 @@
     </div>
 
     <nav class="sidebar-nav">
-      <ul class="nav flex-column gap-1">
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="paginaAtual() === 'dashboard'" (click)="irPara('dashboard')">
-            Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'"
-            (click)="irParaTurmas()">
-            Turmas
-          </a>
-        </li>
-      </ul>
-    </nav>
+  <ul class="nav flex-column gap-1">
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'dashboard'" (click)="irPara('dashboard')">
+        <i class="fi fi-rr-apps-add"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'"
+        (click)="irParaTurmas()">
+        <i class="fi fi-rr-users"></i>
+        <span>Turmas</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center gap-2" (click)="irParaComentarios()">
+        <i class="fi fi-rr-document-signed"></i>
+        <span>Comentários</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
     <div class="sidebar-footer">
       <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()"> Sair</button>
@@ -28,7 +36,14 @@
 
   <div class="flex-grow-1" style="margin-left: 240px;">
     <div class="main-header d-flex justify-content-between align-items-center">
-      <input type="text" class="form-control w-25" placeholder=" Buscar módulos...">
+      <div class="search-box d-flex align-items-center">
+  <i class="fi fi-bs-search search-icon"></i>
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Buscar módulos..."
+  >
+</div>
       <div class="d-flex align-items-center gap-3">
         <span style="cursor:pointer;"></span>
         <span style="cursor:pointer;"></span>
@@ -58,52 +73,83 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 class="mb-0 fw-bold">Painel de Controle</h4>
-          <small class="text-muted">Bem-vindo de volta, Prof. {{ userName() }}!</small>
         </div>
         <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="irParaTurmas()">
           Selecionar Turma
         </button>
       </div>
 
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="text-muted small mb-1">Total de Módulos</div>
-            <div class="fs-2 fw-bold" style="color: #0f2744;">{{ modulos().length }}</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card primary">
-            <div class="small mb-1 opacity-75">Módulos Fáceis</div>
-            <div class="fs-2 fw-bold">{{ contarDificuldade('fácil') }}</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="text-muted small mb-1">Módulos Difíceis</div>
-            <div class="fs-2 fw-bold text-danger">{{ contarDificuldade('difícil') }}</div>
-          </div>
-        </div>
+     <div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-icon-v2">
+        <i class="fi fi-sr-users-alt"></i>
       </div>
+      <div>
+        <div class="mb-1" style="color: #93c5fd; font-size:1.20rem;">Turmas Ativas</div>
+        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalTurmas }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-icon-v2">
+        <i class="fi fi-sr-graduation-cap"></i>
+      </div>
+      <div>
+        <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Total de Alunos</div>
+        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalAlunos }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card-v2">
+      <div class="stat-icon-v2">
+        <i class="fi fi-sr-pencil"></i>
+      </div>
+      <div>
+        <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Respostas Entregues</div>
+        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalRespostas }}</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <div class="row g-4">
+      <div class="row g-4 align-items-stretch">
 
-        <div class="col-md-7">
-          <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold mb-0">Desempenho Geral</h6>
-              <select class="form-select form-select-sm w-auto">
-                <option>Últimos 30 dias</option>
-                <option>Últimos 7 dias</option>
-              </select>
-            </div>
+    <div class="col-md-7">
+  <div class="chart-card h-100 d-flex flex-column">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="fw-bold mb-0">Desempenho Geral</h6>
+    <select class="form-select form-select-sm w-auto">
+      <option>Últimos 30 dias</option>
+      <option>Últimos 7 dias</option>
+    </select>
+  </div>
 
-            <canvas id="graficoDesempenho" height="200"></canvas>
-          </div>
-        </div>
+  <div style="position: relative; height: 220px; flex-shrink: 0;">
+    <canvas id="graficoDesempenho"></canvas>
+  </div>
+
+  <div class="d-flex justify-content-center gap-4 mt-3">
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 12px; height: 12px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+      <div class="small text-muted">Acertos: <strong style="color: #0f2744;">{{ estatisticas().acertos }}</strong></div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 12px; height: 12px; border-radius: 50%; background: #dc2626; display: inline-block;"></span>
+      <div class="small text-muted">Erros: <strong style="color: #0f2744;">{{ estatisticas().erros }}</strong></div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; display: inline-block;"></span>
+      <div class="small text-muted">Não Respondeu: <strong style="color: #0f2744;">{{ estatisticas().naoRespondeu }}</strong></div>
+    </div>
+  </div>
+</div>
+</div>
 
         <div class="col-md-5">
-          <div class="chart-card">
+          <div class="chart-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="fw-bold mb-0">Meus Módulos</h6>
               <a class="text-primary small" style="cursor:pointer;" (click)="irParaTurmas()">Ver turmas</a>

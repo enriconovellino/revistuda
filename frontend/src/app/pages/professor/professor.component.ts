@@ -1,8 +1,9 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, OnInit, AfterViewInit, signal, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Modulo, Turma, Usuario } from '../../model/professor.models';
+import { Chart, registerables } from 'chart.js';
+import { Modulo, Turma, Usuario, EstatisticasProfessor } from '../../model/professor.models';
 import { ProfessorService } from '../../services/professor.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
@@ -15,7 +16,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './professor.component.html',
   styleUrl: './professor.component.scss',
 })
-export class ProfessorComponent implements OnInit {
+export class ProfessorComponent implements OnInit, AfterViewInit {
   userName = signal<string>('Professor');
   isEditProfileOpen = signal<boolean>(false);
   modulos = signal<Modulo[]>([]);
@@ -35,6 +36,15 @@ export class ProfessorComponent implements OnInit {
   salvandoModulo = signal<boolean>(false);
   erroModulo = signal<string | null>(null);
   moduloEmEdicao = signal<Modulo | null>(null);
+  estatisticas = signal<EstatisticasProfessor>({
+    totalTurmas: 0,
+    totalAlunos: 0,
+    totalRespostas: 0,
+    acertos: 0,
+    erros: 0,
+    naoRespondeu: 0,
+  });
+  private graficoChart: Chart | null = null;
   uploadingImage = signal<boolean>(false);
 
   novoTituloModulo = '';
@@ -48,7 +58,8 @@ export class ProfessorComponent implements OnInit {
     private router: Router,
     private professorService: ProfessorService,
     private route: ActivatedRoute,
-  ) {}
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) { }
 
   async ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -62,11 +73,19 @@ export class ProfessorComponent implements OnInit {
       }
       await this.carregarDados();
 
+      if (this.userId) {
+        this.carregarEstatisticas(this.userId);
+      }
+
       this.route.queryParams.subscribe(async params => {
         const tab = params['tab'];
         const turmaId = params['turmaId'];
         if (tab) {
           this.paginaAtual.set(tab);
+          if (tab === 'dashboard') {
+            // garante que o <canvas> já foi (re)criado pelo Angular antes de desenhar
+            setTimeout(() => this.renderizarGrafico(), 0);
+          }
         }
         if (turmaId && this.userId) {
           try {
@@ -83,6 +102,12 @@ export class ProfessorComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.renderizarGrafico();
+    }
+  }
+
   async carregarDados() {
     try {
       this.loading.set(true);
@@ -96,17 +121,104 @@ export class ProfessorComponent implements OnInit {
     }
   }
 
+  async carregarEstatisticas(professorId: number) {
+    try {
+      const stats = await this.professorService.getEstatisticas(professorId);
+      this.estatisticas.set(stats);
+      this.renderizarGrafico();
+    } catch (err: unknown) {
+      console.error('Erro ao carregar estatísticas:', err instanceof Error ? err.message : err);
+    }
+  }
+
+  private renderizarGrafico() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const canvas = document.getElementById('graficoDesempenho') as HTMLCanvasElement | null;
+    if (!canvas) {
+      return;
+    }
+
+    const stats = this.estatisticas();
+    const valores = [stats.acertos, stats.erros, stats.naoRespondeu];
+    const total = valores.reduce((soma, v) => soma + v, 0);
+
+    if (this.graficoChart) {
+      this.graficoChart.destroy();
+      this.graficoChart = null;
+    }
+
+    Chart.register(...registerables);
+
+    const percentPlugin = {
+      id: 'percentLabels',
+      afterDatasetsDraw: (chart: Chart) => {
+        const { ctx } = chart;
+        chart.getDatasetMeta(0).data.forEach((bar: any, index: number) => {
+          const valor = valores[index];
+          const percent = total > 0 ? Math.round((valor / total) * 100) : 0;
+          ctx.save();
+          ctx.font = 'bold 13px Inter, sans-serif';
+          ctx.fillStyle = '#0f2744';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${percent}%`, bar.x, bar.y - 8);
+          ctx.restore();
+        });
+      },
+    };
+
+    this.graficoChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: ['Acertos', 'Erros', 'Não Respondeu'],
+        datasets: [
+          {
+            data: valores,
+            backgroundColor: ['#16a34a', '#dc2626', '#94a3b8'],
+            borderRadius: 6,
+            barThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: { top: 24 },
+        },
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        },
+      },
+      plugins: [percentPlugin],
+    });
+  }
+
   irPara(pagina: string) {
     if (pagina !== 'modulos') {
       this.resetarFormularioModulo();
     }
     this.paginaAtual.set(pagina);
+
+    if (pagina === 'dashboard') {
+      // o Angular só recria o <canvas> no próximo ciclo de detecção de mudanças,
+      // então adiamos a chamada pra garantir que ele já existe no DOM
+      setTimeout(() => this.renderizarGrafico(), 0);
+    }
   }
 
   irParaTurmas() {
     this.resetarFormularioModulo();
     this.turmaSelecionada.set(null);
     this.paginaAtual.set('turmas');
+  }
+  irParaComentarios() {
+    this.router.navigate(['/professor/comentarios']);
   }
 
   selecionarTurma(turma: Turma) {

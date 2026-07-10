@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Modulo, Turma, Licao, Conteudo, Atividade } from '../model/professor.models';
+import { Modulo, Turma, Licao, Conteudo, Atividade, ComentarioAlunoProfessor, ComentarioResumoProfessor } from '../model/professor.models';
 import { AuthService } from './auth.service';
-
+import { EstatisticasProfessor } from '../model/professor.models';
+import { DesempenhoMensal } from '../model/professor.models';
 @Injectable({
   providedIn: 'root',
 })
@@ -17,7 +18,26 @@ export class ProfessorService {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
-
+  async getEstatisticas(professorId: number): Promise<EstatisticasProfessor> {
+    const response = await fetch(`${this.apiUrl}/turmas/estatisticas/${professorId}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar estatísticas');
+    }
+    return data as EstatisticasProfessor;
+  }
+  async getDesempenhoMensal(professorId: number): Promise<DesempenhoMensal[]> {
+    const response = await fetch(`${this.apiUrl}/turmas/desempenho/${professorId}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar desempenho mensal');
+    }
+    return data as DesempenhoMensal[];
+  }
   async getModulos(): Promise<Modulo[]> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       headers: this.getHeaders(),
@@ -258,5 +278,30 @@ export class ProfessorService {
       throw new Error(data.message || 'Erro ao fazer upload da imagem');
     }
     return data;
+  }
+
+  // --- Comentários dos alunos sobre os conteúdos (visão do professor) ---
+
+  async getComentariosPorModulo(moduloId: number): Promise<ComentarioAlunoProfessor[]> {
+    const response = await fetch(`${this.apiUrl}/comentarios/modulo/${moduloId}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar comentários dos alunos');
+    }
+    return data as ComentarioAlunoProfessor[];
+  }
+
+  // Resumo geral: todos os comentários de todas as turmas do professor logado
+  async getComentariosGerais(): Promise<ComentarioResumoProfessor[]> {
+    const response = await fetch(`${this.apiUrl}/comentarios/professor`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar comentários dos alunos');
+    }
+    return data as ComentarioResumoProfessor[];
   }
 }

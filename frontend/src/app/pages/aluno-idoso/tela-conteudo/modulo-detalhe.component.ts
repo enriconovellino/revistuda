@@ -21,7 +21,11 @@ export class AlunoModuloDetalheComponent implements OnInit {
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   licoesConcluidas = signal<number[]>([]);
+
   comentarios = signal<{ [conteudoId: number]: string }>({});
+
+  comentarioSalvo = signal<{ [conteudoId: number]: string }>({});
+
   comentarioSalvoId = signal<number | null>(null);
   editandoComentario = signal<{ [conteudoId: number]: boolean }>({});
 
@@ -78,12 +82,11 @@ export class AlunoModuloDetalheComponent implements OnInit {
       });
       this.conteudosForLicao.set(mappedConteudos);
 
-      const comentariosCarregados: { [conteudoId: number]: string } = {};
-      allConteudos.forEach(c => {
-        const texto = this.alunoService.getComentario(c.conteudo_id);
-        if (texto) comentariosCarregados[c.conteudo_id] = texto;
-      });
+      const conteudoIds = allConteudos.map(c => c.conteudo_id);
+      const comentariosCarregados = await this.alunoService.getComentariosDoAluno(conteudoIds);
+    
       this.comentarios.set(comentariosCarregados);
+      this.comentarioSalvo.set(comentariosCarregados);
 
       this.licoesConcluidas.set(this.alunoService.getLicoesConcluidas(this.moduloId));
 
@@ -117,6 +120,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
     return this.licoesConcluidas().length;
   }
 
+  
   getComentario(conteudoId: number): string {
     return this.comentarios()[conteudoId] || '';
   }
@@ -126,18 +130,28 @@ export class AlunoModuloDetalheComponent implements OnInit {
   }
 
   estaEditandoComentario(conteudoId: number): boolean {
-    const jaTemComentario = !!this.getComentario(conteudoId);
+    const jaSalvou = !!this.comentarioSalvo()[conteudoId];
     const editando = this.editandoComentario()[conteudoId];
-    // se ainda não tem comentário salvo, sempre mostra o campo aberto
-    return !jaTemComentario || !!editando;
+
+    return !jaSalvou || !!editando;
   }
 
   abrirEdicaoComentario(conteudoId: number) {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
 
-  salvarComentario(conteudoId: number) {
-    this.alunoService.saveComentario(conteudoId, this.getComentario(conteudoId));
+  async salvarComentario(conteudoId: number) {
+    const texto = this.getComentario(conteudoId);
+
+    try {
+      await this.alunoService.saveComentario(conteudoId, texto);
+    } catch {
+    
+      return;
+    }
+
+    this.comentarioSalvo.update(atual => ({ ...atual, [conteudoId]: texto }));
+
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: false }));
     this.comentarioSalvoId.set(conteudoId);
     setTimeout(() => {

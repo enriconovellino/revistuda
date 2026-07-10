@@ -91,3 +91,38 @@ export interface AssociacaoImagens extends Atividade {
   itens_direitos?: ItemAssociacao[];
   relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
 }
+export interface ComentarioAlunoProfessor {
+  id: number;
+  texto: string;
+  alunoId: number;
+  conteudoId: number;
+  createdAt: string;
+  updatedAt: string;
+  aluno: { id: number; nome: string };
+  conteudo: { conteudo_id: number; nome_conteudo: string; licao_id: number };
+}
+
+export interface ComentarioResumoProfessor {
+  id: number;
+  texto: string;
+  createdAt: string;
+  updatedAt: string;
+  aluno: { id: number; nome: string };
+  conteudo: { conteudo_id: number; nome_conteudo: string };
+  licao: { licao_id: number; titulo_licao: string };
+  modulo: { modulo_id: number; titulo_modulo: string };
+  turma: { turma_id: number; nome_turma: string };
+}
+export interface EstatisticasProfessor {
+  totalTurmas: number;
+  totalAlunos: number;
+  totalRespostas: number;
+  acertos: number;
+  erros: number;
+  naoRespondeu: number;
+}
+export interface DesempenhoMensal {
+  mes: string;
+  acertos: number;
+  erros: number;
+}
