@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsInt, IsOptional, IsString, ValidateIf } from 'class-validator';
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
@@ -19,4 +19,9 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   senha?: string;
+
+  @ValidateIf((o) => o.turma_id !== null)
+  @IsInt()
+  @IsOptional()
+  turma_id?: number | null;
 }

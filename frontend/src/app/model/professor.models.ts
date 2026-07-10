@@ -1,3 +1,6 @@
+// Limite global de alunos por turma — espelha MAX_ALUNOS_POR_TURMA do backend.
+export const MAX_ALUNOS_POR_TURMA = 10;
+
 export interface Modulo {
   modulo_id: number;
   titulo_modulo: string;

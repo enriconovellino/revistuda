@@ -68,7 +68,7 @@ async function main() {
     data: {
       nome_turma: 'Turma A - Ensino Fundamental',
       descricao_turma: 'Alunos do 5º ano matutino.',
-      capacidade_maxima: 30,
+      capacidade_maxima: 10,
       professor_id: professor.id,
     },
   });
@@ -77,7 +77,7 @@ async function main() {
     data: {
       nome_turma: 'Turma B - Inclusão Digital (EJA)',
       descricao_turma: 'Alunos do Ensino de Jovens e Adultos no período noturno.',
-      capacidade_maxima: 20,
+      capacidade_maxima: 10,
       professor_id: professor.id,
     },
   });

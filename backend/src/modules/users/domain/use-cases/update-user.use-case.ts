@@ -12,6 +12,7 @@ export interface UpdateUserInput {
   senha?: string;
   permissions?: string[];
   approved?: boolean;
+  turma_id?: number | null;
 }
 
 @Injectable()

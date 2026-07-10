@@ -40,6 +40,21 @@ export class TurmaService {
     return await response.json();
   }
 
+  async deleteTurma(id: number): Promise<void> {
+    const response = await fetch(`${this.apiUrl}/turmas/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+    if (!response.ok) {
+      let message = 'Falha ao excluir turma';
+      try {
+        const errData = await response.json();
+        message = errData.message || message;
+      } catch { }
+      throw new Error(message);
+    }
+  }
+
   async createTurma(data: { nome_turma: string; descricao_turma?: string; capacidade_maxima?: number | null; professor_id?: number | null }): Promise<Turma> {
     const response = await fetch(`${this.apiUrl}/turmas`, {
       method: 'POST',

@@ -1,14 +1,15 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
-import { Turma, Usuario } from '../../../model/professor.models';
+import { MAX_ALUNOS_POR_TURMA, Turma, Usuario } from '../../../model/professor.models';
+import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-turmas-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
   templateUrl: './turmas-admin.component.html',
   styleUrl: './turmas-admin.component.scss'
 })
@@ -33,6 +34,21 @@ export class TurmasAdminComponent implements OnInit {
   selectedProfessorForTurma: { [key: number]: number } = {};
   selectedCapacityForTurma: { [key: number]: number | null } = {};
 
+  turmaParaExcluir = signal<Turma | null>(null);
+  deleteLoading = signal<boolean>(false);
+
+  menuAbertoId = signal<number | null>(null);
+
+  toggleMenu(turmaId: number, event: Event) {
+    event.stopPropagation();
+    this.menuAbertoId.set(this.menuAbertoId() === turmaId ? null : turmaId);
+  }
+
+  @HostListener('document:click')
+  fecharMenus() {
+    this.menuAbertoId.set(null);
+  }
+
   filteredTurmas = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const filtro = this.activeFilter();
@@ -51,17 +67,22 @@ export class TurmasAdminComponent implements OnInit {
     this.activeFilter.set(this.activeFilter() === filtro ? null : filtro);
   }
 
+  readonly maxAlunos = MAX_ALUNOS_POR_TURMA;
+
+  capacidadeEfetiva(turma: Turma): number {
+    return Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
+  }
+
   isCheia(turma: Turma): boolean {
-    return turma.capacidade_maxima != null && (turma.totalAlunos ?? 0) >= turma.capacidade_maxima;
+    return (turma.totalAlunos ?? 0) >= this.capacidadeEfetiva(turma);
   }
 
   temVagas(turma: Turma): boolean {
-    return turma.capacidade_maxima == null || (turma.totalAlunos ?? 0) < turma.capacidade_maxima;
+    return (turma.totalAlunos ?? 0) < this.capacidadeEfetiva(turma);
   }
 
   ocupacaoPercentual(turma: Turma): number {
-    if (!turma.capacidade_maxima) return 0;
-    const percentual = ((turma.totalAlunos ?? 0) / turma.capacidade_maxima) * 100;
+    const percentual = ((turma.totalAlunos ?? 0) / this.capacidadeEfetiva(turma)) * 100;
     return Math.min(100, Math.round(percentual));
   }
 
@@ -124,6 +145,10 @@ export class TurmasAdminComponent implements OnInit {
     this.actionError.set(null);
     const profId = this.selectedProfessorForTurma[turmaId];
     const capacity = this.selectedCapacityForTurma[turmaId];
+    if (capacity != null && (capacity < 1 || capacity > MAX_ALUNOS_POR_TURMA)) {
+      this.actionError.set(`A capacidade deve ser entre 1 e ${MAX_ALUNOS_POR_TURMA} alunos.`);
+      return;
+    }
     try {
       this.loading.set(true);
       await this.turmaService.updateTurma(turmaId, {
@@ -151,11 +176,54 @@ export class TurmasAdminComponent implements OnInit {
     }
   }
 
+  pedirExclusaoTurma(turma: Turma) {
+    this.actionError.set(null);
+    this.turmaParaExcluir.set(turma);
+  }
+
+  cancelarExclusaoTurma() {
+    if (this.deleteLoading()) return;
+    this.turmaParaExcluir.set(null);
+  }
+
+  mensagemExclusaoTurma(): string {
+    const turma = this.turmaParaExcluir();
+    if (!turma) return '';
+    const alunos = turma.totalAlunos ?? 0;
+    const alunosTexto = alunos > 0
+      ? ` ${alunos} aluno(s) ficará(ão) sem turma.`
+      : '';
+    return `Excluir a turma "${turma.nome_turma}"? Essa ação não pode ser desfeita.${alunosTexto}`;
+  }
+
+  async confirmarExclusaoTurma() {
+    const turma = this.turmaParaExcluir();
+    if (!turma) return;
+
+    this.deleteLoading.set(true);
+    this.actionError.set(null);
+    try {
+      await this.turmaService.deleteTurma(turma.turma_id);
+      this.turmaParaExcluir.set(null);
+      await this.loadData();
+    } catch (err: any) {
+      this.turmaParaExcluir.set(null);
+      this.actionError.set(err.message || 'Erro ao excluir turma');
+    } finally {
+      this.deleteLoading.set(false);
+    }
+  }
+
   async createTurma() {
     this.actionError.set(null);
     const nome = this.newTurmaNome().trim();
     if (!nome) {
       this.actionError.set('O nome da turma é obrigatório.');
+      return;
+    }
+    const capacidade = this.newTurmaCapacidade();
+    if (capacidade != null && (capacidade < 1 || capacidade > MAX_ALUNOS_POR_TURMA)) {
+      this.actionError.set(`A capacidade deve ser entre 1 e ${MAX_ALUNOS_POR_TURMA} alunos.`);
       return;
     }
 

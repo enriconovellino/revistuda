@@ -43,3 +43,32 @@
   padding-top: 0.85rem;
   padding-bottom: 0.85rem;
 }
+
+.turma-select {
+  max-width: 220px;
+  min-width: 150px;
+  border-radius: 8px;
+}
+
+.turma-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 280px;
+}
+
+.turma-tag {
+  background: #eaf4ff;
+  color: $azul-escuro;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.turma-tag--mais {
+  background: #eef2f7;
+  color: #475569;
+  cursor: default;
+}
