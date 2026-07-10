@@ -5,11 +5,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlunoService, Conteudo } from '../../../services/aluno.service';
 import { Modulo, Licao } from '../../../model/aluno.model';
+import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-aluno-modulo-detalhe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditarPerfilComponent],
   templateUrl: './modulo-detalhe.component.html',
   styleUrl: './modulo-detalhe.component.css',
 })
@@ -157,5 +158,19 @@ export class AlunoModuloDetalheComponent implements OnInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  isEditProfileOpen = signal<boolean>(false);
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 }
