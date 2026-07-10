@@ -44,14 +44,7 @@ async function main() {
     },
   });
 
-  await prisma.user.create({
-    data: {
-      nome: 'Lucas Silva (Criança)',
-      email: 'lucas@revistuda.com.br',
-      senha: defaultPasswordHash,
-      permissions: ['ALUNO_CRIANCA'],
-    },
-  });
+
 
   await prisma.user.create({
     data: {

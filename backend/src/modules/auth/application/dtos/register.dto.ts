@@ -25,14 +25,14 @@ export class RegisterDto {
   senha!: string;
 
   @ApiProperty({
-    example: 'ALUNO_CRIANCA',
+    example: 'ALUNO_IDOSO',
     description: 'Permissão do usuário',
-    enum: ['ALUNO_CRIANCA', 'ALUNO_IDOSO', 'PROFESSOR', 'ADM'],
+    enum: ['ALUNO_IDOSO', 'PROFESSOR', 'ADM'],
   })
   @IsString()
-  @IsIn(['ALUNO_CRIANCA', 'ALUNO_IDOSO', 'PROFESSOR', 'ADM'], {
+  @IsIn(['ALUNO_IDOSO', 'PROFESSOR', 'ADM'], {
     message:
-      'A permissão deve ser uma das seguintes: ALUNO_CRIANCA, ALUNO_IDOSO, PROFESSOR, ADM',
+      'A permissão deve ser uma das seguintes: ALUNO_IDOSO, PROFESSOR, ADM',
   })
   permission!: string;
 }

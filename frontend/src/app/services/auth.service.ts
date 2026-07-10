@@ -173,8 +173,6 @@ export class AuthService {
       this.router.navigate(['/professor']);
     } else if (permissions.includes('ALUNO_IDOSO')) {
       this.router.navigate(['/aluno-idoso']);
-    } else if (permissions.includes('ALUNO_CRIANCA')) {
-      this.router.navigate(['/aluno-crianca']);
     } else {
       this.logout();
     }

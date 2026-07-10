@@ -181,9 +181,7 @@ export class AtividadeRepository implements IAtividadeRepository {
       if (user) {
         const isAdm = user.permissions.includes('ADM');
         const isAluno =
-          (user.permissions.includes('ALUNO_IDOSO') ||
-            user.permissions.includes('ALUNO_CRIANCA')) &&
-          !isAdm;
+          user.permissions.includes('ALUNO_IDOSO') && !isAdm;
         const isProfessor =
           user.permissions.includes('PROFESSOR') && !isAdm;
 

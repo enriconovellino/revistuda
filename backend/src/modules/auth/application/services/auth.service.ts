@@ -83,7 +83,7 @@ export class AuthService {
     const approved = registerDto.permission !== 'PROFESSOR';
 
     let connection: any = {};
-    if (registerDto.permission === 'ALUNO_IDOSO' || registerDto.permission === 'ALUNO_CRIANCA') {
+    if (registerDto.permission === 'ALUNO_IDOSO') {
       let defaultTurma = await this.prisma.turma.findFirst();
       if (!defaultTurma) {
         defaultTurma = await this.prisma.turma.create({

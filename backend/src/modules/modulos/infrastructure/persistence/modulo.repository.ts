@@ -5,7 +5,7 @@ import { Modulo } from '../../domain/entities/modulo.entity';
 
 @Injectable()
 export class ModuloRepository implements IModuloRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(modulo: Modulo): Promise<Modulo> {
     const created = await this.prisma.modulo.create({
@@ -31,9 +31,7 @@ export class ModuloRepository implements IModuloRepository {
       if (user) {
         const isAdm = user.permissions.includes('ADM');
         const isAluno =
-          (user.permissions.includes('ALUNO_IDOSO') ||
-            user.permissions.includes('ALUNO_CRIANCA')) &&
-          !isAdm;
+          user.permissions.includes('ALUNO_IDOSO') && !isAdm;
         const isProfessor =
           user.permissions.includes('PROFESSOR') && !isAdm;
 
