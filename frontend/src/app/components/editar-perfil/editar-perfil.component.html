@@ -38,6 +38,11 @@
           <input type="password" class="form-control" placeholder="Repita a nova senha" [ngModel]="confirmSenha()" (ngModelChange)="confirmSenha.set($event)" name="confirmSenha" [disabled]="loading()" />
         </div>
 
+        <div class="mb-3" *ngIf="senha() || confirmSenha()">
+          <label class="form-label small fw-bold text-dark">Senha Atual</label>
+          <input type="password" class="form-control" placeholder="Digite sua senha atual" [ngModel]="senhaAtual()" (ngModelChange)="senhaAtual.set($event)" name="senhaAtual" [disabled]="loading()" />
+        </div>
+
         <div class="d-flex justify-content-end gap-2 mt-4">
           <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="onCancel()" [disabled]="loading()">Cancelar</button>
           <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="loading()">
