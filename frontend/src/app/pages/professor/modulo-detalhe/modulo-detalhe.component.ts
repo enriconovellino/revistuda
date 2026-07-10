@@ -430,7 +430,18 @@ export class ModuloDetalheComponent implements OnInit {
           return;
         }
       }
-      pares_associacao = this.addAtividadePares;
+      pares_associacao = this.addAtividadePares.map(p => ({
+        esquerdo: {
+          tipo: p.esquerdo.tipo,
+          texto: p.esquerdo.tipo === 'texto' ? p.esquerdo.texto : undefined,
+          imagem_url: p.esquerdo.tipo === 'imagem' ? p.esquerdo.imagem_url : undefined,
+        },
+        direito: {
+          tipo: p.direito.tipo,
+          texto: p.direito.tipo === 'texto' ? p.direito.texto : undefined,
+          imagem_url: p.direito.tipo === 'imagem' ? p.direito.imagem_url : undefined,
+        }
+      }));
     }
 
     try {
@@ -528,7 +539,18 @@ export class ModuloDetalheComponent implements OnInit {
           return;
         }
       }
-      pares_associacao = this.editAtividadePares;
+      pares_associacao = this.editAtividadePares.map(p => ({
+        esquerdo: {
+          tipo: p.esquerdo.tipo,
+          texto: p.esquerdo.tipo === 'texto' ? p.esquerdo.texto : undefined,
+          imagem_url: p.esquerdo.tipo === 'imagem' ? p.esquerdo.imagem_url : undefined,
+        },
+        direito: {
+          tipo: p.direito.tipo,
+          texto: p.direito.tipo === 'texto' ? p.direito.texto : undefined,
+          imagem_url: p.direito.tipo === 'imagem' ? p.direito.imagem_url : undefined,
+        }
+      }));
     }
 
     try {

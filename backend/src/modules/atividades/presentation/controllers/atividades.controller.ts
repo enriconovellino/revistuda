@@ -90,4 +90,21 @@ export class AtividadesController {
     const resposta = await this.responderAtividadeUseCase.execute(alunoId, opcaoId);
     return resposta;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/responder-associacao')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Responder a uma atividade de associação de imagens' })
+  @ApiParam({ name: 'id', description: 'ID da atividade', type: Number })
+  @ApiResponse({ status: 201, description: 'Resposta de associação salva com sucesso' })
+  @ApiResponse({ status: 401, description: 'Token inválido ou não informado' })
+  async responderAssociacao(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('respostas') respostas: { item_1_id: number, item_2_id: number }[],
+    @Request() req
+  ) {
+    const alunoId = req.user.sub;
+    const resposta = await this.responderAtividadeUseCase.executeAssociacao(alunoId, id, respostas);
+    return resposta;
+  }
 }
