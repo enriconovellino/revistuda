@@ -84,21 +84,23 @@ export class ModuloDetalheComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          this.userName.set(user.nome);
+        }
       }
-    }
 
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.moduloId = Number(id);
-        this.loadData();
-      }
-    });
+      this.route.paramMap.subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.moduloId = Number(id);
+          this.loadData();
+        }
+      });
+    }
   }
 
   async loadData() {

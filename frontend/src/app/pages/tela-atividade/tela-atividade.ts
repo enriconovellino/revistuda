@@ -40,15 +40,17 @@ export class TelaAtividade implements OnInit {
   private alunoService = inject(AlunoService);
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.carregarAtividade(Number(id));
-      } else {
-        this.hasError.set(true);
-        this.isLoading.set(false);
-      }
-    });
+    if (typeof window !== 'undefined') {
+      this.route.paramMap.subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.carregarAtividade(Number(id));
+        } else {
+          this.hasError.set(true);
+          this.isLoading.set(false);
+        }
+      });
+    }
   }
 
   async carregarAtividade(id: number) {

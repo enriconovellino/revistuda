@@ -14,7 +14,7 @@ export class ProfessorService {
     const token = this.authService.getAccessToken();
     return {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
 
@@ -248,7 +248,7 @@ export class ProfessorService {
     const response = await fetch(`${this.apiUrl}/uploads`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: formData,
     });
