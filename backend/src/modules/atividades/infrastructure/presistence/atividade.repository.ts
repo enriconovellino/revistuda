@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Atividade, Opcao, MultiplaEscolha, AssociacaoImagens, ItemAssociacao, AssociacaoCorreta, RespostaMultiplaEscolha } from '../../domain/entities/atividade.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IAtividadeRepository } from '../../domain/ports/atividade-repository.port';
@@ -178,14 +178,30 @@ export class AtividadeRepository implements IAtividadeRepository {
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
-        whereCondicao = {
-          licao: {
-            modulo: {
-              turma_id: user.turma_id ?? -1,
+      if (user) {
+        const isAdm = user.permissions.includes('ADM');
+        const isAluno =
+          user.permissions.includes('ALUNO_IDOSO') && !isAdm;
+        const isProfessor =
+          user.permissions.includes('PROFESSOR') && !isAdm;
+
+        if (isAluno) {
+          whereCondicao = {
+            licao: {
+              modulo: {
+                turma_id: user.turma_id ?? -1,
+              },
             },
-          },
-        };
+          };
+        } else if (isProfessor) {
+          whereCondicao = {
+            licao: {
+              modulo: {
+                turma: { professor_id: userId },
+              },
+            },
+          };
+        }
       }
     }
 
@@ -359,5 +375,28 @@ export class AtividadeRepository implements IAtividadeRepository {
       record.resposta_aluno_id,
       record.data_resposta,
     );
+  }
+
+  async saveRespostaAssociacao(alunoId: number, atividadeId: number, respostas: { item_1_id: number, item_2_id: number }[]): Promise<any> {
+    const associacao = await this.prisma.associacaoImagens.findUnique({
+      where: { atividade_id: atividadeId },
+    });
+    if (!associacao) throw new NotFoundException('Associação de imagens não encontrada');
+
+    return await this.prisma.tentativaAssociacao.create({
+      data: {
+        user_id: alunoId,
+        associacao_id: associacao.associacao_id,
+        respostas: {
+          create: respostas.map(r => ({
+            item_1_id: r.item_1_id,
+            item_2_id: r.item_2_id,
+          }))
+        }
+      },
+      include: {
+        respostas: true
+      }
+    });
   }
 }

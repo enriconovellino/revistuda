@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import type { IUserRepository } from '../ports/user-repository.port';
 import { USER_REPOSITORY } from '../ports/user-repository.port';
@@ -10,6 +10,7 @@ export interface UpdateUserInput {
   nome?: string;
   email?: string;
   senha?: string;
+  senha_atual?: string;
   permissions?: string[];
   approved?: boolean;
 }
@@ -22,8 +23,19 @@ export class UpdateUserUseCase implements UseCase<UpdateUserInput, User> {
   ) {}
 
   async execute(input: UpdateUserInput): Promise<User> {
-    const { id, ...updateData } = input;
+    const { id, senha_atual, ...updateData } = input;
     if (updateData.senha) {
+      if (!senha_atual) {
+        throw new BadRequestException('A senha atual é necessária para alterar a senha.');
+      }
+      const user = await this.userRepository.findById(id);
+      if (!user) {
+        throw new NotFoundException('Usuário não encontrado.');
+      }
+      const match = await bcrypt.compare(senha_atual, user.senha);
+      if (!match) {
+        throw new BadRequestException('A senha atual inserida está incorreta.');
+      }
       updateData.senha = await bcrypt.hash(updateData.senha, 10);
     }
     return this.userRepository.update(id, updateData);

@@ -10,6 +10,7 @@ import { ConteudosModule } from './modules/conteudos/conteudos.module';
 import { LicoesModule } from './modules/licoes/licoes.module';
 import { AtividadesModule } from './modules/atividades/atividades.module';
 import { ComentariosModule } from './modules/comentarios/comentarios.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -22,8 +23,8 @@ import { ComentariosModule } from './modules/comentarios/comentarios.module';
     AtividadesModule,
     LicoesModule,
     ComentariosModule,
-  ],
+    UploadsModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

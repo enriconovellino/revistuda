@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
 import { Modulo, Licao, Atividade } from '../../model/aluno.model';
 import { Router, ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
@@ -71,17 +72,19 @@ export class AlunoIdosoComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const user = this.authService.getUser();
-    if (user) this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      const user = this.authService.getUser();
+      if (user) this.userName.set(user.nome);
 
-    this.route.queryParamMap.subscribe(params => {
-      const view = params.get('view');
-      if (view === 'atividades' || view === 'modulos' || view === 'home') {
-        this.currentView.set(view);
-      }
-    });
+      this.route.queryParamMap.subscribe(params => {
+        const view = params.get('view');
+        if (view === 'atividades' || view === 'modulos' || view === 'home') {
+          this.currentView.set(view);
+        }
+      });
 
-    await this.loadData();
+      await this.loadData();
+    }
   }
 
   async loadData() {
@@ -132,6 +135,14 @@ export class AlunoIdosoComponent implements OnInit {
   getDificuldadeClass(dificuldade: string): string {
     const map: Record<string, string> = { FACIL: 'badge-facil', MEDIO: 'badge-medio', DIFICIL: 'badge-dificil' };
     return map[dificuldade?.toUpperCase()] ?? 'badge-facil';
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
   }
 
   abrirEditarPerfil() {

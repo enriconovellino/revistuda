@@ -23,6 +23,7 @@ export class EditarPerfilComponent implements OnInit {
   email = signal<string>('');
   senha = signal<string>('');
   confirmSenha = signal<string>('');
+  senhaAtual = signal<string>('');
 
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -45,6 +46,7 @@ export class EditarPerfilComponent implements OnInit {
     }
     this.senha.set('');
     this.confirmSenha.set('');
+    this.senhaAtual.set('');
     this.error.set(null);
     this.success.set(false);
   }
@@ -80,6 +82,11 @@ export class EditarPerfilComponent implements OnInit {
       return;
     }
 
+    if (this.senha() && !this.senhaAtual().trim()) {
+      this.error.set('A senha atual é obrigatória para alterar a senha.');
+      return;
+    }
+
     try {
       this.loading.set(true);
       const updateData: any = {
@@ -89,20 +96,19 @@ export class EditarPerfilComponent implements OnInit {
 
       if (this.senha()) {
         updateData.senha = this.senha();
+        updateData.senha_atual = this.senhaAtual();
       }
 
       const res = await this.userService.updateUser(this.user.id, updateData);
-      
-      // Update local storage
+
       if (typeof window !== 'undefined' && window.localStorage) {
         const updatedUser = { ...this.user, nome: res.nome, email: res.email };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         this.saveSuccess.emit(updatedUser);
       }
-      
+
       this.success.set(true);
-      
-      // Close after delay
+
       setTimeout(() => {
         this.close.emit();
       }, 1200);

@@ -7,6 +7,7 @@ import { Modulo, Turma, Usuario, EstatisticasProfessor } from '../../model/profe
 import { ProfessorService } from '../../services/professor.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professor',
@@ -44,6 +45,7 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
     naoRespondeu: 0,
   });
   private graficoChart: Chart | null = null;
+  uploadingImage = signal<boolean>(false);
 
   novoTituloModulo = '';
   novaDescricaoModulo = '';
@@ -60,42 +62,44 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   ) { }
 
   async ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user: Usuario = JSON.parse(userStr);
-        this.userName.set(user.nome);
-        this.userId = user.id;
-      }
-    }
-    await this.carregarDados();
-
-    if (this.userId) {
-      this.carregarEstatisticas(this.userId);
-    }
-
-    this.route.queryParams.subscribe(async params => {
-      const tab = params['tab'];
-      const turmaId = params['turmaId'];
-      if (tab) {
-        this.paginaAtual.set(tab);
-        if (tab === 'dashboard') {
-          // garante que o <canvas> já foi (re)criado pelo Angular antes de desenhar
-          setTimeout(() => this.renderizarGrafico(), 0);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user: Usuario = JSON.parse(userStr);
+          this.userName.set(user.nome);
+          this.userId = user.id;
         }
       }
-      if (turmaId && this.userId) {
-        try {
-          const turmas = await this.professorService.getTurmasByProfessor(this.userId);
-          const selected = turmas.find(t => t.turma_id === Number(turmaId));
-          if (selected) {
-            this.turmaSelecionada.set(selected);
+      await this.carregarDados();
+
+      if (this.userId) {
+        this.carregarEstatisticas(this.userId);
+      }
+
+      this.route.queryParams.subscribe(async params => {
+        const tab = params['tab'];
+        const turmaId = params['turmaId'];
+        if (tab) {
+          this.paginaAtual.set(tab);
+          if (tab === 'dashboard') {
+            // garante que o <canvas> já foi (re)criado pelo Angular antes de desenhar
+            setTimeout(() => this.renderizarGrafico(), 0);
           }
-        } catch (e) {
-          console.error('Erro ao recuperar turma selecionada:', e);
         }
-      }
-    });
+        if (turmaId && this.userId) {
+          try {
+            const turmas = await this.professorService.getTurmasByProfessor(this.userId);
+            const selected = turmas.find(t => t.turma_id === Number(turmaId));
+            if (selected) {
+              this.turmaSelecionada.set(selected);
+            }
+          } catch (e) {
+            console.error('Erro ao recuperar turma selecionada:', e);
+          }
+        }
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -340,6 +344,30 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
+  }
+
+  async onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    try {
+      this.uploadingImage.set(true);
+      this.erroModulo.set(null);
+      const res = await this.professorService.uploadImage(file);
+      this.novaImagemUrl = res.url;
+    } catch (err: any) {
+      this.erroModulo.set(err.message || 'Erro ao enviar imagem');
+    } finally {
+      this.uploadingImage.set(false);
+    }
   }
 
   private limparCamposModulo() {

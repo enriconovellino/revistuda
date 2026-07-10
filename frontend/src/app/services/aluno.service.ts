@@ -3,7 +3,6 @@ import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 import { DashboardData, Modulo, Licao, Atividade } from '../model/aluno.model';
 
-
 export interface Conteudo {
   conteudo_id: number;
   nome_conteudo: string;
@@ -19,7 +18,7 @@ export interface Conteudo {
 })
 export class AlunoService {
   private apiUrl = environment.apiUrl;
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   private getHeaders(): HeadersInit {
     const token = this.authService.getAccessToken();
@@ -116,6 +115,21 @@ export class AlunoService {
         body: JSON.stringify({ opcao_id: opcaoId })
       });
       if (!response.ok) throw new Error('Falha ao registrar resposta.');
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async responderAtividadeAssociacao(atividadeId: number, respostas: { item_1_id: number, item_2_id: number }[]): Promise<any> {
+    try {
+      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ respostas })
+      });
+      if (!response.ok) throw new Error('Falha ao registrar resposta de associação.');
       return await response.json();
     } catch (error) {
       console.error(error);

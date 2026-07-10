@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { Modulo, Turma, Licao, Conteudo, Atividade, ComentarioAlunoProfessor, ComentarioResumoProfessor } from '../model/professor.models';
 import { AuthService } from './auth.service';
 import { EstatisticasProfessor } from '../model/professor.models';
-import { DesempenhoMensal} from '../model/professor.models';
+import { DesempenhoMensal } from '../model/professor.models';
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +15,7 @@ export class ProfessorService {
     const token = this.authService.getAccessToken();
     return {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
   async getEstatisticas(professorId: number): Promise<EstatisticasProfessor> {
@@ -29,15 +29,15 @@ export class ProfessorService {
     return data as EstatisticasProfessor;
   }
   async getDesempenhoMensal(professorId: number): Promise<DesempenhoMensal[]> {
-  const response = await fetch(`${this.apiUrl}/turmas/desempenho/${professorId}`, {
-    headers: this.getHeaders(),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || 'Erro ao buscar desempenho mensal');
+    const response = await fetch(`${this.apiUrl}/turmas/desempenho/${professorId}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar desempenho mensal');
+    }
+    return data as DesempenhoMensal[];
   }
-  return data as DesempenhoMensal[];
-}
   async getModulos(): Promise<Modulo[]> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       headers: this.getHeaders(),
@@ -258,6 +258,26 @@ export class ProfessorService {
       const data = await response.json();
       throw new Error(data.message || 'Erro ao deletar atividade');
     }
+  }
+
+  async uploadImage(file: File): Promise<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = this.authService.getAccessToken();
+    const response = await fetch(`${this.apiUrl}/uploads`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao fazer upload da imagem');
+    }
+    return data;
   }
 
   // --- Comentários dos alunos sobre os conteúdos (visão do professor) ---

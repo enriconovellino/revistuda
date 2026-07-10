@@ -5,11 +5,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlunoService, Conteudo } from '../../../services/aluno.service';
 import { Modulo, Licao } from '../../../model/aluno.model';
+import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-aluno-modulo-detalhe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditarPerfilComponent],
   templateUrl: './modulo-detalhe.component.html',
   styleUrl: './modulo-detalhe.component.css',
 })
@@ -37,21 +38,23 @@ export class AlunoModuloDetalheComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          this.userName.set(user.nome);
+        }
       }
-    }
 
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.moduloId = Number(id);
-        this.loadData();
-      }
-    });
+      this.route.paramMap.subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.moduloId = Number(id);
+          this.loadData();
+        }
+      });
+    }
   }
 
   async loadData() {
@@ -171,5 +174,19 @@ export class AlunoModuloDetalheComponent implements OnInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  isEditProfileOpen = signal<boolean>(false);
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 }

@@ -1,10 +1,12 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
 import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao, ComentarioAlunoProfessor } from '../../../model/professor.models';
+import { environment } from '../../../../environments/environment';
+import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 type OpcaoId = 'a' | 'b' | 'c' | 'd';
 
@@ -22,7 +24,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-modulo-detalhe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditarPerfilComponent],
   templateUrl: './modulo-detalhe.component.html',
   styleUrl: './modulo-detalhe.component.css',
 })
@@ -85,23 +87,26 @@ export class ModuloDetalheComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private professorService = inject(ProfessorService);
   private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          this.userName.set(user.nome);
+        }
       }
-    }
 
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.moduloId = Number(id);
-        this.loadData();
-      }
-    });
+      this.route.paramMap.subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.moduloId = Number(id);
+          this.loadData();
+        }
+      });
+    }
   }
 
   async loadData() {
@@ -457,7 +462,18 @@ export class ModuloDetalheComponent implements OnInit {
           return;
         }
       }
-      pares_associacao = this.addAtividadePares;
+      pares_associacao = this.addAtividadePares.map(p => ({
+        esquerdo: {
+          tipo: p.esquerdo.tipo,
+          texto: p.esquerdo.tipo === 'texto' ? p.esquerdo.texto : undefined,
+          imagem_url: p.esquerdo.tipo === 'imagem' ? p.esquerdo.imagem_url : undefined,
+        },
+        direito: {
+          tipo: p.direito.tipo,
+          texto: p.direito.tipo === 'texto' ? p.direito.texto : undefined,
+          imagem_url: p.direito.tipo === 'imagem' ? p.direito.imagem_url : undefined,
+        }
+      }));
     }
 
     try {
@@ -555,7 +571,18 @@ export class ModuloDetalheComponent implements OnInit {
           return;
         }
       }
-      pares_associacao = this.editAtividadePares;
+      pares_associacao = this.editAtividadePares.map(p => ({
+        esquerdo: {
+          tipo: p.esquerdo.tipo,
+          texto: p.esquerdo.tipo === 'texto' ? p.esquerdo.texto : undefined,
+          imagem_url: p.esquerdo.tipo === 'imagem' ? p.esquerdo.imagem_url : undefined,
+        },
+        direito: {
+          tipo: p.direito.tipo,
+          texto: p.direito.tipo === 'texto' ? p.direito.texto : undefined,
+          imagem_url: p.direito.tipo === 'imagem' ? p.direito.imagem_url : undefined,
+        }
+      }));
     }
 
     try {
@@ -640,6 +667,32 @@ export class ModuloDetalheComponent implements OnInit {
     }
   }
 
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
+  }
+
+  async onFileSelected(event: any, item: ItemPar) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    try {
+      item.uploading = true;
+      this.cdr.detectChanges();
+      this.actionError.set(null);
+      const res = await this.professorService.uploadImage(file);
+      item.imagem_url = res.url;
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao enviar imagem');
+    } finally {
+      item.uploading = false;
+      this.cdr.detectChanges();
+    }
+  }
+
   voltar() {
     const tId = this.modulo()?.turma_id;
     if (tId) {
@@ -666,5 +719,19 @@ export class ModuloDetalheComponent implements OnInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  isEditProfileOpen = signal<boolean>(false);
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 }

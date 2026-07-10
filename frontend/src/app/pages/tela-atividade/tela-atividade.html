@@ -54,29 +54,117 @@
           </div>
         }
 
-        @if (opcoesOrdenadas().length > 0) {
-          <p class="instrucao">Selecione a alternativa correta:</p>
+        <!-- Atividade de Múltipla Escolha -->
+        @if (atividade()!.tipo_atividade === 'multipla_escolha') {
+          @if (opcoesOrdenadas().length > 0) {
+            <p class="instrucao">Selecione a alternativa correta:</p>
 
-          <div class="opcoes-lista">
-            @for (opcao of opcoesOrdenadas(); track opcao.opcao_id) {
-              <button
-                type="button"
-                class="opcao-item"
-                [class.selecionada]="isOpcaoSelecionada(opcao)"
-                [class.correta]="isOpcaoCorreta(opcao)"
-                [class.errada]="isOpcaoErrada(opcao)"
-                [disabled]="respostaEnviada()"
-                (click)="selecionarOpcao(opcao)"
-                [id]="'opcao-' + opcao.letra">
-                <span class="opcao-letra">{{ getLetraLabel(opcao.letra) }}</span>
-                <span class="opcao-texto">{{ opcao.texto_opcao }}</span>
-              </button>
+            <div class="opcoes-lista">
+              @for (opcao of opcoesOrdenadas(); track opcao.opcao_id) {
+                <button
+                  type="button"
+                  class="opcao-item"
+                  [class.selecionada]="isOpcaoSelecionada(opcao)"
+                  [class.correta]="isOpcaoCorreta(opcao)"
+                  [class.errada]="isOpcaoErrada(opcao)"
+                  [disabled]="respostaEnviada()"
+                  (click)="selecionarOpcao(opcao)"
+                  [id]="'opcao-' + opcao.letra">
+                  <span class="opcao-letra">{{ getLetraLabel(opcao.letra) }}</span>
+                  <span class="opcao-texto">{{ opcao.texto_opcao }}</span>
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p>Esta atividade ainda não possui alternativas cadastradas.</p>
+            </div>
+          }
+        }
+
+        <!-- Atividade de Associação de Imagens -->
+        @if (atividade()!.tipo_atividade === 'associacao_imagens') {
+          @if ((atividade()!.itens_esquerdos?.length ?? 0) > 0) {
+            <p class="instrucao">Selecione um item da esquerda e depois seu correspondente na direita:</p>
+
+            @if ((selectedLeftId() !== null || conexoes().size > 0) && !respostaEnviada()) {
+              <p class="instrucao-dica" style="color: #4f46e5; font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; text-align: center;">
+                💡 Clique de novo no cartão para desmarcar
+              </p>
             }
-          </div>
-        } @else {
-          <div class="empty-state">
-            <p>Esta atividade ainda não possui alternativas cadastradas.</p>
-          </div>
+
+            <div class="associacao-container">
+              <!-- Coluna Esquerda -->
+              <div class="associacao-coluna">
+                <div class="itens-lista">
+                  @for (item of atividade()!.itens_esquerdos; track item.item_associacao_id) {
+                    <div class="item-associacao-wrapper">
+                      <button
+                        type="button"
+                        class="item-associacao-btn"
+                        [class.selecionado]="isLeftItemSelected(item.item_associacao_id)"
+                        [class.conectado]="isItemEsquerdoConectado(item.item_associacao_id)"
+                        [class.correto]="respostaEnviada() && isConexaoCorreta(item.item_associacao_id)"
+                        [class.incorreto]="respostaEnviada() && isConexaoIncorreta(item.item_associacao_id)"
+                        [disabled]="respostaEnviada()"
+                        (click)="selecionarEsquerdo(item.item_associacao_id)">
+                        
+                        @if (item.tipo === 'imagem') {
+                          <div class="img-wrapper">
+                            <img [src]="getImageUrl(item.imagem_url)" alt="Imagem esquerda" class="associacao-img" />
+                          </div>
+                        } @else {
+                          <span class="associacao-texto">{{ item.texto }}</span>
+                        }
+
+                        @if (isItemEsquerdoConectado(item.item_associacao_id)) {
+                          <span class="par-badge" 
+                            [class.badge-correto]="respostaEnviada() && isConexaoCorreta(item.item_associacao_id)"
+                            [class.badge-incorreto]="respostaEnviada() && isConexaoIncorreta(item.item_associacao_id)">
+                            {{ getParBadge(item.item_associacao_id) }}
+                          </span>
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Coluna Direita -->
+              <div class="associacao-coluna">
+                <div class="itens-lista">
+                  @for (item of atividade()!.itens_direitos; track item.item_associacao_id) {
+                    <div class="item-associacao-wrapper">
+                      <button
+                        type="button"
+                        class="item-associacao-btn direito"
+                        [class.conectado]="isItemDireitoConectado(item.item_associacao_id)"
+                        [class.possivel-destino]="selectedLeftId() !== null && !isItemDireitoConectado(item.item_associacao_id)"
+                        [disabled]="respostaEnviada() || (selectedLeftId() === null && !isItemDireitoConectado(item.item_associacao_id))"
+                        (click)="conectarDireito(item.item_associacao_id)">
+                        
+                        @if (item.tipo === 'imagem') {
+                          <div class="img-wrapper">
+                            <img [src]="getImageUrl(item.imagem_url)" alt="Imagem direita" class="associacao-img" />
+                          </div>
+                        } @else {
+                          <span class="associacao-texto">{{ item.texto }}</span>
+                        }
+
+                        @if (isItemDireitoConectado(item.item_associacao_id)) {
+                          <span class="par-badge">{{ obterParBadgeDoItemDireito(item.item_associacao_id) }}</span>
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p>Esta atividade ainda não possui pares de associação cadastrados.</p>
+            </div>
+          }
         }
 
         @if (respostaEnviada()) {
@@ -84,18 +172,50 @@
             [class.feedback-acerto]="resultado() === 'acerto'"
             [class.feedback-erro]="resultado() === 'erro'">
             @if (resultado() === 'acerto') {
-              <strong>Parabéns!</strong> Você acertou a resposta.
+              <strong>Parabéns!</strong> Você acertou tudo.
             } @else {
-              <strong>Quase lá!</strong> Essa não era a resposta correta. A alternativa certa está destacada em verde.
+              <strong>Quase lá!</strong> Algumas associações não estavam corretas.
             }
           </div>
+
+          @if (resultado() === 'erro' && atividade()!.tipo_atividade === 'associacao_imagens') {
+            <div class="correcao-box">
+              <h5 class="correcao-titulo">Combinação Correta:</h5>
+              <div class="correcao-lista">
+                @for (itemEsq of atividade()!.itens_esquerdos; track itemEsq.item_associacao_id) {
+                  @if (obterItemDireitoCorreto(itemEsq.item_associacao_id); as itemDir) {
+                    <div class="correcao-par">
+                      <div class="correcao-item">
+                        @if (itemEsq.tipo === 'imagem') {
+                          <img [src]="getImageUrl(itemEsq.imagem_url)" class="correcao-img" />
+                        } @else {
+                          <span>{{ itemEsq.texto }}</span>
+                        }
+                      </div>
+                      <span class="correcao-seta">➔</span>
+                      <div class="correcao-item">
+                        @if (itemDir.tipo === 'imagem') {
+                          <img [src]="getImageUrl(itemDir.imagem_url)" class="correcao-img" />
+                        } @else {
+                          <span>{{ itemDir.texto }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
         }
 
         <div class="acoes-rodape">
           @if (!respostaEnviada()) {
             <button
               class="btn-primary-custom btn-grande"
-              [disabled]="opcaoSelecionadaId() === null || opcoesOrdenadas().length === 0"
+              [disabled]="
+                (atividade()!.tipo_atividade === 'multipla_escolha' && (opcaoSelecionadaId() === null || opcoesOrdenadas().length === 0)) ||
+                (atividade()!.tipo_atividade === 'associacao_imagens' && (conexoes().size < (atividade()!.itens_esquerdos?.length ?? 0)))
+              "
               (click)="enviarResposta()"
               id="btn-enviar">
               Enviar resposta
