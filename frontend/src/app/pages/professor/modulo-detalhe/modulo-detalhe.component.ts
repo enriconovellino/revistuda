@@ -6,6 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProfessorService } from '../../../services/professor.service';
 import { Modulo, Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/professor.models';
 import { environment } from '../../../../environments/environment';
+import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 type OpcaoId = 'a' | 'b' | 'c' | 'd';
 
@@ -23,7 +24,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-modulo-detalhe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditarPerfilComponent],
   templateUrl: './modulo-detalhe.component.html',
   styleUrl: './modulo-detalhe.component.css',
 })
@@ -683,5 +684,19 @@ export class ModuloDetalheComponent implements OnInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
+  }
+
+  isEditProfileOpen = signal<boolean>(false);
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 }
