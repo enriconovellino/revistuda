@@ -21,22 +21,37 @@ export class ModuloRepository implements IModuloRepository {
   }
 
   async findAll(userId?: number): Promise<Modulo[]> {
+    let whereCondicao = {};
+
     if (userId) {
       const user = await this.prisma.user.findUnique({
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
-        const modulos = user.turma_id
-          ? await this.prisma.modulo.findMany({
-              where: { turma_id: user.turma_id },
-            })
-          : [];
-        return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
+      if (user) {
+        const isAdm = user.permissions.includes('ADM');
+        const isAluno =
+          (user.permissions.includes('ALUNO_IDOSO') ||
+            user.permissions.includes('ALUNO_CRIANCA')) &&
+          !isAdm;
+        const isProfessor =
+          user.permissions.includes('PROFESSOR') && !isAdm;
+
+        if (isAluno) {
+          whereCondicao = user.turma_id
+            ? { turma_id: user.turma_id }
+            : { turma_id: -1 };
+        } else if (isProfessor) {
+          whereCondicao = {
+            turma: { professor_id: userId },
+          };
+        }
       }
     }
 
-    const modulos = await this.prisma.modulo.findMany();
+    const modulos = await this.prisma.modulo.findMany({
+      where: whereCondicao,
+    });
     return modulos.map((m) => new Modulo(m.modulo_id, m.titulo_modulo, m.dificuldade, m.turma_id, m.descricao_modulo ?? undefined, m.imagem_url ?? undefined));
   }
 

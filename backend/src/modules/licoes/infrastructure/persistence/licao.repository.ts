@@ -30,12 +30,28 @@ export class LicaoRepository implements ILicaoRepository {
         where: { id: userId },
       });
 
-      if (user && (user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA')) && !user.permissions.includes('ADM')) {
-        whereCondicao = {
-          modulo: {
-            turma_id: user.turma_id ?? -1,
-          },
-        };
+      if (user) {
+        const isAdm = user.permissions.includes('ADM');
+        const isAluno =
+          (user.permissions.includes('ALUNO_IDOSO') ||
+            user.permissions.includes('ALUNO_CRIANCA')) &&
+          !isAdm;
+        const isProfessor =
+          user.permissions.includes('PROFESSOR') && !isAdm;
+
+        if (isAluno) {
+          whereCondicao = {
+            modulo: {
+              turma_id: user.turma_id ?? -1,
+            },
+          };
+        } else if (isProfessor) {
+          whereCondicao = {
+            modulo: {
+              turma: { professor_id: userId },
+            },
+          };
+        }
       }
     }
 
