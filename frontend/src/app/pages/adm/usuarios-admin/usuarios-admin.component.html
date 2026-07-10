@@ -1,0 +1,87 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Gestão de Usuários</h4>
+    <small class="text-muted">Aprove cadastros, acompanhe status e gerencie professores e alunos.</small>
+  </div>
+</div>
+
+<div class="alert alert-danger py-2 small" *ngIf="actionError()">{{ actionError() }}</div>
+
+<div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+  <div class="search-box">
+    <input type="text" class="form-control form-control-sm" placeholder="Buscar por nome ou e-mail..."
+      [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <button class="chip" [class.active]="activeFilter() === 'todos'" (click)="activeFilter.set('todos')">Todos</button>
+    <button class="chip" [class.active]="activeFilter() === 'professor'" (click)="activeFilter.set('professor')">Professores</button>
+    <button class="chip" [class.active]="activeFilter() === 'aluno'" (click)="activeFilter.set('aluno')">Alunos</button>
+    <button class="chip" [class.active]="activeFilter() === 'pendente'" (click)="activeFilter.set('pendente')">Pendentes</button>
+  </div>
+</div>
+
+<div class="chart-card p-0" *ngIf="!loading(); else carregando">
+  <div class="table-responsive" *ngIf="filteredUsers().length > 0; else vazio">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr class="text-muted small text-uppercase">
+          <th class="ps-4">Nome</th>
+          <th>Cargo</th>
+          <th>Status</th>
+          <th>Turma</th>
+          <th class="pe-4">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers()">
+          <td class="ps-4">
+            <div class="fw-semibold text-dark">{{ user.nome }}</div>
+            <div class="text-muted small">{{ user.email }}</div>
+          </td>
+          <td>{{ cargoLabel(user) }}</td>
+          <td>
+            <span class="badge bg-success" *ngIf="user.approved">{{ isProfessor(user) ? 'Aprovado' : 'Ativo' }}</span>
+            <span class="badge bg-warning text-dark" *ngIf="!user.approved">Pendente</span>
+          </td>
+          <td>
+            <ng-container *ngIf="isAluno(user)">{{ turmaNome(user.turmaId) }}</ng-container>
+            <ng-container *ngIf="isProfessor(user) && user.approved">
+              <span *ngIf="turmasDoProfessor(user.id).length > 0; else semTurma">
+                {{ turmasDoProfessor(user.id).length }} turma(s)
+              </span>
+              <ng-template #semTurma>—</ng-template>
+            </ng-container>
+            <ng-container *ngIf="!isAluno(user) && !isProfessor(user)">—</ng-container>
+          </td>
+          <td class="pe-4">
+            <div class="d-flex gap-2" *ngIf="isProfessor(user) && !user.approved">
+              <button class="btn btn-sm btn-success" (click)="pedirAprovacao(user)">Aprovar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="pedirRejeicao(user)">Rejeitar</button>
+            </div>
+            <div *ngIf="isProfessor(user) && user.approved">
+              <button class="btn btn-sm btn-outline-danger" (click)="pedirRevogacao(user)">Revogar acesso</button>
+            </div>
+            <span class="text-muted small" *ngIf="!isProfessor(user)">—</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #vazio>
+    <div class="empty-state">
+      <p class="mb-0">Nenhum usuário encontrado para os filtros selecionados.</p>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #carregando>
+  <div class="empty-state">
+    <p class="mb-0">Carregando usuários...</p>
+  </div>
+</ng-template>
+
+<app-confirm-dialog [isOpen]="acaoPendente() !== null" [title]="dialogTitle()" [message]="dialogMessage()"
+  [confirmLabel]="dialogConfirmLabel()" [variant]="dialogVariant()" [loading]="actionLoading()"
+  (confirmed)="confirmarAcao()" (cancelled)="cancelarAcao()"></app-confirm-dialog>

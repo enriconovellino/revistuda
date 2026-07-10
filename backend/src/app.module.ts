@@ -11,6 +11,7 @@ import { LicoesModule } from './modules/licoes/licoes.module';
 import { AtividadesModule } from './modules/atividades/atividades.module';
 import { ComentariosModule } from './modules/comentarios/comentarios.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { RelatoriosModule } from './modules/relatorios/relatorios.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     AtividadesModule,
     LicoesModule,
     ComentariosModule,
-    UploadsModule],
+    UploadsModule,
+    RelatoriosModule],
   controllers: [AppController],
   providers: [AppService],
 })

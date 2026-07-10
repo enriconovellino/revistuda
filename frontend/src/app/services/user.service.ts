@@ -53,6 +53,18 @@ export class UserService {
     }
   }
 
+  async revokeProfessorAccess(id: number): Promise<{ user: any; turmasDesalocadas: number }> {
+    const response = await fetch(`${this.apiUrl}/users/${id}/revoke`, {
+      method: 'PUT',
+      headers: this.getHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Falha ao revogar acesso do professor');
+    }
+    return data;
+  }
+
   async updateUser(id: number, userData: any): Promise<any> {
     const response = await fetch(`${this.apiUrl}/users/${id}`, {
       method: 'PUT',

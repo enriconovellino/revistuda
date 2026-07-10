@@ -14,10 +14,13 @@ import {
   GetTurmasByProfessorUseCase,
   UpdateTurmaUseCase,
 } from '../../domain/use-cases';
-import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
+import { Permissions } from '@/shared/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/modules/auth/infrastructure/guards/permissions.guard';
+import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
 
 @ApiTags('Turmas')
 @Controller('turmas')
+@UseGuards(JwtAuthGuard)
 export class TurmasController {
   constructor(
     private createTurmaUseCase: CreateTurmaUseCase,
@@ -29,9 +32,11 @@ export class TurmasController {
     private getEstatisticasProfessorUseCase: GetEstatisticasProfessorUseCase,
     private getDesempenhoMensalUseCase: GetDesempenhoMensalUseCase,
     private getAlunosByProfessorUseCase: GetAlunosByProfessorUseCase,
-  ) {}
+  ) { }
 
   @Post()
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Criar uma nova turma' })
   @ApiResponse({ status: 201, description: 'Turma criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
@@ -88,6 +93,8 @@ export class TurmasController {
   }
 
   @Put(':id')
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Atualizar turma por ID' })
   @ApiParam({ name: 'id', description: 'ID da turma', type: Number })
   @ApiResponse({ status: 200, description: 'Turma atualizada com sucesso' })
@@ -98,6 +105,8 @@ export class TurmasController {
   }
 
   @Delete(':id')
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Deletar turma por ID' })
   @ApiParam({ name: 'id', description: 'ID da turma', type: Number })
   @ApiResponse({ status: 200, description: 'Turma deletada com sucesso' })

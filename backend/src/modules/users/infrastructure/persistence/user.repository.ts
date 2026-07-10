@@ -18,12 +18,12 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions, createdUser.approved);
+    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions, createdUser.approved, createdUser.turma_id);
   }
 
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany();
-    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions, u.approved));
+    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions, u.approved, u.turma_id));
   }
 
   async findById(id: number): Promise<User | null> {
@@ -35,7 +35,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -47,7 +47,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id);
   }
 
   async update(id: number, data: Partial<User>): Promise<User> {
@@ -62,12 +62,30 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved);
+    return new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved, updatedUser.turma_id);
   }
 
   async delete(id: number): Promise<void> {
     await this.prisma.user.delete({
       where: { id },
     });
+  }
+
+  async revokeProfessorAccess(id: number): Promise<{ user: User; turmasDesalocadas: number }> {
+    const [updatedUser, { count }] = await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id },
+        data: { approved: false, refreshToken: null },
+      }),
+      this.prisma.turma.updateMany({
+        where: { professor_id: id },
+        data: { professor_id: null },
+      }),
+    ]);
+
+    return {
+      user: new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved, updatedUser.turma_id),
+      turmasDesalocadas: count,
+    };
   }
 }

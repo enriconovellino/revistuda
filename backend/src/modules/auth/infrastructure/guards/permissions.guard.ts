@@ -66,13 +66,13 @@ export class PermissionsGuard implements CanActivate {
   }
 
   private extractUserIdFromRequest(request: any): number | null {
-    const headerValue = request.headers?.['x-user-id'] ?? request.headers?.['X-USER-ID'];
+    const sub = request.user?.sub;
 
-    if (!headerValue) {
+    if (sub === undefined || sub === null) {
       return null;
     }
 
-    const userId = Number(headerValue);
+    const userId = Number(sub);
     return Number.isInteger(userId) && userId > 0 ? userId : null;
   }
 }

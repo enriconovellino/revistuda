@@ -20,8 +20,12 @@ export class TurmaRepository implements ITurmaRepository {
   }
 
   async findAll(): Promise<Turma[]> {
-    const turmas = await this.prisma.turma.findMany();
-    return turmas.map((t) => new Turma(t.turma_id, t.nome_turma, t.professor_id, t.descricao_turma ?? undefined, t.capacidade_maxima ?? undefined));
+    const turmas = await this.prisma.turma.findMany({
+      include: { _count: { select: { alunos: true } } },
+    });
+    return turmas.map(
+      (t) => new Turma(t.turma_id, t.nome_turma, t.professor_id, t.descricao_turma ?? undefined, t.capacidade_maxima ?? undefined, t._count.alunos),
+    );
   }
 
   async findById(id: number): Promise<Turma | null> {
