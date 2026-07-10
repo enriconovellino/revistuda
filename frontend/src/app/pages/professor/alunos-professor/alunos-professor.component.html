@@ -1,5 +1,4 @@
 <div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-logo">
       <h5>ReviEstuda</h5>
@@ -22,21 +21,20 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaAlunos()">
+          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'alunos'"
+            (click)="irParaAlunos()">
             <i class="fi fi-rr-graduation-cap"></i>
             <span>Alunos</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'comentarios'"
-            (click)="irParaComentarios()">
+          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaComentarios()">
             <i class="fi fi-rr-document-signed"></i>
             <span>Comentários</span>
           </a>
         </li>
       </ul>
     </nav>
-
 
     <div class="sidebar-footer">
       <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
@@ -73,34 +71,32 @@
       </div>
 
       <div *ngIf="!loading() && !error()">
-        <h3 class="fw-bold text-dark mb-4">💬 Comentários dos Alunos</h3>
+        <h3 class="fw-bold text-dark mb-4">Alunos</h3>
 
-        <!-- Resumo geral -->
         <div class="row g-3 mb-4">
           <div class="col-md-4">
             <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Total de Comentários</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalComentarios() }}</h3>
+              <div class="text-muted small mb-1">Total de Alunos</div>
+              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalAlunos() }}</h3>
             </div>
           </div>
           <div class="col-md-4">
             <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Alunos que Comentaram</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalAlunosUnicos() }}</h3>
+              <div class="text-muted small mb-1">Turmas</div>
+              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalTurmas() }}</h3>
             </div>
           </div>
           <div class="col-md-4">
             <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Módulos com Comentários</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalModulosComComentario() }}</h3>
+              <div class="text-muted small mb-1">Média de Acerto</div>
+              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ mediaAcerto() }}%</h3>
             </div>
           </div>
         </div>
 
-        <!-- Filtros -->
         <div class="chart-card mb-4">
           <div class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <label class="form-label small fw-semibold text-dark">Filtrar por Turma</label>
               <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
                 <option value="">Todas as turmas</option>
@@ -109,18 +105,7 @@
                 </option>
               </select>
             </div>
-
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold text-dark">Filtrar por Módulo</label>
-              <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
-                <option value="">Todos os módulos</option>
-                <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id">
-                  {{ modulo.titulo_modulo }}
-                </option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
+            <div class="col-md-6">
               <button class="btn btn-sm btn-outline-secondary" (click)="limparFiltros()">
                 Limpar Filtros
               </button>
@@ -128,29 +113,35 @@
           </div>
         </div>
 
-        <!-- Lista de comentários -->
         <div class="chart-card">
-          <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
-            <div class="content-box p-3 border rounded" *ngFor="let comentario of comentariosFiltrados()">
-              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-                <div>
-                  <span class="fw-semibold text-dark">{{ comentario.aluno.nome }}</span>
-                  <div class="text-muted" style="font-size: 12px;">
-                    {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
-                    {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+          <div *ngIf="alunosFiltrados().length > 0; else semAlunos">
+            <div class="lista-header">
+              <span>Nome</span>
+              <span>Turma</span>
+              <span>Status</span>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+              <div class="content-box p-3 border rounded" *ngFor="let aluno of alunosFiltrados()">
+                <div class="lista-row">
+                  <span class="fw-semibold text-dark">{{ aluno.nome }}</span>
+                  <span class="text-dark lista-turma">{{ aluno.nome_turma }}</span>
+                  <div class="lista-status">
+                    <span class="badge-metric acertos">{{ aluno.desempenho.acertos }} acertos</span>
+                    <span class="badge-metric erros">{{ aluno.desempenho.erros }} erros</span>
+                    <span class="badge-metric taxa">{{ aluno.desempenho.taxaAcerto }}% acerto</span>
                   </div>
                 </div>
-                <span class="text-muted" style="font-size: 11px;">
-                  {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
-                </span>
+                <div class="text-muted mt-2" style="font-size: 11px;" *ngIf="aluno.desempenho.totalRespostas === 0">
+                  Ainda não respondeu atividades de múltipla escolha.
+                </div>
               </div>
-              <p class="mb-0 small text-dark" style="white-space: pre-wrap;">{{ comentario.texto }}</p>
             </div>
           </div>
 
-          <ng-template #semComentarios>
+          <ng-template #semAlunos>
             <div class="empty-state py-5 text-center">
-              <p class="mb-0 text-muted">Nenhum comentário encontrado com os filtros selecionados.</p>
+              <p class="mb-0 text-muted">Nenhum aluno encontrado com os filtros selecionados.</p>
             </div>
           </ng-template>
         </div>

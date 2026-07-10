@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTurmaDto } from '../../application/dtos/create-turma.dto';
 import { UpdateTurmaDto } from '../../application/dtos/update-turma.dto';
@@ -7,13 +7,16 @@ import {
   CreateTurmaUseCase,
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
+  GetAlunosByProfessorUseCase,
   GetDesempenhoMensalUseCase,
   GetEstatisticasProfessorUseCase,
   GetTurmaUseCase,
   GetTurmasByProfessorUseCase,
   UpdateTurmaUseCase,
 } from '../../domain/use-cases';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 
+@ApiTags('Turmas')
 @Controller('turmas')
 export class TurmasController {
   constructor(
@@ -25,6 +28,7 @@ export class TurmasController {
     private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase,
     private getEstatisticasProfessorUseCase: GetEstatisticasProfessorUseCase,
     private getDesempenhoMensalUseCase: GetDesempenhoMensalUseCase,
+    private getAlunosByProfessorUseCase: GetAlunosByProfessorUseCase,
   ) {}
 
   @Post()
@@ -42,6 +46,16 @@ export class TurmasController {
   async findAll(): Promise<TurmaPresenter[]> {
     const turmas = await this.getAllTurmasUseCase.execute();
     return TurmaPresenter.toCollection(turmas);
+  }
+
+  @Get('meus-alunos')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Listar alunos das turmas do professor logado com desempenho' })
+  @ApiResponse({ status: 200, description: 'Lista de alunos retornada com sucesso' })
+  async meusAlunos(@Req() req: any) {
+    const professorId = req.user.sub;
+    return this.getAlunosByProfessorUseCase.execute(professorId);
   }
 
   @Get('estatisticas/:professorId')
