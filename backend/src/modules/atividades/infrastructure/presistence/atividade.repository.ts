@@ -178,14 +178,30 @@ export class AtividadeRepository implements IAtividadeRepository {
         where: { id: userId },
       });
 
-      if (user && user.permissions.includes('ALUNO_IDOSO') && !user.permissions.includes('ADM')) {
-        whereCondicao = {
-          licao: {
-            modulo: {
-              turma_id: user.turma_id ?? -1,
+      if (user) {
+        const isAdm = user.permissions.includes('ADM');
+        const isAluno =
+          user.permissions.includes('ALUNO_IDOSO') && !isAdm;
+        const isProfessor =
+          user.permissions.includes('PROFESSOR') && !isAdm;
+
+        if (isAluno) {
+          whereCondicao = {
+            licao: {
+              modulo: {
+                turma_id: user.turma_id ?? -1,
+              },
             },
-          },
-        };
+          };
+        } else if (isProfessor) {
+          whereCondicao = {
+            licao: {
+              modulo: {
+                turma: { professor_id: userId },
+              },
+            },
+          };
+        }
       }
     }
 
