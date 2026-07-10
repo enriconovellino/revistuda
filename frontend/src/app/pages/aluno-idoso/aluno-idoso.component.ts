@@ -72,17 +72,19 @@ export class AlunoIdosoComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const user = this.authService.getUser();
-    if (user) this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      const user = this.authService.getUser();
+      if (user) this.userName.set(user.nome);
 
-    this.route.queryParamMap.subscribe(params => {
-      const view = params.get('view');
-      if (view === 'atividades' || view === 'modulos' || view === 'home') {
-        this.currentView.set(view);
-      }
-    });
+      this.route.queryParamMap.subscribe(params => {
+        const view = params.get('view');
+        if (view === 'atividades' || view === 'modulos' || view === 'home') {
+          this.currentView.set(view);
+        }
+      });
 
-    await this.loadData();
+      await this.loadData();
+    }
   }
 
   async loadData() {

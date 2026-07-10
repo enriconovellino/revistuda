@@ -41,14 +41,16 @@ export class AdmComponent implements OnInit {
   private turmaService = inject(TurmaService);
 
   async ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.userName.set(user.nome);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          this.userName.set(user.nome);
+        }
       }
+      await this.loadData();
     }
-    await this.loadData();
   }
 
   async loadData() {

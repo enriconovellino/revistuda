@@ -51,34 +51,36 @@ export class ProfessorComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user: Usuario = JSON.parse(userStr);
-        this.userName.set(user.nome);
-        this.userId = user.id;
-      }
-    }
-    await this.carregarDados();
-
-    this.route.queryParams.subscribe(async params => {
-      const tab = params['tab'];
-      const turmaId = params['turmaId'];
-      if (tab) {
-        this.paginaAtual.set(tab);
-      }
-      if (turmaId && this.userId) {
-        try {
-          const turmas = await this.professorService.getTurmasByProfessor(this.userId);
-          const selected = turmas.find(t => t.turma_id === Number(turmaId));
-          if (selected) {
-            this.turmaSelecionada.set(selected);
-          }
-        } catch (e) {
-          console.error('Erro ao recuperar turma selecionada:', e);
+    if (typeof window !== 'undefined') {
+      if (window.localStorage) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user: Usuario = JSON.parse(userStr);
+          this.userName.set(user.nome);
+          this.userId = user.id;
         }
       }
-    });
+      await this.carregarDados();
+
+      this.route.queryParams.subscribe(async params => {
+        const tab = params['tab'];
+        const turmaId = params['turmaId'];
+        if (tab) {
+          this.paginaAtual.set(tab);
+        }
+        if (turmaId && this.userId) {
+          try {
+            const turmas = await this.professorService.getTurmasByProfessor(this.userId);
+            const selected = turmas.find(t => t.turma_id === Number(turmaId));
+            if (selected) {
+              this.turmaSelecionada.set(selected);
+            }
+          } catch (e) {
+            console.error('Erro ao recuperar turma selecionada:', e);
+          }
+        }
+      });
+    }
   }
 
   async carregarDados() {
