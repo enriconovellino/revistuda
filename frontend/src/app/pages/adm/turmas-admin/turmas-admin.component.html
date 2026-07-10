@@ -26,7 +26,8 @@
       </div>
       <div class="col-md-2">
         <label class="form-label small fw-bold">Capacidade Máxima</label>
-        <input type="number" class="form-control form-control-sm" placeholder="Ex: 30 (Ilimitada se vazio)"
+        <input type="number" class="form-control form-control-sm" min="1" [max]="maxAlunos"
+          [placeholder]="'Máx: ' + maxAlunos + ' (padrão se vazio)'"
           [value]="newTurmaCapacidade() || ''"
           (input)="newTurmaCapacidade.set($any($event.target).value === '' ? null : +$any($event.target).value)" />
       </div>
@@ -60,7 +61,20 @@
   <article class="turma-card2" *ngFor="let turma of filteredTurmas()">
     <div class="tc-head">
       <h3 class="tc-title">{{ turma.nome_turma }}</h3>
-      <span class="status-pill" [ngClass]="statusClass(turma)">{{ statusLabel(turma) }}</span>
+      <div class="tc-head-actions">
+        <span class="status-pill" [ngClass]="statusClass(turma)">{{ statusLabel(turma) }}</span>
+        <div class="tc-menu-wrap">
+          <button class="tc-menu-btn" title="Mais opções" (click)="toggleMenu(turma.turma_id, $event)">&#8942;</button>
+          <div class="tc-menu" *ngIf="menuAbertoId() === turma.turma_id">
+            <button class="tc-menu-item" *ngIf="turma.professor_id" (click)="deallocateProfessor(turma.turma_id)">
+              Desalocar professor
+            </button>
+            <button class="tc-menu-item tc-menu-item--danger" (click)="pedirExclusaoTurma(turma)">
+              Excluir turma
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <p class="tc-sub">{{ turma.descricao_turma || 'Sem descrição' }}</p>
 
@@ -72,10 +86,10 @@
 
     <div class="tc-row">
       <i class="fi fi-rr-users"></i>
-      <span>{{ turma.totalAlunos ?? 0 }}<ng-container *ngIf="turma.capacidade_maxima"> / {{ turma.capacidade_maxima }}</ng-container> alunos</span>
+      <span>{{ turma.totalAlunos ?? 0 }} / {{ capacidadeEfetiva(turma) }} alunos</span>
     </div>
 
-    <div class="occ-bar tc-occ" *ngIf="turma.capacidade_maxima">
+    <div class="occ-bar tc-occ">
       <div class="occ-bar-fill" [class.warn]="ocupacaoPercentual(turma) >= 80 && ocupacaoPercentual(turma) < 100"
         [class.full]="ocupacaoPercentual(turma) >= 100" [style.width.%]="ocupacaoPercentual(turma)"></div>
     </div>
@@ -83,8 +97,8 @@
     <div class="tc-controls">
       <div class="d-flex align-items-center gap-2 mb-2">
         <label class="tc-label">Capacidade</label>
-        <input type="number" class="form-control form-control-sm" style="max-width: 90px;"
-          [value]="selectedCapacityForTurma[turma.turma_id] || ''" placeholder="Ilimitada"
+        <input type="number" class="form-control form-control-sm" style="max-width: 90px;" min="1" [max]="maxAlunos"
+          [value]="selectedCapacityForTurma[turma.turma_id] || ''" [placeholder]="'Máx: ' + maxAlunos"
           (input)="onCapacityInput(turma.turma_id, $event)" />
       </div>
 
@@ -95,12 +109,7 @@
         </option>
       </select>
 
-      <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-primary flex-grow-1" (click)="saveAllocation(turma.turma_id)">Salvar</button>
-        <button class="btn btn-sm btn-outline-danger" *ngIf="turma.professor_id" (click)="deallocateProfessor(turma.turma_id)">
-          Desalocar
-        </button>
-      </div>
+      <button class="btn btn-sm btn-primary w-100" (click)="saveAllocation(turma.turma_id)">Salvar</button>
     </div>
   </article>
 </div>
@@ -110,3 +119,7 @@
     <p class="mb-0">Nenhuma turma encontrada.</p>
   </div>
 </ng-template>
+
+<app-confirm-dialog [isOpen]="turmaParaExcluir() !== null" title="Excluir turma"
+  [message]="mensagemExclusaoTurma()" confirmLabel="Excluir" variant="danger" [loading]="deleteLoading()"
+  (confirmed)="confirmarExclusaoTurma()" (cancelled)="cancelarExclusaoTurma()"></app-confirm-dialog>

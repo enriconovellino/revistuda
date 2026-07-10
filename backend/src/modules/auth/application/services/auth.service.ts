@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { MailerService } from '@/shared/infrastructure/mailer/mailer.service';
+import { MAX_ALUNOS_POR_TURMA } from '@/shared/constants/turma.constants';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
@@ -16,7 +17,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private mailerService: MailerService,
-  ) {}
+  ) { }
 
   async generateTokens(userId: number, email: string) {
     const payload = { sub: userId, email };
@@ -84,20 +85,33 @@ export class AuthService {
 
     let connection: any = {};
     if (registerDto.permission === 'ALUNO_IDOSO') {
-      let defaultTurma = await this.prisma.turma.findFirst();
-      if (!defaultTurma) {
-        defaultTurma = await this.prisma.turma.create({
+      const turmas = await this.prisma.turma.findMany({
+        include: { _count: { select: { alunos: true } } },
+        orderBy: { turma_id: 'asc' },
+      });
+
+      // Aloca na primeira turma com vaga, respeitando o limite global de alunos.
+      let turmaDestino: { turma_id: number } | undefined = turmas.find(
+        (t) => t._count.alunos < Math.min(t.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA),
+      );
+
+      if (!turmaDestino && turmas.length === 0) {
+        turmaDestino = await this.prisma.turma.create({
           data: {
             nome_turma: 'Turma Geral',
             descricao_turma: 'Turma de entrada para novos alunos',
           },
         });
       }
-      connection = {
-        turma: {
-          connect: { turma_id: defaultTurma.turma_id },
-        },
-      };
+
+      // Se todas as turmas estiverem cheias, o aluno fica sem turma até o admin alocar.
+      if (turmaDestino) {
+        connection = {
+          turma: {
+            connect: { turma_id: turmaDestino.turma_id },
+          },
+        };
+      }
     }
 
     const createdUser = await this.prisma.user.create({

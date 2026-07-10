@@ -65,6 +65,21 @@ export class UserService {
     return data;
   }
 
+  async deleteUser(id: number): Promise<void> {
+    const response = await fetch(`${this.apiUrl}/users/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+    if (!response.ok) {
+      let message = 'Falha ao excluir usuário';
+      try {
+        const data = await response.json();
+        message = data.message || message;
+      } catch { }
+      throw new Error(message);
+    }
+  }
+
   async updateUser(id: number, userData: any): Promise<any> {
     const response = await fetch(`${this.apiUrl}/users/${id}`, {
       method: 'PUT',

@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsInt, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
@@ -27,4 +27,9 @@ export class UpdateUserDto {
   @IsOptional()
   @MaxLength(30)
   senha_atual?: string;
+
+  @ValidateIf((o) => o.turma_id !== null)
+  @IsInt()
+  @IsOptional()
+  turma_id?: number | null;
 }

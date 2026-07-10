@@ -45,11 +45,26 @@
             <span class="badge bg-warning text-dark" *ngIf="!user.approved">Pendente</span>
           </td>
           <td>
-            <ng-container *ngIf="isAluno(user)">{{ turmaNome(user.turmaId) }}</ng-container>
+            <ng-container *ngIf="isAluno(user)">
+              <select class="form-select form-select-sm turma-select" [disabled]="actionLoading()"
+                title="Mover aluno para outra turma"
+                (change)="moverParaTurma(user, $any($event.target).value)">
+                <option value="" [selected]="!user.turmaId">Sem turma</option>
+                <option *ngFor="let t of turmas()" [value]="t.turma_id"
+                  [selected]="t.turma_id === user.turmaId"
+                  [disabled]="turmaCheia(t) && t.turma_id !== user.turmaId">
+                  {{ t.nome_turma }}{{ turmaCheia(t) && t.turma_id !== user.turmaId ? ' (cheia)' : '' }}
+                </option>
+              </select>
+            </ng-container>
             <ng-container *ngIf="isProfessor(user) && user.approved">
-              <span *ngIf="turmasDoProfessor(user.id).length > 0; else semTurma">
-                {{ turmasDoProfessor(user.id).length }} turma(s)
-              </span>
+              <div class="turma-tags" *ngIf="turmasDoProfessor(user.id).length > 0; else semTurma">
+                <span class="turma-tag" *ngFor="let t of turmasVisiveis(user.id)">{{ t.nome_turma }}</span>
+                <span class="turma-tag turma-tag--mais" *ngIf="turmasExtras(user.id).length > 0"
+                  [title]="nomesTurmasExtras(user.id)">
+                  +{{ turmasExtras(user.id).length }}
+                </span>
+              </div>
               <ng-template #semTurma>—</ng-template>
             </ng-container>
             <ng-container *ngIf="!isAluno(user) && !isProfessor(user)">—</ng-container>
@@ -62,7 +77,10 @@
             <div *ngIf="isProfessor(user) && user.approved">
               <button class="btn btn-sm btn-outline-danger" (click)="pedirRevogacao(user)">Revogar acesso</button>
             </div>
-            <span class="text-muted small" *ngIf="!isProfessor(user)">—</span>
+            <div *ngIf="isAluno(user)">
+              <button class="btn btn-sm btn-outline-danger" (click)="pedirExclusao(user)">Excluir</button>
+            </div>
+            <span class="text-muted small" *ngIf="!isProfessor(user) && !isAluno(user)">—</span>
           </td>
         </tr>
       </tbody>

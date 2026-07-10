@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
-import { Turma, Usuario } from '../../../model/professor.models';
+import { MAX_ALUNOS_POR_TURMA, Turma, Usuario } from '../../../model/professor.models';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 type Filtro = 'todos' | 'professor' | 'aluno' | 'pendente';
-type TipoAcao = 'aprovar' | 'rejeitar' | 'revogar';
+type TipoAcao = 'aprovar' | 'rejeitar' | 'revogar' | 'excluir';
 
 interface AcaoPendente {
   tipo: TipoAcao;
@@ -90,6 +90,42 @@ export class UsuariosAdminComponent implements OnInit {
     return this.turmas().filter((t) => t.professor_id === professorId);
   }
 
+  // Acima disso, as turmas restantes viram uma etiqueta "+N" com tooltip.
+  readonly maxTagsVisiveis = 2;
+
+  turmasVisiveis(professorId: number): Turma[] {
+    return this.turmasDoProfessor(professorId).slice(0, this.maxTagsVisiveis);
+  }
+
+  turmasExtras(professorId: number): Turma[] {
+    return this.turmasDoProfessor(professorId).slice(this.maxTagsVisiveis);
+  }
+
+  nomesTurmasExtras(professorId: number): string {
+    return this.turmasExtras(professorId).map((t) => t.nome_turma).join(', ');
+  }
+
+  turmaCheia(turma: Turma): boolean {
+    const limite = Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
+    return (turma.totalAlunos ?? 0) >= limite;
+  }
+
+  async moverParaTurma(user: Usuario, valor: string) {
+    const turmaId = valor === '' ? null : Number(valor);
+    if (turmaId === (user.turmaId ?? null)) return;
+
+    this.actionLoading.set(true);
+    this.actionError.set(null);
+    try {
+      await this.userService.updateUser(user.id, { turma_id: turmaId });
+    } catch (err: any) {
+      this.actionError.set(err.message || 'Erro ao mover aluno de turma');
+    } finally {
+      await this.loadData();
+      this.actionLoading.set(false);
+    }
+  }
+
   cargoLabel(user: Usuario): string {
     if (user.permissions.includes('ADM')) return 'Administrador';
     if (this.isProfessor(user)) return 'Professor(a)';
@@ -112,11 +148,17 @@ export class UsuariosAdminComponent implements OnInit {
     this.acaoPendente.set({ tipo: 'revogar', usuario: user });
   }
 
+  pedirExclusao(user: Usuario) {
+    this.actionError.set(null);
+    this.acaoPendente.set({ tipo: 'excluir', usuario: user });
+  }
+
   dialogTitle(): string {
     const acao = this.acaoPendente();
     if (!acao) return '';
     if (acao.tipo === 'aprovar') return 'Aprovar cadastro';
     if (acao.tipo === 'rejeitar') return 'Rejeitar cadastro';
+    if (acao.tipo === 'excluir') return 'Excluir aluno';
     return 'Revogar acesso';
   }
 
@@ -131,6 +173,9 @@ export class UsuariosAdminComponent implements OnInit {
     if (acao.tipo === 'rejeitar') {
       return `Rejeitar e excluir o cadastro de ${nome}? Essa ação não pode ser desfeita.`;
     }
+    if (acao.tipo === 'excluir') {
+      return `Excluir permanentemente a conta de ${nome}? Todo o histórico de respostas dela(e) será apagado. Essa ação não pode ser desfeita.`;
+    }
 
     const turmas = this.turmasDoProfessor(acao.usuario.id);
     const turmasTexto = turmas.length > 0
@@ -144,6 +189,7 @@ export class UsuariosAdminComponent implements OnInit {
     if (!acao) return 'Confirmar';
     if (acao.tipo === 'aprovar') return 'Aprovar';
     if (acao.tipo === 'rejeitar') return 'Rejeitar';
+    if (acao.tipo === 'excluir') return 'Excluir';
     return 'Revogar acesso';
   }
 
@@ -167,6 +213,8 @@ export class UsuariosAdminComponent implements OnInit {
         await this.userService.approveUser(acao.usuario.id);
       } else if (acao.tipo === 'rejeitar') {
         await this.userService.rejectUser(acao.usuario.id);
+      } else if (acao.tipo === 'excluir') {
+        await this.userService.deleteUser(acao.usuario.id);
       } else {
         await this.userService.revokeProfessorAccess(acao.usuario.id);
       }

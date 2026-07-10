@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
+import { MAX_ALUNOS_POR_TURMA } from '@/shared/constants/turma.constants';
 import type { IUserRepository } from '../../domain/ports/user-repository.port';
 import { User } from '../../domain/entities/user.entity';
 
@@ -51,6 +52,22 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(id: number, data: Partial<User>): Promise<User> {
+    if (typeof data.turma_id === 'number') {
+      const turma = await this.prisma.turma.findUnique({
+        where: { turma_id: data.turma_id },
+        include: { _count: { select: { alunos: true } } },
+      });
+      if (!turma) {
+        throw new NotFoundException(`Turma com id ${data.turma_id} não encontrada`);
+      }
+      const current = await this.prisma.user.findUnique({ where: { id }, select: { turma_id: true } });
+      const jaEstaNaTurma = current?.turma_id === data.turma_id;
+      const limite = Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
+      if (!jaEstaNaTurma && turma._count.alunos >= limite) {
+        throw new BadRequestException(`A turma "${turma.nome_turma}" já atingiu o limite de ${limite} aluno(s)`);
+      }
+    }
+
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
@@ -59,6 +76,7 @@ export class UserRepository implements IUserRepository {
         senha: data.senha,
         permissions: data.permissions,
         approved: data.approved,
+        turma_id: data.turma_id,
       },
     });
 
