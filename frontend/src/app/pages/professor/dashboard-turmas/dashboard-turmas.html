@@ -26,13 +26,13 @@
         @if (turma.capacidade_maxima) {
         <span class="badge-capacidade">
           <i class="fi fi-rr-users"></i>
-          {{ turma.total_alunos || 0 }} / {{ turma.capacidade_maxima }} alunos
+          {{ turma.totalAlunos || 0 }} / {{ turma.capacidade_maxima }} alunos
         </span>
 
         <div class="occ-bar"
-          [class.warn]="((turma.total_alunos || 0) / turma.capacidade_maxima) >= 0.8 && ((turma.total_alunos || 0) / turma.capacidade_maxima) < 1"
-          [class.full]="((turma.total_alunos || 0) / turma.capacidade_maxima) >= 1">
-          <div class="occ-fill" [style.width.%]="((turma.total_alunos || 0) / turma.capacidade_maxima) * 100"></div>
+          [class.warn]="((turma.totalAlunos || 0) / turma.capacidade_maxima) >= 0.8 && ((turma.totalAlunos || 0) / turma.capacidade_maxima) < 1"
+          [class.full]="((turma.totalAlunos || 0) / turma.capacidade_maxima) >= 1">
+          <div class="occ-fill" [style.width.%]="((turma.totalAlunos || 0) / turma.capacidade_maxima) * 100"></div>
         </div>
         }
       </div>
