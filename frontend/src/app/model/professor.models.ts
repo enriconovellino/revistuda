@@ -1,3 +1,6 @@
+// Limite global de alunos por turma — espelha MAX_ALUNOS_POR_TURMA do backend.
+export const MAX_ALUNOS_POR_TURMA = 10;
+
 export interface Modulo {
   modulo_id: number;
   titulo_modulo: string;
@@ -12,6 +15,8 @@ export interface Usuario {
   nome: string;
   email: string;
   permissions: string[];
+  approved?: boolean;
+  turmaId?: number | null;
 }
 
 export interface Turma {
@@ -128,4 +133,19 @@ export interface DesempenhoMensal {
   mes: string;
   acertos: number;
   erros: number;
+}
+
+export interface DesempenhoAluno {
+  acertos: number;
+  erros: number;
+  totalRespostas: number;
+  taxaAcerto: number;
+}
+
+export interface AlunoProfessor {
+  aluno_id: number;
+  nome: string;
+  turma_id: number;
+  nome_turma: string;
+  desempenho: DesempenhoAluno;
 }

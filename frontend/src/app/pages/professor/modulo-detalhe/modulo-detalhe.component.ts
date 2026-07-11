@@ -93,6 +93,10 @@ export class ModuloDetalheComponent implements OnInit {
     this.router.navigate(['/professor'], { queryParams: { tab: 'turmas' } });
   }
 
+  irParaAlunos() {
+    this.router.navigate(['/professor/alunos']);
+  }
+
   logout() {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.clear();

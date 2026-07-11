@@ -160,7 +160,8 @@
                         placeholder="Escreva aqui o que você entendeu sobre esse conteúdo..."
                         style="resize: vertical; min-height: 90px;"
                         [ngModel]="getComentario(conteudo.conteudo_id)"
-                        (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)"></textarea>
+                        (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)"
+                        maxlength="2000"></textarea>
                       <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
                         <span class="text-success small fw-semibold" *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
                           ✓ Comentário salvo!

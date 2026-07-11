@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Modulo, Turma, Licao, Conteudo, Atividade, ComentarioAlunoProfessor, ComentarioResumoProfessor } from '../model/professor.models';
+import { Modulo, Turma, Licao, Conteudo, Atividade, ComentarioAlunoProfessor, ComentarioResumoProfessor, AlunoProfessor } from '../model/professor.models';
 import { AuthService } from './auth.service';
 import { EstatisticasProfessor } from '../model/professor.models';
 import { DesempenhoMensal } from '../model/professor.models';
@@ -38,6 +38,18 @@ export class ProfessorService {
     }
     return data as DesempenhoMensal[];
   }
+
+  async getMeusAlunos(): Promise<AlunoProfessor[]> {
+    const response = await fetch(`${this.apiUrl}/turmas/meus-alunos`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar alunos');
+    }
+    return data as AlunoProfessor[];
+  }
+  
   async getModulos(): Promise<Modulo[]> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       headers: this.getHeaders(),

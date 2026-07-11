@@ -6,11 +6,13 @@ import {
   IsArray,
   IsBoolean,
   ValidateNested,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateOpcaoDto {
   @IsString()
+  @MaxLength(150)
   texto_opcao!: string;
 
   @IsString()
@@ -28,10 +30,12 @@ export class CreateItemAssociacaoDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(200)
   texto?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(300)
   imagem_url?: string;
 }
 
@@ -47,6 +51,7 @@ export class CreateParAssociacaoDto {
 
 export class CreateAtividadeDto {
   @IsString()
+  @MaxLength(100)
   titulo_atividade!: string;
 
   @IsString()
@@ -55,6 +60,7 @@ export class CreateAtividadeDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(1000)
   enunciado?: string | null;
 
   @IsOptional()

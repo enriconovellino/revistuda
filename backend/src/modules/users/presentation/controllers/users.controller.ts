@@ -2,18 +2,22 @@ import { Body,Controller, Delete, Get, Param, ParseIntPipe, Put,UseGuards,} from
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
 import { UpdateUserDto } from '../../application/dtos/update-user.dto';
 import { UserPresenter } from '../../application/presenters/user.presenter';
-import { DeleteUserUseCase, GetAllUsersUseCase, GetUserUseCase, UpdateUserUseCase,} from '../../domain/use-cases';
+import { DeleteUserUseCase, GetAllUsersUseCase, GetUserUseCase, RevokeProfessorAccessUseCase, UpdateUserUseCase,} from '../../domain/use-cases';
 import { Permissions } from '@/shared/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/modules/auth/infrastructure/guards/permissions.guard';
+import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { AtividadesRecentesService } from '@/modules/atividades-recentes/atividades-recentes.service';
 
   @Controller('users')
-  @UseGuards(PermissionsGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class UsersController {
   constructor(
     private getAllUsersUseCase: GetAllUsersUseCase,
     private getUserUseCase: GetUserUseCase,
     private updateUserUseCase: UpdateUserUseCase,
     private deleteUserUseCase: DeleteUserUseCase,
+    private revokeProfessorAccessUseCase: RevokeProfessorAccessUseCase,
+    private atividadesRecentesService: AtividadesRecentesService,
   ) {}
   
   @Get()
@@ -61,7 +65,28 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   async approve(@Param('id', ParseIntPipe) id: number): Promise<UserPresenter> {
     const user = await this.updateUserUseCase.execute({ id, approved: true });
+    const cargo = user.permissions.includes('PROFESSOR') ? 'Professor(a)' : 'Administrador(a)';
+    await this.atividadesRecentesService.registrar(
+      'usuario_aprovado',
+      `${cargo} ${user.nome} teve o cadastro aprovado`,
+    );
     return UserPresenter.toPresentation(user);
+  }
+
+  @Put(':id/revoke')
+  @Permissions('users.update')
+  @ApiOperation({ summary: 'Revogar acesso de um professor já aprovado' })
+  @ApiParam({ name: 'id', description: 'ID do usuário', type: Number })
+  @ApiResponse({ status: 200, description: 'Acesso revogado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Usuário não é um professor' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async revoke(@Param('id', ParseIntPipe) id: number): Promise<{ user: UserPresenter; turmasDesalocadas: number }> {
+    const { user, turmasDesalocadas } = await this.revokeProfessorAccessUseCase.execute(id);
+    await this.atividadesRecentesService.registrar(
+      'acesso_revogado',
+      `O acesso de ${user.nome} foi revogado`,
+    );
+    return { user: UserPresenter.toPresentation(user), turmasDesalocadas };
   }
 
   @Delete(':id')

@@ -7,6 +7,7 @@ import { TelaInicialComponent } from './pages/tela-inicial/tela-inicial.componen
 import { authGuard, roleGuard } from './guards/auth.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 import { ComentariosAlunosComponent } from './pages/professor/comentario-alunos/comentarios-alunos.component';
+import { AlunosProfessorComponent } from './pages/professor/alunos-professor/alunos-professor.component';
 import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
 import { EsqueciSenhaComponent } from './pages/tela-senha/esqueci-senha.component';
 import { RedefinirSenhaComponent } from './pages/redefinir-senha/redefinir-senha.component';
@@ -49,6 +50,11 @@ export const routes: Routes = [
   {
     path: 'professor/comentarios',
     component: ComentariosAlunosComponent,
+    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
+  },
+  {
+    path: 'professor/alunos',
+    component: AlunosProfessorComponent,
     canActivate: [authGuard, roleGuard(['PROFESSOR'])]
   },
   {

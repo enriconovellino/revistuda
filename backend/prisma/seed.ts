@@ -13,18 +13,16 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Iniciando a semeadura do banco de dados...');
 
-  // Limpar dados anteriores de forma segura
+  // Limpar dados anteriores (users antes de turmas por causa do FK turma_id)
   await prisma.conteudo.deleteMany({});
   await prisma.atividade.deleteMany({});
   await prisma.licao.deleteMany({});
   await prisma.modulo.deleteMany({});
-  await prisma.turma.deleteMany({});
   await prisma.user.deleteMany({});
+  await prisma.turma.deleteMany({});
 
-  // Criptografar senha padrão para os testes
   const defaultPasswordHash = await bcrypt.hash('123456', 10);
 
-  // 1. Criar Usuários Padrão para cada Perfil
   console.log('👥 Criando usuários de teste (Senha padrão: 123456)...');
   await prisma.user.create({
     data: {
@@ -32,6 +30,7 @@ async function main() {
       email: 'admin@revistuda.com.br',
       senha: defaultPasswordHash,
       permissions: ['ADM'],
+      approved: true,
     },
   });
 
@@ -41,27 +40,16 @@ async function main() {
       email: 'professor@revistuda.com.br',
       senha: defaultPasswordHash,
       permissions: ['PROFESSOR'],
+      approved: true,
     },
   });
 
-
-
-  await prisma.user.create({
-    data: {
-      nome: 'Maria Souza (Idoso)',
-      email: 'maria@revistuda.com.br',
-      senha: defaultPasswordHash,
-      permissions: ['ALUNO_IDOSO'],
-    },
-  });
-
-  // 2. Criar Turmas de Teste
   console.log('🏫 Criando turmas...');
   const turmaA = await prisma.turma.create({
     data: {
       nome_turma: 'Turma A - Ensino Fundamental',
       descricao_turma: 'Alunos do 5º ano matutino.',
-      capacidade_maxima: 30,
+      capacidade_maxima: 10,
       professor_id: professor.id,
     },
   });
@@ -70,12 +58,56 @@ async function main() {
     data: {
       nome_turma: 'Turma B - Inclusão Digital (EJA)',
       descricao_turma: 'Alunos do Ensino de Jovens e Adultos no período noturno.',
-      capacidade_maxima: 20,
+      capacidade_maxima: 10,
       professor_id: professor.id,
     },
   });
 
-  // 3. Criar Módulos de Teste
+  console.log('🎓 Criando alunos vinculados às turmas...');
+  const maria = await prisma.user.create({
+    data: {
+      nome: 'Maria Souza',
+      email: 'maria@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['ALUNO_IDOSO'],
+      approved: true,
+      turma_id: turmaA.turma_id,
+    },
+  });
+
+  const joao = await prisma.user.create({
+    data: {
+      nome: 'João Silva',
+      email: 'joao@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['ALUNO_IDOSO'],
+      approved: true,
+      turma_id: turmaA.turma_id,
+    },
+  });
+
+  const ana = await prisma.user.create({
+    data: {
+      nome: 'Ana Costa',
+      email: 'ana@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['ALUNO_IDOSO'],
+      approved: true,
+      turma_id: turmaB.turma_id,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      nome: 'Pedro Lima',
+      email: 'pedro@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['ALUNO_IDOSO'],
+      approved: true,
+      turma_id: turmaB.turma_id,
+    },
+  });
+
   console.log('📚 Criando módulos...');
   const moduloMatematica = await prisma.modulo.create({
     data: {
@@ -104,7 +136,6 @@ async function main() {
     },
   });
 
-  // Criar Lições de Teste
   console.log('📖 Criando lições...');
   const licaoMatematica = await prisma.licao.create({
     data: {
@@ -130,7 +161,6 @@ async function main() {
     },
   });
 
-  // 4. Criar Conteúdos de Teste
   console.log('📝 Criando conteúdos...');
   await prisma.conteudo.createMany({
     data: [
@@ -158,7 +188,7 @@ async function main() {
   });
 
   console.log('🎯 Criando atividades...');
-  await prisma.atividade.create({
+  const atividadeAdicao = await prisma.atividade.create({
     data: {
       titulo_atividade: 'Prática de Adição',
       tipo_atividade: 'multipla_escolha',
@@ -172,14 +202,17 @@ async function main() {
               { letra: 'b', texto_opcao: '4', correta: true },
               { letra: 'c', texto_opcao: '5', correta: false },
               { letra: 'd', texto_opcao: '6', correta: false },
-            ]
-          }
-        }
-      }
-    }
+            ],
+          },
+        },
+      },
+    },
+    include: {
+      multipla_escolha: { include: { opcoes: true } },
+    },
   });
 
-  await prisma.atividade.create({
+  const atividadeLeitura = await prisma.atividade.create({
     data: {
       titulo_atividade: 'Exercício de Interpretação',
       tipo_atividade: 'multipla_escolha',
@@ -192,14 +225,42 @@ async function main() {
               { letra: 'a', texto_opcao: 'Monteiro Lobato', correta: true },
               { letra: 'b', texto_opcao: 'Machado de Assis', correta: false },
               { letra: 'c', texto_opcao: 'Clarice Lispector', correta: false },
-            ]
-          }
-        }
-      }
-    }
+            ],
+          },
+        },
+      },
+    },
+    include: {
+      multipla_escolha: { include: { opcoes: true } },
+    },
+  });
+
+  const opcoesAdicao = atividadeAdicao.multipla_escolha!.opcoes;
+  const opcoesLeitura = atividadeLeitura.multipla_escolha!.opcoes;
+
+  const opcaoAdicaoCorreta = opcoesAdicao.find((o) => o.correta)!;
+  const opcaoAdicaoErrada = opcoesAdicao.find((o) => !o.correta)!;
+  const opcaoLeituraCorreta = opcoesLeitura.find((o) => o.correta)!;
+  const opcaoLeituraErrada = opcoesLeitura.find((o) => !o.correta)!;
+
+  console.log('📊 Criando respostas de desempenho...');
+  // Maria: 1 acerto + 1 erro
+  await prisma.respostaMultiplaEscolha.createMany({
+    data: [
+      { aluno_id: maria.id, resposta_aluno_id: opcaoAdicaoCorreta.opcao_id },
+      { aluno_id: maria.id, resposta_aluno_id: opcaoLeituraErrada.opcao_id },
+      // João: 2 acertos
+      { aluno_id: joao.id, resposta_aluno_id: opcaoAdicaoCorreta.opcao_id },
+      { aluno_id: joao.id, resposta_aluno_id: opcaoLeituraCorreta.opcao_id },
+      // Ana: 1 acerto (atividade da Turma A — ainda conta no desempenho geral do professor)
+      { aluno_id: ana.id, resposta_aluno_id: opcaoAdicaoCorreta.opcao_id },
+      // Pedro: sem respostas
+    ],
   });
 
   console.log('✅ Semeadura concluída com sucesso!');
+  console.log('   Professor: professor@revistuda.com.br / 123456');
+  console.log('   Alunos: Maria & João (Turma A), Ana & Pedro (Turma B)');
 }
 
 main()

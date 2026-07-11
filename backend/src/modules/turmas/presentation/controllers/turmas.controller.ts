@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTurmaDto } from '../../application/dtos/create-turma.dto';
 import { UpdateTurmaDto } from '../../application/dtos/update-turma.dto';
@@ -7,14 +7,21 @@ import {
   CreateTurmaUseCase,
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
+  GetAlunosByProfessorUseCase,
   GetDesempenhoMensalUseCase,
   GetEstatisticasProfessorUseCase,
   GetTurmaUseCase,
   GetTurmasByProfessorUseCase,
   UpdateTurmaUseCase,
 } from '../../domain/use-cases';
+import { Permissions } from '@/shared/decorators/permissions.decorator';
+import { PermissionsGuard } from '@/modules/auth/infrastructure/guards/permissions.guard';
+import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { AtividadesRecentesService } from '@/modules/atividades-recentes/atividades-recentes.service';
 
+@ApiTags('Turmas')
 @Controller('turmas')
+@UseGuards(JwtAuthGuard)
 export class TurmasController {
   constructor(
     private createTurmaUseCase: CreateTurmaUseCase,
@@ -23,16 +30,23 @@ export class TurmasController {
     private updateTurmaUseCase: UpdateTurmaUseCase,
     private deleteTurmaUseCase: DeleteTurmaUseCase,
     private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase,
+    private atividadesRecentesService: AtividadesRecentesService,
     private getEstatisticasProfessorUseCase: GetEstatisticasProfessorUseCase,
     private getDesempenhoMensalUseCase: GetDesempenhoMensalUseCase,
-  ) {}
+    private getAlunosByProfessorUseCase: GetAlunosByProfessorUseCase,
+  ) { }
 
   @Post()
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Criar uma nova turma' })
   @ApiResponse({ status: 201, description: 'Turma criada com sucesso' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   async create(@Body() dto: CreateTurmaDto): Promise<TurmaPresenter> {
     const turma = await this.createTurmaUseCase.execute(dto);
+    if (dto.professor_id != null) {
+      await this.atividadesRecentesService.registrarDesignacaoProfessor(dto.professor_id, turma.nome_turma);
+    }
     return TurmaPresenter.toPresentation(turma);
   }
 
@@ -42,6 +56,16 @@ export class TurmasController {
   async findAll(): Promise<TurmaPresenter[]> {
     const turmas = await this.getAllTurmasUseCase.execute();
     return TurmaPresenter.toCollection(turmas);
+  }
+
+  @Get('meus-alunos')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Listar alunos das turmas do professor logado com desempenho' })
+  @ApiResponse({ status: 200, description: 'Lista de alunos retornada com sucesso' })
+  async meusAlunos(@Req() req: any) {
+    const professorId = req.user.sub;
+    return this.getAlunosByProfessorUseCase.execute(professorId);
   }
 
   @Get('estatisticas/:professorId')
@@ -74,16 +98,24 @@ export class TurmasController {
   }
 
   @Put(':id')
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Atualizar turma por ID' })
   @ApiParam({ name: 'id', description: 'ID da turma', type: Number })
   @ApiResponse({ status: 200, description: 'Turma atualizada com sucesso' })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateTurmaDto): Promise<TurmaPresenter> {
     const turma = await this.updateTurmaUseCase.execute({ id, ...dto });
+    // Só registra no feed quando a atualização mexeu no professor da turma.
+    if (dto.professor_id !== undefined) {
+      await this.atividadesRecentesService.registrarDesignacaoProfessor(dto.professor_id, turma.nome_turma);
+    }
     return TurmaPresenter.toPresentation(turma);
   }
 
   @Delete(':id')
+  @UseGuards(PermissionsGuard)
+  @Permissions('ADM')
   @ApiOperation({ summary: 'Deletar turma por ID' })
   @ApiParam({ name: 'id', description: 'ID da turma', type: Number })
   @ApiResponse({ status: 200, description: 'Turma deletada com sucesso' })

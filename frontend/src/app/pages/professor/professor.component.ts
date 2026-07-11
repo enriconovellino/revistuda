@@ -208,6 +208,10 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/professor/comentarios']);
   }
 
+  irParaAlunos() {
+    this.router.navigate(['/professor/alunos']);
+  }
+
   selecionarTurma(turma: Turma) {
     this.turmaSelecionada.set(turma);
     this.paginaAtual.set('modulos');

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsOptional, IsInt, MaxLength, Max, Min } from 'class-validator';
+import { MAX_ALUNOS_POR_TURMA } from '@/shared/constants/turma.constants';
 
 export class CreateTurmaDto {
   @ApiProperty({
@@ -7,6 +8,7 @@ export class CreateTurmaDto {
     description: 'Nome da turma',
   })
   @IsString()
+  @MaxLength(100)
   nome_turma!: string;
 
   @ApiPropertyOptional({
@@ -15,13 +17,16 @@ export class CreateTurmaDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(300)
   descricao_turma?: string;
 
   @ApiPropertyOptional({
-    example: 30,
-    description: 'Quantidade máxima de alunos na turma',
+    example: 10,
+    description: `Quantidade máxima de alunos na turma (limite: ${MAX_ALUNOS_POR_TURMA})`,
   })
   @IsInt()
+  @Min(1)
+  @Max(MAX_ALUNOS_POR_TURMA, { message: `capacidade_maxima não pode ser maior que ${MAX_ALUNOS_POR_TURMA}` })
   @IsOptional()
   capacidade_maxima?: number;
 

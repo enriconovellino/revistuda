@@ -20,11 +20,8 @@
           <label class="campo-label" for="email">Seu e-mail</label>
           <div class="campo-input-wrap" [class.campo-erro]="emailTocado && !email.trim()">
             <i class="fi fi-rr-envelope campo-icone"></i>
-            <input id="email" type="email" class="campo-input"
-              placeholder="exemplo@email.com"
-              [(ngModel)]="email"
-              (blur)="marcarTocado('email')"
-              autocomplete="email"/>
+            <input id="email" type="email" class="campo-input" placeholder="exemplo@email.com" [(ngModel)]="email"
+              (blur)="marcarTocado('email')" autocomplete="email" maxlength="50" />
           </div>
           <span class="msg-erro-campo" *ngIf="emailTocado && !email.trim()">Preencha o e-mail.</span>
         </div>
@@ -34,10 +31,8 @@
           <div class="campo-input-wrap" [class.campo-erro]="senhaTocada && !senha.trim()">
             <i class="fi fi-rr-lock campo-icone"></i>
             <input id="senha" [type]="mostrarSenha ? 'text' : 'password'" class="campo-input"
-              placeholder="Digite sua senha"
-              [(ngModel)]="senha"
-              (blur)="marcarTocado('senha')"
-              autocomplete="current-password"/>
+              placeholder="Digite sua senha" [(ngModel)]="senha" (blur)="marcarTocado('senha')"
+              autocomplete="current-password" maxlength="30" />
             <button type="button" class="btn-olho" (click)="toggleSenha()">
               <i class="fi" [class.fi-rr-eye]="!mostrarSenha" [class.fi-rr-eye-crossed]="mostrarSenha"></i>
             </button>
@@ -46,8 +41,7 @@
           <a href="javascript:void(0)" class="link-esqueci" (click)="irParaEsqueciSenha()">Esqueci minha senha</a>
         </div>
 
-        <button type="button" class="btn-voz" (click)="loginPorVoz()"
-          [class.btn-voz--ativo]="escutando()">
+        <button type="button" class="btn-voz" (click)="loginPorVoz()" [class.btn-voz--ativo]="escutando()">
           <span class="voz-icone-circulo" [class.pulsando]="escutando()">
             <i class="fi fi-rr-microphone"></i>
           </span>
@@ -82,11 +76,8 @@
           <label class="campo-label" for="nome">Seu nome completo</label>
           <div class="campo-input-wrap" [class.campo-erro]="nomeTocado && !nome.trim()">
             <i class="fi fi-rr-user campo-icone"></i>
-            <input id="nome" type="text" class="campo-input"
-              placeholder="Como devemos te chamar?"
-              [(ngModel)]="nome"
-              (blur)="marcarTocado('nome')"
-              autocomplete="name"/>
+            <input id="nome" type="text" class="campo-input" placeholder="Como devemos te chamar?" [(ngModel)]="nome"
+              (blur)="marcarTocado('nome')" autocomplete="name" maxlength="100" />
           </div>
           <span class="msg-erro-campo" *ngIf="nomeTocado && !nome.trim()">Preencha o nome.</span>
         </div>
@@ -95,11 +86,8 @@
           <label class="campo-label" for="emailCadastro">Seu e-mail</label>
           <div class="campo-input-wrap" [class.campo-erro]="emailCadastroTocado && !emailCadastro.trim()">
             <i class="fi fi-rr-envelope campo-icone"></i>
-            <input id="emailCadastro" type="email" class="campo-input"
-              placeholder="exemplo@email.com"
-              [(ngModel)]="emailCadastro"
-              (blur)="marcarTocado('emailCadastro')"
-              autocomplete="email"/>
+            <input id="emailCadastro" type="email" class="campo-input" placeholder="exemplo@email.com"
+              [(ngModel)]="emailCadastro" (blur)="marcarTocado('emailCadastro')" autocomplete="email" maxlength="50" />
           </div>
           <span class="msg-erro-campo" *ngIf="emailCadastroTocado && !emailCadastro.trim()">Preencha o e-mail.</span>
         </div>
@@ -109,12 +97,11 @@
           <div class="campo-input-wrap" [class.campo-erro]="senhaCadastroTocada && senhaCadastro.trim().length < 6">
             <i class="fi fi-rr-lock campo-icone"></i>
             <input id="senhaCadastro" [type]="mostrarSenhaCadastro ? 'text' : 'password'" class="campo-input"
-              placeholder="Mínimo 6 caracteres"
-              [(ngModel)]="senhaCadastro"
-              (blur)="marcarTocado('senhaCadastro')"
-              autocomplete="new-password"/>
+              placeholder="Mínimo 6 caracteres" [(ngModel)]="senhaCadastro" (blur)="marcarTocado('senhaCadastro')"
+              autocomplete="new-password" maxlength="30" />
             <button type="button" class="btn-olho" (click)="toggleSenhaCadastro()">
-              <i class="fi" [class.fi-rr-eye]="!mostrarSenhaCadastro" [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"></i>
+              <i class="fi" [class.fi-rr-eye]="!mostrarSenhaCadastro"
+                [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"></i>
             </button>
           </div>
           <span class="msg-erro-campo" *ngIf="senhaCadastroTocada && senhaCadastro.trim().length < 6">
@@ -122,8 +109,7 @@
           </span>
         </div>
 
-        <button type="button" class="btn-voz" (click)="loginPorVoz()"
-          [class.btn-voz--ativo]="escutando()">
+        <button type="button" class="btn-voz" (click)="loginPorVoz()" [class.btn-voz--ativo]="escutando()">
           <span class="voz-icone-circulo" [class.pulsando]="escutando()">
             <i class="fi fi-rr-microphone"></i>
           </span>

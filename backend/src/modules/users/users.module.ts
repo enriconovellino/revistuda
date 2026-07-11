@@ -7,6 +7,7 @@ import {
   DeleteUserUseCase,
   GetAllUsersUseCase,
   GetUserUseCase,
+  RevokeProfessorAccessUseCase,
   UpdateUserUseCase,
 } from './domain/use-cases';
 
@@ -19,6 +20,7 @@ import {
     GetUserUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+    RevokeProfessorAccessUseCase,
 
     // Repositório
     {

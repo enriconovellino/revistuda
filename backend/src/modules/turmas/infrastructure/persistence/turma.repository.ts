@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { ITurmaRepository } from '../../domain/ports/turma-repository.port';
 import { Turma } from '../../domain/entities/turma.entity';
@@ -20,8 +20,12 @@ export class TurmaRepository implements ITurmaRepository {
   }
 
   async findAll(): Promise<Turma[]> {
-    const turmas = await this.prisma.turma.findMany();
-    return turmas.map((t) => new Turma(t.turma_id, t.nome_turma, t.professor_id, t.descricao_turma ?? undefined, t.capacidade_maxima ?? undefined));
+    const turmas = await this.prisma.turma.findMany({
+      include: { _count: { select: { alunos: true } } },
+    });
+    return turmas.map(
+      (t) => new Turma(t.turma_id, t.nome_turma, t.professor_id, t.descricao_turma ?? undefined, t.capacidade_maxima ?? undefined, t._count.alunos),
+    );
   }
 
   async findById(id: number): Promise<Turma | null> {
@@ -44,6 +48,14 @@ export class TurmaRepository implements ITurmaRepository {
   }
 
   async delete(id: number): Promise<void> {
+    // Modulo -> Turma é uma relação obrigatória (Restrict): excluir direto estouraria FK.
+    // Alunos não bloqueiam — a FK opcional desvincula (SET NULL) automaticamente.
+    const modulos = await this.prisma.modulo.count({ where: { turma_id: id } });
+    if (modulos > 0) {
+      throw new BadRequestException(
+        `A turma possui ${modulos} módulo(s) vinculado(s). Exclua ou mova os módulos antes de excluir a turma.`,
+      );
+    }
     await this.prisma.turma.delete({ where: { turma_id: id } });
   }
 

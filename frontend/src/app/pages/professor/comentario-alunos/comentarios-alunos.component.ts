@@ -35,14 +35,12 @@ export class ComentariosAlunosComponent implements OnInit {
   private professorService = inject(ProfessorService);
   private router = inject(Router);
 
-  // Lista única de turmas presentes nos comentários (pra popular o select)
   turmasDisponiveis = computed(() => {
     const mapa = new Map<number, string>();
     this.comentarios().forEach(c => mapa.set(c.turma.turma_id, c.turma.nome_turma));
     return Array.from(mapa.entries()).map(([turma_id, nome_turma]) => ({ turma_id, nome_turma }));
   });
 
-  // Lista de módulos disponíveis, já filtrada pela turma selecionada (se houver)
   modulosDisponiveis = computed(() => {
     const turmaId = this.turmaFiltro();
     const mapa = new Map<number, string>();
@@ -52,7 +50,6 @@ export class ComentariosAlunosComponent implements OnInit {
     return Array.from(mapa.entries()).map(([modulo_id, titulo_modulo]) => ({ modulo_id, titulo_modulo }));
   });
 
-  // Comentários já filtrados por turma e módulo selecionados
   comentariosFiltrados = computed(() => {
     const turmaId = this.turmaFiltro();
     const moduloId = this.moduloFiltro();
@@ -63,7 +60,6 @@ export class ComentariosAlunosComponent implements OnInit {
     });
   });
 
-  // Resumo geral (cards no topo)
   totalComentarios = computed(() => this.comentarios().length);
   totalAlunosUnicos = computed(() => new Set(this.comentarios().map(c => c.aluno.id)).size);
   totalModulosComComentario = computed(() => new Set(this.comentarios().map(c => c.modulo.modulo_id)).size);
@@ -94,7 +90,7 @@ export class ComentariosAlunosComponent implements OnInit {
 
   onTurmaChange(value: string) {
     this.turmaFiltro.set(value ? Number(value) : null);
-    this.moduloFiltro.set(null); // reseta o módulo ao trocar de turma
+    this.moduloFiltro.set(null);
   }
 
   onModuloChange(value: string) {
@@ -176,6 +172,10 @@ export class ComentariosAlunosComponent implements OnInit {
         this.irParaTurmas();
         break;
 
+      case 'alunos':
+        this.irParaAlunos();
+        break;
+
       case 'comentarios':
         this.irParaComentarios();
         break;
@@ -183,7 +183,11 @@ export class ComentariosAlunosComponent implements OnInit {
   }
 
   irParaComentarios() {
-    this.router.navigate(['/comentarios-alunos']); // ajuste a rota se necessário
+    this.router.navigate(['/professor/comentarios']);
+  }
+
+  irParaAlunos() {
+    this.router.navigate(['/professor/alunos']);
   }
 
   logout() {

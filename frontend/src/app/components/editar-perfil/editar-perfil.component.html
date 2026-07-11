@@ -4,12 +4,12 @@
       <h5 class="fw-bold mb-0 text-dark">Editar Minha Conta</h5>
       <button class="btn-close-modal" (click)="onCancel()">✕</button>
     </div>
-    
+
     <div class="modal-body">
       <div class="alert alert-danger py-2 small mb-3" *ngIf="error()">
         {{ error() }}
       </div>
-      
+
       <div class="alert alert-success py-2 small mb-3 text-center" *ngIf="success()">
         Perfil atualizado com sucesso!
       </div>
@@ -17,12 +17,14 @@
       <form (ngSubmit)="onSave()">
         <div class="mb-3">
           <label class="form-label small fw-bold text-dark">Nome Completo</label>
-          <input type="text" class="form-control" placeholder="Seu nome" [ngModel]="nome()" (ngModelChange)="nome.set($event)" name="nome" [disabled]="loading()" />
+          <input type="text" class="form-control" placeholder="Seu nome" [ngModel]="nome()"
+            (ngModelChange)="nome.set($event)" name="nome" [disabled]="loading()" maxlength="100" />
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold text-dark">E-mail</label>
-          <input type="email" class="form-control" placeholder="Seu e-mail" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" [disabled]="loading()" />
+          <input type="email" class="form-control" placeholder="Seu e-mail" [ngModel]="email()"
+            (ngModelChange)="email.set($event)" name="email" [disabled]="loading()" maxlength="50" />
         </div>
 
         <hr class="my-3 text-muted">
@@ -30,21 +32,25 @@
 
         <div class="mb-3">
           <label class="form-label small fw-bold text-dark">Nova Senha</label>
-          <input type="password" class="form-control" placeholder="Mínimo 6 caracteres" [ngModel]="senha()" (ngModelChange)="senha.set($event)" name="senha" [disabled]="loading()" />
+          <input type="password" class="form-control" placeholder="Mínimo 6 caracteres" [ngModel]="senha()"
+            (ngModelChange)="senha.set($event)" name="senha" [disabled]="loading()" maxlength="30" />
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold text-dark">Confirmar Nova Senha</label>
-          <input type="password" class="form-control" placeholder="Repita a nova senha" [ngModel]="confirmSenha()" (ngModelChange)="confirmSenha.set($event)" name="confirmSenha" [disabled]="loading()" />
+          <input type="password" class="form-control" placeholder="Repita a nova senha" [ngModel]="confirmSenha()"
+            (ngModelChange)="confirmSenha.set($event)" name="confirmSenha" [disabled]="loading()" maxlength="30" />
         </div>
 
         <div class="mb-3" *ngIf="senha() || confirmSenha()">
           <label class="form-label small fw-bold text-dark">Senha Atual</label>
-          <input type="password" class="form-control" placeholder="Digite sua senha atual" [ngModel]="senhaAtual()" (ngModelChange)="senhaAtual.set($event)" name="senhaAtual" [disabled]="loading()" />
+          <input type="password" class="form-control" placeholder="Digite sua senha atual" [ngModel]="senhaAtual()"
+            (ngModelChange)="senhaAtual.set($event)" name="senhaAtual" [disabled]="loading()" maxlength="30" />
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-4">
-          <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="onCancel()" [disabled]="loading()">Cancelar</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="onCancel()"
+            [disabled]="loading()">Cancelar</button>
           <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="loading()">
             <span *ngIf="!loading()">Salvar</span>
             <span *ngIf="loading()">Salvando...</span>
