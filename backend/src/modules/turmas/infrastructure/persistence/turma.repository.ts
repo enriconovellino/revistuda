@@ -50,6 +50,11 @@ export class TurmaRepository implements ITurmaRepository {
   async findByProfessorId(professorId: number): Promise<Turma[]> {
     const turmas = await this.prisma.turma.findMany({
       where: { professor_id: professorId },
+      include: {
+        _count: {
+          select: { alunos: true },
+        },
+      },
     });
 
     return turmas.map(
@@ -60,6 +65,7 @@ export class TurmaRepository implements ITurmaRepository {
           t.professor_id,
           t.descricao_turma ?? undefined,
           t.capacidade_maxima ?? undefined,
+          t._count.alunos,
         ),
     );
   }

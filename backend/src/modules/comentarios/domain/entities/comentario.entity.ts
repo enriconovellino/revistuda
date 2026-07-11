@@ -5,7 +5,9 @@ export class Comentario {
   conteudoId!: number;
   createdAt!: Date;
   updatedAt!: Date;
- 
+  resposta?: string | null;
+  respostaAt?: Date | null;
+
   constructor(
     id: number,
     texto: string,
@@ -13,6 +15,8 @@ export class Comentario {
     conteudoId: number,
     createdAt: Date,
     updatedAt: Date,
+    resposta?: string | null,
+    respostaAt?: Date | null,
   ) {
     this.id = id;
     this.texto = texto;
@@ -20,5 +24,7 @@ export class Comentario {
     this.conteudoId = conteudoId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.resposta = resposta;
+    this.respostaAt = respostaAt;
   }
 }

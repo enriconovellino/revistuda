@@ -9,12 +9,22 @@ import { ProfessorService } from '../../../services/professor.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard-turmas.html',
-  styleUrl: './dashboard-turmas.css',
+  styleUrl: './dashboard-turmas.scss',
 })
 export class DashboardTurmas implements OnInit {
   private professorService = inject(ProfessorService);
   private authService = inject(AuthService);
+  percentualOcupacao(turma: Turma): number {
+    if (!turma.capacidade_maxima) return 0;
+    return Math.min(100, ( turma.capacidade_maxima) * 100);
+  }
 
+  corBarra(turma: Turma): string {
+    const percentual = this.percentualOcupacao(turma);
+    if (percentual >= 90) return 'alta';
+    if (percentual >= 60) return 'media';
+    return 'baixa';
+  }
   turmas = signal<Turma[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);

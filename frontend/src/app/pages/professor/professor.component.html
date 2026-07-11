@@ -6,28 +6,29 @@
     </div>
 
     <nav class="sidebar-nav">
-  <ul class="nav flex-column gap-1">
-    <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'dashboard'" (click)="irPara('dashboard')">
-        <i class="fi fi-rr-apps-add"></i>
-        <span>Dashboard</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'"
-        (click)="irParaTurmas()">
-        <i class="fi fi-rr-users"></i>
-        <span>Turmas</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2" (click)="irParaComentarios()">
-        <i class="fi fi-rr-document-signed"></i>
-        <span>Comentários</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+      <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'dashboard'"
+            (click)="irPara('dashboard')">
+            <i class="fi fi-rr-apps-add"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2"
+            [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'" (click)="irParaTurmas()">
+            <i class="fi fi-rr-users"></i>
+            <span>Turmas</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaComentarios()">
+            <i class="fi fi-rr-document-signed"></i>
+            <span>Comentários</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
     <div class="sidebar-footer">
       <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()"> Sair</button>
@@ -35,30 +36,19 @@
   </div>
 
   <div class="flex-grow-1" style="margin-left: 240px;">
-    <div class="main-header d-flex justify-content-between align-items-center">
-      <div class="search-box d-flex align-items-center">
-  <i class="fi fi-bs-search search-icon"></i>
-  <input
-    type="text"
-    class="form-control"
-    placeholder="Buscar módulos..."
-  >
-</div>
-      <div class="d-flex align-items-center gap-3">
-        <span style="cursor:pointer;"></span>
-        <span style="cursor:pointer;"></span>
-        <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
-          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-            style="width: 36px; height: 36px; background: #0f2744 !important;">
-            {{ userName().charAt(0).toUpperCase() }}
-          </div>
-          <div>
-            <div class="fw-semibold small">{{ userName() }}</div>
-            <div class="text-muted" style="font-size: 11px;">Professor</div>
-          </div>
+    <div class="main-header d-flex align-items-center justify-content-end">
+      <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+          style="width: 36px; height: 36px; background: #0f2744 !important;">
+          {{ userName().charAt(0).toUpperCase() }}
+        </div>
+        <div>
+          <div class="fw-semibold small">{{ userName() }}</div>
+          <div class="text-muted" style="font-size: 11px;">Professor</div>
         </div>
       </div>
     </div>
+
     @if (loading()) {
     <div class="d-flex justify-content-center mt-5">
       <div class="spinner-border text-primary" role="status"></div>
@@ -74,79 +64,84 @@
         <div>
           <h4 class="mb-0 fw-bold">Painel de Controle</h4>
         </div>
-        <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="irParaTurmas()">
-          Selecionar Turma
-        </button>
       </div>
 
-     <div class="row g-3 mb-4">
-  <div class="col-md-4">
-    <div class="stat-card-v2">
-      <div class="stat-icon-v2">
-        <i class="fi fi-sr-users-alt"></i>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card-v2">
+            <div class="stat-icon-v2">
+              <i class="fi fi-sr-users-alt"></i>
+            </div>
+            <div>
+              <div class="mb-1" style="color: #93c5fd; font-size:1.20rem;">Turmas Ativas</div>
+              <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalTurmas }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card-v2">
+            <div class="stat-icon-v2">
+              <i class="fi fi-sr-graduation-cap"></i>
+            </div>
+            <div>
+              <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Total de Alunos</div>
+              <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalAlunos }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card-v2">
+            <div class="stat-icon-v2">
+              <i class="fi fi-sr-pencil"></i>
+            </div>
+            <div>
+              <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Respostas Entregues</div>
+              <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalRespostas }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="mb-1" style="color: #93c5fd; font-size:1.20rem;">Turmas Ativas</div>
-        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalTurmas }}</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="stat-card-v2">
-      <div class="stat-icon-v2">
-        <i class="fi fi-sr-graduation-cap"></i>
-      </div>
-      <div>
-        <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Total de Alunos</div>
-        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalAlunos }}</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="stat-card-v2">
-      <div class="stat-icon-v2">
-        <i class="fi fi-sr-pencil"></i>
-      </div>
-      <div>
-        <div class="mb-1" style="color: #93c5fd; font-size: 1.20rem;">Respostas Entregues</div>
-        <div class="fw-bold" style="color: #bfdbfe; font-size: 2.2rem;">{{ estatisticas().totalRespostas }}</div>
-      </div>
-    </div>
-  </div>
-</div>
 
       <div class="row g-4 align-items-stretch">
 
-    <div class="col-md-7">
-  <div class="chart-card h-100 d-flex flex-column">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h6 class="fw-bold mb-0">Desempenho Geral</h6>
-    <select class="form-select form-select-sm w-auto">
-      <option>Últimos 30 dias</option>
-      <option>Últimos 7 dias</option>
-    </select>
-  </div>
+        <div class="col-md-7">
+          <div class="chart-card h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0">Desempenho Geral</h6>
+              <select class="form-select form-select-sm w-auto">
+                <option>Últimos 30 dias</option>
+                <option>Últimos 7 dias</option>
+              </select>
+            </div>
 
-  <div style="position: relative; height: 220px; flex-shrink: 0;">
-    <canvas id="graficoDesempenho"></canvas>
-  </div>
+            <div class="d-flex flex-grow-1 gap-3">
+              <div style="position: relative; height: 220px; flex: 1 1 auto; min-width: 0;">
+                <canvas id="graficoDesempenho"></canvas>
+              </div>
 
-  <div class="d-flex justify-content-center gap-4 mt-3">
-    <div class="d-flex align-items-center gap-2">
-      <span style="width: 12px; height: 12px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
-      <div class="small text-muted">Acertos: <strong style="color: #0f2744;">{{ estatisticas().acertos }}</strong></div>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="width: 12px; height: 12px; border-radius: 50%; background: #dc2626; display: inline-block;"></span>
-      <div class="small text-muted">Erros: <strong style="color: #0f2744;">{{ estatisticas().erros }}</strong></div>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span style="width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; display: inline-block;"></span>
-      <div class="small text-muted">Não Respondeu: <strong style="color: #0f2744;">{{ estatisticas().naoRespondeu }}</strong></div>
-    </div>
-  </div>
-</div>
-</div>
+              <div class="d-flex flex-column justify-content-center gap-3" style="flex-shrink: 0;">
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    style="width: 12px; height: 12px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+                  <div class="small"><strong style="color: #0f2744;">Acertos: </strong> <span
+                      style="color: #0f2744; font-weight: 600;">{{ estatisticas().acertos }}</span></div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    style="width: 12px; height: 12px; border-radius: 50%; background: #dc2626; display: inline-block;"></span>
+                  <div class="small"><strong style="color: #0f2744;">Erros: </strong> <span
+                      style="color: #0f2744; font-weight: 600;">{{ estatisticas().erros }}</span></div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    style="width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; display: inline-block;"></span>
+                  <div class="small"><strong style="color: #0f2744;">Não Respondeu: </strong> <span
+                      style="color: #0f2744; font-weight: 600;">{{ estatisticas().naoRespondeu }}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="col-md-5">
           <div class="chart-card h-100">
@@ -159,10 +154,10 @@
               <p class="text-muted small">Nenhum módulo criado ainda.</p>
               }
               @for (modulo of modulos().slice(0, 4); track modulo.modulo_id) {
-              <div class="turma-card" (click)="verModulo(modulo.modulo_id)">
+              <div class="turma-card">
                 <div class="turma-icon">
                   @if (modulo.imagem_url) {
-                  <img [src]="modulo.imagem_url"
+                  <img [src]="getImageUrl(modulo.imagem_url)"
                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                   } @else {
 
@@ -178,6 +173,9 @@
                   [class.bg-danger]="modulo.dificuldade === 'difícil'">
                   {{ modulo.dificuldade }}
                 </span>
+                <button class="btn btn-sm btn-entrar" (click)="verModulo(modulo.modulo_id)">
+                  Entrar
+                </button>
               </div>
               }
             </div>
@@ -189,133 +187,16 @@
     }
 
     @if (paginaAtual() === 'modulos') {
-    <div class="p-4">
-      @if (turmaSelecionada()) {
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <button class="btn btn-link btn-sm px-0 mb-2 text-decoration-none" (click)="irParaTurmas()">
-            Voltar para turmas
-          </button>
-          <h4 class="mb-0 fw-bold">{{ turmaSelecionada()!.nome_turma }}</h4>
-          <small class="text-muted">{{ modulosDaTurmaSelecionada().length }} módulo(s) nesta turma</small>
-        </div>
-        <button class="btn btn-sm text-white px-3" style="background: #0f2744;" (click)="toggleFormModulo()">
-          {{ mostrarFormModulo() ? 'Cancelar' : '+ Novo Módulo' }}
-        </button>
-      </div>
-
-      @if (turmaSelecionada()!.descricao_turma || turmaSelecionada()!.capacidade_maxima) {
-      <div class="alert alert-light border mb-4">
-        @if (turmaSelecionada()!.descricao_turma) {
-        <div>{{ turmaSelecionada()!.descricao_turma }}</div>
-        }
-        @if (turmaSelecionada()!.capacidade_maxima) {
-        <small class="text-muted">Capacidade máxima: {{ turmaSelecionada()!.capacidade_maxima }} alunos</small>
-        }
-      </div>
-      }
-
-      @if (mostrarFormModulo()) {
-      <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title mb-1">{{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}</h5>
-          <small class="text-muted d-block mb-3">Turma selecionada: {{ turmaSelecionada()!.nome_turma }}</small>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Título <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
-                placeholder="Ex: Introdução à Informática" [(ngModel)]="novoTituloModulo" name="tituloModulo" />
-              @if (erroModulo()) {
-              <div class="invalid-feedback">{{ erroModulo() }}</div>
-              }
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Descrição</label>
-              <input type="text" class="form-control" placeholder="Descrição opcional" [(ngModel)]="novaDescricaoModulo"
-                name="descricaoModulo" />
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Dificuldade</label>
-              <select class="form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
-                <option value="fácil">Fácil</option>
-                <option value="médio">Médio</option>
-                <option value="difícil">Difícil</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Imagem de Capa</label>
-              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" name="imagemUrl" />
-              <div *ngIf="uploadingImage()" class="mt-2 d-flex align-items-center gap-2 text-muted small">
-                <span class="spinner-border spinner-border-sm" role="status"></span>
-                Enviando imagem...
-              </div>
-              <div *ngIf="novaImagemUrl && !uploadingImage()" class="mt-2 text-muted small text-truncate">
-                Imagem selecionada: <a [href]="getImageUrl(novaImagemUrl)" target="_blank">{{ novaImagemUrl }}</a>
-              </div>
-            </div>
-            <div class="col-12">
-              <button class="btn btn-success" type="button" (click)="salvarModulo()" [disabled]="salvandoModulo() || uploadingImage()">
-                {{ salvandoModulo() ? 'Salvando...' : moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      }
-
-      @if (modulosDaTurmaSelecionada().length === 0 && !mostrarFormModulo()) {
-      <div class="text-center mt-5">
-        <p class="text-muted fs-5">Nenhum módulo criado para esta turma ainda.</p>
-        <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
-      </div>
-      }
-
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (modulo of modulosDaTurmaSelecionada(); track modulo.modulo_id) {
-        <div class="col">
-          <div class="card h-100 shadow-sm">
-            @if (modulo.imagem_url) {
-            <img [src]="getImageUrl(modulo.imagem_url)" class="card-img-top" alt="{{ modulo.titulo_modulo }}"
-              style="height: 180px; object-fit: cover;">
-            } @else {
-            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-              <span class="text-muted">Sem imagem</span>
-            </div>
-            }
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">{{ modulo.titulo_modulo }}</h5>
-                <span class="badge" [class.bg-success]="modulo.dificuldade === 'fácil'"
-                  [class.bg-warning]="modulo.dificuldade === 'médio'"
-                  [class.bg-danger]="modulo.dificuldade === 'difícil'">
-                  {{ modulo.dificuldade }}
-                </span>
-              </div>
-              <p class="card-text text-muted">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
-            </div>
-            <div class="card-footer d-flex gap-2">
-              <button class="btn btn-sm btn-primary flex-fill" (click)="verModulo(modulo.modulo_id)"> Ver
-                Lições</button>
-              <button class="btn btn-sm btn-outline-warning" (click)="editarModulo(modulo)">Editar</button>
-              <button class="btn btn-sm btn-outline-danger" (click)="deletarModulo(modulo.modulo_id)">Deletar</button>
-            </div>
-          </div>
-        </div>
-        }
-      </div>
-      } @else {
-      <div class="alert alert-info d-flex justify-content-between align-items-center">
-        <span>Selecione uma turma para visualizar os módulos.</span>
-        <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
-      </div>
-      }
-    </div>
+    <app-dashboard-modulos [turma]="turmaSelecionada()" (voltar)="irParaTurmas()"></app-dashboard-modulos>
     }
+
     @if (paginaAtual() === 'turmas') {
     <app-dashboard-turmas (turmaSelecionada)="selecionarTurma($event)"></app-dashboard-turmas>
     }
+
     }
   </div>
 </div>
 
-<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()" (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>
+<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
+  (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>

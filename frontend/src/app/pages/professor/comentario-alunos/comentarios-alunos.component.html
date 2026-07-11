@@ -22,7 +22,8 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaComentarios()">
+          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'comentarios'"
+            (click)="irParaComentarios()">
             <i class="fi fi-rr-document-signed"></i>
             <span>Comentários</span>
           </a>
@@ -38,8 +39,8 @@
 
   <div class="flex-grow-1" style="margin-left: 240px;">
     <div class="main-header d-flex justify-content-between align-items-center">
-      <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-3" (click)="voltar()">
-        <span>←</span> Voltar
+      <button class="voltar-btn" (click)="voltar()">
+        <span class="voltar-btn-icon">←</span> Voltar
       </button>
 
       <div class="d-flex align-items-center gap-3">
@@ -66,26 +67,46 @@
       </div>
 
       <div *ngIf="!loading() && !error()">
-        <h3 class="fw-bold text-dark mb-4">💬 Comentários dos Alunos</h3>
+        <h3 class="fw-bold text-dark mb-4">
+          <span class="page-title-icon">
+            <i class="fi fi-rr-comment-alt"></i>
+          </span>
+          Comentários dos Alunos
+        </h3>
 
         <!-- Resumo geral -->
         <div class="row g-3 mb-4">
           <div class="col-md-4">
-            <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Total de Comentários</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalComentarios() }}</h3>
+            <div class="stat-card-dark">
+              <div class="stat-icon">
+                <i class="fi fi-rr-comment-alt"></i>
+              </div>
+              <div>
+                <div class="stat-label">Total de Comentários</div>
+                <div class="stat-value">{{ totalComentarios() }}</div>
+              </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Alunos que Comentaram</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalAlunosUnicos() }}</h3>
+            <div class="stat-card-dark">
+              <div class="stat-icon">
+                <i class="fi fi-rr-graduation-cap"></i>
+              </div>
+              <div>
+                <div class="stat-label">Alunos que Comentaram</div>
+                <div class="stat-value">{{ totalAlunosUnicos() }}</div>
+              </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="chart-card text-center">
-              <div class="text-muted small mb-1">Módulos com Comentários</div>
-              <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalModulosComComentario() }}</h3>
+            <div class="stat-card-dark">
+              <div class="stat-icon">
+                <i class="fi fi-rr-book-alt"></i>
+              </div>
+              <div>
+                <div class="stat-label">Módulos com Comentários</div>
+                <div class="stat-value">{{ totalModulosComComentario() }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -114,7 +135,7 @@
             </div>
 
             <div class="col-md-4">
-              <button class="btn btn-sm btn-outline-secondary" (click)="limparFiltros()">
+              <button class="btn-limpar-filtros" (click)="limparFiltros()">
                 Limpar Filtros
               </button>
             </div>
@@ -124,20 +145,51 @@
         <!-- Lista de comentários -->
         <div class="chart-card">
           <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
-            <div class="content-box p-3 border rounded" *ngFor="let comentario of comentariosFiltrados()">
+            <div class="comentario-card" *ngFor="let comentario of comentariosFiltrados()">
               <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-                <div>
-                  <span class="fw-semibold text-dark">{{ comentario.aluno.nome }}</span>
-                  <div class="text-muted" style="font-size: 12px;">
-                    {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
-                    {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+                <div class="d-flex align-items-start gap-3">
+                  <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
+                  <div>
+                    <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
+                    <div class="comentario-meta">
+                      {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
+                      {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+                    </div>
                   </div>
                 </div>
-                <span class="text-muted" style="font-size: 11px;">
+                <span class="comentario-data">
                   {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
                 </span>
               </div>
-              <p class="mb-0 small text-dark" style="white-space: pre-wrap;">{{ comentario.texto }}</p>
+
+              <p class="comentario-texto">{{ comentario.texto }}</p>
+
+              <div class="resposta-existente" *ngIf="comentario.resposta">
+                <div class="resposta-existente-label">
+                  <i class="fi fi-rr-corner-down-right"></i> Sua resposta
+                </div>
+                <p class="resposta-existente-texto">{{ comentario.resposta }}</p>
+              </div>
+
+              <div class="comentario-footer">
+                <button class="btn-responder" type="button" (click)="toggleResposta(comentario.id)">
+                  <i class="fi fi-rr-comment-alt-dots"></i>
+                  {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Editar Resposta' : 'Responder') }}
+                </button>
+              </div>
+
+              <div class="resposta-box" *ngIf="respostaAbertaId() === comentario.id">
+                <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
+                <textarea class="resposta-textarea" rows="2" placeholder="Escreva sua resposta..."
+                  [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
+                <div class="resposta-actions">
+                  <button class="btn-resposta-enviar" type="button" [disabled]="enviandoResposta()"
+                    (click)="enviarResposta(comentario)">
+                    <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
+                    {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

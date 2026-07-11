@@ -8,6 +8,7 @@ import {
   GetComentariosByConteudoUseCase,
   GetComentariosByModuloUseCase,
   GetComentariosByProfessorUseCase,
+  ResponderComentarioUseCase, // novo
 } from './domain/use-cases';
 
 @Module({
@@ -19,6 +20,7 @@ import {
     GetComentariosByConteudoUseCase,
     GetComentariosByModuloUseCase,
     GetComentariosByProfessorUseCase,
+    ResponderComentarioUseCase, // novo
   ],
 })
 export class ComentariosModule {}

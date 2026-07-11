@@ -176,6 +176,9 @@ model ComentarioAluno {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  resposta     String?
+  respostaAt   DateTime?
+
   aluno        User     @relation(fields: [alunoId], references: [id])
   conteudo     Conteudo @relation(fields: [conteudoId], references: [conteudo_id])
 

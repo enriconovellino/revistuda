@@ -1,0 +1,168 @@
+<div class="p-4">
+  @if (loading()) {
+  <div class="d-flex justify-content-center mt-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+  } @else if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (turma) {
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn btn-link btn-sm px-0 mb-2 text-decoration-none" (click)="irParaTurmas()">
+        Voltar para turmas
+      </button>
+      <h4 class="mb-0 fw-bold">{{ turma.nome_turma }}</h4>
+      <small class="text-muted">{{ modulosDaTurma().length }} módulo(s) nesta turma</small>
+    </div>
+    <button class="btn-novo-modulo" (click)="toggleFormModulo()">
+      {{ mostrarFormModulo() ? 'Cancelar' : '+ Novo Módulo' }}
+    </button>
+  </div>
+
+  @if (turma.descricao_turma) {
+  <div class="alert alert-light border mb-4">
+    <div>{{ turma.descricao_turma }}</div>
+  </div>
+  }
+
+  @if (mostrarFormModulo()) {
+  <div class="modulo-form-card mb-4">
+    <div class="modulo-form-header">
+      <div class="modulo-form-icon">
+        <i class="fi fi-rr-box-open"></i>
+      </div>
+      <div>
+        <h5 class="modulo-form-title">{{ moduloEmEdicao() ? 'Editar Módulo' : 'Novo Módulo' }}</h5>
+        <span class="modulo-form-subtitle">Turma selecionada: <strong>{{ turma.nome_turma }}</strong></span>
+      </div>
+    </div>
+
+    <div class="modulo-form-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="modulo-form-label">Título <span class="text-danger">*</span></label>
+          <input type="text" class="modulo-form-control" [class.is-invalid]="erroModulo()"
+            placeholder="Ex: Introdução à Informática" [(ngModel)]="novoTituloModulo" name="tituloModulo" />
+          @if (erroModulo()) {
+          <div class="modulo-form-error">{{ erroModulo() }}</div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label class="modulo-form-label">Descrição</label>
+          <input type="text" class="modulo-form-control" placeholder="Descrição opcional"
+            [(ngModel)]="novaDescricaoModulo" name="descricaoModulo" />
+        </div>
+        <div class="col-md-2">
+          <label class="modulo-form-label">Dificuldade</label>
+          <select class="modulo-form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
+            <option value="fácil">Fácil</option>
+            <option value="médio">Médio</option>
+            <option value="difícil">Difícil</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="modulo-form-label">Imagem de Capa</label>
+
+          <label class="modulo-dropzone" [class.is-uploading]="uploadingImage()">
+            <input type="file" class="modulo-dropzone-input" (change)="onFileSelected($event)" accept="image/*"
+              name="imagemUrl" />
+
+            @if (uploadingImage()) {
+            <div class="modulo-dropzone-state">
+              <span class="spinner-border spinner-border-sm" role="status"></span>
+              <span>Enviando imagem...</span>
+            </div>
+            } @else if (novaImagemUrl) {
+            <div class="modulo-dropzone-state modulo-dropzone-state-success">
+              <i class="fi fi-rr-picture"></i>
+              <span class="text-truncate">Imagem selecionada</span>
+              <a [href]="getImageUrl(novaImagemUrl)" target="_blank" (click)="$event.stopPropagation()"
+                class="modulo-dropzone-link">Ver</a>
+            </div>
+            } @else {
+            <div class="modulo-dropzone-state">
+              <i class="fi fi-rr-cloud-upload-alt"></i>
+              <span>Clique para escolher uma imagem</span>
+            </div>
+            }
+          </label>
+        </div>
+
+        <div class="col-12">
+          <button class="modulo-btn-save" type="button" (click)="salvarModulo()"
+            [disabled]="salvandoModulo() || uploadingImage()">
+            @if (salvandoModulo()) {
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+            Salvando...
+            } @else {
+            <i class="fi fi-rr-disk"></i>
+            {{ moduloEmEdicao() ? 'Atualizar Módulo' : 'Salvar Módulo' }}
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if (modulosDaTurma().length === 0 && !mostrarFormModulo()) {
+  <div class="text-center mt-5">
+    <p class="text-muted fs-5">Nenhum módulo criado para esta turma ainda.</p>
+    <button class="btn btn-primary" (click)="toggleFormModulo()">+ Criar primeiro módulo</button>
+  </div>
+  }
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    @for (modulo of modulosDaTurma(); track modulo.modulo_id) {
+    <div class="col">
+      <div class="modulo-card-v3 h-100">
+        <div class="modulo-card-v3-img">
+          @if (modulo.imagem_url) {
+          <img [src]="getImageUrl(modulo.imagem_url)" alt="{{ modulo.titulo_modulo }}">
+          } @else {
+          <div class="modulo-card-v3-noimg">
+            <i class="fi fi-rr-picture"></i>
+          </div>
+          }
+          <span class="modulo-badge-v3" [class.badge-facil]="modulo.dificuldade === 'fácil'"
+            [class.badge-medio]="modulo.dificuldade === 'médio'"
+            [class.badge-dificil]="modulo.dificuldade === 'difícil'">
+            {{ modulo.dificuldade }}
+          </span>
+        </div>
+
+        <div class="modulo-card-v3-body">
+          <h5 class="modulo-card-v3-title">{{ modulo.titulo_modulo }}</h5>
+          <p class="modulo-card-v3-desc">{{ modulo.descricao_modulo || 'Sem descrição' }}</p>
+        </div>
+
+        <div class="modulo-card-v3-actions">
+          <button class="btn-ver-licoes-v3" (click)="verModulo(modulo.modulo_id)">
+            <i class="fi fi-rr-book-open-reader"></i>
+            Ver Lições
+          </button>
+
+          <div class="modulo-card-v3-icons">
+            <button class="btn-icon-v3 btn-icon-edit-v3" (click)="editarModulo(modulo)" title="Editar">
+              <i class="fi fi-rr-pencil"></i>
+            </button>
+            <button class="btn-icon-v3 btn-icon-delete-v3" (click)="deletarModulo(modulo.modulo_id)"
+              title="Deletar">
+              <i class="fi fi-rr-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  } @else {
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <span>Selecione uma turma para visualizar os módulos.</span>
+    <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
+  </div>
+  }
+</div>
