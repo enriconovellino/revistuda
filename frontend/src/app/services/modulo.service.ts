@@ -1,0 +1,91 @@
+import { Injectable, inject } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { Modulo } from '../model/modulo.model';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ModuloService {
+  private authService = inject(AuthService);
+  private apiUrl = environment.apiUrl;
+
+  private getHeaders(): HeadersInit {
+    const token = this.authService.getAccessToken();
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }
+
+  async getModulos(): Promise<Modulo[]> {
+    const response = await fetch(`${this.apiUrl}/modulos`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar Modulos');
+    }
+
+    return data as Modulo[];
+  }
+
+  async createModulo(
+    modulo: Omit<Modulo, 'modulo_id'> & { turma_id: number },
+  ): Promise<Modulo> {
+    const response = await fetch(`${this.apiUrl}/modulos`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(modulo),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao criar módulo');
+    }
+
+    return data as Modulo;
+  }
+
+  async updateModulo(
+    id: number,
+    modulo: Partial<Omit<Modulo, 'modulo_id'>>,
+  ): Promise<Modulo> {
+    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(modulo),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao atualizar módulo');
+    }
+
+    return data as Modulo;
+  }
+
+  async deleteModulo(id: number): Promise<void> {
+    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || 'Erro ao deletar módulo');
+    }
+  }
+
+  async getModuloById(id: number): Promise<Modulo> {
+    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar módulo');
+    }
+    return data as Modulo;
+  }
+}

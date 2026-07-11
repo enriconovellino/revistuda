@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
+import { ModuloService } from '../../services/modulo.service';
+import { LicaoService } from '../../services/licao.service';
+import { AtividadeService } from '../../services/atividade.service';
 import { Modulo } from '../../model/modulo.model';
 import { Licao } from '../../model/licao.model';
 import { Atividade } from '../../model/atividade.model';
@@ -69,6 +72,9 @@ export class AlunoIdosoComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private alunoService: AlunoService,
+    private moduloService: ModuloService,
+    private licaoService: LicaoService,
+    private atividadeService: AtividadeService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -93,10 +99,14 @@ export class AlunoIdosoComponent implements OnInit {
     this.isLoading.set(true);
     this.hasError.set(false);
     try {
-      const data = await this.alunoService.getDashboardData();
-      this.modulos.set(data.modulos);
-      this.licoes.set(data.licoes);
-      this.atividades.set(data.atividades);
+      const [modulos, licoes, atividades] = await Promise.all([
+        this.moduloService.getModulos(),
+        this.licaoService.getLicoes(),
+        this.atividadeService.getAtividades()
+      ]);
+      this.modulos.set(modulos);
+      this.licoes.set(licoes);
+      this.atividades.set(atividades);
     } catch {
       this.hasError.set(true);
     } finally {

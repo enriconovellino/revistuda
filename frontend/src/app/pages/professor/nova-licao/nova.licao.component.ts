@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfessorService } from '../../../services/professor.service';
+import { LicaoService } from '../../../services/licao.service';
+import { ConteudoService } from '../../../services/conteudo.service';
 import { AtividadeService } from '../../../services/atividade.service';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
@@ -59,6 +61,8 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   @Output() licaoCriada = new EventEmitter<void>();
 
   private professorService = inject(ProfessorService);
+  private licaoService = inject(LicaoService);
+  private conteudoService = inject(ConteudoService);
   private atividadeService = inject(AtividadeService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -117,13 +121,13 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     try {
       this.loadingItens.set(true);
 
-      const allLicoes = await this.professorService.getLicoes();
+      const allLicoes = await this.licaoService.getLicoes();
       const licoesDoModulo = allLicoes.filter(l => l.modulo_id === this.moduloId);
       this.licoes.set(licoesDoModulo);
 
       const licaoIds = new Set(licoesDoModulo.map(l => l.licao_id));
 
-      const allConteudos = await this.professorService.getConteudos();
+      const allConteudos = await this.conteudoService.getConteudos();
       const mappedConteudos: { [licaoId: number]: Conteudo[] } = {};
       allConteudos
         .filter(c => licaoIds.has(c.licao_id))
@@ -243,14 +247,14 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     try {
       this.saving.set(true);
 
-      const licao = await this.professorService.createLicao({
+      const licao = await this.licaoService.createLicao({
         titulo_licao: this.titulo.trim(),
         comentario: this.comentario.trim() || undefined,
         modulo_id: this.moduloId,
       });
 
       if (hasText || hasMedia) {
-        await this.professorService.createConteudo({
+        await this.conteudoService.createConteudo({
           nome_conteudo: `Conteúdo da Lição: ${licao.titulo_licao}`,
           tipo_conteudo: this.midiaType,
           url_conteudo: this.midiaType !== 'Texto' ? this.url.trim() : undefined,
@@ -273,7 +277,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir esta lição? Todos os conteúdos e atividades dela também serão excluídos.')) return;
     try {
-      await this.professorService.deleteLicao(licaoId);
+      await this.licaoService.deleteLicao(licaoId);
       await this.loadItens();
     } catch (err: unknown) {
       this.error.set(getErrorMessage(err, 'Erro ao excluir lição.'));
@@ -312,7 +316,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       this.savingConteudo.set(true);
       const licao = this.licoes().find(l => l.licao_id === this.conteudoLicaoId);
 
-      await this.professorService.createConteudo({
+      await this.conteudoService.createConteudo({
         nome_conteudo: `Conteúdo da Lição: ${licao?.titulo_licao || ''}`,
         tipo_conteudo: this.conteudoMidiaType,
         url_conteudo: this.conteudoMidiaType !== 'Texto' ? this.conteudoUrl.trim() : undefined,
@@ -333,7 +337,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir este conteúdo?')) return;
     try {
-      await this.professorService.deleteConteudo(conteudoId);
+      await this.conteudoService.deleteConteudo(conteudoId);
       await this.loadItens();
     } catch (err: unknown) {
       this.conteudoError.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));

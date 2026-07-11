@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Modulo } from '../../../model/modulo.model';
 import { Turma } from '../../../model/turma.model';
 import { ProfessorService } from '../../../services/professor.service';
+import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -45,6 +46,7 @@ export class DashboardModulosComponent implements OnChanges {
   constructor(
     private router: Router,
     private professorService: ProfessorService,
+    private moduloService: ModuloService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -58,7 +60,7 @@ export class DashboardModulosComponent implements OnChanges {
     try {
       this.loading.set(true);
       this.error.set(null);
-      const modulos = await this.professorService.getModulos();
+      const modulos = await this.moduloService.getModulos();
       this.modulos.set(modulos);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao carregar módulos';
@@ -123,7 +125,7 @@ export class DashboardModulosComponent implements OnChanges {
       };
 
       if (this.moduloEmEdicao()) {
-        const atualizado = await this.professorService.updateModulo(
+        const atualizado = await this.moduloService.updateModulo(
           this.moduloEmEdicao()!.modulo_id,
           dados,
         );
@@ -132,7 +134,7 @@ export class DashboardModulosComponent implements OnChanges {
         );
         this.moduloEmEdicao.set(null);
       } else {
-        const modulo = await this.professorService.createModulo(dados);
+        const modulo = await this.moduloService.createModulo(dados);
         this.modulos.update((lista) => [...lista, modulo]);
       }
 
@@ -151,7 +153,7 @@ export class DashboardModulosComponent implements OnChanges {
     }
 
     try {
-      await this.professorService.deleteModulo(Number(id));
+      await this.moduloService.deleteModulo(Number(id));
       this.modulos.update((lista) => lista.filter((m) => m.modulo_id !== Number(id)));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao deletar módulo';

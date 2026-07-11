@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AlunoService, Conteudo } from '../../../services/aluno.service';
+import { AlunoService } from '../../../services/aluno.service';
+import { ModuloService } from '../../../services/modulo.service';
+import { LicaoService } from '../../../services/licao.service';
+import { ConteudoService } from '../../../services/conteudo.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
+import { Conteudo } from '../../../model/conteudo.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
@@ -36,6 +40,9 @@ export class AlunoModuloDetalheComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private alunoService = inject(AlunoService);
+  private moduloService = inject(ModuloService);
+  private licaoService = inject(LicaoService);
+  private conteudoService = inject(ConteudoService);
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit() {
@@ -63,14 +70,14 @@ export class AlunoModuloDetalheComponent implements OnInit {
       this.loading.set(true);
       this.error.set(null);
 
-      const mod = await this.alunoService.getModuloById(this.moduloId);
+      const mod = await this.moduloService.getModuloById(this.moduloId);
       this.modulo.set(mod);
 
-      const allLicoes = await this.alunoService.getLicoes();
+      const allLicoes = await this.licaoService.getLicoes();
       const filteredLicoes = allLicoes.filter(l => l.modulo_id === this.moduloId);
       this.licoes.set(filteredLicoes);
 
-      const allConteudos = await this.alunoService.getConteudos();
+      const allConteudos = await this.conteudoService.getConteudos();
       const mappedConteudos: { [key: number]: Conteudo[] } = {};
       allConteudos.forEach(c => {
         if (!mappedConteudos[c.licao_id]) {

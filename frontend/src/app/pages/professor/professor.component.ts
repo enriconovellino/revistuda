@@ -7,6 +7,7 @@ import { Usuario, EstatisticasProfessor } from '../../model/professor.models';
 import { Modulo } from '../../model/modulo.model';
 import { Turma } from '../../model/turma.model';
 import { ProfessorService } from '../../services/professor.service';
+import { ModuloService } from '../../services/modulo.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
 import { DashboardModulosComponent } from './dashboard-modulos/dashboard-modulos.component';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
@@ -42,6 +43,7 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private professorService: ProfessorService,
+    private moduloService: ModuloService,
     private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) { }
@@ -96,7 +98,7 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   async carregarDados() {
     try {
       this.loading.set(true);
-      const modulos = await this.professorService.getModulos();
+      const modulos = await this.moduloService.getModulos();
       this.modulos.set(modulos);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao carregar dados';

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
+import { ModuloService } from '../../../services/modulo.service';
+import { LicaoService } from '../../../services/licao.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
@@ -33,6 +35,8 @@ export class ModuloDetalheComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private professorService = inject(ProfessorService);
+  private moduloService = inject(ModuloService);
+  private licaoService = inject(LicaoService);
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -59,10 +63,10 @@ export class ModuloDetalheComponent implements OnInit {
       this.loading.set(true);
       this.error.set(null);
 
-      const mod = await this.professorService.getModuloById(this.moduloId);
+      const mod = await this.moduloService.getModuloById(this.moduloId);
       this.modulo.set(mod);
 
-      const allLicoes = await this.professorService.getLicoes();
+      const allLicoes = await this.licaoService.getLicoes();
       const filteredLicoes = allLicoes.filter(l => l.modulo_id === this.moduloId);
       this.licoes.set(filteredLicoes);
 
