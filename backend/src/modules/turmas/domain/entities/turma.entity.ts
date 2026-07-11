@@ -4,7 +4,7 @@ export class Turma {
   descricao_turma?: string;
   capacidade_maxima?: number;
   professor_id?: number | null;
-  totalAlunosalunos?: number;
+  totalAlunos?: number;
 
   constructor(
     turma_id: number,
@@ -12,13 +12,13 @@ export class Turma {
     professor_id?: number | null,
     descricao_turma?: string,
     capacidade_maxima?: number,
-    totalAlunosalunos?: number,
+    totalAlunos?: number,
   ) {
     this.turma_id = turma_id;
     this.nome_turma = nome_turma;
     this.professor_id = professor_id;
     this.descricao_turma = descricao_turma;
     this.capacidade_maxima = capacidade_maxima;
-    this.totalAlunosalunos = totalAlunosalunos;
+    this.totalAlunos = totalAlunos;
   }
 }
