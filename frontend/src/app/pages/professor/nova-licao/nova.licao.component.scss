@@ -1,0 +1,550 @@
+// ============================================
+// Tokens
+// ============================================
+$accent: #2563eb;
+$accent-dark: #1d4ed8;
+$accent-soft: #eff6ff;
+$blue: #2563eb;
+$blue-dark: #1d4ed8;
+$blue-soft: #eff6ff;
+$ink: #1f2937;
+$muted: #6b7280;
+$border: #e5e7eb;
+$danger: #dc2626;
+$radius: 12px;
+
+// ============================================
+// Card principal / header
+// ============================================
+
+.gestao-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.gestao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.gestao-title {
+  font-weight: 800;
+  color: $ink;
+  margin: 0;
+}
+
+.gestao-header-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+// ============================================
+// Botões (header + variações padronizadas)
+// ============================================
+
+.gestao-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.gestao-btn-outline {
+  background: white;
+  border-color: $blue;
+  color: $blue-dark;
+
+  &:hover {
+    background: $blue-soft;
+  }
+}
+
+.gestao-btn-solid {
+  background: $blue;
+  color: white;
+  box-shadow: 0 3px 10px rgba($blue, 0.25);
+
+  &:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 5px 14px rgba($blue, 0.32);
+  }
+}
+
+// ============================================
+// Lista de lições / cards clicáveis
+// ============================================
+
+.gestao-empty {
+  text-align: center;
+  color: $muted;
+  padding: 2rem 0;
+}
+
+.gestao-licao-group {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.gestao-licao-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: $blue-soft;
+  border: 1.5px solid rgba($blue, 0.25);
+  border-radius: $radius;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: darken($blue-soft, 2%);
+    border-color: rgba($blue, 0.4);
+  }
+}
+
+.gestao-licao-card-open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.gestao-licao-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gestao-licao-chevron {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $blue-dark;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.gestao-licao-chevron-open {
+  transform: rotate(90deg);
+}
+
+.gestao-licao-group-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: $ink;
+  margin: 0;
+}
+
+.gestao-licao-count {
+  font-size: 0.78rem;
+  color: $muted;
+}
+
+// ============================================
+// Grid de conteúdos/atividades por lição
+// ============================================
+
+.gestao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.1rem;
+  margin-top: 0.9rem;
+}
+
+.gestao-grid-expand {
+  padding-left: 0.25rem;
+}
+
+.gestao-item-card {
+  border: 1.5px solid $border;
+  border-radius: $radius;
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border-top: 4px solid $accent;
+  background: $accent-soft;
+  min-height: 140px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($accent, 0.15);
+  }
+}
+
+.gestao-item-card-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.gestao-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0.22rem 0.55rem;
+  width: fit-content;
+}
+
+.gestao-badge-conteudo {
+  color: $accent-dark;
+  background: white;
+}
+
+.gestao-badge-atividade {
+  color: $blue-dark;
+  background: white;
+}
+
+.gestao-item-card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: $ink;
+  margin: 0;
+}
+
+.gestao-item-card-text {
+  font-size: 0.88rem;
+  color: $muted;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gestao-item-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.25rem;
+}
+
+.gestao-hint {
+  color: $muted;
+  font-size: 0.85rem;
+  grid-column: 1 / -1;
+}
+
+// ============================================
+// Botões de excluir (padronizados: pill vermelho suave)
+// ============================================
+
+.gestao-licao-delete,
+.gestao-link-delete,
+.nova-licao-link-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1.5px solid transparent;
+  background: $danger;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba($danger, 0.25);
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($danger, 0.32);
+  }
+
+  &::before {
+    content: "🗑";
+    font-size: 0.75rem;
+  }
+}
+
+// Versão "link" (dentro dos cards de conteúdo/atividade), mais discreta
+.gestao-link-delete,
+.nova-licao-link-delete {
+  padding: 0.3rem 0.65rem;
+  font-size: 0.74rem;
+  box-shadow: none;
+}
+
+// ============================================
+// Form fields (reaproveitados dentro dos modais)
+// ============================================
+
+.nova-licao-alert {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: $danger;
+  border-radius: $radius;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.nova-licao-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $ink;
+  margin-bottom: 0.4rem;
+}
+
+.nova-licao-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: $muted;
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+}
+
+.nova-licao-input,
+.nova-licao-select,
+.nova-licao-textarea {
+  width: 100%;
+  background: #f9fafb;
+  border: 1.5px solid $border;
+  border-radius: $radius;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
+  color: $ink;
+  margin-bottom: 0.4rem;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    outline: none;
+    background: #fff;
+    border-color: $accent;
+    box-shadow: 0 0 0 4px rgba($accent, 0.14);
+  }
+}
+
+.nova-licao-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.nova-licao-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+.nova-licao-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  background: linear-gradient(135deg, $accent, $accent-dark);
+  color: white;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.7rem 1rem;
+  border-radius: $radius;
+  box-shadow: 0 4px 12px rgba($accent, 0.28);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// ============================================
+// Modais
+// ============================================
+
+.nova-licao-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.nova-licao-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.nova-licao-modal-lg {
+  max-width: 640px;
+}
+
+.nova-licao-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .nova-licao-subform-title {
+    margin-bottom: 0;
+  }
+}
+
+.nova-licao-modal-close {
+  border: none;
+  background: none;
+  color: $muted;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.25rem;
+
+  &:hover {
+    color: $ink;
+  }
+}
+
+.nova-licao-subform-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: $ink;
+  margin-bottom: 1rem;
+}
+
+// ============================================
+// Questões (dentro do modal de Nova Atividade)
+// ============================================
+
+.nova-licao-questao {
+  padding: 1rem;
+  background: #f9fafb;
+  border: 1px dashed $border;
+  border-radius: $radius;
+  margin-bottom: 1rem;
+}
+
+.nova-licao-questao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.nova-licao-questao-tag {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: $accent-dark;
+  background: $accent-soft;
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+}
+
+.nova-licao-link-add {
+  border: none;
+  background: none;
+  color: $blue-dark;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.nova-licao-opcao-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+
+  .nova-licao-opcao-label {
+    width: 16px;
+    font-weight: 700;
+    color: $muted;
+  }
+
+  .nova-licao-input {
+    flex: 1;
+    margin-bottom: 0;
+  }
+}
+
+.nova-licao-add-questao-btn {
+  width: 100%;
+  background: $blue-soft;
+  border: 1.5px dashed rgba($blue, 0.4);
+  color: $blue-dark;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem;
+  border-radius: $radius;
+
+  &:hover {
+    background: darken($blue-soft, 3%);
+  }
+}
+
+// --- Pares de associação de imagens ---
+
+.nova-licao-par {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: white;
+  margin-bottom: 0.6rem;
+}
+
+.nova-licao-par-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: $ink;
+  margin-bottom: 0.5rem;
+}
+
+.nova-licao-par-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.nova-licao-par-preview {
+  height: 32px;
+  max-width: 60px;
+  object-fit: contain;
+  margin-top: 0.3rem;
+  border-radius: 4px;
+}

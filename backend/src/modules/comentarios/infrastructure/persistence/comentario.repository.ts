@@ -5,7 +5,7 @@ import { Comentario } from '../../domain/entities/comentario.entity';
 
 @Injectable()
 export class ComentarioRepository implements IComentarioRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async upsert(alunoId: number, conteudoId: number, texto: string): Promise<Comentario> {
     const salvo = await this.prisma.comentarioAluno.upsert({
@@ -81,6 +81,23 @@ export class ComentarioRepository implements IComentarioRepository {
       aluno: c.aluno,
       conteudo: c.conteudo,
     }));
+  }
+  async responder(id: number, resposta: string): Promise<Comentario> {
+    const salvo = await this.prisma.comentarioAluno.update({
+      where: { id },
+      data: { resposta, respostaAt: new Date() },
+    });
+
+    return new Comentario(
+      salvo.id,
+      salvo.texto,
+      salvo.alunoId,
+      salvo.conteudoId,
+      salvo.createdAt,
+      salvo.updatedAt,
+      salvo.resposta,     
+      salvo.respostaAt,   
+    );
   }
 
   async findByProfessor(professorId: number): Promise<ComentarioResumo[]> {

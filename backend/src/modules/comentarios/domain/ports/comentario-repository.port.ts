@@ -28,6 +28,7 @@ export interface IComentarioRepository {
   findByConteudo(conteudoId: number): Promise<ComentarioComAluno[]>;
   findByModulo(moduloId: number): Promise<ComentarioComAluno[]>;
   findByProfessor(professorId: number): Promise<ComentarioResumo[]>;
+  responder(id: number, resposta: string): Promise<Comentario>;
 }
+
 export const COMENTARIO_REPOSITORY = 'COMENTARIO_REPOSITORY';
- 

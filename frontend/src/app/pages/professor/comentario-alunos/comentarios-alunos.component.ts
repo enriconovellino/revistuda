@@ -26,6 +26,12 @@ export class ComentariosAlunosComponent implements OnInit {
   turmaFiltro = signal<number | null>(null);
   moduloFiltro = signal<number | null>(null);
 
+  // --- Resposta a comentário ---
+  respostaAbertaId = signal<number | null>(null);
+  respostaTexto = '';
+  enviandoResposta = signal<boolean>(false);
+  respostaError = signal<string | null>(null);
+
   private professorService = inject(ProfessorService);
   private router = inject(Router);
 
@@ -94,6 +100,50 @@ export class ComentariosAlunosComponent implements OnInit {
   limparFiltros() {
     this.turmaFiltro.set(null);
     this.moduloFiltro.set(null);
+  }
+
+  // --- Iniciais do aluno (avatar) ---
+  getIniciais(nome: string): string {
+    if (!nome) return '?';
+    const partes = nome.trim().split(' ').filter(Boolean);
+    if (partes.length === 1) return partes[0].charAt(0).toUpperCase();
+    return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
+  }
+
+  // --- Responder comentário ---
+
+  toggleResposta(comentarioId: number) {
+    if (this.respostaAbertaId() === comentarioId) {
+      this.respostaAbertaId.set(null);
+      this.respostaTexto = '';
+      this.respostaError.set(null);
+    } else {
+      this.respostaAbertaId.set(comentarioId);
+      this.respostaTexto = '';
+      this.respostaError.set(null);
+    }
+  }
+
+  async enviarResposta(comentario: ComentarioResumoProfessor) {
+    this.respostaError.set(null);
+
+    if (!this.respostaTexto.trim()) {
+      this.respostaError.set('Escreva algo antes de enviar.');
+      return;
+    }
+
+    try {
+      this.enviandoResposta.set(true);
+      await this.professorService.responderComentario(comentario.id, this.respostaTexto.trim());
+
+      this.respostaAbertaId.set(null);
+      this.respostaTexto = '';
+      await this.loadData();
+    } catch (err: unknown) {
+      this.respostaError.set(getErrorMessage(err, 'Erro ao enviar a resposta.'));
+    } finally {
+      this.enviandoResposta.set(false);
+    }
   }
 
   voltar() {

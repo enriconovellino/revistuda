@@ -316,4 +316,17 @@ export class ProfessorService {
     }
     return data as ComentarioResumoProfessor[];
   }
+  // Professor responde a um comentário de aluno
+  async responderComentario(comentarioId: number, resposta: string): Promise<ComentarioResumoProfessor> {
+    const response = await fetch(`${this.apiUrl}/comentarios/${comentarioId}/resposta`, {
+      method: 'PATCH',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ resposta }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao enviar resposta');
+    }
+    return data as ComentarioResumoProfessor;
+  }
 }

@@ -6,13 +6,14 @@ import { Chart, registerables } from 'chart.js';
 import { Modulo, Turma, Usuario, EstatisticasProfessor } from '../../model/professor.models';
 import { ProfessorService } from '../../services/professor.service';
 import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
+import { DashboardModulosComponent } from './dashboard-modulos/dashboard-modulos.component';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, DashboardTurmas, EditarPerfilComponent],
+  imports: [CommonModule, FormsModule, DashboardTurmas, DashboardModulosComponent, EditarPerfilComponent],
   templateUrl: './professor.component.html',
   styleUrl: './professor.component.scss',
 })
@@ -20,22 +21,10 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   userName = signal<string>('Professor');
   isEditProfileOpen = signal<boolean>(false);
   modulos = signal<Modulo[]>([]);
-  modulosDaTurmaSelecionada = computed<Modulo[]>(() => {
-    const turma = this.turmaSelecionada();
-    if (!turma) {
-      return [];
-    }
-
-    return this.modulos().filter((modulo) => modulo.turma_id === turma.turma_id);
-  });
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
   paginaAtual = signal<string>('dashboard');
   turmaSelecionada = signal<Turma | null>(null);
-  mostrarFormModulo = signal<boolean>(false);
-  salvandoModulo = signal<boolean>(false);
-  erroModulo = signal<string | null>(null);
-  moduloEmEdicao = signal<Modulo | null>(null);
   estatisticas = signal<EstatisticasProfessor>({
     totalTurmas: 0,
     totalAlunos: 0,
@@ -45,12 +34,6 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
     naoRespondeu: 0,
   });
   private graficoChart: Chart | null = null;
-  uploadingImage = signal<boolean>(false);
-
-  novoTituloModulo = '';
-  novaDescricaoModulo = '';
-  novaDificuldadeModulo = 'fácil';
-  novaImagemUrl = '';
 
   userId: number | null = null;
 
@@ -168,7 +151,6 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
         });
       },
     };
-
     this.graficoChart = new Chart(canvas, {
       type: 'bar',
       data: {
@@ -178,7 +160,9 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
             data: valores,
             backgroundColor: ['#16a34a', '#dc2626', '#94a3b8'],
             borderRadius: 6,
-            barThickness: 50,
+            barThickness: 45,
+            categoryPercentage: 1.0,
+            barPercentage: 1.0,
           },
         ],
       },
@@ -192,6 +176,12 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
           legend: { display: false },
         },
         scales: {
+          x: {
+            ticks: {
+              font: { size: 14, weight: 'bold' },
+              color: '#0f2744',
+            },
+          },
           y: { beginAtZero: true, ticks: { stepSize: 1 } },
         },
       },
@@ -200,9 +190,6 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   }
 
   irPara(pagina: string) {
-    if (pagina !== 'modulos') {
-      this.resetarFormularioModulo();
-    }
     this.paginaAtual.set(pagina);
 
     if (pagina === 'dashboard') {
@@ -213,10 +200,10 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   }
 
   irParaTurmas() {
-    this.resetarFormularioModulo();
     this.turmaSelecionada.set(null);
     this.paginaAtual.set('turmas');
   }
+
   irParaComentarios() {
     this.router.navigate(['/professor/comentarios']);
   }
@@ -226,7 +213,6 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   }
 
   selecionarTurma(turma: Turma) {
-    this.resetarFormularioModulo();
     this.turmaSelecionada.set(turma);
     this.paginaAtual.set('modulos');
   }
@@ -235,100 +221,16 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
     return this.modulos().filter((m) => m.dificuldade === dificuldade).length;
   }
 
-  toggleFormModulo() {
-    if (this.mostrarFormModulo()) {
-      this.resetarFormularioModulo();
-      return;
-    }
-
-    if (!this.turmaSelecionada()) {
-      this.irParaTurmas();
-      return;
-    }
-
-    this.moduloEmEdicao.set(null);
-    this.erroModulo.set(null);
-    this.limparCamposModulo();
-    this.mostrarFormModulo.set(true);
-  }
-
-  editarModulo(modulo: Modulo) {
-    this.moduloEmEdicao.set(modulo);
-    this.novoTituloModulo = modulo.titulo_modulo;
-    this.novaDescricaoModulo = modulo.descricao_modulo || '';
-    this.novaDificuldadeModulo = modulo.dificuldade;
-    this.novaImagemUrl = modulo.imagem_url || '';
-    this.mostrarFormModulo.set(true);
-    this.paginaAtual.set('modulos');
-  }
-
-  async salvarModulo() {
-    if (!this.novoTituloModulo.trim()) {
-      this.erroModulo.set('Título do módulo é obrigatório');
-      return;
-    }
-
-    const turma = this.turmaSelecionada();
-    if (!turma) {
-      this.erroModulo.set('Selecione uma turma antes de salvar o módulo.');
-      return;
-    }
-
-    try {
-      this.salvandoModulo.set(true);
-      this.erroModulo.set(null);
-
-      const dados = {
-        titulo_modulo: this.novoTituloModulo,
-        descricao_modulo: this.novaDescricaoModulo || undefined,
-        dificuldade: this.novaDificuldadeModulo,
-        imagem_url: this.novaImagemUrl || undefined,
-        turma_id: turma.turma_id,
-      };
-
-      if (this.moduloEmEdicao()) {
-        const atualizado = await this.professorService.updateModulo(
-          this.moduloEmEdicao()!.modulo_id,
-          dados,
-        );
-        this.modulos.update((lista) =>
-          lista.map((modulo) =>
-            modulo.modulo_id === atualizado.modulo_id ? atualizado : modulo,
-          ),
-        );
-        this.moduloEmEdicao.set(null);
-      } else {
-        const modulo = await this.professorService.createModulo(dados);
-        this.modulos.update((lista) => [...lista, modulo]);
-      }
-
-      this.resetarFormularioModulo();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erro ao salvar módulo';
-      this.erroModulo.set(message);
-    } finally {
-      this.salvandoModulo.set(false);
-    }
-  }
-
-  async deletarModulo(id: number) {
-    if (!confirm('Tem certeza que deseja deletar este módulo?')) {
-      return;
-    }
-
-    try {
-      await this.professorService.deleteModulo(Number(id));
-      this.modulos.update((lista) =>
-        lista.filter((modulo) => modulo.modulo_id !== Number(id)),
-      );
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erro ao deletar módulo';
-      alert(message);
-    }
-  }
-
   verModulo(id: number) {
     this.router.navigate(['/professor/modulo', id]);
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
   }
 
   abrirEditarPerfil() {
@@ -348,43 +250,5 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
       localStorage.clear();
     }
     this.router.navigate(['/']);
-  }
-
-  getImageUrl(url?: string): string {
-    if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
-      return url;
-    }
-    return `${environment.apiUrl}${url}`;
-  }
-
-  async onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    if (!file) return;
-
-    try {
-      this.uploadingImage.set(true);
-      this.erroModulo.set(null);
-      const res = await this.professorService.uploadImage(file);
-      this.novaImagemUrl = res.url;
-    } catch (err: any) {
-      this.erroModulo.set(err.message || 'Erro ao enviar imagem');
-    } finally {
-      this.uploadingImage.set(false);
-    }
-  }
-
-  private limparCamposModulo() {
-    this.novoTituloModulo = '';
-    this.novaDescricaoModulo = '';
-    this.novaDificuldadeModulo = 'fácil';
-    this.novaImagemUrl = '';
-  }
-
-  private resetarFormularioModulo() {
-    this.mostrarFormModulo.set(false);
-    this.moduloEmEdicao.set(null);
-    this.erroModulo.set(null);
-    this.limparCamposModulo();
   }
 }

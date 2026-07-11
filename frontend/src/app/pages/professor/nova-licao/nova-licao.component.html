@@ -1,0 +1,306 @@
+<div class="gestao-card">
+  <div class="gestao-header">
+    <div>
+      <h4 class="gestao-title">Gestão de Conteúdos e Atividades</h4>
+    </div>
+
+    <div class="gestao-header-actions">
+      <button class="gestao-btn gestao-btn-outline" (click)="toggleLicaoForm()" type="button">
+        + Nova Lição
+      </button>
+      <button class="gestao-btn gestao-btn-outline" (click)="toggleAtividadeForm()" type="button">
+         Nova Atividade
+      </button>
+      <button class="gestao-btn gestao-btn-outline" (click)="toggleConteudoForm()" type="button">
+        ⊕ Novo Conteúdo
+      </button>
+    </div>
+  </div>
+
+  <div class="nova-licao-alert" *ngIf="error()">{{ error() }}</div>
+
+  <!-- ================= Lista de lições (cards clicáveis) ================= -->
+
+  <div class="gestao-empty" *ngIf="licoes().length === 0">
+    <p class="mb-0">Nenhuma lição cadastrada ainda.</p>
+    <small>Clique em "+ Nova Lição" para criar a primeira.</small>
+  </div>
+
+  <div class="gestao-licao-group" *ngFor="let licao of licoes()">
+    <div class="gestao-licao-card" [class.gestao-licao-card-open]="isLicaoExpanded(licao.licao_id)"
+      (click)="toggleLicaoExpand(licao.licao_id)">
+      <div class="gestao-licao-card-main">
+        <span class="gestao-licao-chevron" [class.gestao-licao-chevron-open]="isLicaoExpanded(licao.licao_id)">
+          ›
+        </span>
+        <div>
+          <h6 class="gestao-licao-group-title">{{ licao.titulo_licao }}</h6>
+          <span class="gestao-licao-count">
+            {{ countConteudos(licao.licao_id) }} conteúdo(s) · {{ countAtividades(licao.licao_id) }} atividade(s)
+          </span>
+        </div>
+      </div>
+
+      <button class="gestao-licao-delete" type="button" title="Excluir lição"
+        (click)="deleteLicao(licao.licao_id, $event)">
+        Excluir Lição
+      </button>
+    </div>
+
+    <div class="gestao-grid gestao-grid-expand" *ngIf="isLicaoExpanded(licao.licao_id)">
+      <div class="gestao-item-card" *ngFor="let c of conteudosForLicao()[licao.licao_id]">
+        <div class="gestao-item-card-top">
+          <span class="gestao-badge gestao-badge-conteudo">{{ c.tipo_conteudo | titlecase }}</span>
+        </div>
+        <p class="gestao-item-card-text">{{ c.texto_conteudo || 'Sem texto — apenas mídia' }}</p>
+        <div class="gestao-item-card-footer">
+          <button class="gestao-link-delete" (click)="deleteConteudo(c.conteudo_id, $event)">Excluir</button>
+        </div>
+      </div>
+
+      <div class="gestao-item-card" *ngFor="let a of atividadesForLicao()[licao.licao_id]">
+        <div class="gestao-item-card-top">
+          <span class="gestao-badge gestao-badge-atividade">{{ getTipoAtividadeLabel(a.tipo_atividade) }}</span>
+        </div>
+        <h6 class="gestao-item-card-title">{{ a.titulo_atividade }}</h6>
+        <p class="gestao-item-card-text">{{ a.enunciado }}</p>
+        <div class="gestao-item-card-footer">
+          <button class="gestao-link-delete" (click)="deleteAtividade(a.atividade_id, $event)">Excluir</button>
+        </div>
+      </div>
+
+      <p class="gestao-hint" *ngIf="!countConteudos(licao.licao_id) && !countAtividades(licao.licao_id)">
+        Nenhum conteúdo ou atividade nesta lição ainda.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Modal: Nova Lição ================= -->
+<div class="nova-licao-modal-backdrop" *ngIf="showLicaoForm()" (click)="toggleLicaoForm()">
+  <div class="nova-licao-modal" (click)="$event.stopPropagation()">
+    <div class="nova-licao-modal-header">
+      <h6 class="nova-licao-subform-title">Nova Lição</h6>
+      <button class="nova-licao-modal-close" (click)="toggleLicaoForm()" type="button">✕</button>
+    </div>
+
+    <div class="nova-licao-alert" *ngIf="error()">{{ error() }}</div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Título da Lição <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input" placeholder="Ex: Lição 1: Somando Números"
+        [(ngModel)]="titulo" name="tituloLicao" />
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Comentário/Descrição</label>
+      <input type="text" class="nova-licao-input" placeholder="Opcional" [(ngModel)]="comentario"
+        name="comentarioLicao" />
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Texto do Conteúdo</label>
+      <textarea class="nova-licao-textarea" rows="4" placeholder="Digite o texto explicativo da lição..."
+        [(ngModel)]="texto" name="textoLicao"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Tipo de Mídia</label>
+      <select class="nova-licao-select" [(ngModel)]="midiaType" name="midiaTypeLicao">
+        <option value="Texto">Sem Mídia (Apenas Texto)</option>
+        <option value="Vídeo">Vídeo (Youtube)</option>
+        <option value="Áudio">Áudio</option>
+      </select>
+    </div>
+
+    <div class="mb-4" *ngIf="midiaType !== 'Texto'">
+      <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input"
+        [placeholder]="midiaType === 'Vídeo' ? 'Ex: https://www.youtube.com/watch?v=...' : 'Ex: https://exemplo.com/audio.mp3'"
+        [(ngModel)]="url" name="urlLicao" />
+    </div>
+
+    <button class="nova-licao-btn" (click)="criarLicao()" [disabled]="saving()">
+      <span class="spinner-border spinner-border-sm" role="status" *ngIf="saving()"></span>
+      {{ saving() ? 'Salvando...' : 'Criar Lição' }}
+    </button>
+  </div>
+</div>
+
+<!-- ================= Modal: Novo Conteúdo ================= -->
+<div class="nova-licao-modal-backdrop" *ngIf="showConteudoForm()" (click)="toggleConteudoForm()">
+  <div class="nova-licao-modal" (click)="$event.stopPropagation()">
+    <div class="nova-licao-modal-header">
+      <h6 class="nova-licao-subform-title">Novo Conteúdo</h6>
+      <button class="nova-licao-modal-close" (click)="toggleConteudoForm()" type="button">✕</button>
+    </div>
+
+    <div class="nova-licao-alert" *ngIf="conteudoError()">{{ conteudoError() }}</div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Lição <span class="text-danger">*</span></label>
+      <select class="nova-licao-select" [(ngModel)]="conteudoLicaoId" name="conteudoLicao">
+        <option *ngFor="let l of licoes()" [ngValue]="l.licao_id">
+          {{ l.titulo_licao }} ({{ countConteudos(l.licao_id) }}/{{ maxItensPorLicao }})
+        </option>
+      </select>
+      <small class="nova-licao-hint" *ngIf="conteudoLimiteAtingido(conteudoLicaoId)">
+        Essa lição já atingiu o limite de {{ maxItensPorLicao }} conteúdos.
+      </small>
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Texto do Conteúdo</label>
+      <textarea class="nova-licao-textarea" rows="3" placeholder="Digite o texto do conteúdo..."
+        [(ngModel)]="conteudoTexto" name="conteudoTexto"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Tipo de Mídia</label>
+      <select class="nova-licao-select" [(ngModel)]="conteudoMidiaType" name="conteudoMidiaType">
+        <option value="Texto">Sem Mídia (Apenas Texto)</option>
+        <option value="Vídeo">Vídeo (Youtube)</option>
+        <option value="Áudio">Áudio</option>
+      </select>
+    </div>
+
+    <div class="mb-3" *ngIf="conteudoMidiaType !== 'Texto'">
+      <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input" placeholder="Insira o link da mídia..."
+        [(ngModel)]="conteudoUrl" name="conteudoUrl" />
+    </div>
+
+    <button class="nova-licao-btn" (click)="adicionarConteudo()"
+      [disabled]="savingConteudo() || conteudoLimiteAtingido(conteudoLicaoId)">
+      <span class="spinner-border spinner-border-sm" role="status" *ngIf="savingConteudo()"></span>
+      {{ savingConteudo() ? 'Salvando...' : 'Salvar Conteúdo' }}
+    </button>
+  </div>
+</div>
+
+<!-- ================= Modal: Nova Atividade (múltiplas questões) ================= -->
+<div class="nova-licao-modal-backdrop" *ngIf="showAtividadeForm()" (click)="toggleAtividadeForm()">
+  <div class="nova-licao-modal nova-licao-modal-lg" (click)="$event.stopPropagation()">
+    <div class="nova-licao-modal-header">
+      <h6 class="nova-licao-subform-title">Nova Atividade</h6>
+      <button class="nova-licao-modal-close" (click)="toggleAtividadeForm()" type="button">✕</button>
+    </div>
+
+    <div class="nova-licao-alert" *ngIf="atividadeError()">{{ atividadeError() }}</div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Lição <span class="text-danger">*</span></label>
+      <select class="nova-licao-select" [(ngModel)]="atividadeLicaoId" name="atividadeLicao">
+        <option *ngFor="let l of licoes()" [ngValue]="l.licao_id">
+          {{ l.titulo_licao }} ({{ countAtividades(l.licao_id) }}/{{ maxItensPorLicao }})
+        </option>
+      </select>
+      <small class="nova-licao-hint" *ngIf="atividadeLimiteAtingido(atividadeLicaoId)">
+        Essa lição já atingiu o limite de {{ maxItensPorLicao }} atividades.
+      </small>
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Título da Atividade <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input" placeholder="Ex: Quiz de revisão"
+        [(ngModel)]="atividadeTitulo" name="atividadeTitulo" />
+      <small class="nova-licao-hint" *ngIf="atividadeQuestoes.length > 1">
+        Com mais de 1 questão, cada uma vira um item separado numerado (ex: "{{ atividadeTitulo || 'Título' }} - Questão 1").
+      </small>
+    </div>
+
+    <div class="nova-licao-questao" *ngFor="let questao of atividadeQuestoes; let qi = index">
+      <div class="nova-licao-questao-header">
+        <span class="nova-licao-questao-tag">Questão {{ qi + 1 }}</span>
+        <button class="nova-licao-link-delete" type="button" *ngIf="atividadeQuestoes.length > 1"
+          (click)="removeQuestao(qi)">Remover</button>
+      </div>
+
+      <div class="mb-3">
+        <label class="nova-licao-label">Tipo</label>
+        <select class="nova-licao-select" [(ngModel)]="questao.tipo" [name]="'tipoQuestao' + qi">
+          <option value="multipla_escolha">Múltipla Escolha</option>
+          <option value="associacao_imagens">Associação de Imagens</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="nova-licao-label">Enunciado <span class="text-danger">*</span></label>
+        <textarea class="nova-licao-textarea" rows="2" placeholder="Digite a pergunta..."
+          [(ngModel)]="questao.enunciado" [name]="'enunciadoQuestao' + qi"></textarea>
+      </div>
+
+      <!-- Múltipla escolha -->
+      <div class="mb-2" *ngIf="questao.tipo === 'multipla_escolha'">
+        <label class="nova-licao-label">Opções (mín. 2, máx. 4)</label>
+        <div class="nova-licao-opcao-row" *ngFor="let id of opcaoIds; let i = index">
+          <span class="nova-licao-opcao-label">{{ opcaoLabels[i] }}</span>
+          <input type="text" class="nova-licao-input" [placeholder]="'Opção ' + opcaoLabels[i]"
+            [(ngModel)]="questao.opcoes[id]" [name]="'opcao' + id + qi" />
+          <input type="radio" [name]="'respostaCorreta' + qi" [value]="id" [(ngModel)]="questao.respostaCorreta"
+            title="Marcar como correta" />
+        </div>
+        <small class="nova-licao-hint">Selecione o radio da opção correta.</small>
+      </div>
+
+      <!-- Associação de imagens -->
+      <div class="mb-2" *ngIf="questao.tipo === 'associacao_imagens'">
+        <label class="nova-licao-label d-flex justify-content-between align-items-center">
+          Pares de Associação (mín. 2)
+          <button type="button" class="nova-licao-link-add" (click)="addParImagem(questao)">+ Par</button>
+        </label>
+
+        <div class="nova-licao-par" *ngFor="let par of questao.pares; let pi = index">
+          <div class="nova-licao-par-header">
+            <span>Par #{{ pi + 1 }}</span>
+            <button type="button" class="nova-licao-link-delete" (click)="removeParImagem(questao, pi)">Remover</button>
+          </div>
+
+          <div class="nova-licao-par-cols">
+            <div class="nova-licao-par-col">
+              <label class="nova-licao-hint">Esquerdo</label>
+              <select class="nova-licao-select" [(ngModel)]="par.esquerdo.tipo" [name]="'esqTipo' + qi + pi">
+                <option value="texto">Texto</option>
+                <option value="imagem">Imagem</option>
+              </select>
+              <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="nova-licao-input"
+                placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" [name]="'esqTexto' + qi + pi" />
+              <div *ngIf="par.esquerdo.tipo === 'imagem'">
+                <input type="file" class="nova-licao-input" accept="image/*"
+                  (change)="onFileSelected($event, par.esquerdo)" />
+                <div *ngIf="par.esquerdo.uploading" class="nova-licao-hint">Enviando...</div>
+                <img *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading" [src]="getImageUrl(par.esquerdo.imagem_url)"
+                  class="nova-licao-par-preview" />
+              </div>
+            </div>
+
+            <div class="nova-licao-par-col">
+              <label class="nova-licao-hint">Direito</label>
+              <select class="nova-licao-select" [(ngModel)]="par.direito.tipo" [name]="'dirTipo' + qi + pi">
+                <option value="texto">Texto</option>
+                <option value="imagem">Imagem</option>
+              </select>
+              <input *ngIf="par.direito.tipo === 'texto'" type="text" class="nova-licao-input"
+                placeholder="Texto direito" [(ngModel)]="par.direito.texto" [name]="'dirTexto' + qi + pi" />
+              <div *ngIf="par.direito.tipo === 'imagem'">
+                <input type="file" class="nova-licao-input" accept="image/*"
+                  (change)="onFileSelected($event, par.direito)" />
+                <div *ngIf="par.direito.uploading" class="nova-licao-hint">Enviando...</div>
+                <img *ngIf="par.direito.imagem_url && !par.direito.uploading" [src]="getImageUrl(par.direito.imagem_url)"
+                  class="nova-licao-par-preview" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="nova-licao-add-questao-btn" type="button" (click)="addQuestao()">+ Adicionar Questão</button>
+
+    <button class="nova-licao-btn mt-3" (click)="adicionarAtividade()"
+      [disabled]="savingAtividade() || atividadeLimiteAtingido(atividadeLicaoId)">
+      <span class="spinner-border spinner-border-sm" role="status" *ngIf="savingAtividade()"></span>
+      {{ savingAtividade() ? 'Salvando...' : 'Salvar Atividade' }}
+    </button>
+  </div>
+</div>

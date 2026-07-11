@@ -25,7 +25,7 @@ export interface Turma {
   descricao_turma?: string;
   capacidade_maxima?: number | null;
   professor_id?: number | null;
-  totalAlunos?: number;
+  total_alunos?: number;
 }
 
 export interface Licao {
@@ -113,6 +113,8 @@ export interface ComentarioResumoProfessor {
   texto: string;
   createdAt: string;
   updatedAt: string;
+  resposta?: string | null;
+  respostaAt?: string | null;
   aluno: { id: number; nome: string };
   conteudo: { conteudo_id: number; nome_conteudo: string };
   licao: { licao_id: number; titulo_licao: string };

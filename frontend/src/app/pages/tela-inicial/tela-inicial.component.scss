@@ -76,30 +76,34 @@
 
 .conteudo-central {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1450px; // era 1300px — mais espaço, cards maiores
     text-align: center;
 }
 
 .pergunta-principal {
-    font-size: clamp(1.8rem, 4vw, 3.6rem);
+    font-size: clamp(2.2rem, 4.5vw, 4.2rem); // maior
     font-weight: 800;
-    color: $azul-escuro;
+    color: $azul-escuro !important; // garante o azul escuro mesmo se algo sobrescrever
     margin-bottom: .6rem;
     line-height: 1.15;
 }
 
 .subtexto {
-    font-size: clamp(.95rem, 1.6vw, 1.5rem);
+    font-size: clamp(1.05rem, 1.8vw, 1.65rem); // maior
     color: #5d6875;
-    margin-bottom: clamp(1.5rem, 4vh, 3.5rem);
+    margin-bottom: clamp(2rem, 4vh, 4rem);
 }
 
 .grid-perfis {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(1rem, 2vw, 2rem);
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: clamp(1.5rem, 3vw, 3rem); // mais espaço entre os cards
 
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 560px) {
         grid-template-columns: 1fr;
     }
 }
@@ -108,13 +112,13 @@
     background: #fff;
     border: 2px solid #e6eaf0;
     border-radius: 28px;
-    padding: clamp(1.5rem, 3.5vh, 3.2rem) clamp(1.2rem, 2.5vw, 2.2rem);
-    min-height: clamp(160px, 24vh, 260px);
+    padding: clamp(2.2rem, 5vh, 4.2rem) clamp(1.5rem, 3vw, 2.6rem);
+    min-height: clamp(240px, 34vh, 360px); // cards ainda maiores
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(.7rem, 1.5vh, 1.4rem);
+    gap: clamp(1rem, 2vh, 1.8rem);
     cursor: pointer;
     transition: all .2s ease;
 
@@ -132,46 +136,24 @@
 }
 
 .icone-perfil {
-    width: clamp(64px, 9vw, 110px);
-    height: clamp(64px, 9vw, 110px);
+    width: clamp(84px, 11vw, 150px); // maior
+    height: clamp(84px, 11vw, 150px);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: clamp(1.5rem, 3vw, 2.8rem);
+    font-size: clamp(2rem, 4vw, 3.6rem);
     flex-shrink: 0;
 
-    &.bg-azul-escuro {
-        background: $azul-escuro;
-    }
-
-    &.bg-azul-medio {
-        background: $azul-medio;
-    }
-
-    &.bg-azul-claro {
-        background: $azul-claro;
-    }
-
-    &.bg-cinza {
-        background: #bcc6d1;
-    }
+    &.bg-azul-escuro { background: $azul-escuro; }
+    &.bg-azul-medio { background: $azul-medio; }
+    &.bg-azul-claro { background: $azul-claro; }
+    &.bg-cinza { background: #bcc6d1; }
 }
 
 .titulo-perfil {
-    font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+    font-size: clamp(1.4rem, 2.6vw, 2.2rem); // maior
     font-weight: 700;
     color: $azul-escuro;
-}
-
-@media (max-height: 800px) {
-    .boas-vindas-page {
-        padding: 1.2rem 1.5rem;
-        padding-top: calc(1.2rem + 64px);
-    }
-
-    .subtexto {
-        margin-bottom: 1.5rem;
-    }
 }
