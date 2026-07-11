@@ -30,7 +30,7 @@ export class TurmasController {
     private updateTurmaUseCase: UpdateTurmaUseCase,
     private deleteTurmaUseCase: DeleteTurmaUseCase,
     private getTurmasByProfessorUseCase: GetTurmasByProfessorUseCase,
-    private atividadesRecentesService: AtividadesRecentesService,,
+    private atividadesRecentesService: AtividadesRecentesService,
     private getEstatisticasProfessorUseCase: GetEstatisticasProfessorUseCase,
     private getDesempenhoMensalUseCase: GetDesempenhoMensalUseCase,
     private getAlunosByProfessorUseCase: GetAlunosByProfessorUseCase,
