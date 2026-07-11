@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, MaxLength } from 'class-validator';
 
 export class CreateLicaoDto {
   @ApiProperty({
@@ -7,6 +7,7 @@ export class CreateLicaoDto {
     description: 'Título da lição',
   })
   @IsString()
+  @MaxLength(100)
   titulo_licao!: string;
 
   @ApiPropertyOptional({
@@ -15,6 +16,7 @@ export class CreateLicaoDto {
   })
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   comentario?: string;
 
   @ApiProperty({

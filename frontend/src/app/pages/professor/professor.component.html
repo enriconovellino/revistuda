@@ -224,7 +224,7 @@
             <div class="col-md-6">
               <label class="form-label">Título <span class="text-danger">*</span></label>
               <input type="text" class="form-control" [class.is-invalid]="erroModulo()"
-                placeholder="Ex: Introdução à Informática" [(ngModel)]="novoTituloModulo" name="tituloModulo" />
+                placeholder="Ex: Introdução à Informática" [(ngModel)]="novoTituloModulo" name="tituloModulo" maxlength="100" />
               @if (erroModulo()) {
               <div class="invalid-feedback">{{ erroModulo() }}</div>
               }
@@ -232,7 +232,7 @@
             <div class="col-md-4">
               <label class="form-label">Descrição</label>
               <input type="text" class="form-control" placeholder="Descrição opcional" [(ngModel)]="novaDescricaoModulo"
-                name="descricaoModulo" />
+                name="descricaoModulo" maxlength="500" />
             </div>
             <div class="col-md-2">
               <label class="form-label">Dificuldade</label>

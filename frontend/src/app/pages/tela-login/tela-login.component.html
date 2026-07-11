@@ -22,7 +22,7 @@
           <label for="loginEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>Endereço de e-mail</label>
           <input type="email" class="form-control" id="loginEmail" formControlName="email"
             placeholder="nome@exemplo.com"
-            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" maxlength="50">
           <div class="invalid-feedback">Digite um e-mail válido.</div>
         </div>
 
@@ -31,7 +31,7 @@
           <div class="position-relative">
             <input [type]="mostrarSenhaLogin ? 'text' : 'password'" class="form-control" id="loginSenha"
               formControlName="senha" placeholder="••••••••"
-              [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
+              [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched" maxlength="100">
             <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaLogin"
               [class.fi-rr-eye-crossed]="mostrarSenhaLogin" (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
           </div>
@@ -40,7 +40,8 @@
             A senha é obrigatória.
           </div>
           <div class="text-end mt-1">
-           <a href="javascript:void(0)" class="link-accent" style="font-size: .85rem;" (click)="irParaEsqueciSenha()">Esqueci minha senha</a>
+            <a href="javascript:void(0)" class="link-accent" style="font-size: .85rem;"
+              (click)="irParaEsqueciSenha()">Esqueci minha senha</a>
           </div>
         </div>
 
@@ -66,7 +67,7 @@
           <label for="regNome" class="form-label"><i class="fi fi-rr-user me-1"></i>Nome completo</label>
           <input type="text" class="form-control" id="regNome" formControlName="nome"
             placeholder="Como devemos te chamar?"
-            [class.is-invalid]="registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched">
+            [class.is-invalid]="registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched" maxlength="100">
           <div class="invalid-feedback">O nome é obrigatório.</div>
         </div>
 
@@ -74,7 +75,8 @@
           <label for="regEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>E-mail</label>
           <input type="email" class="form-control" id="regEmail" formControlName="email"
             placeholder="exemplo@estudo.com"
-            [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            maxlength="150">
           <div class="invalid-feedback">Digite um e-mail válido.</div>
         </div>
 
@@ -83,7 +85,8 @@
           <div class="position-relative">
             <input [type]="mostrarSenhaCadastro ? 'text' : 'password'" class="form-control" id="regSenha"
               formControlName="senha" placeholder="Mínimo 6 caracteres"
-              [class.is-invalid]="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
+              [class.is-invalid]="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched"
+              maxlength="100">
             <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaCadastro"
               [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"
               (click)="mostrarSenhaCadastro = !mostrarSenhaCadastro"></i>

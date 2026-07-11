@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsOptional, IsInt, MaxLength } from 'class-validator';
 
 export class CreateTurmaDto {
   @ApiProperty({
@@ -7,6 +7,7 @@ export class CreateTurmaDto {
     description: 'Nome da turma',
   })
   @IsString()
+  @MaxLength(100)
   nome_turma!: string;
 
   @ApiPropertyOptional({
@@ -15,6 +16,7 @@ export class CreateTurmaDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(300)
   descricao_turma?: string;
 
   @ApiPropertyOptional({

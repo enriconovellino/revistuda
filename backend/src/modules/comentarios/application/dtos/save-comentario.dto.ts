@@ -1,4 +1,4 @@
-import { IsInt, IsString, MinLength } from 'class-validator';
+import { IsInt, IsString, MinLength, MaxLength } from 'class-validator';
 
 export class SaveComentarioDto {
   @IsInt()
@@ -6,5 +6,6 @@ export class SaveComentarioDto {
 
   @IsString()
   @MinLength(1)
+  @MaxLength(2000)
   texto!: string;
 }
