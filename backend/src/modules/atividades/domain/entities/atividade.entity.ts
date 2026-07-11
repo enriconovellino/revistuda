@@ -26,6 +26,10 @@ export class Atividade {
   tipo_atividade: string;
   enunciado: string | null;
   licao_id: number;
+  data_criacao?: Date;
+  modulo?: { modulo_id: number; titulo_modulo: string };
+  status?: 'a_fazer' | 'fazendo' | 'feito';
+  data_conclusao?: Date | null;
 
   constructor(
     atividade_id: number,

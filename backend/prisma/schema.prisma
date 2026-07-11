@@ -26,7 +26,8 @@ model User {
   resetPasswordExpires  DateTime?
   tentativasAssociacao TentativaAssociacao[]
   respostasMultiplaEscolha RespostaMultiplaEscolha[]
-  comentarios  ComentarioAluno[]   
+  comentarios  ComentarioAluno[]
+  progressosAtividade ProgressoAtividade[]
 }
 
 // Feed de eventos do painel admin (cadastros, aprovações, designações).
@@ -82,13 +83,28 @@ model Licao {
 
 model Atividade {
   atividade_id         Int      @id @default(autoincrement())
-  titulo_atividade     String   
+  titulo_atividade     String
   tipo_atividade       String
   enunciado            String?
+  data_criacao         DateTime @default(now())
   licao_id             Int
   licao                Licao    @relation(fields: [licao_id], references: [licao_id], onDelete: Cascade)
   multipla_escolha     MultiplaEscolha?
   associacao_imagens   AssociacaoImagens?
+  progressos           ProgressoAtividade[]
+}
+
+model ProgressoAtividade {
+  progresso_id   Int       @id @default(autoincrement())
+  aluno_id       Int
+  atividade_id   Int
+  status         String    // a_fazer | fazendo | feito
+  data_inicio    DateTime?
+  data_conclusao DateTime?
+  aluno          User      @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  atividade      Atividade @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
+
+  @@unique([aluno_id, atividade_id])
 }
 
 model MultiplaEscolha {
