@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, output, signal } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
+import { AtividadeRecente, AtividadeRecenteService } from '../../../services/atividade-recente.service';
 import { Turma, Usuario } from '../../../model/professor.models';
 import { AdmView } from '../adm.component';
 
@@ -17,14 +18,29 @@ export class DashboardAdminComponent implements OnInit {
 
   private userService = inject(UserService);
   private turmaService = inject(TurmaService);
+  private atividadeRecenteService = inject(AtividadeRecenteService);
 
   loading = signal<boolean>(false);
   users = signal<Usuario[]>([]);
   turmas = signal<Turma[]>([]);
+  atividadesRecentes = signal<AtividadeRecente[]>([]);
 
-  pendingProfessors = computed(() =>
-    this.users().filter((u) => u.permissions.includes('PROFESSOR') && !u.approved)
+  // Feed recolhido por padrão para não poluir o dashboard.
+  private readonly atividadesRecolhidas = 5;
+  mostrarTodasAtividades = signal<boolean>(false);
+
+  atividadesVisiveis = computed(() =>
+    this.mostrarTodasAtividades()
+      ? this.atividadesRecentes()
+      : this.atividadesRecentes().slice(0, this.atividadesRecolhidas)
   );
+
+  atividadesOcultas = computed(() =>
+    Math.max(0, this.atividadesRecentes().length - this.atividadesRecolhidas)
+  );
+
+  // Professores e admins recém-cadastrados aguardando aprovação.
+  pendingUsers = computed(() => this.users().filter((u) => !u.approved));
 
   totalProfessores = computed(() =>
     this.users().filter((u) => u.permissions.includes('PROFESSOR') && u.approved).length
@@ -50,12 +66,41 @@ export class DashboardAdminComponent implements OnInit {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const [users, turmas] = await Promise.all([this.userService.getUsers(), this.turmaService.getTurmas()]);
+      const [users, turmas, atividades] = await Promise.all([
+        this.userService.getUsers(),
+        this.turmaService.getTurmas(),
+        this.atividadeRecenteService.getAtividadesRecentes(),
+      ]);
       this.users.set(users);
       this.turmas.set(turmas);
+      this.atividadesRecentes.set(atividades);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  iconeAtividade(tipo: string): string {
+    switch (tipo) {
+      case 'aluno_cadastrado': return '🎓';
+      case 'solicitacao_cadastro': return '📩';
+      case 'usuario_aprovado': return '✅';
+      case 'professor_designado': return '📌';
+      case 'professor_removido': return '⚠️';
+      case 'acesso_revogado': return '⛔';
+      default: return '🔹';
+    }
+  }
+
+  tempoRelativo(data: string): string {
+    const diffMs = Date.now() - new Date(data).getTime();
+    const minutos = Math.floor(diffMs / 60000);
+    if (minutos < 1) return 'agora';
+    if (minutos < 60) return `há ${minutos} min`;
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `há ${horas} h`;
+    const dias = Math.floor(horas / 24);
+    if (dias < 7) return dias === 1 ? 'há 1 dia' : `há ${dias} dias`;
+    return new Date(data).toLocaleDateString('pt-BR');
   }
 
   ocupacaoPercentual(turma: Turma): number {

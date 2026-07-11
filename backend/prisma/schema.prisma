@@ -29,6 +29,14 @@ model User {
   comentarios  ComentarioAluno[]   
 }
 
+// Feed de eventos do painel admin (cadastros, aprovações, designações).
+model AtividadeRecente {
+  atividade_recente_id Int      @id @default(autoincrement())
+  tipo                 String
+  descricao            String
+  data                 DateTime @default(now())
+}
+
 model Modulo {
   modulo_id        Int     @id @default(autoincrement())
   titulo_modulo    String

@@ -6,6 +6,7 @@ import { DeleteUserUseCase, GetAllUsersUseCase, GetUserUseCase, RevokeProfessorA
 import { Permissions } from '@/shared/decorators/permissions.decorator';
 import { PermissionsGuard } from '@/modules/auth/infrastructure/guards/permissions.guard';
 import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { AtividadesRecentesService } from '@/modules/atividades-recentes/atividades-recentes.service';
 
   @Controller('users')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -16,6 +17,7 @@ export class UsersController {
     private updateUserUseCase: UpdateUserUseCase,
     private deleteUserUseCase: DeleteUserUseCase,
     private revokeProfessorAccessUseCase: RevokeProfessorAccessUseCase,
+    private atividadesRecentesService: AtividadesRecentesService,
   ) {}
   
   @Get()
@@ -63,6 +65,11 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   async approve(@Param('id', ParseIntPipe) id: number): Promise<UserPresenter> {
     const user = await this.updateUserUseCase.execute({ id, approved: true });
+    const cargo = user.permissions.includes('PROFESSOR') ? 'Professor(a)' : 'Administrador(a)';
+    await this.atividadesRecentesService.registrar(
+      'usuario_aprovado',
+      `${cargo} ${user.nome} teve o cadastro aprovado`,
+    );
     return UserPresenter.toPresentation(user);
   }
 
@@ -75,6 +82,10 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   async revoke(@Param('id', ParseIntPipe) id: number): Promise<{ user: UserPresenter; turmasDesalocadas: number }> {
     const { user, turmasDesalocadas } = await this.revokeProfessorAccessUseCase.execute(id);
+    await this.atividadesRecentesService.registrar(
+      'acesso_revogado',
+      `O acesso de ${user.nome} foi revogado`,
+    );
     return { user: UserPresenter.toPresentation(user), turmasDesalocadas };
   }
 

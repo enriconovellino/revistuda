@@ -12,11 +12,12 @@ import { AtividadesModule } from './modules/atividades/atividades.module';
 import { ComentariosModule } from './modules/comentarios/comentarios.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
+import { AtividadesRecentesModule } from './modules/atividades-recentes/atividades-recentes.module';
 
 @Module({
   imports: [
     PrismaModule,
-    UsersModule,
+    AtividadesRecentesModule, UsersModule,
     AuthModule,
     ModulosModule,
     TurmasModule,

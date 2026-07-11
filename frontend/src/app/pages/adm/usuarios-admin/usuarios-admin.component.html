@@ -70,7 +70,7 @@
             <ng-container *ngIf="!isAluno(user) && !isProfessor(user)">—</ng-container>
           </td>
           <td class="pe-4">
-            <div class="d-flex gap-2" *ngIf="isProfessor(user) && !user.approved">
+            <div class="d-flex gap-2" *ngIf="!user.approved">
               <button class="btn btn-sm btn-success" (click)="pedirAprovacao(user)">Aprovar</button>
               <button class="btn btn-sm btn-outline-danger" (click)="pedirRejeicao(user)">Rejeitar</button>
             </div>
@@ -80,7 +80,7 @@
             <div *ngIf="isAluno(user)">
               <button class="btn btn-sm btn-outline-danger" (click)="pedirExclusao(user)">Excluir</button>
             </div>
-            <span class="text-muted small" *ngIf="!isProfessor(user) && !isAluno(user)">—</span>
+            <span class="text-muted small" *ngIf="!isProfessor(user) && !isAluno(user) && user.approved">—</span>
           </td>
         </tr>
       </tbody>

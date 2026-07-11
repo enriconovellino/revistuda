@@ -118,10 +118,11 @@ export class TelaLoginComponent implements OnInit {
 
     try {
 
-      const isProfessor =
-        this.registerForm.value.permission === 'PROFESSOR';
+      const precisaAprovacao =
+        this.registerForm.value.permission === 'PROFESSOR' ||
+        this.registerForm.value.permission === 'ADM';
 
-      if (isProfessor) {
+      if (precisaAprovacao) {
         this.successMessage.set(
           'Cadastro realizado com sucesso! Aguarde a aprovação do administrador.'
         );
