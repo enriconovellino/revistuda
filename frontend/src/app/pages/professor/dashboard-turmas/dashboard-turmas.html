@@ -29,7 +29,7 @@
     }
 
     <div class="row g-4">
-      @for (turma of turmas(); track turma.turma_id) {
+      @for (turma of turmasPaginadas(); track turma.turma_id) {
         <div class="col-md-4">
           <div class="card h-100 shadow-sm">
             <div class="card-body">
@@ -48,5 +48,36 @@
         </div>
       }
     </div>
+
+    @if (totalPaginas() > 1) {
+      <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          [disabled]="paginaAtual() === 1"
+          (click)="irParaPagina(paginaAtual() - 1)">
+          ← Anterior
+        </button>
+
+        @for (p of paginas(); track p) {
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="p === paginaAtual()"
+            [class.btn-outline-secondary]="p !== paginaAtual()"
+            (click)="irParaPagina(p)">
+            {{ p }}
+          </button>
+        }
+
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          [disabled]="paginaAtual() === totalPaginas()"
+          (click)="irParaPagina(paginaAtual() + 1)">
+          Próxima →
+        </button>
+      </div>
+      <div class="text-center text-muted small mt-2">
+        Página {{ paginaAtual() }} de {{ totalPaginas() }}
+      </div>
+    }
   </div>
 }

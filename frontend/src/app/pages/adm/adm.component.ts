@@ -36,6 +36,28 @@ export class AdmComponent implements OnInit {
     return this.turmas().filter(t => !t.professor_id);
   });
 
+  readonly itensPorPaginaTurmas = 5;
+  paginaAtualTurmas = signal(1);
+
+  turmasPaginadas = computed(() => {
+    const inicio = (this.paginaAtualTurmas() - 1) * this.itensPorPaginaTurmas;
+    return this.turmas().slice(inicio, inicio + this.itensPorPaginaTurmas);
+  });
+
+  totalPaginasTurmas = computed(() =>
+    Math.max(1, Math.ceil(this.turmas().length / this.itensPorPaginaTurmas))
+  );
+
+  paginasTurmas = computed(() =>
+    Array.from({ length: this.totalPaginasTurmas() }, (_, i) => i + 1)
+  );
+
+  irParaPaginaTurmas(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginasTurmas()) {
+      this.paginaAtualTurmas.set(pagina);
+    }
+  }
+
   private router = inject(Router);
   private userService = inject(UserService);
   private turmaService = inject(TurmaService);
@@ -70,6 +92,7 @@ export class AdmComponent implements OnInit {
 
       const allTurmas = await this.turmaService.getTurmas();
       this.turmas.set(allTurmas);
+      this.paginaAtualTurmas.set(1);
 
       allTurmas.forEach(t => {
         this.selectedProfessorForTurma[t.turma_id] = t.professor_id || 0;

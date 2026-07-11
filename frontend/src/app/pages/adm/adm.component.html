@@ -205,7 +205,7 @@
               <div class="d-flex flex-column gap-3" *ngIf="turmas().length > 0; else noTurmas">
                 <div
                   class="p-3 border rounded bg-white shadow-sm d-flex flex-wrap justify-content-between align-items-center"
-                  *ngFor="let turma of turmas()">
+                  *ngFor="let turma of turmasPaginadas()">
                   <div class="turma-info">
                     <h6 class="fw-bold mb-1 text-dark">{{ turma.nome_turma }}</h6>
                     <p class="text-muted mb-2" style="font-size: 13px;">{{ turma.descricao_turma || 'Sem descrição' }}
@@ -250,6 +250,36 @@
                     </button>
                   </div>
                 </div>
+              </div>
+
+              <div *ngIf="turmas().length > 0 && totalPaginasTurmas() > 1"
+                class="d-flex justify-content-center align-items-center gap-2 mt-4">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  [disabled]="paginaAtualTurmas() === 1"
+                  (click)="irParaPaginaTurmas(paginaAtualTurmas() - 1)">
+                  ← Anterior
+                </button>
+
+                <button
+                  *ngFor="let p of paginasTurmas()"
+                  class="btn btn-sm"
+                  [class.btn-primary]="p === paginaAtualTurmas()"
+                  [class.btn-outline-secondary]="p !== paginaAtualTurmas()"
+                  (click)="irParaPaginaTurmas(p)">
+                  {{ p }}
+                </button>
+
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  [disabled]="paginaAtualTurmas() === totalPaginasTurmas()"
+                  (click)="irParaPaginaTurmas(paginaAtualTurmas() + 1)">
+                  Próxima →
+                </button>
+              </div>
+              <div *ngIf="turmas().length > 0 && totalPaginasTurmas() > 1"
+                class="text-center text-muted small mt-2">
+                Página {{ paginaAtualTurmas() }} de {{ totalPaginasTurmas() }}
               </div>
 
               <ng-template #noTurmas>

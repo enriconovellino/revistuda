@@ -36,6 +36,29 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   salvandoModulo = signal<boolean>(false);
   erroModulo = signal<string | null>(null);
   moduloEmEdicao = signal<Modulo | null>(null);
+
+  readonly itensPorPaginaModulos = 6;
+  paginaAtualModulos = signal(1);
+
+  modulosPaginados = computed(() => {
+    const inicio = (this.paginaAtualModulos() - 1) * this.itensPorPaginaModulos;
+    return this.modulosDaTurmaSelecionada().slice(inicio, inicio + this.itensPorPaginaModulos);
+  });
+
+  totalPaginasModulos = computed(() =>
+    Math.max(1, Math.ceil(this.modulosDaTurmaSelecionada().length / this.itensPorPaginaModulos))
+  );
+
+  paginasModulos = computed(() =>
+    Array.from({ length: this.totalPaginasModulos() }, (_, i) => i + 1)
+  );
+
+  irParaPaginaModulos(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginasModulos()) {
+      this.paginaAtualModulos.set(pagina);
+    }
+  }
+
   estatisticas = signal<EstatisticasProfessor>({
     totalTurmas: 0,
     totalAlunos: 0,
@@ -228,6 +251,7 @@ export class ProfessorComponent implements OnInit, AfterViewInit {
   selecionarTurma(turma: Turma) {
     this.resetarFormularioModulo();
     this.turmaSelecionada.set(turma);
+    this.paginaAtualModulos.set(1);
     this.paginaAtual.set('modulos');
   }
 

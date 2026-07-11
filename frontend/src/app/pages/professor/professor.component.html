@@ -277,7 +277,7 @@
       }
 
       <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (modulo of modulosDaTurmaSelecionada(); track modulo.modulo_id) {
+        @for (modulo of modulosPaginados(); track modulo.modulo_id) {
         <div class="col">
           <div class="card h-100 shadow-sm">
             @if (modulo.imagem_url) {
@@ -309,6 +309,37 @@
         </div>
         }
       </div>
+
+      @if (totalPaginasModulos() > 1) {
+        <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            [disabled]="paginaAtualModulos() === 1"
+            (click)="irParaPaginaModulos(paginaAtualModulos() - 1)">
+            ← Anterior
+          </button>
+
+          @for (p of paginasModulos(); track p) {
+            <button
+              class="btn btn-sm"
+              [class.btn-primary]="p === paginaAtualModulos()"
+              [class.btn-outline-secondary]="p !== paginaAtualModulos()"
+              (click)="irParaPaginaModulos(p)">
+              {{ p }}
+            </button>
+          }
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            [disabled]="paginaAtualModulos() === totalPaginasModulos()"
+            (click)="irParaPaginaModulos(paginaAtualModulos() + 1)">
+            Próxima →
+          </button>
+        </div>
+        <div class="text-center text-muted small mt-2">
+          Página {{ paginaAtualModulos() }} de {{ totalPaginasModulos() }}
+        </div>
+      }
       } @else {
       <div class="alert alert-info d-flex justify-content-between align-items-center">
         <span>Selecione uma turma para visualizar os módulos.</span>
