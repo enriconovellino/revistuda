@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlunoService, Conteudo } from '../../../services/aluno.service';
-import { Modulo, Licao } from '../../../model/aluno.model';
+import { Modulo } from '../../../model/modulo.model';
+import { Licao } from '../../../model/licao.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({

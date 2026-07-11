@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, compu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Modulo, Turma } from '../../../model/professor.models';
+import { Modulo } from '../../../model/modulo.model';
+import { Turma } from '../../../model/turma.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { environment } from '../../../../environments/environment';
 

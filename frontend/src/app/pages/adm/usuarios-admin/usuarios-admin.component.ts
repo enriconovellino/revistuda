@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
-import { MAX_ALUNOS_POR_TURMA, Turma, Usuario } from '../../../model/professor.models';
+import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
+import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 type Filtro = 'todos' | 'professor' | 'aluno' | 'pendente';

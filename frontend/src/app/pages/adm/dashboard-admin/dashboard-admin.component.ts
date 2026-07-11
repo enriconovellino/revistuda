@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
 import { AtividadeRecente, AtividadeRecenteService } from '../../../services/atividade-recente.service';
-import { Turma, Usuario } from '../../../model/professor.models';
+import { Usuario } from '../../../model/professor.models';
+import { Turma } from '../../../model/turma.model';
 import { AdmView } from '../adm.component';
 
 @Component({

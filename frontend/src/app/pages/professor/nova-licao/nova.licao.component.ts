@@ -2,7 +2,10 @@ import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfessorService } from '../../../services/professor.service';
-import { Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/professor.models';
+import { AtividadeService } from '../../../services/atividade.service';
+import { Licao } from '../../../model/licao.model';
+import { Conteudo } from '../../../model/conteudo.model';
+import { Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/atividade.model';
 import { environment } from '../../../../environments/environment';
 
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -56,6 +59,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   @Output() licaoCriada = new EventEmitter<void>();
 
   private professorService = inject(ProfessorService);
+  private atividadeService = inject(AtividadeService);
   private cdr = inject(ChangeDetectorRef);
 
   readonly maxItensPorLicao = MAX_ITENS_POR_LICAO;
@@ -129,7 +133,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
         });
       this.conteudosForLicao.set(mappedConteudos);
 
-      const allAtividades = await this.professorService.getAtividades();
+      const allAtividades = await this.atividadeService.getAtividades();
       const mappedAtividades: { [licaoId: number]: Atividade[] } = {};
       allAtividades
         .filter(a => licaoIds.has(a.licao_id))
@@ -499,7 +503,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       const multiQuestao = payloads.length > 1;
       for (let i = 0; i < payloads.length; i++) {
         const p = payloads[i];
-        await this.professorService.createAtividade({
+        await this.atividadeService.createAtividade({
           titulo_atividade: multiQuestao ? `${this.atividadeTitulo.trim()} - Questão ${i + 1}` : this.atividadeTitulo.trim(),
           tipo_atividade: p.tipo,
           enunciado: p.enunciado,
@@ -522,7 +526,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir esta atividade?')) return;
     try {
-      await this.professorService.deleteAtividade(atividadeId);
+      await this.atividadeService.deleteAtividade(atividadeId);
       await this.loadItens();
     } catch (err: unknown) {
       this.atividadeError.set(getErrorMessage(err, 'Erro ao excluir atividade.'));

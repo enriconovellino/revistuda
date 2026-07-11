@@ -2,7 +2,8 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlunoService } from '../../services/aluno.service';
-import { Atividade, OpcaoAtividade, ItemAssociacao } from '../../model/aluno.model';
+import { AtividadeService } from '../../services/atividade.service';
+import { Atividade, OpcaoAtividade, ItemAssociacao } from '../../model/atividade.model';
 import { environment } from '../../../environments/environment';
 
 type ResultadoAtividade = 'acerto' | 'erro' | null;
@@ -38,6 +39,7 @@ export class TelaAtividade implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private alunoService = inject(AlunoService);
+  private atividadeService = inject(AtividadeService);
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -59,7 +61,7 @@ export class TelaAtividade implements OnInit {
     this.resetarResposta();
 
     try {
-      const atividade = await this.alunoService.getAtividadeById(id);
+      const atividade = await this.atividadeService.getAtividadeById(id);
       if (!atividade) {
         this.hasError.set(true);
         return;
@@ -75,7 +77,7 @@ export class TelaAtividade implements OnInit {
   // --- Mapeamento de cliques para Múltipla Escolha ---
   selecionarOpcao(opcao: OpcaoAtividade) {
     if (this.respostaEnviada()) return;
-    this.opcaoSelecionadaId.set(opcao.opcao_id);
+    this.opcaoSelecionadaId.set(opcao.opcao_id ?? null);
   }
 
   // --- Mapeamento de cliques para Associação de Imagens ---
@@ -195,7 +197,7 @@ export class TelaAtividade implements OnInit {
       this.resultado.set(opcaoEscolhida.correta ? 'acerto' : 'erro');
 
       try {
-        await this.alunoService.responderAtividadeMultiplaEscolha(atividade.atividade_id, selecionadaId);
+        await this.atividadeService.responderAtividadeMultiplaEscolha(atividade.atividade_id, selecionadaId);
       } catch (error) {
         console.error('Erro ao salvar resposta no banco:', error);
       }
@@ -220,7 +222,7 @@ export class TelaAtividade implements OnInit {
       this.resultado.set(acertoCompleto ? 'acerto' : 'erro');
 
       try {
-        await this.alunoService.responderAtividadeAssociacao(atividade.atividade_id, respostasFormatadas);
+        await this.atividadeService.responderAtividadeAssociacao(atividade.atividade_id, respostasFormatadas);
       } catch (error) {
         console.error('Erro ao salvar resposta de associação no banco:', error);
       }

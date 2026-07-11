@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, output, signal } from '@angular/core';
-import { Turma } from '../../../model/professor.models';
+import { Turma } from '../../../model/turma.model';
 import { AuthService } from '../../../services/auth.service';
 import { ProfessorService } from '../../../services/professor.service';
 

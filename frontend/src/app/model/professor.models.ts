@@ -1,15 +1,6 @@
 // Limite global de alunos por turma — espelha MAX_ALUNOS_POR_TURMA do backend.
 export const MAX_ALUNOS_POR_TURMA = 10;
 
-export interface Modulo {
-  modulo_id: number;
-  titulo_modulo: string;
-  descricao_modulo?: string;
-  dificuldade: string;
-  imagem_url?: string;
-  turma_id?: number;
-}
-
 export interface Usuario {
   id: number;
   nome: string;
@@ -19,84 +10,6 @@ export interface Usuario {
   turmaId?: number | null;
 }
 
-export interface Turma {
-  turma_id: number;
-  nome_turma: string;
-  descricao_turma?: string;
-  capacidade_maxima?: number | null;
-  professor_id?: number | null;
-  totalAlunos?: number;
-}
-
-export interface Licao {
-  licao_id: number;
-  titulo_licao: string;
-  comentario?: string;
-  modulo_id: number;
-}
-
-export interface Conteudo {
-  conteudo_id: number;
-  nome_conteudo: string;
-  tipo_conteudo: string;
-  url_conteudo?: string | null;
-  texto_conteudo?: string | null;
-  licao_id: number;
-  safeUrl?: any;
-}
-
-export interface OpcaoAtividade {
-  opcao_id?: number;
-  texto_opcao: string;
-  letra: 'a' | 'b' | 'c' | 'd';
-  correta: boolean;
-}
-
-export interface ItemPar {
-  tipo: 'texto' | 'imagem';
-  texto?: string;
-  imagem_url?: string;
-  uploading?: boolean;
-}
-
-export interface ParAssociacao {
-  esquerdo: ItemPar;
-  direito: ItemPar;
-}
-
-export interface ItemAssociacao {
-  item_associacao_id: number;
-  tipo: 'texto' | 'imagem';
-  texto?: string;
-  imagem_url?: string;
-  uploading?: boolean;
-}
-
-export interface Atividade {
-  atividade_id: number;
-  titulo_atividade: string;
-  tipo_atividade: string;
-  enunciado?: string | null;
-  opcoes?: OpcaoAtividade[];
-  pares_associacao?: ParAssociacao[];
-  itens_esquerdos?: ItemAssociacao[];
-  itens_direitos?: ItemAssociacao[];
-  relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
-  licao_id: number;
-}
-
-export interface MultiplaEscolha extends Atividade {
-  tipo_atividade: 'multipla_escolha';
-  opcoes: OpcaoAtividade[];
-}
-
-export interface AssociacaoImagens extends Atividade {
-  tipo_atividade: 'associacao_imagens';
-  pares_associacao?: ParAssociacao[];
-  itens_esquerdos?: ItemAssociacao[];
-  itens_direitos?: ItemAssociacao[];
-  relacoes_corretas?: { item_1_id: number, item_2_id: number }[];
-}
 export interface ComentarioAlunoProfessor {
   id: number;
   texto: string;

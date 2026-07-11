@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AlunoService } from '../../services/aluno.service';
-import { Modulo, Licao, Atividade } from '../../model/aluno.model';
+import { Modulo } from '../../model/modulo.model';
+import { Licao } from '../../model/licao.model';
+import { Atividade } from '../../model/atividade.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
 

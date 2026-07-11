@@ -1,9 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Modulo, Turma, Licao, Conteudo, Atividade, ComentarioAlunoProfessor, ComentarioResumoProfessor, AlunoProfessor } from '../model/professor.models';
+import { ComentarioAlunoProfessor, ComentarioResumoProfessor, AlunoProfessor } from '../model/professor.models';
 import { AuthService } from './auth.service';
 import { EstatisticasProfessor } from '../model/professor.models';
 import { DesempenhoMensal } from '../model/professor.models';
+import { Modulo } from '../model/modulo.model';
+import { Turma } from '../model/turma.model';
+import { Licao } from '../model/licao.model';
+import { Conteudo } from '../model/conteudo.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,6 +23,7 @@ export class ProfessorService {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
+
   async getEstatisticas(professorId: number): Promise<EstatisticasProfessor> {
     const response = await fetch(`${this.apiUrl}/turmas/estatisticas/${professorId}`, {
       headers: this.getHeaders(),
@@ -28,6 +34,7 @@ export class ProfessorService {
     }
     return data as EstatisticasProfessor;
   }
+
   async getDesempenhoMensal(professorId: number): Promise<DesempenhoMensal[]> {
     const response = await fetch(`${this.apiUrl}/turmas/desempenho/${professorId}`, {
       headers: this.getHeaders(),
@@ -49,7 +56,7 @@ export class ProfessorService {
     }
     return data as AlunoProfessor[];
   }
-  
+
   async getModulos(): Promise<Modulo[]> {
     const response = await fetch(`${this.apiUrl}/modulos`, {
       headers: this.getHeaders(),
@@ -217,61 +224,6 @@ export class ProfessorService {
     return resData as Conteudo;
   }
 
-  async getAtividades(): Promise<Atividade[]> {
-    const response = await fetch(`${this.apiUrl}/atividades`, {
-      headers: this.getHeaders(),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Erro ao buscar atividades');
-    }
-    return data as Atividade[];
-  }
-
-  async createAtividade(data: {
-    titulo_atividade: string;
-    tipo_atividade: string;
-    enunciado?: string | null;
-    opcoes?: Atividade['opcoes'];
-    pares_associacao?: Atividade['pares_associacao'];
-    licao_id: number;
-  }): Promise<Atividade> {
-    const response = await fetch(`${this.apiUrl}/atividades`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify(data),
-    });
-    const resData = await response.json();
-    if (!response.ok) {
-      throw new Error(resData.message || 'Erro ao criar atividade');
-    }
-    return resData as Atividade;
-  }
-
-  async updateAtividade(id: number, data: Partial<Atividade>): Promise<Atividade> {
-    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
-      method: 'PUT',
-      headers: this.getHeaders(),
-      body: JSON.stringify(data),
-    });
-    const resData = await response.json();
-    if (!response.ok) {
-      throw new Error(resData.message || 'Erro ao atualizar atividade');
-    }
-    return resData as Atividade;
-  }
-
-  async deleteAtividade(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
-      method: 'DELETE',
-      headers: this.getHeaders(),
-    });
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.message || 'Erro ao deletar atividade');
-    }
-  }
-
   async uploadImage(file: File): Promise<{ url: string }> {
     const formData = new FormData();
     formData.append('file', file);
@@ -305,7 +257,6 @@ export class ProfessorService {
     return data as ComentarioAlunoProfessor[];
   }
 
-  // Resumo geral: todos os comentários de todas as turmas do professor logado
   async getComentariosGerais(): Promise<ComentarioResumoProfessor[]> {
     const response = await fetch(`${this.apiUrl}/comentarios/professor`, {
       headers: this.getHeaders(),
@@ -316,7 +267,7 @@ export class ProfessorService {
     }
     return data as ComentarioResumoProfessor[];
   }
-  // Professor responde a um comentário de aluno
+
   async responderComentario(comentarioId: number, resposta: string): Promise<ComentarioResumoProfessor> {
     const response = await fetch(`${this.apiUrl}/comentarios/${comentarioId}/resposta`, {
       method: 'PATCH',

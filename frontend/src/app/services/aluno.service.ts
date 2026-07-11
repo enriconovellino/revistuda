@@ -1,7 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { DashboardData, Modulo, Licao, Atividade } from '../model/aluno.model';
+import { AtividadeService } from './atividade.service';
+import { DashboardData } from '../model/aluno.model';
+import { Modulo } from '../model/modulo.model';
+import { Licao } from '../model/licao.model';
 
 export interface Conteudo {
   conteudo_id: number;
@@ -18,7 +21,10 @@ export interface Conteudo {
 })
 export class AlunoService {
   private apiUrl = environment.apiUrl;
-  constructor(private authService: AuthService) { }
+  private authService = inject(AuthService);
+  private atividadeService = inject(AtividadeService);
+
+  constructor() { }
 
   private getHeaders(): HeadersInit {
     const token = this.authService.getAccessToken();
@@ -83,65 +89,11 @@ export class AlunoService {
     }
   }
 
-  async getAtividades(): Promise<Atividade[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return [];
-      return await response.json();
-    } catch {
-      return [];
-    }
-  }
-
-  async getAtividadeById(id: number): Promise<Atividade | null> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return null;
-      return await response.json();
-    } catch {
-      return null;
-    }
-  }
-
-  async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ opcao_id: opcaoId })
-      });
-      if (!response.ok) throw new Error('Falha ao registrar resposta.');
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async responderAtividadeAssociacao(atividadeId: number, respostas: { item_1_id: number, item_2_id: number }[]): Promise<any> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ respostas })
-      });
-      if (!response.ok) throw new Error('Falha ao registrar resposta de associação.');
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
   async getDashboardData(): Promise<DashboardData> {
     const [modulos, licoes, atividades] = await Promise.all([
       this.getModulos(),
       this.getLicoes(),
-      this.getAtividades()
+      this.atividadeService.getAtividades()
     ]);
     return { modulos, licoes, atividades };
   }

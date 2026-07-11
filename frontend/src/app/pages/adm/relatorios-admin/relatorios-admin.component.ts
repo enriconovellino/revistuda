@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RelatorioOverview, RelatorioService } from '../../../services/relatorio.service';
+import { RelatorioService } from '../../../services/relatorio.service';
+import { RelatorioOverview } from '../../../model/relatorio.model';
 
 @Component({
   selector: 'app-relatorios-admin',

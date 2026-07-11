@@ -4,7 +4,8 @@ import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
 import { TelaInicialComponent } from './pages/tela-inicial/tela-inicial.component';
-import { authGuard, roleGuard } from './guards/auth.guard';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
 import { ComentariosAlunosComponent } from './pages/professor/comentario-alunos/comentarios-alunos.component';
 import { AlunosProfessorComponent } from './pages/professor/alunos-professor/alunos-professor.component';
@@ -20,7 +21,7 @@ export const routes: Routes = [
   { path: 'login-idoso', component: LoginIdosoComponent },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
-  
+
 
   {
     path: 'aluno-idoso',

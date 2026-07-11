@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
-import { Modulo, Licao } from '../../../model/professor.models';
+import { Modulo } from '../../../model/modulo.model';
+import { Licao } from '../../../model/licao.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 import { NovaLicaoComponent } from '../nova-licao/nova.licao.component';
 
