@@ -49,7 +49,7 @@ export class UsuariosAdminComponent implements OnInit {
         filtro === 'todos' ? true :
         filtro === 'professor' ? isProfessor :
         filtro === 'aluno' ? isAluno :
-        filtro === 'pendente' ? (isProfessor && !user.approved) : true;
+        filtro === 'pendente' ? !user.approved : true;
 
       const matchesTerm = !term || user.nome.toLowerCase().includes(term) || user.email.toLowerCase().includes(term);
 
@@ -168,7 +168,8 @@ export class UsuariosAdminComponent implements OnInit {
     const nome = acao.usuario.nome;
 
     if (acao.tipo === 'aprovar') {
-      return `Aprovar o cadastro de ${nome}? Ela(e) poderá fazer login como professor(a) imediatamente.`;
+      const cargo = this.isProfessor(acao.usuario) ? 'professor(a)' : 'administrador(a)';
+      return `Aprovar o cadastro de ${nome}? Ela(e) poderá fazer login como ${cargo} imediatamente.`;
     }
     if (acao.tipo === 'rejeitar') {
       return `Rejeitar e excluir o cadastro de ${nome}? Essa ação não pode ser desfeita.`;

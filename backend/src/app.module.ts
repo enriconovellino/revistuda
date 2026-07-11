@@ -10,9 +10,10 @@ import { ConteudosModule } from './modules/conteudos/conteudos.module';
 import { LicoesModule } from './modules/licoes/licoes.module';
 import { AtividadesModule } from './modules/atividades/atividades.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
+import { AtividadesRecentesModule } from './modules/atividades-recentes/atividades-recentes.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, ModulosModule, TurmasModule, ConteudosModule, AtividadesModule, LicoesModule, RelatoriosModule],
+  imports: [PrismaModule, AtividadesRecentesModule, UsersModule, AuthModule, ModulosModule, TurmasModule, ConteudosModule, AtividadesModule, LicoesModule, RelatoriosModule],
   controllers: [AppController],
   providers: [AppService],
 })
