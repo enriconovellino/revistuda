@@ -3,60 +3,56 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
-import { ComentarioResumoProfessor } from '../../../model/professor.models';
+import { AlunoProfessor } from '../../../model/professor.models';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
 }
 
 @Component({
-  selector: 'app-comentarios-alunos',
+  selector: 'app-alunos-professor',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './comentarios-alunos.component.html',
-  styleUrl: './comentarios-alunos.component.css',
+  templateUrl: './alunos-professor.component.html',
+  styleUrl: './alunos-professor.component.css',
 })
-export class ComentariosAlunosComponent implements OnInit {
+export class AlunosProfessorComponent implements OnInit {
   userName = signal<string>('Professor');
 
-  comentarios = signal<ComentarioResumoProfessor[]>([]);
+  alunos = signal<AlunoProfessor[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
   turmaFiltro = signal<number | null>(null);
-  moduloFiltro = signal<number | null>(null);
 
   private professorService = inject(ProfessorService);
   private router = inject(Router);
 
   turmasDisponiveis = computed(() => {
     const mapa = new Map<number, string>();
-    this.comentarios().forEach(c => mapa.set(c.turma.turma_id, c.turma.nome_turma));
+    this.alunos().forEach((a) => mapa.set(a.turma_id, a.nome_turma));
     return Array.from(mapa.entries()).map(([turma_id, nome_turma]) => ({ turma_id, nome_turma }));
   });
 
-  modulosDisponiveis = computed(() => {
+  alunosFiltrados = computed(() => {
     const turmaId = this.turmaFiltro();
-    const mapa = new Map<number, string>();
-    this.comentarios()
-      .filter(c => turmaId === null || c.turma.turma_id === turmaId)
-      .forEach(c => mapa.set(c.modulo.modulo_id, c.modulo.titulo_modulo));
-    return Array.from(mapa.entries()).map(([modulo_id, titulo_modulo]) => ({ modulo_id, titulo_modulo }));
+    return this.alunos().filter((a) => turmaId === null || a.turma_id === turmaId);
   });
 
-  comentariosFiltrados = computed(() => {
-    const turmaId = this.turmaFiltro();
-    const moduloId = this.moduloFiltro();
-    return this.comentarios().filter(c => {
-      if (turmaId !== null && c.turma.turma_id !== turmaId) return false;
-      if (moduloId !== null && c.modulo.modulo_id !== moduloId) return false;
-      return true;
-    });
+  totalAlunos = computed(() => this.alunosFiltrados().length);
+
+  totalTurmas = computed(() => {
+    return new Set(this.alunosFiltrados().map((a) => a.turma_id)).size;
   });
 
-  totalComentarios = computed(() => this.comentarios().length);
-  totalAlunosUnicos = computed(() => new Set(this.comentarios().map(c => c.aluno.id)).size);
-  totalModulosComComentario = computed(() => new Set(this.comentarios().map(c => c.modulo.modulo_id)).size);
+  mediaAcerto = computed(() => {
+    const lista = this.alunosFiltrados().filter((a) => a.desempenho.totalRespostas > 0);
+    if (lista.length === 0) {
+      return 0;
+    }
+    const soma = lista.reduce((acc, a) => acc + a.desempenho.taxaAcerto, 0);
+    return Math.round(soma / lista.length);
+  });
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -73,10 +69,10 @@ export class ComentariosAlunosComponent implements OnInit {
     try {
       this.loading.set(true);
       this.error.set(null);
-      const comentarios = await this.professorService.getComentariosGerais();
-      this.comentarios.set(comentarios);
+      const alunos = await this.professorService.getMeusAlunos();
+      this.alunos.set(alunos);
     } catch (err: unknown) {
-      this.error.set(getErrorMessage(err, 'Erro ao carregar os comentários dos alunos.'));
+      this.error.set(getErrorMessage(err, 'Erro ao carregar os alunos.'));
     } finally {
       this.loading.set(false);
     }
@@ -84,16 +80,10 @@ export class ComentariosAlunosComponent implements OnInit {
 
   onTurmaChange(value: string) {
     this.turmaFiltro.set(value ? Number(value) : null);
-    this.moduloFiltro.set(null);
-  }
-
-  onModuloChange(value: string) {
-    this.moduloFiltro.set(value ? Number(value) : null);
   }
 
   limparFiltros() {
     this.turmaFiltro.set(null);
-    this.moduloFiltro.set(null);
   }
 
   voltar() {
@@ -108,8 +98,12 @@ export class ComentariosAlunosComponent implements OnInit {
     this.router.navigate(['/professor'], { queryParams: { tab: 'turmas' } });
   }
 
-  paginaAtual() {
-    return 'comentarios';
+  irParaComentarios() {
+    this.router.navigate(['/professor/comentarios']);
+  }
+
+  irParaAlunos() {
+    this.router.navigate(['/professor/alunos']);
   }
 
   irPara(pagina: string) {
@@ -117,27 +111,20 @@ export class ComentariosAlunosComponent implements OnInit {
       case 'dashboard':
         this.irParaDashboard();
         break;
-
       case 'turmas':
         this.irParaTurmas();
         break;
-
       case 'alunos':
         this.irParaAlunos();
         break;
-
       case 'comentarios':
         this.irParaComentarios();
         break;
     }
   }
 
-  irParaComentarios() {
-    this.router.navigate(['/professor/comentarios']);
-  }
-
-  irParaAlunos() {
-    this.router.navigate(['/professor/alunos']);
+  paginaAtual() {
+    return 'alunos';
   }
 
   logout() {

@@ -7,6 +7,7 @@ import {
   CreateTurmaUseCase,
   DeleteTurmaUseCase,
   GetAllTurmasUseCase,
+  GetAlunosByProfessorUseCase,
   GetDesempenhoMensalUseCase,
   GetEstatisticasProfessorUseCase,
   GetTurmasByProfessorUseCase,
@@ -27,6 +28,7 @@ import {
     GetTurmasByProfessorUseCase,
     GetEstatisticasProfessorUseCase,
     GetDesempenhoMensalUseCase,
+    GetAlunosByProfessorUseCase,
   ],
 })
 export class TurmasModule {}

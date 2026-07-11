@@ -126,3 +126,18 @@ export interface DesempenhoMensal {
   acertos: number;
   erros: number;
 }
+
+export interface DesempenhoAluno {
+  acertos: number;
+  erros: number;
+  totalRespostas: number;
+  taxaAcerto: number;
+}
+
+export interface AlunoProfessor {
+  aluno_id: number;
+  nome: string;
+  turma_id: number;
+  nome_turma: string;
+  desempenho: DesempenhoAluno;
+}
