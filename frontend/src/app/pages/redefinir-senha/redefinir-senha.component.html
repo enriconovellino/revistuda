@@ -20,14 +20,14 @@
 
       <div class="mb-3">
         <label class="form-label small fw-semibold">Nova senha</label>
-        <input type="password" class="form-control" placeholder="Digite a nova senha"
-          [(ngModel)]="novaSenha" name="novaSenha" />
+        <input type="password" class="form-control" placeholder="Digite a nova senha" [(ngModel)]="novaSenha"
+          name="novaSenha" maxlength="30" />
       </div>
 
       <div class="mb-4">
         <label class="form-label small fw-semibold">Confirmar nova senha</label>
-        <input type="password" class="form-control" placeholder="Digite a senha novamente"
-          [(ngModel)]="confirmarSenha" name="confirmarSenha" (keyup.enter)="redefinir()" />
+        <input type="password" class="form-control" placeholder="Digite a senha novamente" [(ngModel)]="confirmarSenha"
+          name="confirmarSenha" (keyup.enter)="redefinir()" maxlength="30" />
       </div>
 
       <button class="btn btn-primary w-100 py-2 d-flex justify-content-center align-items-center gap-2"

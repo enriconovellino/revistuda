@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsOptional, IsInt, MaxLength } from 'class-validator';
 
 export class CreateConteudoDto {
   @ApiProperty({
@@ -7,6 +7,7 @@ export class CreateConteudoDto {
     description: 'Nome do conteúdo',
   })
   @IsString()
+  @MaxLength(100)
   nome_conteudo!: string;
 
   @ApiProperty({
@@ -22,6 +23,7 @@ export class CreateConteudoDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(300)
   url_conteudo?: string;
 
   @ApiPropertyOptional({
@@ -30,6 +32,7 @@ export class CreateConteudoDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(5000)
   texto_conteudo?: string;
 
   @ApiProperty({

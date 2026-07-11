@@ -12,7 +12,7 @@
       <div class="mb-3">
         <label class="form-label small fw-semibold">E-mail</label>
         <input type="email" class="form-control" placeholder="seuemail@exemplo.com"
-          [(ngModel)]="email" name="email" (keyup.enter)="enviar()" />
+          [(ngModel)]="email" name="email" (keyup.enter)="enviar()" maxlength="150" />
       </div>
 
       <button class="btn btn-primary w-100 py-2 d-flex justify-content-center align-items-center gap-2"
