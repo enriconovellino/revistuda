@@ -57,10 +57,8 @@
               </div>
             </div>
 
-            <button class="btn btn-sm"
-              [class.btn-outline-success]="!isConcluida(licao.licao_id)"
-              [class.btn-success]="isConcluida(licao.licao_id)"
-              (click)="toggleConcluida(licao.licao_id)">
+            <button class="btn btn-lg fw-semibold px-4" [class.btn-outline-success]="!isConcluida(licao.licao_id)"
+              [class.btn-success]="isConcluida(licao.licao_id)" (click)="toggleConcluida(licao.licao_id)">
               {{ isConcluida(licao.licao_id) ? 'Marcada como concluída' : 'Marcar como concluída' }}
             </button>
           </div>
@@ -106,15 +104,14 @@
               </div>
 
               <div class="comentario-box mt-3 pt-3 border-top">
-                <label class="form-label small fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você entendeu?</label>
+                <label class="form-label small fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você
+                  entendeu?</label>
 
                 <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvo">
                   <textarea class="form-control" rows="4"
                     placeholder="Escreva aqui o que você entendeu sobre esse conteúdo..."
-                    style="resize: vertical; min-height: 90px;"
-                    [ngModel]="getComentario(conteudo.conteudo_id)"
-                    (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)"
-                    maxlength="2000"></textarea>
+                    style="resize: vertical; min-height: 90px;" [ngModel]="getComentario(conteudo.conteudo_id)"
+                    (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)" maxlength="2000"></textarea>
                   <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
                     <span class="text-success small fw-semibold" *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
                       ✓ Comentário salvo!
@@ -127,9 +124,11 @@
 
                 <ng-template #comentarioSalvo>
                   <div class="comentario-salvo-box p-3 rounded" style="background: #f8fafc;">
-                    <p class="mb-2 text-dark small" style="white-space: pre-wrap;">{{ getComentario(conteudo.conteudo_id) }}</p>
+                    <p class="mb-2 text-dark small" style="white-space: pre-wrap;">{{
+                      getComentario(conteudo.conteudo_id) }}</p>
                     <div class="d-flex justify-content-end">
-                      <button class="btn btn-link btn-sm p-0 text-primary" style="text-decoration: none; font-size: 12px;"
+                      <button class="btn btn-link btn-sm p-0 text-primary"
+                        style="text-decoration: none; font-size: 12px;"
                         (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
                         ✏️ Editar comentário
                       </button>

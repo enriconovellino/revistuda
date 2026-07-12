@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
-import { Turma } from '../model/professor.models';
+import { Turma } from '../model/turma.model';
 
 @Injectable({
   providedIn: 'root'

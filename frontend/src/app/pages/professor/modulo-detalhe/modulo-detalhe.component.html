@@ -1,111 +1,34 @@
-<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <h5>ReviEstuda</h5>
-      <small>Plataforma Educacional</small>
-    </div>
-
-    <nav class="sidebar-nav">
-      <ul class="nav flex-column gap-1">
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaDashboard()">
-            <i class="fi fi-rr-comment"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2 active" (click)="irParaTurmas()">
-            <i class="fi fi-rr-users"></i>
-            <span>Turmas</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" (click)="irParaAlunos()">
-            <i class="fi fi-rr-graduation-cap"></i>
-            <span>Alunos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" (click)="verComentariosGerais()">
-            <i class="fi fi-rr-document-signed"></i>
-            <span>Comentários</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
-    </div>
+<div>
+  <div *ngIf="loading()" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
   </div>
 
-  <div class="flex-grow-1" style="margin-left: 240px;">
-    <div class="main-header d-flex justify-content-between align-items-center">
-      <button class="voltar-btn" (click)="voltar()">
-        <span class="voltar-btn-icon"></span> Voltar para Módulos
-      </button>
+  <div *ngIf="error()" class="alert alert-danger mb-4">
+    {{ error() }}
+  </div>
 
-      <div class="d-flex align-items-center gap-3">
-
-        <div class="d-flex align-items-center gap-2">
-          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-            style="width: 36px; height: 36px; background: #0f2744 !important;">
-            {{ userName().charAt(0).toUpperCase() }}
-          </div>
-          <div>
-            <div class="fw-semibold small">{{ userName() }}</div>
-            <div class="text-muted" style="font-size: 11px;">Professor</div>
-          </div>
-        </div>
+  <div *ngIf="!loading() && !error() && modulo()">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <button class="btn-voltar-global mb-3" (click)="voltar()">
+          <i class="fi fi-rr-arrow-small-left"></i>
+          Voltar para Módulos
+        </button>
+        <h4 class="mb-0 fw-bold">{{ modulo()?.titulo_modulo }}</h4>
+        <small class="text-muted">
+          {{ licoes().length }} lição(ões) neste módulo
+        </small>
       </div>
     </div>
 
-    <div class="p-4">
-      <div *ngIf="loading()" class="d-flex justify-content-center my-5">
-        <div class="spinner-border text-primary" role="status"></div>
-      </div>
+    <div class="error-banner alert alert-danger" *ngIf="actionError()">
+      {{ actionError() }}
+    </div>
 
-      <div *ngIf="error()" class="alert alert-danger mb-4">
-        {{ error() }}
-      </div>
-
-      <div *ngIf="!loading() && !error() && modulo()">
-        <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 12px; background: white;">
-          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-            <div>
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <h3 class="fw-bold text-dark mb-0">{{ modulo()?.titulo_modulo }}</h3>
-                <span class="badge" [class.bg-success]="modulo()?.dificuldade === 'fácil'"
-                  [class.bg-warning]="modulo()?.dificuldade === 'médio'"
-                  [class.bg-danger]="modulo()?.dificuldade === 'difícil'">
-                  {{ modulo()?.dificuldade | titlecase }}
-                </span>
-              </div>
-              <p class="text-muted mb-0" style="font-size: 14px;">{{ modulo()?.descricao_modulo || 'Sem descrição
-                cadastrada' }}</p>
-            </div>
-
-            <div class="text-md-end">
-              <span class="text-muted small">Total de Lições</span>
-              <h4 class="fw-bold text-primary mb-0" style="color: #0f2744 !important;">{{ licoes().length }}</h4>
-            </div>
-          </div>
-        </div>
-
-        <div class="error-banner alert alert-danger" *ngIf="actionError()">
-          {{ actionError() }}
-        </div>
-
-        <div class="row g-4">
-          <div class="col-md-12">
-            <app-nova-licao [moduloId]="moduloId" (licaoCriada)="loadData()"></app-nova-licao>
-          </div>
-        </div>
+    <div class="row g-4">
+      <div class="col-md-12">
+        <app-nova-licao [moduloId]="moduloId" (licaoCriada)="loadData()"></app-nova-licao>
       </div>
     </div>
   </div>
 </div>
-
-<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
-  (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>

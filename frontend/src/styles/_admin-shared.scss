@@ -88,3 +88,27 @@
 .occ-bar-fill.full {
   background: #dc2626;
 }
+
+.btn-voltar-global {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+  transition: filter 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    color: white;
+  }
+}

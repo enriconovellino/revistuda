@@ -9,7 +9,8 @@
     <nav class="sidebar-nav">
       <ul class="nav flex-column gap-1">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/aluno-idoso" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <a class="nav-link" routerLink="/aluno-idoso" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}">
             Início
           </a>
         </li>
@@ -61,4 +62,5 @@
   </div>
 </div>
 
-<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()" (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>
+<app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
+  (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>

@@ -15,6 +15,10 @@ export class AtividadePresenter {
       tipo_atividade: atividade.tipo_atividade,
       enunciado: atividade.enunciado || undefined,
       licao_id: atividade.licao_id,
+      data_criacao: atividade.data_criacao ?? undefined,
+      modulo: atividade.modulo ?? undefined,
+      status: atividade.status ?? 'a_fazer',
+      data_conclusao: atividade.data_conclusao ?? null,
     };
 
     if (isMultiplaEscolha) {

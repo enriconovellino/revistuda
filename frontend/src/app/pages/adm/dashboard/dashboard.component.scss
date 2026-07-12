@@ -1,0 +1,153 @@
+@use 'variables' as *;
+
+.dash-wrap {
+  width: 100%;
+}
+
+/* Cards com identidade FGV: barra superior em degradê (marinho → azul
+   vivo, como no logo), fundo levemente azulado e borda tonalizada. */
+.stat-card,
+.chart-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba($azul-fgv, 0.16);
+}
+
+.stat-card::before,
+.chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, $azul-fgv, $azul-fgv-claro);
+}
+
+.stat-card {
+  background: linear-gradient(165deg, #ffffff 35%, #e9f3fb 100%);
+}
+
+.chart-card {
+  background: linear-gradient(165deg, #ffffff 45%, #eef5fb 100%);
+  padding: 2rem;
+}
+
+.chart-card h5 {
+  color: $azul-fgv;
+}
+
+/* Feed de atividades recentes */
+.atividade-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+
+  & + & {
+    border-top: 1px solid rgba($azul-fgv, 0.1);
+  }
+}
+
+.atividade-icone {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.atividade-texto {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #33475e;
+}
+
+.atividade-tempo {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: #7b8ba1;
+  white-space: nowrap;
+}
+
+/* Rótulo do card — mais forte e no azul FGV para não sumir
+   ao lado do big number. */
+.stat-label {
+  color: $azul-fgv;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.stat-num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: $azul-fgv;
+  line-height: 1.1;
+}
+
+.stat-num.sm {
+  font-size: 1.5rem;
+}
+
+/* Barras de ocupação acompanham o degradê FGV; alertas mantêm a cor. */
+.occ-bar-fill {
+  background: linear-gradient(90deg, $azul-fgv, $azul-fgv-claro);
+}
+
+.occ-bar-fill.warn {
+  background: #d97706;
+}
+
+.occ-bar-fill.full {
+  background: #dc2626;
+}
+
+/* Rótulos do resumo executivo — afirmações, em tom escuro legível. */
+.resumo-label {
+  color: #33475e;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Selos de ícone coloridos */
+.icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-badge svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.badge-teal { background: #0e8a80; }
+.badge-navy { background: $azul-fgv; }
+.badge-purple { background: #7c4a9c; }
+.badge-orange { background: #cf6a0e; }
+.badge-danger { background: #c62b2b; }
+
+/* Estados de atenção — a barra superior muda de cor junto. */
+.stat-card.attn {
+  border-color: #d97706;
+}
+
+.stat-card.attn::before {
+  background: #d97706;
+}
+
+.stat-card.attn-danger {
+  border-color: #dc2626;
+}
+
+.stat-card.attn-danger::before {
+  background: #dc2626;
+}

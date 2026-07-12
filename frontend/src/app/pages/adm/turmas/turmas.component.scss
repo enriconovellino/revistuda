@@ -1,0 +1,243 @@
+@use 'variables' as *;
+
+.search-box {
+  flex: 0 1 320px;
+  min-width: 220px;
+}
+
+.search-box .form-control {
+  border-radius: 8px;
+}
+
+.chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.45rem 1rem;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.chip:hover {
+  border-color: $azul-medio;
+  color: #16233d;
+}
+
+.chip.active {
+  background: #eaf4ff;
+  border-color: $azul-medio;
+  color: $azul-escuro;
+}
+
+/* Grid de cards */
+.turma-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+.turma-card2 {
+  background: white;
+  border: 1px solid #e6ecf3;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(15, 39, 68, 0.05);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.turma-card2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 39, 68, 0.1);
+  border-color: $azul-medio;
+}
+
+.tc-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.tc-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.tc-menu-wrap {
+  position: relative;
+}
+
+.tc-menu-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1.15rem;
+  line-height: 1;
+  padding: 0.2rem 0.45rem;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tc-menu-btn:hover {
+  background: #eef2f7;
+  color: #16233d;
+}
+
+.tc-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  min-width: 185px;
+  background: white;
+  border: 1px solid #e6ecf3;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 39, 68, 0.12);
+  padding: 0.3rem;
+}
+
+.tc-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  transition: background 0.15s;
+}
+
+.tc-menu-item:hover {
+  background: #f1f5f9;
+}
+
+.tc-menu-item--danger {
+  color: #c62b2b;
+}
+
+.tc-menu-item--danger:hover {
+  background: #fbeaea;
+}
+
+.tc-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #16233d;
+  margin: 0;
+}
+
+.tc-sub {
+  color: #64748b;
+  font-size: 0.83rem;
+  margin: 0 0 0.9rem;
+}
+
+.status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.65rem;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-pill.status--ok {
+  background: #e8f7ee;
+  color: #16a34a;
+}
+
+.status-pill.status--warn {
+  background: #fbf1de;
+  color: #b45309;
+}
+
+.status-pill.status--danger {
+  background: #fbeaea;
+  color: #c62b2b;
+}
+
+.tc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.87rem;
+  color: #334155;
+  margin-bottom: 0.45rem;
+}
+
+.tc-row i {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  display: inline-flex;
+}
+
+.tc-row--danger {
+  color: #c62b2b;
+}
+
+.tc-row--danger i {
+  color: #c62b2b;
+}
+
+.tc-occ {
+  margin: 0.35rem 0 1rem;
+  height: 10px;
+  margin-top: auto;
+}
+
+.tc-controls {
+  margin-top: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef2f7;
+}
+
+.tc-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  margin: 0;
+}
+
+.form-select,
+.form-control {
+  border-radius: 8px;
+}
+
+.btn-salvar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 39, 68, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

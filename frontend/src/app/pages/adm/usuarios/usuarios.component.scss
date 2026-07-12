@@ -1,0 +1,99 @@
+@use 'variables' as *;
+
+.search-box {
+  flex: 0 1 320px;
+  min-width: 220px;
+}
+
+.search-box .form-control {
+  border-radius: 8px;
+}
+
+.chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.4rem 0.9rem;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.chip:hover {
+  border-color: $azul-medio;
+  color: #16233d;
+}
+
+.chip.active {
+  background: #eaf4ff;
+  border-color: $azul-medio;
+  color: $azul-escuro;
+}
+
+.table thead th {
+  border-bottom: 1px solid #e2e8f0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+}
+
+.table td {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.turma-select {
+  max-width: 220px;
+  min-width: 150px;
+  border-radius: 8px;
+}
+
+.turma-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 280px;
+}
+
+.turma-tag {
+  background: #eaf4ff;
+  color: $azul-escuro;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.turma-tag--mais {
+  background: #eef2f7;
+  color: #475569;
+  cursor: default;
+}
+
+.btn-danger-acao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1.5px solid transparent;
+  background: #dc2626;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(#dc2626, 0.25);
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(#dc2626, 0.32);
+    color: white;
+  }
+}

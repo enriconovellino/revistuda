@@ -7,6 +7,7 @@ import { GetAtividadeUseCase } from '../../domain/use-cases/get-atividade.use-ca
 import { UpdateAtividadeUseCase } from '../../domain/use-cases/update-atividade.use-case';
 import { DeleteAtividadeUseCase } from '../../domain/use-cases/delete-atividade.use-case';
 import { ResponderAtividadeUseCase } from '../../domain/use-cases/responder-atividade.use-case';
+import { IniciarAtividadeUseCase } from '../../domain/use-cases/iniciar-atividade.use-case';
 import { AtividadePresenter } from '../../application/presenters/atividade.presenter';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
@@ -19,7 +20,8 @@ export class AtividadesController {
     private getAtividadeUseCase: GetAtividadeUseCase,
     private updateAtividadeUseCase: UpdateAtividadeUseCase,
     private deleteAtividadeUseCase: DeleteAtividadeUseCase,
-    private responderAtividadeUseCase: ResponderAtividadeUseCase
+    private responderAtividadeUseCase: ResponderAtividadeUseCase,
+    private iniciarAtividadeUseCase: IniciarAtividadeUseCase,
   ) {}
 
   @Post()
@@ -75,6 +77,17 @@ export class AtividadesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/iniciar')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Marcar atividade como em andamento (fazendo)' })
+  @ApiParam({ name: 'id', description: 'ID da atividade', type: Number })
+  @ApiResponse({ status: 200, description: 'Progresso atualizado com sucesso' })
+  async iniciar(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    const alunoId = req.user.sub;
+    return this.iniciarAtividadeUseCase.execute(alunoId, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post(':id/responder')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Responder a uma atividade de múltipla escolha' })
@@ -87,7 +100,7 @@ export class AtividadesController {
     @Request() req
   ) {
     const alunoId = req.user.sub;
-    const resposta = await this.responderAtividadeUseCase.execute(alunoId, opcaoId);
+    const resposta = await this.responderAtividadeUseCase.execute(alunoId, id, opcaoId);
     return resposta;
   }
 

@@ -1,0 +1,117 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Comentários dos Alunos</h4>
+    <small class="text-muted">Acompanhe as observações e dê feedbacks para as lições.</small>
+  </div>
+</div>
+
+<div *ngIf="loading()" class="d-flex justify-content-center my-5">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
+
+<div *ngIf="error()" class="alert alert-danger py-2 small">
+  {{ error() }}
+</div>
+
+<div *ngIf="!loading() && !error()">
+
+    <!-- Resumo geral -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <app-stat-card label="Total de Comentários" [value]="totalComentarios()" badgeClass="badge-navy">
+          <i icon class="fi fi-rr-comment-alt"></i>
+        </app-stat-card>
+      </div>
+      <div class="col-md-4">
+        <app-stat-card label="Alunos que Comentaram" [value]="totalAlunosUnicos()" badgeClass="badge-purple">
+          <i icon class="fi fi-rr-graduation-cap"></i>
+        </app-stat-card>
+      </div>
+      <div class="col-md-4">
+        <app-stat-card label="Módulos com Comentários" [value]="totalModulosComComentario()" badgeClass="badge-teal">
+          <i icon class="fi fi-rr-book-alt"></i>
+        </app-stat-card>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+      <div class="turma-select-wrap">
+        <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
+          <option value="">Todas as turmas</option>
+          <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id" [selected]="turmaFiltro() === turma.turma_id">
+            {{ turma.nome_turma }}
+          </option>
+        </select>
+      </div>
+
+      <div class="turma-select-wrap">
+        <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
+          <option value="">Todos os módulos</option>
+          <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id" [selected]="moduloFiltro() === modulo.modulo_id">
+            {{ modulo.titulo_modulo }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Lista de comentários -->
+    <div class="chart-card">
+      <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
+        <div class="comentario-card" *ngFor="let comentario of comentariosFiltrados()">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+            <div class="d-flex align-items-start gap-3">
+              <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
+              <div>
+                <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
+                <div class="comentario-meta">
+                  {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
+                  {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+                </div>
+              </div>
+            </div>
+            <span class="comentario-data">
+              {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+
+          <p class="comentario-texto">{{ comentario.texto }}</p>
+
+          <div class="resposta-existente" *ngIf="comentario.resposta">
+            <div class="resposta-existente-label">
+              <i class="fi fi-rr-corner-down-right"></i> Sua resposta
+            </div>
+            <p class="resposta-existente-texto">{{ comentario.resposta }}</p>
+          </div>
+
+          <div class="comentario-footer">
+            <button class="btn-responder" type="button" (click)="toggleResposta(comentario.id)">
+              <i class="fi fi-rr-comment-alt-dots"></i>
+              {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Editar Resposta' :
+              'Responder') }}
+            </button>
+          </div>
+
+          <div class="resposta-box" *ngIf="respostaAbertaId() === comentario.id">
+            <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
+            <textarea class="resposta-textarea" rows="2" placeholder="Escreva sua resposta..."
+              [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
+            <div class="resposta-actions">
+              <button class="btn-resposta-enviar" type="button" [disabled]="enviandoResposta()"
+                (click)="enviarResposta(comentario)">
+                <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
+                {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #semComentarios>
+        <div class="empty-state py-5 text-center">
+          <p class="mb-0 text-muted">Nenhum comentário encontrado com os filtros selecionados.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>

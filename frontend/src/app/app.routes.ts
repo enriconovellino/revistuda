@@ -1,28 +1,33 @@
 import { Routes } from '@angular/router';
-import { TelaLoginComponent } from './pages/tela-login/tela-login.component';
+import { LoginComponent } from './pages/auth/login/login.component';
 import { DashboardAlunoIdosoComponent } from './pages/aluno-idoso/dashboard-idoso/dashboard.component';
+import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
-import { TelaInicialComponent } from './pages/tela-inicial/tela-inicial.component';
-import { authGuard, roleGuard } from './guards/auth.guard';
+import { TelaInicialComponent } from './pages/landing/tela-inicial/tela-inicial.component';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
-import { ComentariosAlunosComponent } from './pages/professor/comentario-alunos/comentarios-alunos.component';
-import { AlunosProfessorComponent } from './pages/professor/alunos-professor/alunos-professor.component';
-import { LoginIdosoComponent } from './pages/login-idoso/login-idoso.component';
-import { EsqueciSenhaComponent } from './pages/tela-senha/esqueci-senha.component';
-import { RedefinirSenhaComponent } from './pages/redefinir-senha/redefinir-senha.component';
+import { ComentariosAlunosComponent } from './pages/professor/comentarios/comentarios.component';
+import { AlunosProfessorComponent } from './pages/professor/alunos/alunos.component';
+import { LoginIdosoComponent } from './pages/auth/login-idoso/login-idoso.component';
+import { EsqueciSenhaComponent } from './pages/auth/esqueci-senha/esqueci-senha.component';
+import { RedefinirSenhaComponent } from './pages/auth/redefinir-senha/redefinir-senha.component';
 import { AlunoModuloDetalheComponent } from './pages/aluno-idoso/conteudos-idoso/conteudo.component';
-import { TelaAtividade } from './pages/tela-atividade/tela-atividade';
-import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
+import { TelaAtividade } from './pages/aluno-idoso/tela-atividade/tela-atividade';
+import { ProfessorDashboardComponent } from './pages/professor/dashboard/dashboard.component';
+import { TurmasProfessorComponent } from './pages/professor/turmas/turmas';
+import { ModulosProfessorComponent } from './pages/professor/modulos/modulos.component';
 
 import { ModulosIdosoComponent } from './pages/aluno-idoso/modulos-idoso/modulos.component';
 import { AtividadesIdosoComponent } from './pages/aluno-idoso/atividades-idoso/atividades.component';
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
-  { path: 'login', component: TelaLoginComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'login-idoso', component: LoginIdosoComponent },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
+
 
   {
     path: 'aluno-idoso',
@@ -40,22 +45,16 @@ export const routes: Routes = [
   {
     path: 'professor',
     component: ProfessorComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/modulo/:id',
-    component: ModuloDetalheComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/comentarios',
-    component: ComentariosAlunosComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/alunos',
-    component: AlunosProfessorComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
+    canActivate: [authGuard, roleGuard(['PROFESSOR'])],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: ProfessorDashboardComponent },
+      { path: 'turmas', component: TurmasProfessorComponent },
+      { path: 'modulos', component: ModulosProfessorComponent },
+      { path: 'modulo/:id', component: ModuloDetalheComponent },
+      { path: 'comentarios', component: ComentariosAlunosComponent },
+      { path: 'alunos', component: AlunosProfessorComponent }
+    ]
   },
   {
     path: 'adm',

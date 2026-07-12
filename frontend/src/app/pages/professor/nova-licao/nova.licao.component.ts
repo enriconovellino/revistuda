@@ -1,9 +1,15 @@
-import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfessorService } from '../../../services/professor.service';
-import { Licao, Conteudo, Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/professor.models';
+import { LicaoService } from '../../../services/licao.service';
+import { ConteudoService } from '../../../services/conteudo.service';
+import { AtividadeService } from '../../../services/atividade.service';
+import { Licao } from '../../../model/licao.model';
+import { Conteudo } from '../../../model/conteudo.model';
+import { Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/atividade.model';
 import { environment } from '../../../../environments/environment';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -44,7 +50,7 @@ function novaQuestaoVazia(): QuestaoForm {
 @Component({
   selector: 'app-nova-licao',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginatorComponent],
   templateUrl: './nova-licao.component.html',
   styleUrl: './nova.licao.component.scss',
 })
@@ -56,6 +62,9 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   @Output() licaoCriada = new EventEmitter<void>();
 
   private professorService = inject(ProfessorService);
+  private licaoService = inject(LicaoService);
+  private conteudoService = inject(ConteudoService);
+  private atividadeService = inject(AtividadeService);
   private cdr = inject(ChangeDetectorRef);
 
   readonly maxItensPorLicao = MAX_ITENS_POR_LICAO;
@@ -67,6 +76,30 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   conteudosForLicao = signal<{ [licaoId: number]: Conteudo[] }>({});
   atividadesForLicao = signal<{ [licaoId: number]: Atividade[] }>({});
   loadingItens = signal<boolean>(false);
+
+  // --- Paginação ---
+  paginaAtual = signal<number>(1);
+  itensPorPagina = signal<number>(6);
+
+  totalPaginas = computed(() => {
+    return Math.ceil(this.licoes().length / this.itensPorPagina()) || 1;
+  });
+
+  licoesOrdenadas = computed(() => {
+    return [...this.licoes()].sort((a, b) => a.titulo_licao.localeCompare(b.titulo_licao));
+  });
+
+  licoesPaginadas = computed(() => {
+    const inicio = (this.paginaAtual() - 1) * this.itensPorPagina();
+    const fim = inicio + this.itensPorPagina();
+    return this.licoesOrdenadas().slice(inicio, fim);
+  });
+
+  mudarPagina(page: number) {
+    if (page >= 1 && page <= this.totalPaginas()) {
+      this.paginaAtual.set(page);
+    }
+  }
 
   // --- Expansão dos cards de lição ---
   private expandedLicoesSet = signal<Set<number>>(new Set());
@@ -113,13 +146,13 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     try {
       this.loadingItens.set(true);
 
-      const allLicoes = await this.professorService.getLicoes();
+      const allLicoes = await this.licaoService.getLicoes();
       const licoesDoModulo = allLicoes.filter(l => l.modulo_id === this.moduloId);
       this.licoes.set(licoesDoModulo);
 
       const licaoIds = new Set(licoesDoModulo.map(l => l.licao_id));
 
-      const allConteudos = await this.professorService.getConteudos();
+      const allConteudos = await this.conteudoService.getConteudos();
       const mappedConteudos: { [licaoId: number]: Conteudo[] } = {};
       allConteudos
         .filter(c => licaoIds.has(c.licao_id))
@@ -129,7 +162,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
         });
       this.conteudosForLicao.set(mappedConteudos);
 
-      const allAtividades = await this.professorService.getAtividades();
+      const allAtividades = await this.atividadeService.getAtividades();
       const mappedAtividades: { [licaoId: number]: Atividade[] } = {};
       allAtividades
         .filter(a => licaoIds.has(a.licao_id))
@@ -239,14 +272,14 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     try {
       this.saving.set(true);
 
-      const licao = await this.professorService.createLicao({
+      const licao = await this.licaoService.createLicao({
         titulo_licao: this.titulo.trim(),
         comentario: this.comentario.trim() || undefined,
         modulo_id: this.moduloId,
       });
 
       if (hasText || hasMedia) {
-        await this.professorService.createConteudo({
+        await this.conteudoService.createConteudo({
           nome_conteudo: `Conteúdo da Lição: ${licao.titulo_licao}`,
           tipo_conteudo: this.midiaType,
           url_conteudo: this.midiaType !== 'Texto' ? this.url.trim() : undefined,
@@ -269,7 +302,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir esta lição? Todos os conteúdos e atividades dela também serão excluídos.')) return;
     try {
-      await this.professorService.deleteLicao(licaoId);
+      await this.licaoService.deleteLicao(licaoId);
       await this.loadItens();
     } catch (err: unknown) {
       this.error.set(getErrorMessage(err, 'Erro ao excluir lição.'));
@@ -308,7 +341,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       this.savingConteudo.set(true);
       const licao = this.licoes().find(l => l.licao_id === this.conteudoLicaoId);
 
-      await this.professorService.createConteudo({
+      await this.conteudoService.createConteudo({
         nome_conteudo: `Conteúdo da Lição: ${licao?.titulo_licao || ''}`,
         tipo_conteudo: this.conteudoMidiaType,
         url_conteudo: this.conteudoMidiaType !== 'Texto' ? this.conteudoUrl.trim() : undefined,
@@ -329,7 +362,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir este conteúdo?')) return;
     try {
-      await this.professorService.deleteConteudo(conteudoId);
+      await this.conteudoService.deleteConteudo(conteudoId);
       await this.loadItens();
     } catch (err: unknown) {
       this.conteudoError.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
@@ -499,7 +532,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       const multiQuestao = payloads.length > 1;
       for (let i = 0; i < payloads.length; i++) {
         const p = payloads[i];
-        await this.professorService.createAtividade({
+        await this.atividadeService.createAtividade({
           titulo_atividade: multiQuestao ? `${this.atividadeTitulo.trim()} - Questão ${i + 1}` : this.atividadeTitulo.trim(),
           tipo_atividade: p.tipo,
           enunciado: p.enunciado,
@@ -522,7 +555,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     event.stopPropagation();
     if (!confirm('Deseja realmente excluir esta atividade?')) return;
     try {
-      await this.professorService.deleteAtividade(atividadeId);
+      await this.atividadeService.deleteAtividade(atividadeId);
       await this.loadItens();
     } catch (err: unknown) {
       this.atividadeError.set(getErrorMessage(err, 'Erro ao excluir atividade.'));

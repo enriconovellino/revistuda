@@ -1,0 +1,126 @@
+/* ==========================================
+   Search bar & filter chips
+   ========================================== */
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.search-box .form-control {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.45rem 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.search-box .form-control:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 3px rgba(15, 39, 68, 0.1);
+  outline: none;
+}
+
+.turma-select-wrap .form-select {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  min-width: 180px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.turma-select-wrap .form-select:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 3px rgba(15, 39, 68, 0.1);
+}
+
+.chip {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  border-radius: 20px;
+  padding: 0.35rem 0.9rem;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.chip.active {
+  background: #0f2744;
+  color: #fff;
+  border-color: #0f2744;
+}
+
+/* ==========================================
+   Table card
+   ========================================== */
+.table thead th {
+  border-bottom: 1px solid #e2e8f0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+}
+
+.table td {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+/* ==========================================
+   Turma tag
+   ========================================== */
+.turma-tag {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+}
+
+/* ==========================================
+   Taxa de acertos badges
+   ========================================== */
+.badge-taxa {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+}
+
+.badge-taxa.taxa-ok {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.badge-taxa.taxa-warn {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.badge-taxa.taxa-danger {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.badge-taxa.taxa-sem-dados {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+/* ==========================================
+   Empty state
+   ========================================== */
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
