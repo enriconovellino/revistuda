@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Turma } from '../../../model/turma.model';
 import { AuthService } from '../../../services/auth.service';
 import { ProfessorService } from '../../../services/professor.service';
+import { MAX_ALUNOS_POR_TURMA } from '../../../model/professor.models';
 
 @Component({
   selector: 'app-turmas-professor',
@@ -17,21 +18,34 @@ export class TurmasProfessorComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  percentualOcupacao(turma: Turma): number {
-    if (!turma.capacidade_maxima) return 0;
-    return Math.min(100, ( turma.capacidade_maxima) * 100);
-  }
-
-  corBarra(turma: Turma): string {
-    const percentual = this.percentualOcupacao(turma);
-    if (percentual >= 90) return 'alta';
-    if (percentual >= 60) return 'media';
-    return 'baixa';
-  }
+  readonly maxAlunos = MAX_ALUNOS_POR_TURMA;
 
   turmas = signal<Turma[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  capacidadeEfetiva(turma: Turma): number {
+    return Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
+  }
+
+  isCheia(turma: Turma): boolean {
+    return (turma.totalAlunos ?? 0) >= this.capacidadeEfetiva(turma);
+  }
+
+  ocupacaoPercentual(turma: Turma): number {
+    const percentual = ((turma.totalAlunos ?? 0) / this.capacidadeEfetiva(turma)) * 100;
+    return Math.min(100, Math.round(percentual));
+  }
+
+  statusLabel(turma: Turma): string {
+    if (this.isCheia(turma)) return 'Cheia';
+    return 'Ativa';
+  }
+
+  statusClass(turma: Turma): string {
+    if (this.isCheia(turma)) return 'status--warn';
+    return 'status--ok';
+  }
 
   async carregarTurmas() {
     try {

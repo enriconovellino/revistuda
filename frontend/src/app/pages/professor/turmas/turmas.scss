@@ -21,62 +21,133 @@
 .grid-turmas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-/* ===== CARD DE TURMA ===== */
+/* ===== CARD DE TURMA (Design igual ao ADM) ===== */
 
-.card-turma {
+.turma-card2 {
   background: white;
-  border-radius: 12px;
-  border-left: 4px solid $azul-medio;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e6ecf3;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(15, 39, 68, 0.05);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  }
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+  min-height: 330px;
 }
 
-.conteudo-card {
+.turma-card2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 39, 68, 0.1);
+  border-color: $azul-medio;
+}
+
+.tc-head {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 0.5rem;
+  margin-bottom: 0.15rem;
 }
 
-.nome-turma {
-  color: $azul-escuro;
-  font-weight: 800;
-  font-size: 1.15rem;
-  margin: 0;
-}
-
-.descricao-turma {
-  color: #64748b;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.badge-capacidade {
-  display: inline-flex;
+.tc-head-actions {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  width: fit-content;
-  background: #dbeafe;
-  color: $azul-medio;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 6px 14px;
-  border-radius: 20px;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.tc-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #16233d;
+  margin: 0;
+}
+
+.tc-sub {
+  color: #64748b;
+  font-size: 0.83rem;
+  margin: 0 0 0.9rem;
+}
+
+.status-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.65rem;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-pill.status--ok {
+  background: #e8f7ee;
+  color: #16a34a;
+}
+
+.status-pill.status--warn {
+  background: #fbf1de;
+  color: #b45309;
+}
+
+.status-pill.status--danger {
+  background: #fbeaea;
+  color: #c62b2b;
+}
+
+.tc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.87rem;
+  color: #334155;
+  margin-bottom: 0.45rem;
+}
+
+.tc-row i {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  display: inline-flex;
+}
+
+.occ-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.occ-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $azul-fgv, $azul-fgv-claro);
+  border-radius: 99px;
+  transition: width 0.2s;
+}
+
+.occ-bar-fill.warn {
+  background: #d97706;
+}
+
+.occ-bar-fill.full {
+  background: #dc2626;
+}
+
+.tc-occ {
+  margin: 0.35rem 0 1rem;
+  height: 10px;
+  margin-top: auto;
 }
 
 .rodape-card {
-  margin-top: 0.5rem;
+  margin-top: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
 }
 
 .btn-modulos {
@@ -85,62 +156,14 @@
   color: white;
   border: none;
   font-weight: 600;
-  padding: 12px;
+  padding: 10px;
   border-radius: 8px;
   transition: background 0.2s ease;
   cursor: pointer;
+  font-size: 0.85rem;
 
   &:hover {
     background: $azul-medio;
     color: white;
-  }
-}
-
-/* ===== OCC-BAR — BARRA DE OCUPAÇÃO (uso futuro) ===== */
-
-.occ-bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 99px;
-  background: #e2e8f0;
-  overflow: hidden;
-  position: relative;
-
-  .occ-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: $azul-medio;
-    transition: width 0.3s ease, background 0.3s ease;
-  }
-
-  &.warn .occ-fill {
-    background: #f59e0b;
-  }
-
-  &.full .occ-fill {
-    background: #dc2626;
-  }
-}
-
-/* ===== EMPTY-STATE (uso futuro, se quiser trocar o text-center simples) ===== */
-
-.empty-state {
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  color: #94a3b8;
-  background: transparent;
-
-  i {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
-    display: block;
-    color: #cbd5e1;
-  }
-
-  p {
-    margin: 0;
-    font-size: 0.95rem;
   }
 }
