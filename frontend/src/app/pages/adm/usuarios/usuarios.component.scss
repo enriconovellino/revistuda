@@ -72,3 +72,28 @@
   color: #475569;
   cursor: default;
 }
+
+.btn-danger-acao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1.5px solid transparent;
+  background: #dc2626;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(#dc2626, 0.25);
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(#dc2626, 0.32);
+    color: white;
+  }
+}

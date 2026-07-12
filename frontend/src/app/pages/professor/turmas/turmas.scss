@@ -153,18 +153,28 @@
 
 .btn-modulos {
   width: 100%;
-  background: $azul-escuro;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
   color: white;
   border: none;
-  font-weight: 600;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
-  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
   font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 
   &:hover {
-    background: $azul-medio;
-    color: white;
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 39, 68, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }

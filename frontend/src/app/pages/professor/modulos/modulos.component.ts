@@ -7,11 +7,12 @@ import { Turma } from '../../../model/turma.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 @Component({
   selector: 'app-modulos-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginatorComponent],
   templateUrl: './modulos.component.html',
   styleUrl: './modulos.component.scss',
 })
@@ -27,6 +28,26 @@ export class ModulosProfessorComponent implements OnInit {
     if (!t) return [];
     return this.modulos().filter((m) => m.turma_id === t.turma_id);
   });
+
+  paginaAtual = signal<number>(1);
+  itensPorPagina = signal<number>(6);
+
+  totalPaginas = computed(() => {
+    const total = this.modulosDaTurma().length;
+    return Math.ceil(total / this.itensPorPagina()) || 1;
+  });
+
+  modulosPaginados = computed(() => {
+    const start = (this.paginaAtual() - 1) * this.itensPorPagina();
+    const end = start + this.itensPorPagina();
+    return this.modulosDaTurma().slice(start, end);
+  });
+
+  mudarPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginas()) {
+      this.paginaAtual.set(pagina);
+    }
+  }
 
   mostrarFormModulo = signal<boolean>(false);
   salvandoModulo = signal<boolean>(false);

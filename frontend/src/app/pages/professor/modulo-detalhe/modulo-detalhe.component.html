@@ -1,10 +1,4 @@
-<div class="p-4">
-  <div class="mb-4">
-    <button class="voltar-btn" (click)="voltar()">
-      <span class="voltar-btn-icon"></span> Voltar para Módulos
-    </button>
-  </div>
-
+<div>
   <div *ngIf="loading()" class="d-flex justify-content-center my-5">
     <div class="spinner-border text-primary" role="status"></div>
   </div>
@@ -14,24 +8,16 @@
   </div>
 
   <div *ngIf="!loading() && !error() && modulo()">
-    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 12px; background: white;">
-      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-        <div>
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <h3 class="fw-bold text-dark mb-0">{{ modulo()?.titulo_modulo }}</h3>
-            <span class="badge" [class.bg-success]="modulo()?.dificuldade === 'fácil'"
-              [class.bg-warning]="modulo()?.dificuldade === 'médio'"
-              [class.bg-danger]="modulo()?.dificuldade === 'difícil'">
-              {{ modulo()?.dificuldade | titlecase }}
-            </span>
-          </div>
-          <p class="text-muted mb-0" style="font-size: 14px;">{{ modulo()?.descricao_modulo || 'Sem descrição cadastrada' }}</p>
-        </div>
-
-        <div class="text-md-end">
-          <span class="text-muted small">Total de Lições</span>
-          <h4 class="fw-bold text-primary mb-0" style="color: #0f2744 !important;">{{ licoes().length }}</h4>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <button class="btn-voltar-global mb-3" (click)="voltar()">
+          <i class="fi fi-rr-arrow-small-left"></i>
+          Voltar para Módulos
+        </button>
+        <h4 class="mb-0 fw-bold">{{ modulo()?.titulo_modulo }}</h4>
+        <small class="text-muted">
+          {{ licoes().length }} lição(ões) neste módulo
+        </small>
       </div>
     </div>
 
