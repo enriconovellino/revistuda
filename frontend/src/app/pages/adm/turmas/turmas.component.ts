@@ -70,7 +70,7 @@ export class TurmasAdminComponent implements OnInit {
   filteredTurmas = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const filtro = this.activeFilter();
-    return this.turmas().filter((t) => {
+    const filtradas = this.turmas().filter((t) => {
       const matchesTerm = !term || t.nome_turma.toLowerCase().includes(term);
       const matchesFiltro =
         filtro === null ? true :
@@ -79,6 +79,7 @@ export class TurmasAdminComponent implements OnInit {
         filtro === 'com-vagas' ? this.temVagas(t) : true;
       return matchesTerm && matchesFiltro;
     });
+    return filtradas.sort((a, b) => a.nome_turma.localeCompare(b.nome_turma));
   });
 
   toggleFilter(filtro: 'cheia' | 'sem-professor' | 'com-vagas') {

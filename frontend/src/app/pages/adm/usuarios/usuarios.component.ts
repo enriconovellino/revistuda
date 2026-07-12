@@ -43,7 +43,7 @@ export class UsuariosAdminComponent implements OnInit {
     const term = this.searchTerm().trim().toLowerCase();
     const filtro = this.activeFilter();
 
-    return this.users().filter((user) => {
+    const filtrados = this.users().filter((user) => {
       const isProfessor = user.permissions.includes('PROFESSOR');
       const isAluno = user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA');
 
@@ -57,6 +57,7 @@ export class UsuariosAdminComponent implements OnInit {
 
       return matchesFiltro && matchesTerm;
     });
+    return filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
   });
 
   readonly PAGE_SIZE = 10;
