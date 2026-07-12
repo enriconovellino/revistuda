@@ -1,0 +1,122 @@
+<div class="tela-login-page">
+  <div class="painel-esquerdo">
+    <img src="/img/login.jpg" alt="Estudantes" class="bg-imagem">
+    <div class="overlay"></div>
+
+    <div class="logo-centro">
+      <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
+      <span class="nome-marca">ReviStuda</span>
+    </div>
+  </div>
+  <div class="painel-direito">
+    <div class="formulario-bloco">
+
+      <div class="alert alert-danger py-2 small" *ngIf="error()">
+        {{ error() }}
+      </div>
+      <form class="row g-3" *ngIf="isLogin()" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <h2 class="titulo-form col-12 mb-0">Bem-vindo</h2>
+        <p class="subtitulo-form col-12 mb-0">Acesse sua plataforma educacional personalizada.</p>
+
+        <div class="col-12">
+          <label for="loginEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>Endereço de e-mail</label>
+          <input type="email" class="form-control" id="loginEmail" formControlName="email"
+            placeholder="nome@exemplo.com"
+            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" maxlength="50">
+          <div class="invalid-feedback">Digite um e-mail válido.</div>
+        </div>
+
+        <div class="col-12">
+          <label for="loginSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Sua senha</label>
+          <div class="position-relative">
+            <input [type]="mostrarSenhaLogin ? 'text' : 'password'" class="form-control" id="loginSenha"
+              formControlName="senha" placeholder="••••••••"
+              [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched" maxlength="100">
+            <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaLogin"
+              [class.fi-rr-eye-crossed]="mostrarSenhaLogin" (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
+          </div>
+          <div class="invalid-feedback d-block"
+            *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
+            A senha é obrigatória.
+          </div>
+          <div class="text-end mt-1">
+            <a href="javascript:void(0)" class="link-accent" style="font-size: .85rem;"
+              (click)="irParaEsqueciSenha()">Esqueci minha senha</a>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn-auth w-100" [disabled]="loading()">
+            <span *ngIf="!loading()">Acessar Plataforma <i class="fi fi-rr-arrow-right"></i></span>
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
+
+        <div class="col-12 text-center">
+          <p class="text-muted mb-0 small">
+            Não tem uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(false)">Cadastre-se
+              gratuitamente</a>
+          </p>
+        </div>
+      </form>
+      <form class="row g-3" *ngIf="!isLogin()" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <h2 class="titulo-form col-12 mb-0">Criar Conta</h2>
+        <p class="subtitulo-form col-12 mb-0">Comece sua jornada educacional personalizada.</p>
+
+        <div class="col-12">
+          <label for="regNome" class="form-label"><i class="fi fi-rr-user me-1"></i>Nome completo</label>
+          <input type="text" class="form-control" id="regNome" formControlName="nome"
+            placeholder="Como devemos te chamar?"
+            [class.is-invalid]="registerForm.get('nome')?.invalid && registerForm.get('nome')?.touched" maxlength="100">
+          <div class="invalid-feedback">O nome é obrigatório.</div>
+        </div>
+
+        <div class="col-12">
+          <label for="regEmail" class="form-label"><i class="fi fi-rr-envelope me-1"></i>E-mail</label>
+          <input type="email" class="form-control" id="regEmail" formControlName="email"
+            placeholder="exemplo@estudo.com"
+            [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            maxlength="150">
+          <div class="invalid-feedback">Digite um e-mail válido.</div>
+        </div>
+
+        <div class="col-12">
+          <label for="regSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Senha</label>
+          <div class="position-relative">
+            <input [type]="mostrarSenhaCadastro ? 'text' : 'password'" class="form-control" id="regSenha"
+              formControlName="senha" placeholder="Mínimo 6 caracteres"
+              [class.is-invalid]="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched"
+              maxlength="100">
+            <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaCadastro"
+              [class.fi-rr-eye-crossed]="mostrarSenhaCadastro"
+              (click)="mostrarSenhaCadastro = !mostrarSenhaCadastro"></i>
+          </div>
+          <div class="invalid-feedback d-block"
+            *ngIf="registerForm.get('senha')?.invalid && registerForm.get('senha')?.touched">
+            A senha precisa de no mínimo 6 caracteres.
+          </div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn-auth w-100" [disabled]="loading()">
+            <span *ngIf="!loading()">Cadastrar Agora <i class="fi fi-rr-arrow-right"></i></span>
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
+
+        <div class="col-12 text-center">
+          <p class="text-muted mb-0 small">
+            Já possui uma conta? <a href="javascript:void(0)" class="link-accent" (click)="setMode(true)">Fazer
+              Login</a>
+          </p>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  <div class="modal-sucesso-overlay" *ngIf="showSuccessModal()">
+    <div class="modal-sucesso">
+      <i class="fi fi-rr-check-circle"></i>
+      <p class="mb-0 fw-semibold">Cadastro realizado com sucesso!</p>
+    </div>
+  </div>
+</div>

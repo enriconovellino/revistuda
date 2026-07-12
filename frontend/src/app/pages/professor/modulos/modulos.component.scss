@@ -1,0 +1,558 @@
+@use '../../../../styles/variables' as *;
+
+.modulo-card-v2 {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 39, 68, 0.06);
+  border: 1px solid #eef1f6;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(15, 39, 68, 0.12);
+
+    .modulo-card-v2-img img {
+      transform: scale(1.06);
+    }
+  }
+}
+
+.modulo-card-v2-img {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+}
+
+.modulo-card-v2-noimg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2f7, #dde5f0);
+  color: #94a3b8;
+  font-size: 2rem;
+}
+
+.modulo-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: white;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  &.badge-facil { background: rgba(22, 163, 74, 0.9); }
+  &.badge-medio { background: rgba(217, 119, 6, 0.9); }
+  &.badge-dificil { background: rgba(220, 38, 38, 0.9); }
+}
+
+.modulo-card-v2-body {
+  padding: 1.1rem 1.2rem 0.6rem;
+  flex-grow: 1;
+}
+
+.modulo-card-v2-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: $azul-escuro;
+  margin-bottom: 0.35rem;
+}
+
+.modulo-card-v2-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.modulo-card-v2-footer {
+  padding: 0.9rem 1.2rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-ver-licoes {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: $azul-escuro;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: #16345c;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-icon-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-edit {
+  color: #d97706;
+
+  &:hover {
+    background: #fffbeb;
+    border-color: #fbbf24;
+  }
+}
+
+.btn-icon-delete {
+  color: #dc2626;
+
+  &:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+  }
+}
+
+/* ===================================================== */
+/* V3 - inspirado no card do painel do aluno              */
+/* ===================================================== */
+
+.modulo-card-v3 {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #e9edf3;
+  box-shadow: 0 1px 3px rgba(15, 39, 68, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(15, 39, 68, 0.1);
+
+    .modulo-card-v3-img img {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.modulo-card-v3-img {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+}
+
+.modulo-card-v3-noimg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2f7, #dde5f0);
+  color: #94a3b8;
+  font-size: 1.8rem;
+}
+
+.modulo-badge-v3 {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.28rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  &.badge-facil { background: #16a34a; }
+  &.badge-medio { background: #2563eb; }
+  &.badge-dificil { background: #dc2626; }
+}
+
+.modulo-card-v3-body {
+  padding: 1rem 1.15rem 0.4rem;
+  flex-grow: 1;
+}
+
+.modulo-card-v3-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: $azul-escuro;
+  margin-bottom: 0.25rem;
+}
+
+.modulo-card-v3-desc {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.modulo-card-v3-actions {
+  padding: 0.9rem 1.15rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-ver-licoes-v3 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+  transition: filter 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+}
+
+.modulo-card-v3-icons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-icon-v3 {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-edit-v3 {
+  color: #d97706;
+
+  &:hover {
+    background: #fffbeb;
+    border-color: #fbbf24;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-icon-delete-v3 {
+  color: #dc2626;
+
+  &:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    transform: translateY(-1px);
+  }
+}
+
+/* ===================================================== */
+/* Formulário de módulo (redesign)                        */
+/* ===================================================== */
+
+// Tokens
+$accent: #0d9488; // teal — acento "estudo/progresso"
+$accent-dark: #0f766e;
+$accent-soft: #e6f6f4;
+$ink: #1f2937;
+$muted: #6b7280;
+$border: #e5e7eb;
+$border-soft: #eef0f2;
+$danger: #dc2626;
+$radius-lg: 18px;
+$radius-md: 12px;
+
+// Botão "Novo Módulo" / "Cancelar" — mantém o azul-marinho já usado no resto da tela
+.btn-novo-modulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(15, 39, 68, 0.28);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 39, 68, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Cartão do formulário
+.modulo-form-card {
+  background: #fff;
+  border: 1px solid $border-soft;
+  border-radius: $radius-lg;
+  box-shadow: 0 8px 28px rgba(17, 24, 39, 0.06);
+  overflow: hidden;
+  animation: modulo-form-in 0.2s ease;
+}
+
+@keyframes modulo-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modulo-form-header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, $accent-soft, #ffffff);
+  border-bottom: 1px solid $border-soft;
+}
+
+.modulo-form-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: $accent;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.modulo-form-title {
+  margin: 0;
+  font-weight: 700;
+  color: $ink;
+}
+
+.modulo-form-subtitle {
+  font-size: 0.82rem;
+  color: $muted;
+
+  strong {
+    color: $ink;
+  }
+}
+
+.modulo-form-body {
+  padding: 1.5rem;
+}
+
+// Inputs
+.modulo-form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: $ink;
+  margin-bottom: 0.4rem;
+}
+
+.modulo-form-control,
+.modulo-form-select {
+  width: 100%;
+  background: #f9fafb;
+  border: 1.5px solid $border;
+  border-radius: $radius-md;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.92rem;
+  color: $ink;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:hover {
+    border-color: darken($border, 8%);
+  }
+
+  &:focus {
+    outline: none;
+    background: #fff;
+    border-color: $accent;
+    box-shadow: 0 0 0 4px rgba($accent, 0.12);
+  }
+
+  &.is-invalid {
+    border-color: $danger;
+    background: #fef2f2;
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba($danger, 0.12);
+    }
+  }
+}
+
+.modulo-form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+.modulo-form-error {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: $danger;
+  font-weight: 500;
+}
+
+// Dropzone de imagem
+.modulo-dropzone {
+  position: relative;
+  display: block;
+  border: 1.5px dashed $border;
+  border-radius: $radius-md;
+  background: #f9fafb;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: $accent;
+    background: $accent-soft;
+  }
+
+  &.is-uploading {
+    cursor: progress;
+  }
+}
+
+.modulo-dropzone-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.modulo-dropzone-state {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: $muted;
+  min-width: 0;
+
+  i {
+    font-size: 1rem;
+    color: $accent;
+    flex-shrink: 0;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.modulo-dropzone-state-success {
+  color: $ink;
+  font-weight: 500;
+}
+
+.modulo-dropzone-link {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $accent-dark;
+  text-decoration: none;
+  z-index: 1;
+  position: relative;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Botão Salvar
+.modulo-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: $accent;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: $radius-md;
+  box-shadow: 0 2px 10px rgba($accent, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: $accent-dark;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba($accent, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+}

@@ -1,24 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { DashboardData, Modulo, Licao, Atividade } from '../model/aluno.model';
-
-export interface Conteudo {
-  conteudo_id: number;
-  nome_conteudo: string;
-  tipo_conteudo: string;
-  texto_conteudo?: string;
-  url_conteudo?: string;
-  licao_id: number;
-  safeUrl?: any;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlunoService {
   private apiUrl = environment.apiUrl;
-  constructor(private authService: AuthService) { }
+  private authService = inject(AuthService);
+
+
+  constructor() { }
 
   private getHeaders(): HeadersInit {
     const token = this.authService.getAccessToken();
@@ -35,78 +27,6 @@ export class AlunoService {
     return user.id ?? user.usuario_id ?? null;
   }
 
-  async getModulos(): Promise<Modulo[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}/modulos`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return [];
-      return await response.json();
-    } catch {
-      return [];
-    }
-  }
-
-  async getModuloById(id: number): Promise<Modulo | null> {
-    try {
-      const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return null;
-      return await response.json();
-    } catch {
-      return null;
-    }
-  }
-
-  async getLicoes(): Promise<Licao[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}/licoes`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return [];
-      return await response.json();
-    } catch {
-      return [];
-    }
-  }
-
-  async getConteudos(): Promise<Conteudo[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}/conteudos`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return [];
-      return await response.json();
-    } catch {
-      return [];
-    }
-  }
-
-  async getAtividades(): Promise<Atividade[]> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return [];
-      return await response.json();
-    } catch {
-      return [];
-    }
-  }
-
-  async getAtividadeById(id: number): Promise<Atividade | null> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
-        headers: this.getHeaders()
-      });
-      if (!response.ok) return null;
-      return await response.json();
-    } catch {
-      return null;
-    }
-  }
-
   async iniciarAtividade(atividadeId: number): Promise<{ status: string; data_inicio: string | null; data_conclusao: string | null }> {
     const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
       method: 'POST',
@@ -117,45 +37,6 @@ export class AlunoService {
       throw new Error(data.message || 'Falha ao iniciar atividade.');
     }
     return data;
-  }
-
-  async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ opcao_id: opcaoId })
-      });
-      if (!response.ok) throw new Error('Falha ao registrar resposta.');
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async responderAtividadeAssociacao(atividadeId: number, respostas: { item_1_id: number, item_2_id: number }[]): Promise<any> {
-    try {
-      const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ respostas })
-      });
-      if (!response.ok) throw new Error('Falha ao registrar resposta de associação.');
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getDashboardData(): Promise<DashboardData> {
-    const [modulos, licoes, atividades] = await Promise.all([
-      this.getModulos(),
-      this.getLicoes(),
-      this.getAtividades()
-    ]);
-    return { modulos, licoes, atividades };
   }
 
   private progressKey(moduloId: number): string {

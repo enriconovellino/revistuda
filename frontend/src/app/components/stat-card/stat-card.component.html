@@ -1,0 +1,28 @@
+<div class="stat-card"
+     [class.attn]="attn"
+     [class.attn-danger]="attnDanger"
+     [class.d-flex]="horizontal"
+     [class.align-items-center]="horizontal"
+     [class.gap-3]="horizontal"
+     [style.width]="width"
+     [style.height]="height">
+
+  @if (horizontal) {
+    <span class="icon-badge" [ngClass]="badgeClass">
+      <ng-content select="[icon]"></ng-content>
+    </span>
+    <div>
+      <div class="stat-label mb-1">{{ label }}</div>
+      <div class="stat-num sm" [class.text-danger]="attn || attnDanger">{{ value }}</div>
+    </div>
+  } @else {
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="icon-badge" [ngClass]="badgeClass">
+        <ng-content select="[icon]"></ng-content>
+      </span>
+      <span class="stat-label">{{ label }}</span>
+    </div>
+    <div class="stat-num" [class.text-danger]="attn || attnDanger">{{ value }}</div>
+  }
+
+</div>

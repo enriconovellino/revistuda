@@ -1,0 +1,101 @@
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.content-box {
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.lista-header,
+.lista-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lista-header {
+  padding: 0 0.75rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.lista-turma {
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.lista-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.lista-header span:last-child {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .lista-header {
+    display: none;
+  }
+
+  .lista-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .lista-status {
+    justify-content: flex-start;
+  }
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 2px rgba(15, 39, 68, 0.1);
+}
+
+.empty-state {
+  color: #64748b;
+}
+
+.badge-metric {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+.badge-metric.acertos {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.badge-metric.erros {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.badge-metric.taxa {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
