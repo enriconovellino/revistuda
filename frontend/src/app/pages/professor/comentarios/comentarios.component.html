@@ -1,92 +1,59 @@
-<div class="p-4">
-  <div class="mb-4">
-    <button class="voltar-btn" (click)="voltar()">
-      <span class="voltar-btn-icon">←</span> Voltar
-    </button>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Comentários dos Alunos</h4>
+    <small class="text-muted">Acompanhe as observações e dê feedbacks para as lições.</small>
   </div>
+</div>
 
-  <div *ngIf="loading()" class="d-flex justify-content-center my-5">
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
+<div *ngIf="loading()" class="d-flex justify-content-center my-5">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
 
-  <div *ngIf="error()" class="alert alert-danger mb-4">
-    {{ error() }}
-  </div>
+<div *ngIf="error()" class="alert alert-danger py-2 small">
+  {{ error() }}
+</div>
 
-  <div *ngIf="!loading() && !error()">
-    <h3 class="fw-bold text-dark mb-4">
-      <span class="page-title-icon">
-        <i class="fi fi-rr-comment-alt"></i>
-      </span>
-      Comentários dos Alunos
-    </h3>
+<div *ngIf="!loading() && !error()">
 
     <!-- Resumo geral -->
     <div class="row g-3 mb-4">
       <div class="col-md-4">
-        <div class="stat-card-dark">
-          <div class="stat-icon">
-            <i class="fi fi-rr-comment-alt"></i>
-          </div>
-          <div>
-            <div class="stat-label">Total de Comentários</div>
-            <div class="stat-value">{{ totalComentarios() }}</div>
-          </div>
-        </div>
+        <app-stat-card label="Total de Comentários" [value]="totalComentarios()" badgeClass="badge-navy">
+          <i icon class="fi fi-rr-comment-alt"></i>
+        </app-stat-card>
       </div>
       <div class="col-md-4">
-        <div class="stat-card-dark">
-          <div class="stat-icon">
-            <i class="fi fi-rr-graduation-cap"></i>
-          </div>
-          <div>
-            <div class="stat-label">Alunos que Comentaram</div>
-            <div class="stat-value">{{ totalAlunosUnicos() }}</div>
-          </div>
-        </div>
+        <app-stat-card label="Alunos que Comentaram" [value]="totalAlunosUnicos()" badgeClass="badge-purple">
+          <i icon class="fi fi-rr-graduation-cap"></i>
+        </app-stat-card>
       </div>
       <div class="col-md-4">
-        <div class="stat-card-dark">
-          <div class="stat-icon">
-            <i class="fi fi-rr-book-alt"></i>
-          </div>
-          <div>
-            <div class="stat-label">Módulos com Comentários</div>
-            <div class="stat-value">{{ totalModulosComComentario() }}</div>
-          </div>
-        </div>
+        <app-stat-card label="Módulos com Comentários" [value]="totalModulosComComentario()" badgeClass="badge-teal">
+          <i icon class="fi fi-rr-book-alt"></i>
+        </app-stat-card>
       </div>
     </div>
 
     <!-- Filtros -->
-    <div class="chart-card mb-4">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-4">
-          <label class="form-label small fw-semibold text-dark">Filtrar por Turma</label>
-          <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
-            <option value="">Todas as turmas</option>
-            <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id">
-              {{ turma.nome_turma }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-4">
-          <label class="form-label small fw-semibold text-dark">Filtrar por Módulo</label>
-          <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
-            <option value="">Todos os módulos</option>
-            <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id">
-              {{ modulo.titulo_modulo }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-4">
-          <button class="btn-limpar-filtros" (click)="limparFiltros()">
-            Limpar Filtros
-          </button>
-        </div>
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+      <div class="turma-select-wrap">
+        <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
+          <option value="">Todas as turmas</option>
+          <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id" [selected]="turmaFiltro() === turma.turma_id">
+            {{ turma.nome_turma }}
+          </option>
+        </select>
       </div>
+
+      <div class="turma-select-wrap">
+        <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
+          <option value="">Todos os módulos</option>
+          <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id" [selected]="moduloFiltro() === modulo.modulo_id">
+            {{ modulo.titulo_modulo }}
+          </option>
+        </select>
+      </div>
+
     </div>
 
     <!-- Lista de comentários -->
@@ -148,4 +115,3 @@
       </ng-template>
     </div>
   </div>
-</div>

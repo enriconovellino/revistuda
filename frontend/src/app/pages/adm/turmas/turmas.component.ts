@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, signal, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
@@ -6,11 +6,12 @@ import { TurmaService } from '../../../services/turma.service';
 import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 @Component({
   selector: 'app-turmas-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, PaginatorComponent],
   templateUrl: './turmas.component.html',
   styleUrl: './turmas.component.scss'
 })
@@ -39,6 +40,22 @@ export class TurmasAdminComponent implements OnInit {
   deleteLoading = signal<boolean>(false);
 
   menuAbertoId = signal<number | null>(null);
+
+  readonly PAGE_SIZE = 10;
+  paginaAtual = signal(1);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.filteredTurmas().length / this.PAGE_SIZE)));
+  turmasPaginadas = computed(() =>
+    this.filteredTurmas().slice((this.paginaAtual() - 1) * this.PAGE_SIZE, this.paginaAtual() * this.PAGE_SIZE)
+  );
+
+  constructor() {
+    effect(() => {
+      this.filteredTurmas();
+      untracked(() => this.paginaAtual.set(1));
+    });
+  }
+
+  mudarPagina(p: number) { this.paginaAtual.set(p); }
 
   toggleMenu(turmaId: number, event: Event) {
     event.stopPropagation();

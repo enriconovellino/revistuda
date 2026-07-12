@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
@@ -6,6 +6,7 @@ import { TurmaService } from '../../../services/turma.service';
 import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 type Filtro = 'todos' | 'professor' | 'aluno' | 'pendente';
 type TipoAcao = 'aprovar' | 'rejeitar' | 'revogar' | 'excluir';
@@ -18,7 +19,7 @@ interface AcaoPendente {
 @Component({
   selector: 'app-usuarios-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, PaginatorComponent],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss'
 })
@@ -57,6 +58,22 @@ export class UsuariosAdminComponent implements OnInit {
       return matchesFiltro && matchesTerm;
     });
   });
+
+  readonly PAGE_SIZE = 10;
+  paginaAtual = signal(1);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.filteredUsers().length / this.PAGE_SIZE)));
+  usuariosPaginados = computed(() =>
+    this.filteredUsers().slice((this.paginaAtual() - 1) * this.PAGE_SIZE, this.paginaAtual() * this.PAGE_SIZE)
+  );
+
+  constructor() {
+    effect(() => {
+      this.filteredUsers();
+      untracked(() => this.paginaAtual.set(1));
+    });
+  }
+
+  mudarPagina(p: number) { this.paginaAtual.set(p); }
 
   async ngOnInit() {
     await this.loadData();

@@ -1,9 +1,10 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
 import { AlunoProfessor } from '../../../model/professor.models';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -12,21 +13,31 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-alunos-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginatorComponent],
   templateUrl: './alunos.component.html',
   styleUrl: './alunos.component.css',
 })
 export class AlunosProfessorComponent implements OnInit {
-  userName = signal<string>('Professor');
-
   alunos = signal<AlunoProfessor[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
+  searchTerm = signal<string>('');
   turmaFiltro = signal<number | null>(null);
+
+  readonly PAGE_SIZE = 10;
+  paginaAtual = signal(1);
 
   private professorService = inject(ProfessorService);
   private router = inject(Router);
+
+  constructor() {
+    // Reset to page 1 whenever the filtered set changes
+    effect(() => {
+      this.alunosFiltrados(); // track filter changes
+      untracked(() => this.paginaAtual.set(1));
+    });
+  }
 
   turmasDisponiveis = computed(() => {
     const mapa = new Map<number, string>();
@@ -36,32 +47,42 @@ export class AlunosProfessorComponent implements OnInit {
 
   alunosFiltrados = computed(() => {
     const turmaId = this.turmaFiltro();
-    return this.alunos().filter((a) => turmaId === null || a.turma_id === turmaId);
+    const term = this.searchTerm().trim().toLowerCase();
+    return this.alunos().filter((a) => {
+      const matchTurma = turmaId === null || a.turma_id === turmaId;
+      const matchNome = !term || a.nome.toLowerCase().includes(term);
+      return matchTurma && matchNome;
+    });
   });
 
-  totalAlunos = computed(() => this.alunosFiltrados().length);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.alunosFiltrados().length / this.PAGE_SIZE)));
 
-  totalTurmas = computed(() => {
-    return new Set(this.alunosFiltrados().map((a) => a.turma_id)).size;
-  });
+  alunosPaginados = computed(() =>
+    this.alunosFiltrados().slice(
+      (this.paginaAtual() - 1) * this.PAGE_SIZE,
+      this.paginaAtual() * this.PAGE_SIZE
+    )
+  );
 
-  mediaAcerto = computed(() => {
-    const lista = this.alunosFiltrados().filter((a) => a.desempenho.totalRespostas > 0);
-    if (lista.length === 0) {
-      return 0;
-    }
-    const soma = lista.reduce((acc, a) => acc + a.desempenho.taxaAcerto, 0);
-    return Math.round(soma / lista.length);
-  });
+  mudarPagina(p: number) {
+    this.paginaAtual.set(p);
+  }
+
+  taxaAcerto(aluno: AlunoProfessor): string {
+    const { acertos, totalRespostas } = aluno.desempenho;
+    if (!totalRespostas) return '—';
+    return `${acertos}/${totalRespostas} (${aluno.desempenho.taxaAcerto}%)`;
+  }
+
+  taxaClass(aluno: AlunoProfessor): string {
+    if (!aluno.desempenho.totalRespostas) return 'taxa-sem-dados';
+    const t = aluno.desempenho.taxaAcerto;
+    if (t >= 70) return 'taxa-ok';
+    if (t >= 40) return 'taxa-warn';
+    return 'taxa-danger';
+  }
 
   ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.userName.set(user.nome);
-      }
-    }
     this.loadData();
   }
 
@@ -84,53 +105,10 @@ export class AlunosProfessorComponent implements OnInit {
 
   limparFiltros() {
     this.turmaFiltro.set(null);
+    this.searchTerm.set('');
   }
 
   voltar() {
-    this.router.navigate(['/professor'], { queryParams: { tab: 'turmas' } });
-  }
-
-  irParaDashboard() {
-    this.router.navigate(['/professor'], { queryParams: { tab: 'dashboard' } });
-  }
-
-  irParaTurmas() {
-    this.router.navigate(['/professor'], { queryParams: { tab: 'turmas' } });
-  }
-
-  irParaComentarios() {
-    this.router.navigate(['/professor/comentarios']);
-  }
-
-  irParaAlunos() {
-    this.router.navigate(['/professor/alunos']);
-  }
-
-  irPara(pagina: string) {
-    switch (pagina) {
-      case 'dashboard':
-        this.irParaDashboard();
-        break;
-      case 'turmas':
-        this.irParaTurmas();
-        break;
-      case 'alunos':
-        this.irParaAlunos();
-        break;
-      case 'comentarios':
-        this.irParaComentarios();
-        break;
-    }
-  }
-
-  paginaAtual() {
-    return 'alunos';
-  }
-
-  logout() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.clear();
-    }
-    this.router.navigate(['/']);
+    this.router.navigate(['/professor/turmas']);
   }
 }

@@ -34,7 +34,7 @@
 /* Grid de cards */
 .turma-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 1.25rem;
 }
 
@@ -42,11 +42,12 @@
   background: white;
   border: 1px solid #e6ecf3;
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(15, 39, 68, 0.05);
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   display: flex;
   flex-direction: column;
+  min-height: 320px;
 }
 
 .turma-card2:hover {
@@ -192,10 +193,11 @@
 .tc-occ {
   margin: 0.35rem 0 1rem;
   height: 10px;
+  margin-top: auto;
 }
 
 .tc-controls {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 0.85rem;
   border-top: 1px solid #eef2f7;
 }
@@ -210,4 +212,22 @@
 .form-select,
 .form-control {
   border-radius: 8px;
+}
+
+.btn-salvar {
+  width: 100%;
+  background: $azul-escuro;
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+  font-size: 0.85rem;
+
+  &:hover {
+    background: $azul-medio;
+    color: white;
+  }
 }

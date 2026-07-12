@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
 import { ComentarioResumoProfessor } from '../../../model/professor.models';
+import { StatCardComponent } from '../../../components/stat-card/stat-card.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -12,7 +13,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-comentarios-alunos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StatCardComponent],
   templateUrl: './comentarios.component.html',
   styleUrl: './comentarios.component.css',
 })

@@ -1,92 +1,81 @@
-<div class="p-4">
-  <div class="mb-4">
-    <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-3" (click)="voltar()">
-      <span>←</span> Voltar
-    </button>
-  </div>
-
-  <div *ngIf="loading()" class="d-flex justify-content-center my-5">
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
-
-  <div *ngIf="error()" class="alert alert-danger mb-4">
-    {{ error() }}
-  </div>
-
-  <div *ngIf="!loading() && !error()">
-    <h3 class="fw-bold text-dark mb-4">Alunos</h3>
-
-    <div class="row g-3 mb-4">
-      <div class="col-md-4">
-        <div class="chart-card text-center">
-          <div class="text-muted small mb-1">Total de Alunos</div>
-          <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalAlunos() }}</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="chart-card text-center">
-          <div class="text-muted small mb-1">Turmas</div>
-          <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ totalTurmas() }}</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="chart-card text-center">
-          <div class="text-muted small mb-1">Média de Acerto</div>
-          <h3 class="fw-bold mb-0" style="color: #0f2744;">{{ mediaAcerto() }}%</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="chart-card mb-4">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-6">
-          <label class="form-label small fw-semibold text-dark">Filtrar por Turma</label>
-          <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
-            <option value="">Todas as turmas</option>
-            <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id">
-              {{ turma.nome_turma }}
-            </option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <button class="btn btn-sm btn-outline-secondary" (click)="limparFiltros()">
-            Limpar Filtros
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="chart-card">
-      <div *ngIf="alunosFiltrados().length > 0; else semAlunos">
-        <div class="lista-header">
-          <span>Nome</span>
-          <span>Turma</span>
-          <span>Status</span>
-        </div>
-
-        <div class="d-flex flex-column gap-3">
-          <div class="content-box p-3 border rounded" *ngFor="let aluno of alunosFiltrados()">
-            <div class="lista-row">
-              <span class="fw-semibold text-dark">{{ aluno.nome }}</span>
-              <span class="text-dark lista-turma">{{ aluno.nome_turma }}</span>
-              <div class="lista-status">
-                <span class="badge-metric acertos">{{ aluno.desempenho.acertos }} acertos</span>
-                <span class="badge-metric erros">{{ aluno.desempenho.erros }} erros</span>
-                <span class="badge-metric taxa">{{ aluno.desempenho.taxaAcerto }}% acerto</span>
-              </div>
-            </div>
-            <div class="text-muted mt-2" style="font-size: 11px;" *ngIf="aluno.desempenho.totalRespostas === 0">
-              Ainda não respondeu atividades de múltipla escolha.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ng-template #semAlunos>
-        <div class="empty-state py-5 text-center">
-          <p class="mb-0 text-muted">Nenhum aluno encontrado com os filtros selecionados.</p>
-        </div>
-      </ng-template>
-    </div>
+<!-- Cabeçalho -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Meus Alunos</h4>
+    <small class="text-muted">Acompanhe o desempenho e filtre por turma.</small>
   </div>
 </div>
+
+<!-- Erros -->
+<div class="alert alert-danger py-2 small" *ngIf="error()">{{ error() }}</div>
+
+<!-- Barra de busca e filtros -->
+<div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+  <div class="search-box">
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      placeholder="Buscar por nome..."
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+    />
+  </div>
+
+  <div class="turma-select-wrap">
+    <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
+      <option value="">Todas as turmas</option>
+      <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id"
+        [selected]="turmaFiltro() === turma.turma_id">
+        {{ turma.nome_turma }}
+      </option>
+    </select>
+  </div>
+
+</div>
+
+<!-- Tabela -->
+<div class="chart-card p-0" *ngIf="!loading(); else carregando">
+  <div class="table-responsive" *ngIf="alunosFiltrados().length > 0; else semAlunos">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr class="text-muted small text-uppercase">
+          <th class="ps-4">Nome</th>
+          <th>Turma</th>
+          <th class="pe-4 text-end">Taxa de Acertos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let aluno of alunosPaginados()">
+          <td class="ps-4">
+            <div class="fw-semibold text-dark">{{ aluno.nome }}</div>
+          </td>
+          <td>
+            <span class="turma-tag">{{ aluno.nome_turma }}</span>
+          </td>
+          <td class="pe-4 text-end">
+            <span class="badge-taxa" [ngClass]="taxaClass(aluno)">
+              {{ taxaAcerto(aluno) }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <app-paginator
+      [paginaAtual]="paginaAtual()"
+      [totalPaginas]="totalPaginas()"
+      (paginaMudou)="mudarPagina($event)">
+    </app-paginator>
+  </div>
+
+  <ng-template #semAlunos>
+    <div class="empty-state">
+      <p class="mb-0">Nenhum aluno encontrado para os filtros selecionados.</p>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #carregando>
+  <div class="empty-state">
+    <p class="mb-0">Carregando alunos...</p>
+  </div>
+</ng-template>
