@@ -1,8 +1,12 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AlunoService } from '../../../services/aluno.service';
-import { Modulo, Atividade, Licao } from '../../../model/aluno.model';
+import { ModuloService } from '../../../services/modulo.service';
+import { LicaoService } from '../../../services/licao.service';
+import { AtividadeService } from '../../../services/atividade.service';
+import { Modulo } from '../../../model/modulo.model';
+import { Licao } from '../../../model/licao.model';
+import { Atividade } from '../../../model/atividade.model';
 
 @Component({
   selector: 'app-dashboard-aluno-idoso',
@@ -39,7 +43,9 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   });
 
   constructor(
-    private alunoService: AlunoService,
+    private moduloService: ModuloService,
+    private atividadeService: AtividadeService,
+    private licaoService: LicaoService,
     private router: Router
   ) { }
 
@@ -53,9 +59,9 @@ export class DashboardAlunoIdosoComponent implements OnInit {
 
     try {
       const [modulos, atividades, licoes] = await Promise.all([
-        this.alunoService.getModulos(),
-        this.alunoService.getAtividades(),
-        this.alunoService.getLicoes()
+        this.moduloService.getModulos(),
+        this.atividadeService.getAtividades(),
+        this.licaoService.getLicoes()
       ]);
 
       this.modulos.set(modulos);

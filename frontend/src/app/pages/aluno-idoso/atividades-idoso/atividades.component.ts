@@ -1,8 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AlunoService } from '../../../services/aluno.service';
-import { Atividade } from '../../../model/aluno.model';
+import { AtividadeService } from '../../../services/atividade.service';
+import { Atividade } from '../../../model/atividade.model';
 
 @Component({
   selector: 'app-atividades-idoso',
@@ -18,9 +18,9 @@ export class AtividadesIdosoComponent implements OnInit {
   atividades = signal<Atividade[]>([]);
 
   constructor(
-    private alunoService: AlunoService,
+    private atividadeService: AtividadeService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -31,7 +31,7 @@ export class AtividadesIdosoComponent implements OnInit {
     this.hasError.set(false);
 
     try {
-      const atividades = await this.alunoService.getAtividades();
+      const atividades = await this.atividadeService.getAtividades();
       this.atividades.set(atividades);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erro desconhecido';

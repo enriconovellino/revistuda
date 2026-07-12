@@ -1,8 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AlunoService } from '../../../services/aluno.service';
-import { Modulo, Licao } from '../../../model/aluno.model';
+import { ModuloService } from '../../../services/modulo.service';
+import { LicaoService } from '../../../services/licao.service';
+import { Modulo } from '../../../model/modulo.model';
+import { Licao } from '../../../model/licao.model';
 
 @Component({
   selector: 'app-modulos-idoso',
@@ -19,9 +21,10 @@ export class ModulosIdosoComponent implements OnInit {
   licoes = signal<Licao[]>([]);
 
   constructor(
-    private alunoService: AlunoService,
+    private moduloService: ModuloService,
+    private licaoService: LicaoService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -33,8 +36,8 @@ export class ModulosIdosoComponent implements OnInit {
 
     try {
       const [modulos, licoes] = await Promise.all([
-        this.alunoService.getModulos(),
-        this.alunoService.getLicoes()
+        this.moduloService.getModulos(),
+        this.licaoService.getLicoes()
       ]);
       this.modulos.set(modulos);
       this.licoes.set(licoes);

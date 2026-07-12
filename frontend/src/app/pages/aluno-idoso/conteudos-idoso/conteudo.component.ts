@@ -7,9 +7,11 @@ import { AlunoService } from '../../../services/aluno.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { ConteudoService } from '../../../services/conteudo.service';
+import { AtividadeService } from '../../../services/atividade.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
+import { Atividade } from '../../../model/atividade.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
@@ -20,10 +22,12 @@ import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-
   styleUrl: './conteudo.component.css',
 })
 export class AlunoModuloDetalheComponent implements OnInit {
+  userName = signal<string>('Aluno');
   moduloId = 0;
   modulo = signal<Modulo | null>(null);
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
+  atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
   licoesConcluidas = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
@@ -40,6 +44,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   private moduloService = inject(ModuloService);
   private licaoService = inject(LicaoService);
   private conteudoService = inject(ConteudoService);
+  private atividadeService = inject(AtividadeService);
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
@@ -77,8 +82,9 @@ export class AlunoModuloDetalheComponent implements OnInit {
       });
       this.conteudosForLicao.set(mappedConteudos);
 
-      const conteudoIds = allConteudos.map((c: Conteudo) => c.conteudo_id);
+      const conteudoIds = allConteudos.map(c => c.conteudo_id);
       const comentariosCarregados = await this.alunoService.getComentariosDoAluno(conteudoIds);
+
 
       this.comentarios.set(comentariosCarregados);
       this.comentarioSalvo.set(comentariosCarregados);
@@ -112,9 +118,32 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.licoesConcluidas.set(atualizadas);
   }
 
+  getAtividadeDaLicao(licaoId: number): Atividade | null {
+    const atividades = this.atividadesPorLicao()[licaoId] ?? [];
+    if (atividades.length === 0) return null;
+
+    const pendente = atividades.find(a => a.status === 'a_fazer' || a.status === 'fazendo');
+    return pendente ?? atividades[0];
+  }
+
+  getBotaoAtividadeLabel(licaoId: number): string {
+    const atividade = this.getAtividadeDaLicao(licaoId);
+    if (!atividade) return 'Realizar atividade';
+    if (atividade.status === 'feito') return 'Revisar atividade';
+    if (atividade.status === 'fazendo') return 'Continuar atividade';
+    return 'Realizar atividade';
+  }
+
+  realizarAtividade(licaoId: number) {
+    const atividade = this.getAtividadeDaLicao(licaoId);
+    if (!atividade) return;
+    this.router.navigate(['/aluno-idoso/atividade', atividade.atividade_id]);
+  }
+
   get totalConcluidas(): number {
     return this.licoesConcluidas().length;
   }
+
 
   getComentario(conteudoId: number): string {
     return this.comentarios()[conteudoId] || '';
@@ -156,7 +185,32 @@ export class AlunoModuloDetalheComponent implements OnInit {
     }, 2000);
   }
 
-  voltar(): void {
-    this.router.navigate(['/aluno-idoso/modulos']);
+  voltar() {
+    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
+  }
+
+  irParaView(view: string) {
+    this.router.navigate(['/aluno-idoso'], { queryParams: { view } });
+  }
+
+  logout() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.clear();
+    }
+    this.router.navigate(['/']);
+  }
+
+  isEditProfileOpen = signal<boolean>(false);
+
+  abrirEditarPerfil() {
+    this.isEditProfileOpen.set(true);
+  }
+
+  fecharEditarPerfil() {
+    this.isEditProfileOpen.set(false);
+  }
+
+  onProfileUpdated(updatedUser: any) {
+    this.userName.set(updatedUser.nome);
   }
 }
