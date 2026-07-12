@@ -1,5 +1,10 @@
 @use 'variables' as *;
 
+:host {
+  display: block;
+  height: 100%;
+}
+
 .stat-card {
   position: relative;
   overflow: hidden;
@@ -9,6 +14,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background: linear-gradient(165deg, #ffffff 35%, #e9f3fb 100%);
   width: 100%;
+  height: 100%;
   box-sizing: border-box;
 }
 

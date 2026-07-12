@@ -1,67 +1,65 @@
 @use 'variables' as *;
 
-.stat-card {
-  background: white;
+/* ==========================================
+   Layout wrapper
+   ========================================== */
+.dash-prof {
+  width: 100%;
+}
+
+/* ==========================================
+   Chart card — igual ao admin dashboard
+   ========================================== */
+.chart-card {
+  background: linear-gradient(165deg, #ffffff 45%, #eef5fb 100%);
+  border: 1px solid rgba($azul-fgv, 0.16);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $azul-fgv, $azul-fgv-claro);
+  }
 }
 
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  flex-shrink: 0;
+.chart-card h6 {
+  color: $azul-fgv;
 }
 
-.stat-card-v2 {
-  background: $azul-escuro;
-  border: 1px solid $azul-escuro;
-  border-radius: 12px;
-  padding: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+/* ==========================================
+   Badge classes (usados pelo stat-card)
+   ========================================== */
+.badge-teal  { background: #0e8a80; }
+.badge-navy  { background: $azul-fgv; }
+.badge-purple { background: #7c4a9c; }
 
-.stat-icon-v2 {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: #93c5fd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  flex-shrink: 0;
-}
-
-.stat-card.primary {
-  background: $azul-escuro;
-  color: white;
-}
-
-.turma-card {
+/* ==========================================
+   Lista de módulos recentes
+   ========================================== */
+.modulo-card {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
   border-radius: 10px;
   position: relative;
-  background: #90caf1;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   transition: background 0.2s ease;
 
   &:hover {
     background: #eef2f7;
   }
 
-  .turma-icon {
+  .modulo-icon {
     width: 44px;
     height: 44px;
     border-radius: 8px;
@@ -71,15 +69,12 @@
   }
 
   .badge {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     font-weight: 600;
     font-size: 12px;
-    padding: 6px 16px;
+    padding: 6px 12px;
     border-radius: 20px;
     border: none;
+    flex-shrink: 0;
 
     &.bg-success {
       background: #d1fae5 !important;
@@ -101,21 +96,15 @@
     background: #0f2744;
     color: #fff;
     border: none;
-    font-size: 15px;
+    font-size: 13px;
     padding: 4px 14px;
     border-radius: 7px;
     margin-left: auto;
+    flex-shrink: 0;
 
     &:hover {
-      background: #1E90FF;
+      background: $azul-medio;
       color: #fff;
     }
   }
-}
-
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }

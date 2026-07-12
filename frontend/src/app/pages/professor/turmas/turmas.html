@@ -1,14 +1,17 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Minhas Turmas</h4>
+    <small class="text-muted">Gerencie suas turmas, acompanhe a capacidade e acesse módulos.</small>
+  </div>
+</div>
+
 @if (loading()) {
 <div class="d-flex justify-content-center mt-5">
   <div class="spinner-border text-primary" role="status"></div>
 </div>
 } @else if (error()) {
-<div class="alert alert-danger m-4">{{ error() }}</div>
+<div class="alert alert-danger py-2 small">{{ error() }}</div>
 } @else {
-<div class="turmas-page">
-  <div class="cabecalho-turmas">
-    <h4 class="titulo-pagina">Minhas Turmas</h4>
-  </div>
 
   @if (turmas().length === 0) {
   <div class="text-center mt-5">
@@ -51,5 +54,4 @@
     [totalPaginas]="totalPaginas()"
     (paginaMudou)="mudarPagina($event)">
   </app-paginator>
-</div>
 }
