@@ -80,14 +80,18 @@ export class UsuariosAdminComponent implements OnInit {
     await this.loadData();
   }
 
-  async loadData() {
-    this.loading.set(true);
+  async loadData(showLoader: boolean = true) {
+    if (showLoader) {
+      this.loading.set(true);
+    }
     try {
       const [users, turmas] = await Promise.all([this.userService.getUsers(), this.turmaService.getTurmas()]);
       this.users.set(users);
       this.turmas.set(turmas);
     } finally {
-      this.loading.set(false);
+      if (showLoader) {
+        this.loading.set(false);
+      }
     }
   }
 
@@ -140,7 +144,7 @@ export class UsuariosAdminComponent implements OnInit {
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao mover aluno de turma');
     } finally {
-      await this.loadData();
+      await this.loadData(false);
       this.actionLoading.set(false);
     }
   }
@@ -239,7 +243,7 @@ export class UsuariosAdminComponent implements OnInit {
         await this.userService.revokeProfessorAccess(acao.usuario.id);
       }
       this.acaoPendente.set(null);
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao executar ação');
     } finally {
