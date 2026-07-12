@@ -7,23 +7,27 @@
   <nav class="sidebar-nav">
     <ul class="nav flex-column gap-1">
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentView === 'dashboard'" (click)="setView('dashboard')">
-          Dashboard
+        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'dashboard'" (click)="setView('dashboard')">
+          <i class="fi fi-rr-apps-add"></i>
+          <span>Dashboard</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentView === 'usuarios'" (click)="setView('usuarios')">
-          Usuários
+        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'usuarios'" (click)="setView('usuarios')">
+          <i class="fi fi-rr-user"></i>
+          <span>Usuários</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentView === 'turmas'" (click)="setView('turmas')">
-          Turmas
+        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'turmas'" (click)="setView('turmas')">
+          <i class="fi fi-rr-users"></i>
+          <span>Turmas</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentView === 'relatorios'" (click)="setView('relatorios')">
-          Relatórios
+        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'relatorios'" (click)="setView('relatorios')">
+          <i class="fi fi-rr-document-signed"></i>
+          <span>Relatórios</span>
         </a>
       </li>
     </ul>

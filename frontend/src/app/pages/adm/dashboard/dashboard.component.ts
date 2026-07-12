@@ -7,10 +7,12 @@ import { Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { AdmView } from '../adm.component';
 
+import { StatCardComponent } from '../../../components/stat-card/stat-card.component';
+
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, StatCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

@@ -21,7 +21,7 @@
   color: white;
   font-weight: 800;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
 }
 
 .sidebar-logo small {
@@ -38,9 +38,11 @@
   color: rgba(255, 255, 255, 0.7) !important;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.2s;
   cursor: pointer;
+  text-decoration: none;
+  display: block;
 }
 
 .sidebar-nav .nav-link:hover {
