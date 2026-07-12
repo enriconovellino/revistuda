@@ -59,7 +59,10 @@ export class TelaAtividade implements OnInit {
     this.resetarResposta();
 
     try {
-      const atividade = await this.alunoService.getAtividadeById(id);
+      const [atividade] = await Promise.all([
+        this.alunoService.getAtividadeById(id),
+        this.alunoService.iniciarAtividade(id).catch(() => null),
+      ]);
       if (!atividade) {
         this.hasError.set(true);
         return;

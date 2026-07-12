@@ -107,6 +107,18 @@ export class AlunoService {
     }
   }
 
+  async iniciarAtividade(atividadeId: number): Promise<{ status: string; data_inicio: string | null; data_conclusao: string | null }> {
+    const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Falha ao iniciar atividade.');
+    }
+    return data;
+  }
+
   async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
     try {
       const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
