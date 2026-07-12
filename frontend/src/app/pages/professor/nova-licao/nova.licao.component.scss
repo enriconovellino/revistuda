@@ -174,20 +174,32 @@ $radius: 12px;
 }
 
 .gestao-item-card {
-  border: 1.5px solid $border;
-  border-radius: $radius;
-  padding: 1.35rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(26, 66, 138, 0.16); // $azul-fgv
+  border-radius: 12px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  border-top: 4px solid $accent;
-  background: $accent-soft;
+  background: linear-gradient(165deg, #ffffff 35%, #e9f3fb 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   min-height: 140px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1a428a, #0095db); // $azul-fgv, $azul-fgv-claro
+  }
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba($accent, 0.15);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -234,7 +246,7 @@ $radius: 12px;
 .gestao-item-card-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 0.25rem;
+  margin-top: auto;
 }
 
 .gestao-hint {
@@ -268,11 +280,6 @@ $radius: 12px;
     filter: brightness(1.08);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba($danger, 0.32);
-  }
-
-  &::before {
-    content: "🗑";
-    font-size: 0.75rem;
   }
 }
 

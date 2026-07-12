@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfessorService } from '../../../services/professor.service';
@@ -9,6 +9,7 @@ import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
 import { Atividade, OpcaoAtividade, ItemPar, ParAssociacao } from '../../../model/atividade.model';
 import { environment } from '../../../../environments/environment';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -49,7 +50,7 @@ function novaQuestaoVazia(): QuestaoForm {
 @Component({
   selector: 'app-nova-licao',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginatorComponent],
   templateUrl: './nova-licao.component.html',
   styleUrl: './nova.licao.component.scss',
 })
@@ -75,6 +76,30 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   conteudosForLicao = signal<{ [licaoId: number]: Conteudo[] }>({});
   atividadesForLicao = signal<{ [licaoId: number]: Atividade[] }>({});
   loadingItens = signal<boolean>(false);
+
+  // --- Paginação ---
+  paginaAtual = signal<number>(1);
+  itensPorPagina = signal<number>(6);
+
+  totalPaginas = computed(() => {
+    return Math.ceil(this.licoes().length / this.itensPorPagina()) || 1;
+  });
+
+  licoesOrdenadas = computed(() => {
+    return [...this.licoes()].sort((a, b) => a.titulo_licao.localeCompare(b.titulo_licao));
+  });
+
+  licoesPaginadas = computed(() => {
+    const inicio = (this.paginaAtual() - 1) * this.itensPorPagina();
+    const fim = inicio + this.itensPorPagina();
+    return this.licoesOrdenadas().slice(inicio, fim);
+  });
+
+  mudarPagina(page: number) {
+    if (page >= 1 && page <= this.totalPaginas()) {
+      this.paginaAtual.set(page);
+    }
+  }
 
   // --- Expansão dos cards de lição ---
   private expandedLicoesSet = signal<Set<number>>(new Set());

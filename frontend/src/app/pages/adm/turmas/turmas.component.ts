@@ -70,7 +70,7 @@ export class TurmasAdminComponent implements OnInit {
   filteredTurmas = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const filtro = this.activeFilter();
-    return this.turmas().filter((t) => {
+    const filtradas = this.turmas().filter((t) => {
       const matchesTerm = !term || t.nome_turma.toLowerCase().includes(term);
       const matchesFiltro =
         filtro === null ? true :
@@ -79,6 +79,7 @@ export class TurmasAdminComponent implements OnInit {
         filtro === 'com-vagas' ? this.temVagas(t) : true;
       return matchesTerm && matchesFiltro;
     });
+    return filtradas.sort((a, b) => a.nome_turma.localeCompare(b.nome_turma));
   });
 
   toggleFilter(filtro: 'cheia' | 'sem-professor' | 'com-vagas') {
@@ -120,8 +121,10 @@ export class TurmasAdminComponent implements OnInit {
     await this.loadData();
   }
 
-  async loadData() {
-    this.loading.set(true);
+  async loadData(showLoader: boolean = true) {
+    if (showLoader) {
+      this.loading.set(true);
+    }
     try {
       const users = await this.userService.getUsers();
       this.professors.set(users.filter((u) => u.permissions.includes('PROFESSOR') && u.approved));
@@ -136,7 +139,9 @@ export class TurmasAdminComponent implements OnInit {
     } catch (err: any) {
       console.error('Erro ao buscar turmas', err);
     } finally {
-      this.loading.set(false);
+      if (showLoader) {
+        this.loading.set(false);
+      }
     }
   }
 
@@ -173,7 +178,7 @@ export class TurmasAdminComponent implements OnInit {
         professor_id: profId === 0 ? null : profId,
         capacidade_maxima: capacity
       });
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao atualizar turma');
     } finally {
@@ -186,7 +191,7 @@ export class TurmasAdminComponent implements OnInit {
     try {
       this.loading.set(true);
       await this.turmaService.updateTurma(turmaId, { professor_id: null });
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao desalocar professor');
     } finally {
@@ -223,7 +228,7 @@ export class TurmasAdminComponent implements OnInit {
     try {
       await this.turmaService.deleteTurma(turma.turma_id);
       this.turmaParaExcluir.set(null);
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.turmaParaExcluir.set(null);
       this.actionError.set(err.message || 'Erro ao excluir turma');
@@ -260,7 +265,7 @@ export class TurmasAdminComponent implements OnInit {
       this.newTurmaProfessorId.set(null);
       this.showCreateForm.set(false);
 
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao criar turma');
     } finally {

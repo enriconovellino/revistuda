@@ -1,4 +1,3 @@
-<div class="p-4">
   @if (loading()) {
   <div class="d-flex justify-content-center mt-5">
     <div class="spinner-border text-primary" role="status"></div>
@@ -9,22 +8,19 @@
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <button class="btn btn-link btn-sm px-0 mb-2 text-decoration-none" (click)="irParaTurmas()">
+      <button class="btn-voltar-global mb-3" (click)="irParaTurmas()">
+        <i class="fi fi-rr-arrow-small-left"></i>
         Voltar para turmas
       </button>
       <h4 class="mb-0 fw-bold">{{ turma.nome_turma }}</h4>
       <small class="text-muted">{{ modulosDaTurma().length }} módulo(s) nesta turma</small>
     </div>
-    <button class="btn-novo-modulo" (click)="toggleFormModulo()">
+    <button [class]="mostrarFormModulo() ? 'btn btn-secondary px-4 py-2 fw-semibold' : 'btn btn-primary px-4 py-2 fw-semibold'" (click)="toggleFormModulo()">
       {{ mostrarFormModulo() ? 'Cancelar' : '+ Novo Módulo' }}
     </button>
   </div>
 
-  @if (turma.descricao_turma) {
-  <div class="alert alert-light border mb-4">
-    <div>{{ turma.descricao_turma }}</div>
-  </div>
-  }
+
 
   @if (mostrarFormModulo()) {
   <div class="modulo-form-card mb-4">
@@ -114,9 +110,8 @@
   </div>
   }
 
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    @for (modulo of modulosDaTurma(); track modulo.modulo_id) {
-    <div class="col">
+  <div class="grid-modulos">
+    @for (modulo of modulosPaginados(); track modulo.modulo_id) {
       <div class="modulo-card-v3 h-100">
         <div class="modulo-card-v3-img">
           @if (modulo.imagem_url) {
@@ -154,13 +149,17 @@
           </div>
         </div>
       </div>
-    </div>
     }
   </div>
+
+  <app-paginator
+    [paginaAtual]="paginaAtual()"
+    [totalPaginas]="totalPaginas()"
+    (paginaMudou)="mudarPagina($event)">
+  </app-paginator>
   } @else {
   <div class="alert alert-info d-flex justify-content-between align-items-center">
     <span>Selecione uma turma para visualizar os módulos.</span>
     <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
   </div>
   }
-</div>

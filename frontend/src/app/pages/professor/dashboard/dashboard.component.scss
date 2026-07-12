@@ -93,18 +93,31 @@
   }
 
   .btn-entrar {
-    background: #0f2744;
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #0f2744, #1e3a8a);
+    color: white;
     border: none;
-    font-size: 13px;
-    padding: 4px 14px;
-    border-radius: 7px;
+    border-radius: 10px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     margin-left: auto;
     flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+    transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 
     &:hover {
-      background: $azul-medio;
-      color: #fff;
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 39, 68, 0.35);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }
