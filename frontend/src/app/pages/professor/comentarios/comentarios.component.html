@@ -1,206 +1,151 @@
-<div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <h5>ReviEstuda</h5>
-      <small>Plataforma Educacional</small>
-    </div>
-    <nav class="sidebar-nav">
-      <ul class="nav flex-column gap-1">
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'dashboard'"
-            (click)="irPara('dashboard')">
-            <i class="fi fi-rr-apps-add"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2"
-            [class.active]="paginaAtual() === 'turmas' || paginaAtual() === 'modulos'" (click)="irParaTurmas()">
-            <i class="fi fi-rr-users"></i>
-            <span>Turmas</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" [class.active]="paginaAtual() === 'comentarios'"
-            (click)="irParaComentarios()">
-            <i class="fi fi-rr-document-signed"></i>
-            <span>Comentários</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-
-    <div class="sidebar-footer">
-      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
-    </div>
+<div class="p-4">
+  <div class="mb-4">
+    <button class="voltar-btn" (click)="voltar()">
+      <span class="voltar-btn-icon">←</span> Voltar
+    </button>
   </div>
 
-  <div class="flex-grow-1" style="margin-left: 240px;">
-    <div class="main-header d-flex justify-content-between align-items-center">
-      <button class="voltar-btn" (click)="voltar()">
-        <span class="voltar-btn-icon">←</span> Voltar
-      </button>
+  <div *ngIf="loading()" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
 
-      <div class="d-flex align-items-center gap-3">
-        <div class="d-flex align-items-center gap-2">
-          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-            style="width: 36px; height: 36px; background: #0f2744 !important;">
-            {{ userName().charAt(0).toUpperCase() }}
+  <div *ngIf="error()" class="alert alert-danger mb-4">
+    {{ error() }}
+  </div>
+
+  <div *ngIf="!loading() && !error()">
+    <h3 class="fw-bold text-dark mb-4">
+      <span class="page-title-icon">
+        <i class="fi fi-rr-comment-alt"></i>
+      </span>
+      Comentários dos Alunos
+    </h3>
+
+    <!-- Resumo geral -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card-dark">
+          <div class="stat-icon">
+            <i class="fi fi-rr-comment-alt"></i>
           </div>
           <div>
-            <div class="fw-semibold small">{{ userName() }}</div>
-            <div class="text-muted" style="font-size: 11px;">Professor</div>
+            <div class="stat-label">Total de Comentários</div>
+            <div class="stat-value">{{ totalComentarios() }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card-dark">
+          <div class="stat-icon">
+            <i class="fi fi-rr-graduation-cap"></i>
+          </div>
+          <div>
+            <div class="stat-label">Alunos que Comentaram</div>
+            <div class="stat-value">{{ totalAlunosUnicos() }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card-dark">
+          <div class="stat-icon">
+            <i class="fi fi-rr-book-alt"></i>
+          </div>
+          <div>
+            <div class="stat-label">Módulos com Comentários</div>
+            <div class="stat-value">{{ totalModulosComComentario() }}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="p-4">
-      <div *ngIf="loading()" class="d-flex justify-content-center my-5">
-        <div class="spinner-border text-primary" role="status"></div>
-      </div>
-
-      <div *ngIf="error()" class="alert alert-danger mb-4">
-        {{ error() }}
-      </div>
-
-      <div *ngIf="!loading() && !error()">
-        <h3 class="fw-bold text-dark mb-4">
-          <span class="page-title-icon">
-            <i class="fi fi-rr-comment-alt"></i>
-          </span>
-          Comentários dos Alunos
-        </h3>
-
-        <!-- Resumo geral -->
-        <div class="row g-3 mb-4">
-          <div class="col-md-4">
-            <div class="stat-card-dark">
-              <div class="stat-icon">
-                <i class="fi fi-rr-comment-alt"></i>
-              </div>
-              <div>
-                <div class="stat-label">Total de Comentários</div>
-                <div class="stat-value">{{ totalComentarios() }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="stat-card-dark">
-              <div class="stat-icon">
-                <i class="fi fi-rr-graduation-cap"></i>
-              </div>
-              <div>
-                <div class="stat-label">Alunos que Comentaram</div>
-                <div class="stat-value">{{ totalAlunosUnicos() }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="stat-card-dark">
-              <div class="stat-icon">
-                <i class="fi fi-rr-book-alt"></i>
-              </div>
-              <div>
-                <div class="stat-label">Módulos com Comentários</div>
-                <div class="stat-value">{{ totalModulosComComentario() }}</div>
-              </div>
-            </div>
-          </div>
+    <!-- Filtros -->
+    <div class="chart-card mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold text-dark">Filtrar por Turma</label>
+          <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
+            <option value="">Todas as turmas</option>
+            <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id">
+              {{ turma.nome_turma }}
+            </option>
+          </select>
         </div>
 
-        <!-- Filtros -->
-        <div class="chart-card mb-4">
-          <div class="row g-3 align-items-end">
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold text-dark">Filtrar por Turma</label>
-              <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
-                <option value="">Todas as turmas</option>
-                <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id">
-                  {{ turma.nome_turma }}
-                </option>
-              </select>
-            </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold text-dark">Filtrar por Módulo</label>
+          <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
+            <option value="">Todos os módulos</option>
+            <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id">
+              {{ modulo.titulo_modulo }}
+            </option>
+          </select>
+        </div>
 
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold text-dark">Filtrar por Módulo</label>
-              <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
-                <option value="">Todos os módulos</option>
-                <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id">
-                  {{ modulo.titulo_modulo }}
-                </option>
-              </select>
-            </div>
+        <div class="col-md-4">
+          <button class="btn-limpar-filtros" (click)="limparFiltros()">
+            Limpar Filtros
+          </button>
+        </div>
+      </div>
+    </div>
 
-            <div class="col-md-4">
-              <button class="btn-limpar-filtros" (click)="limparFiltros()">
-                Limpar Filtros
+    <!-- Lista de comentários -->
+    <div class="chart-card">
+      <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
+        <div class="comentario-card" *ngFor="let comentario of comentariosFiltrados()">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+            <div class="d-flex align-items-start gap-3">
+              <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
+              <div>
+                <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
+                <div class="comentario-meta">
+                  {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
+                  {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+                </div>
+              </div>
+            </div>
+            <span class="comentario-data">
+              {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+
+          <p class="comentario-texto">{{ comentario.texto }}</p>
+
+          <div class="resposta-existente" *ngIf="comentario.resposta">
+            <div class="resposta-existente-label">
+              <i class="fi fi-rr-corner-down-right"></i> Sua resposta
+            </div>
+            <p class="resposta-existente-texto">{{ comentario.resposta }}</p>
+          </div>
+
+          <div class="comentario-footer">
+            <button class="btn-responder" type="button" (click)="toggleResposta(comentario.id)">
+              <i class="fi fi-rr-comment-alt-dots"></i>
+              {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Editar Resposta' :
+              'Responder') }}
+            </button>
+          </div>
+
+          <div class="resposta-box" *ngIf="respostaAbertaId() === comentario.id">
+            <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
+            <textarea class="resposta-textarea" rows="2" placeholder="Escreva sua resposta..."
+              [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
+            <div class="resposta-actions">
+              <button class="btn-resposta-enviar" type="button" [disabled]="enviandoResposta()"
+                (click)="enviarResposta(comentario)">
+                <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
+                {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
               </button>
             </div>
           </div>
         </div>
-
-        <!-- Lista de comentários -->
-        <div class="chart-card">
-          <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
-            <div class="comentario-card" *ngFor="let comentario of comentariosFiltrados()">
-              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-                <div class="d-flex align-items-start gap-3">
-                  <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
-                  <div>
-                    <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
-                    <div class="comentario-meta">
-                      {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
-                      {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
-                    </div>
-                  </div>
-                </div>
-                <span class="comentario-data">
-                  {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
-                </span>
-              </div>
-
-              <p class="comentario-texto">{{ comentario.texto }}</p>
-
-              <div class="resposta-existente" *ngIf="comentario.resposta">
-                <div class="resposta-existente-label">
-                  <i class="fi fi-rr-corner-down-right"></i> Sua resposta
-                </div>
-                <p class="resposta-existente-texto">{{ comentario.resposta }}</p>
-              </div>
-
-              <div class="comentario-footer">
-                <button class="btn-responder" type="button" (click)="toggleResposta(comentario.id)">
-                  <i class="fi fi-rr-comment-alt-dots"></i>
-                  {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Editar Resposta' :
-                  'Responder') }}
-                </button>
-              </div>
-
-              <div class="resposta-box" *ngIf="respostaAbertaId() === comentario.id">
-                <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
-                <textarea class="resposta-textarea" rows="2" placeholder="Escreva sua resposta..."
-                  [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
-                <div class="resposta-actions">
-                  <button class="btn-resposta-enviar" type="button" [disabled]="enviandoResposta()"
-                    (click)="enviarResposta(comentario)">
-                    <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
-                    {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <ng-template #semComentarios>
-            <div class="empty-state py-5 text-center">
-              <p class="mb-0 text-muted">Nenhum comentário encontrado com os filtros selecionados.</p>
-            </div>
-          </ng-template>
-        </div>
       </div>
+
+      <ng-template #semComentarios>
+        <div class="empty-state py-5 text-center">
+          <p class="mb-0 text-muted">Nenhum comentário encontrado com os filtros selecionados.</p>
+        </div>
+      </ng-template>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Modulo } from '../../../model/modulo.model';
 import { Turma } from '../../../model/turma.model';
 import { ProfessorService } from '../../../services/professor.service';
@@ -15,21 +15,17 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './modulos.component.html',
   styleUrl: './modulos.component.scss',
 })
-export class ModulosProfessorComponent implements OnChanges {
-  
-  @Input() turma: Turma | null = null;
-
-
-  @Output() voltar = new EventEmitter<void>();
+export class ModulosProfessorComponent implements OnInit {
+  turma: Turma | null = null;
 
   modulos = signal<Modulo[]>([]);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
   modulosDaTurma = computed<Modulo[]>(() => {
-    const turma = this.turma;
-    if (!turma) return [];
-    return this.modulos().filter((m) => m.turma_id === turma.turma_id);
+    const t = this.turma;
+    if (!t) return [];
+    return this.modulos().filter((m) => m.turma_id === t.turma_id);
   });
 
   mostrarFormModulo = signal<boolean>(false);
@@ -43,16 +39,39 @@ export class ModulosProfessorComponent implements OnChanges {
   novaDificuldadeModulo = 'fácil';
   novaImagemUrl = '';
 
-  constructor(
-    private router: Router,
-    private professorService: ProfessorService,
-    private moduloService: ModuloService,
-  ) {}
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private professorService = inject(ProfessorService);
+  private moduloService = inject(ModuloService);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['turma']) {
-      this.resetarFormularioModulo();
-      this.carregarModulos();
+  ngOnInit() {
+    this.route.queryParams.subscribe(async (params) => {
+      const turmaId = params['turmaId'];
+      if (turmaId) {
+        await this.carregarTurmaSelecionada(Number(turmaId));
+      } else {
+        this.turma = null;
+      }
+    });
+  }
+
+  async carregarTurmaSelecionada(turmaId: number) {
+    try {
+      this.loading.set(true);
+      const userStr = localStorage.getItem('user');
+      if (!userStr) return;
+      const user = JSON.parse(userStr);
+      const turmas = await this.professorService.getTurmasByProfessor(user.id);
+      const selected = turmas.find((t) => t.turma_id === turmaId);
+      if (selected) {
+        this.turma = selected;
+        this.resetarFormularioModulo();
+        await this.carregarModulos();
+      }
+    } catch (err: unknown) {
+      console.error(err);
+    } finally {
+      this.loading.set(false);
     }
   }
 
@@ -72,7 +91,7 @@ export class ModulosProfessorComponent implements OnChanges {
 
   irParaTurmas() {
     this.resetarFormularioModulo();
-    this.voltar.emit();
+    this.router.navigate(['/professor/turmas']);
   }
 
   toggleFormModulo() {

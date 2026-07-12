@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Turma } from '../../../model/turma.model';
 import { AuthService } from '../../../services/auth.service';
 import { ProfessorService } from '../../../services/professor.service';
@@ -14,6 +15,8 @@ import { ProfessorService } from '../../../services/professor.service';
 export class TurmasProfessorComponent implements OnInit {
   private professorService = inject(ProfessorService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+
   percentualOcupacao(turma: Turma): number {
     if (!turma.capacidade_maxima) return 0;
     return Math.min(100, ( turma.capacidade_maxima) * 100);
@@ -25,11 +28,10 @@ export class TurmasProfessorComponent implements OnInit {
     if (percentual >= 60) return 'media';
     return 'baixa';
   }
+
   turmas = signal<Turma[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
-
-  turmaSelecionada = output<Turma>();
 
   async carregarTurmas() {
     try {
@@ -51,7 +53,7 @@ export class TurmasProfessorComponent implements OnInit {
   }
 
   verDetalhes(turma: Turma) {
-    this.turmaSelecionada.emit(turma);
+    this.router.navigate(['/professor/modulos'], { queryParams: { turmaId: turma.turma_id } });
   }
 
   async ngOnInit() {

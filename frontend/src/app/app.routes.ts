@@ -14,6 +14,9 @@ import { EsqueciSenhaComponent } from './pages/auth/esqueci-senha/esqueci-senha.
 import { RedefinirSenhaComponent } from './pages/auth/redefinir-senha/redefinir-senha.component';
 import { AlunoModuloDetalheComponent } from './pages/aluno-idoso/tela-conteudo/modulo-detalhe.component';
 import { TelaAtividade } from './pages/aluno-idoso/tela-atividade/tela-atividade';
+import { ProfessorDashboardComponent } from './pages/professor/dashboard/dashboard.component';
+import { TurmasProfessorComponent } from './pages/professor/turmas/turmas';
+import { ModulosProfessorComponent } from './pages/professor/modulos/modulos.component';
 
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
@@ -41,22 +44,16 @@ export const routes: Routes = [
   {
     path: 'professor',
     component: ProfessorComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/modulo/:id',
-    component: ModuloDetalheComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/comentarios',
-    component: ComentariosAlunosComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
-  },
-  {
-    path: 'professor/alunos',
-    component: AlunosProfessorComponent,
-    canActivate: [authGuard, roleGuard(['PROFESSOR'])]
+    canActivate: [authGuard, roleGuard(['PROFESSOR'])],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: ProfessorDashboardComponent },
+      { path: 'turmas', component: TurmasProfessorComponent },
+      { path: 'modulos', component: ModulosProfessorComponent },
+      { path: 'modulo/:id', component: ModuloDetalheComponent },
+      { path: 'comentarios', component: ComentariosAlunosComponent },
+      { path: 'alunos', component: AlunosProfessorComponent }
+    ]
   },
   {
     path: 'adm',
