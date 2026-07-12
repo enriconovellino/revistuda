@@ -58,7 +58,7 @@
 </div>
 
 <div class="turma-grid" *ngIf="filteredTurmas().length > 0; else noTurmas">
-  <article class="turma-card2" *ngFor="let turma of filteredTurmas()">
+  <article class="turma-card2" *ngFor="let turma of turmasPaginadas()">
     <div class="tc-head">
       <h3 class="tc-title">{{ turma.nome_turma }}</h3>
       <div class="tc-head-actions">
@@ -113,6 +113,12 @@
     </div>
   </article>
 </div>
+
+<app-paginator
+  [paginaAtual]="paginaAtual()"
+  [totalPaginas]="totalPaginas()"
+  (paginaMudou)="mudarPagina($event)">
+</app-paginator>
 
 <ng-template #noTurmas>
   <div class="empty-state">

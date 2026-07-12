@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import { Turma } from '../../../model/turma.model';
 import { AuthService } from '../../../services/auth.service';
 import { ProfessorService } from '../../../services/professor.service';
 import { MAX_ALUNOS_POR_TURMA } from '../../../model/professor.models';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 @Component({
   selector: 'app-turmas-professor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PaginatorComponent],
   templateUrl: './turmas.html',
   styleUrl: './turmas.scss',
 })
@@ -19,10 +20,21 @@ export class TurmasProfessorComponent implements OnInit {
   private router = inject(Router);
 
   readonly maxAlunos = MAX_ALUNOS_POR_TURMA;
+  readonly PAGE_SIZE = 10;
 
   turmas = signal<Turma[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  paginaAtual = signal(1);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.turmas().length / this.PAGE_SIZE)));
+  turmasPaginadas = computed(() =>
+    this.turmas().slice((this.paginaAtual() - 1) * this.PAGE_SIZE, this.paginaAtual() * this.PAGE_SIZE)
+  );
+
+  mudarPagina(p: number) {
+    this.paginaAtual.set(p);
+  }
 
   capacidadeEfetiva(turma: Turma): number {
     return Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
@@ -57,6 +69,7 @@ export class TurmasProfessorComponent implements OnInit {
 
       const turmas = await this.professorService.getTurmasByProfessor(user.id);
       this.turmas.set(turmas);
+      this.paginaAtual.set(1);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Erro ao carregar turmas';

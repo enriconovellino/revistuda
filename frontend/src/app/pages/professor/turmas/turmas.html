@@ -17,7 +17,7 @@
   }
 
   <div class="grid-turmas">
-    @for (turma of turmas(); track turma.turma_id) {
+    @for (turma of turmasPaginadas(); track turma.turma_id) {
     <div class="turma-card2">
       <div class="tc-head">
         <h3 class="tc-title">{{ turma.nome_turma }}</h3>
@@ -45,5 +45,11 @@
     </div>
     }
   </div>
+
+  <app-paginator
+    [paginaAtual]="paginaAtual()"
+    [totalPaginas]="totalPaginas()"
+    (paginaMudou)="mudarPagina($event)">
+  </app-paginator>
 </div>
 }

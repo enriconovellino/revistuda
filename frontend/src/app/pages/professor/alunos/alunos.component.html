@@ -48,7 +48,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let aluno of alunosFiltrados()">
+        <tr *ngFor="let aluno of alunosPaginados()">
           <td class="ps-4">
             <div class="fw-semibold text-dark">{{ aluno.nome }}</div>
           </td>
@@ -63,6 +63,11 @@
         </tr>
       </tbody>
     </table>
+    <app-paginator
+      [paginaAtual]="paginaAtual()"
+      [totalPaginas]="totalPaginas()"
+      (paginaMudou)="mudarPagina($event)">
+    </app-paginator>
   </div>
 
   <ng-template #semAlunos>

@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of filteredUsers()">
+        <tr *ngFor="let user of usuariosPaginados()">
           <td class="ps-4">
             <div class="fw-semibold text-dark">{{ user.nome }}</div>
             <div class="text-muted small">{{ user.email }}</div>
@@ -85,6 +85,11 @@
         </tr>
       </tbody>
     </table>
+    <app-paginator
+      [paginaAtual]="paginaAtual()"
+      [totalPaginas]="totalPaginas()"
+      (paginaMudou)="mudarPagina($event)">
+    </app-paginator>
   </div>
 
   <ng-template #vazio>

@@ -1,9 +1,10 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
 import { AlunoProfessor } from '../../../model/professor.models';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -12,7 +13,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-alunos-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginatorComponent],
   templateUrl: './alunos.component.html',
   styleUrl: './alunos.component.css',
 })
@@ -24,8 +25,19 @@ export class AlunosProfessorComponent implements OnInit {
   searchTerm = signal<string>('');
   turmaFiltro = signal<number | null>(null);
 
+  readonly PAGE_SIZE = 10;
+  paginaAtual = signal(1);
+
   private professorService = inject(ProfessorService);
   private router = inject(Router);
+
+  constructor() {
+    // Reset to page 1 whenever the filtered set changes
+    effect(() => {
+      this.alunosFiltrados(); // track filter changes
+      untracked(() => this.paginaAtual.set(1));
+    });
+  }
 
   turmasDisponiveis = computed(() => {
     const mapa = new Map<number, string>();
@@ -42,6 +54,19 @@ export class AlunosProfessorComponent implements OnInit {
       return matchTurma && matchNome;
     });
   });
+
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.alunosFiltrados().length / this.PAGE_SIZE)));
+
+  alunosPaginados = computed(() =>
+    this.alunosFiltrados().slice(
+      (this.paginaAtual() - 1) * this.PAGE_SIZE,
+      this.paginaAtual() * this.PAGE_SIZE
+    )
+  );
+
+  mudarPagina(p: number) {
+    this.paginaAtual.set(p);
+  }
 
   taxaAcerto(aluno: AlunoProfessor): string {
     const { acertos, totalRespostas } = aluno.desempenho;
