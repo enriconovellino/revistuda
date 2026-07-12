@@ -15,7 +15,7 @@ export class TurmaPresenter {
     presenter.descricao_turma = turma.descricao_turma;
     presenter.capacidade_maxima = turma.capacidade_maxima;
     presenter.professor_id = turma.professor_id;
-    presenter.totalAlunos = turma.totalAlunos;
+    presenter.totalAlunos = turma.total_alunos;
     return presenter;
   }
 
