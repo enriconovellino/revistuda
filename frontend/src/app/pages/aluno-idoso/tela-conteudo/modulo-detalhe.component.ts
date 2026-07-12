@@ -7,9 +7,11 @@ import { AlunoService } from '../../../services/aluno.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { ConteudoService } from '../../../services/conteudo.service';
+import { AtividadeService } from '../../../services/atividade.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
+import { Atividade } from '../../../model/atividade.model';
 import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
@@ -25,6 +27,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   modulo = signal<Modulo | null>(null);
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
+  atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
   licoesConcluidas = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
@@ -43,6 +46,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   private moduloService = inject(ModuloService);
   private licaoService = inject(LicaoService);
   private conteudoService = inject(ConteudoService);
+  private atividadeService = inject(AtividadeService);
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit() {
@@ -90,9 +94,19 @@ export class AlunoModuloDetalheComponent implements OnInit {
       });
       this.conteudosForLicao.set(mappedConteudos);
 
+      const allAtividades = await this.atividadeService.getAtividades();
+      const mappedAtividades: { [key: number]: Atividade[] } = {};
+      allAtividades.forEach(a => {
+        if (!mappedAtividades[a.licao_id]) {
+          mappedAtividades[a.licao_id] = [];
+        }
+        mappedAtividades[a.licao_id].push(a);
+      });
+      this.atividadesPorLicao.set(mappedAtividades);
+
       const conteudoIds = allConteudos.map(c => c.conteudo_id);
       const comentariosCarregados = await this.alunoService.getComentariosDoAluno(conteudoIds);
-    
+
       this.comentarios.set(comentariosCarregados);
       this.comentarioSalvo.set(comentariosCarregados);
 
@@ -124,11 +138,32 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.licoesConcluidas.set(atualizadas);
   }
 
+  getAtividadeDaLicao(licaoId: number): Atividade | null {
+    const atividades = this.atividadesPorLicao()[licaoId] ?? [];
+    if (atividades.length === 0) return null;
+
+    const pendente = atividades.find(a => a.status === 'a_fazer' || a.status === 'fazendo');
+    return pendente ?? atividades[0];
+  }
+
+  getBotaoAtividadeLabel(licaoId: number): string {
+    const atividade = this.getAtividadeDaLicao(licaoId);
+    if (!atividade) return 'Realizar atividade';
+    if (atividade.status === 'feito') return 'Revisar atividade';
+    if (atividade.status === 'fazendo') return 'Continuar atividade';
+    return 'Realizar atividade';
+  }
+
+  realizarAtividade(licaoId: number) {
+    const atividade = this.getAtividadeDaLicao(licaoId);
+    if (!atividade) return;
+    this.router.navigate(['/aluno-idoso/atividade', atividade.atividade_id]);
+  }
+
   get totalConcluidas(): number {
     return this.licoesConcluidas().length;
   }
 
-  
   getComentario(conteudoId: number): string {
     return this.comentarios()[conteudoId] || '';
   }
@@ -154,7 +189,6 @@ export class AlunoModuloDetalheComponent implements OnInit {
     try {
       await this.alunoService.saveComentario(conteudoId, texto);
     } catch {
-    
       return;
     }
 

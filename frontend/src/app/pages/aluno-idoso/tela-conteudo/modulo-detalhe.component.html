@@ -104,12 +104,21 @@
                   </div>
                 </div>
 
-                <button class="btn btn-lg fw-semibold px-4"
-                  [class.btn-outline-success]="!isConcluida(licao.licao_id)"
-                  [class.btn-success]="isConcluida(licao.licao_id)"
-                  (click)="toggleConcluida(licao.licao_id)">
-                  {{ isConcluida(licao.licao_id) ? 'Marcada como concluída' : 'Marcar como concluída' }}
-                </button>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                  <button class="btn btn-lg fw-semibold px-4"
+                    [class.btn-outline-success]="!isConcluida(licao.licao_id)"
+                    [class.btn-success]="isConcluida(licao.licao_id)"
+                    (click)="toggleConcluida(licao.licao_id)">
+                    {{ isConcluida(licao.licao_id) ? 'Marcada como concluída' : 'Marcar como concluída' }}
+                  </button>
+
+                  <button
+                    *ngIf="isConcluida(licao.licao_id) && getAtividadeDaLicao(licao.licao_id)"
+                    class="btn btn-lg fw-semibold px-4 btn-realizar-atividade"
+                    (click)="realizarAtividade(licao.licao_id)">
+                    {{ getBotaoAtividadeLabel(licao.licao_id) }}
+                  </button>
+                </div>
               </div>
 
               <div class="d-flex flex-column gap-3 mt-3">

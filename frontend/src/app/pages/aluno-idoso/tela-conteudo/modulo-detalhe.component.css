@@ -111,3 +111,14 @@
   margin-right: 6px;
   color: #1E90FF;
 }
+
+.btn-realizar-atividade {
+  background: #0f2744;
+  color: #fff;
+  border: none;
+}
+
+.btn-realizar-atividade:hover {
+  background: #1a3a5c;
+  color: #fff;
+}
