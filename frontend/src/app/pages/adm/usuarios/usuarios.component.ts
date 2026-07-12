@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
@@ -6,6 +6,7 @@ import { TurmaService } from '../../../services/turma.service';
 import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 type Filtro = 'todos' | 'professor' | 'aluno' | 'pendente';
 type TipoAcao = 'aprovar' | 'rejeitar' | 'revogar' | 'excluir';
@@ -18,7 +19,7 @@ interface AcaoPendente {
 @Component({
   selector: 'app-usuarios-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent, PaginatorComponent],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss'
 })
@@ -42,7 +43,7 @@ export class UsuariosAdminComponent implements OnInit {
     const term = this.searchTerm().trim().toLowerCase();
     const filtro = this.activeFilter();
 
-    return this.users().filter((user) => {
+    const filtrados = this.users().filter((user) => {
       const isProfessor = user.permissions.includes('PROFESSOR');
       const isAluno = user.permissions.includes('ALUNO_IDOSO') || user.permissions.includes('ALUNO_CRIANCA');
 
@@ -56,20 +57,41 @@ export class UsuariosAdminComponent implements OnInit {
 
       return matchesFiltro && matchesTerm;
     });
+    return filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
   });
+
+  readonly PAGE_SIZE = 10;
+  paginaAtual = signal(1);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.filteredUsers().length / this.PAGE_SIZE)));
+  usuariosPaginados = computed(() =>
+    this.filteredUsers().slice((this.paginaAtual() - 1) * this.PAGE_SIZE, this.paginaAtual() * this.PAGE_SIZE)
+  );
+
+  constructor() {
+    effect(() => {
+      this.filteredUsers();
+      untracked(() => this.paginaAtual.set(1));
+    });
+  }
+
+  mudarPagina(p: number) { this.paginaAtual.set(p); }
 
   async ngOnInit() {
     await this.loadData();
   }
 
-  async loadData() {
-    this.loading.set(true);
+  async loadData(showLoader: boolean = true) {
+    if (showLoader) {
+      this.loading.set(true);
+    }
     try {
       const [users, turmas] = await Promise.all([this.userService.getUsers(), this.turmaService.getTurmas()]);
       this.users.set(users);
       this.turmas.set(turmas);
     } finally {
-      this.loading.set(false);
+      if (showLoader) {
+        this.loading.set(false);
+      }
     }
   }
 
@@ -122,7 +144,7 @@ export class UsuariosAdminComponent implements OnInit {
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao mover aluno de turma');
     } finally {
-      await this.loadData();
+      await this.loadData(false);
       this.actionLoading.set(false);
     }
   }
@@ -221,7 +243,7 @@ export class UsuariosAdminComponent implements OnInit {
         await this.userService.revokeProfessorAccess(acao.usuario.id);
       }
       this.acaoPendente.set(null);
-      await this.loadData();
+      await this.loadData(false);
     } catch (err: any) {
       this.actionError.set(err.message || 'Erro ao executar ação');
     } finally {

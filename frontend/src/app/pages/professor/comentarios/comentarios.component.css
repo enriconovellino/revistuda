@@ -122,21 +122,40 @@
   box-shadow: 0 0 0 2px rgba(15, 39, 68, 0.1);
 }
 
-.btn-limpar-filtros {
-  width: 100%;
-  background: #f1f5f9;
-  border: 1.5px solid #cbd5e1;
-  color: #475569;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
+.turma-select-wrap .form-select {
   border-radius: 8px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  border: 1px solid #cbd5e1;
+  min-width: 180px;
+  transition: border-color 0.15s ease-in-out;
 }
 
-.btn-limpar-filtros:hover {
+.turma-select-wrap .form-select:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 3px rgba(15, 39, 68, 0.1);
+}
+
+.chip {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  border-radius: 20px;
+  padding: 0.35rem 0.9rem;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
   background: #e2e8f0;
-  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.chip.active {
+  background: #0f2744;
+  color: #fff;
+  border-color: #0f2744;
 }
 
 .empty-state {

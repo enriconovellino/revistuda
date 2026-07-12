@@ -1,14 +1,17 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-bold">Minhas Turmas</h4>
+    <small class="text-muted">Gerencie suas turmas, acompanhe a capacidade e acesse módulos.</small>
+  </div>
+</div>
+
 @if (loading()) {
 <div class="d-flex justify-content-center mt-5">
   <div class="spinner-border text-primary" role="status"></div>
 </div>
 } @else if (error()) {
-<div class="alert alert-danger m-4">{{ error() }}</div>
+<div class="alert alert-danger py-2 small">{{ error() }}</div>
 } @else {
-<div class="turmas-page">
-  <div class="cabecalho-turmas">
-    <h4 class="titulo-pagina">Minhas Turmas</h4>
-  </div>
 
   @if (turmas().length === 0) {
   <div class="text-center mt-5">
@@ -17,33 +20,38 @@
   }
 
   <div class="grid-turmas">
-    @for (turma of turmas(); track turma.turma_id) {
-    <div class="card-turma">
-      <div class="conteudo-card">
-        <h5 class="nome-turma">{{ turma.nome_turma }}</h5>
-        <p class="descricao-turma">{{ turma.descricao_turma || 'Sem descrição' }}</p>
-
-        @if (turma.capacidade_maxima) {
-        <span class="badge-capacidade">
-          <i class="fi fi-rr-users"></i>
-          {{ turma.totalAlunos || 0 }} / {{ turma.capacidade_maxima }} alunos
-        </span>
-
-        <div class="occ-bar"
-          [class.warn]="((turma.totalAlunos || 0) / turma.capacidade_maxima) >= 0.8 && ((turma.totalAlunos || 0) / turma.capacidade_maxima) < 1"
-          [class.full]="((turma.totalAlunos || 0) / turma.capacidade_maxima) >= 1">
-          <div class="occ-fill" [style.width.%]="((turma.totalAlunos || 0) / turma.capacidade_maxima) * 100"></div>
+    @for (turma of turmasPaginadas(); track turma.turma_id) {
+    <div class="turma-card2">
+      <div class="tc-head">
+        <h3 class="tc-title">{{ turma.nome_turma }}</h3>
+        <div class="tc-head-actions">
+          <span class="status-pill" [ngClass]="statusClass(turma)">{{ statusLabel(turma) }}</span>
         </div>
-        }
+      </div>
+      <p class="tc-sub">{{ turma.descricao_turma || 'Sem descrição' }}</p>
+
+      <div class="tc-row">
+        <i class="fi fi-rr-users"></i>
+        <span>{{ turma.totalAlunos ?? 0 }} / {{ capacidadeEfetiva(turma) }} alunos</span>
       </div>
 
-      <div class="rodape-card">
+      <div class="occ-bar tc-occ">
+        <div class="occ-bar-fill" [class.warn]="ocupacaoPercentual(turma) >= 80 && ocupacaoPercentual(turma) < 100"
+          [class.full]="ocupacaoPercentual(turma) >= 100" [style.width.%]="ocupacaoPercentual(turma)"></div>
+      </div>
+
+      <div class="rodape-card mt-auto">
         <button type="button" class="btn-modulos" (click)="verDetalhes(turma)">
-          Módulos e Atividades
+          Módulos
         </button>
       </div>
     </div>
     }
   </div>
-</div>
+
+  <app-paginator
+    [paginaAtual]="paginaAtual()"
+    [totalPaginas]="totalPaginas()"
+    (paginaMudou)="mudarPagina($event)">
+  </app-paginator>
 }

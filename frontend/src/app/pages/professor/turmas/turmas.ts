@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import { Turma } from '../../../model/turma.model';
 import { AuthService } from '../../../services/auth.service';
 import { ProfessorService } from '../../../services/professor.service';
+import { MAX_ALUNOS_POR_TURMA } from '../../../model/professor.models';
+import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 @Component({
   selector: 'app-turmas-professor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PaginatorComponent],
   templateUrl: './turmas.html',
   styleUrl: './turmas.scss',
 })
@@ -17,21 +19,45 @@ export class TurmasProfessorComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  percentualOcupacao(turma: Turma): number {
-    if (!turma.capacidade_maxima) return 0;
-    return Math.min(100, ( turma.capacidade_maxima) * 100);
-  }
-
-  corBarra(turma: Turma): string {
-    const percentual = this.percentualOcupacao(turma);
-    if (percentual >= 90) return 'alta';
-    if (percentual >= 60) return 'media';
-    return 'baixa';
-  }
+  readonly maxAlunos = MAX_ALUNOS_POR_TURMA;
+  readonly PAGE_SIZE = 10;
 
   turmas = signal<Turma[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  paginaAtual = signal(1);
+  totalPaginas = computed(() => Math.max(1, Math.ceil(this.turmas().length / this.PAGE_SIZE)));
+  turmasPaginadas = computed(() =>
+    this.turmas().slice((this.paginaAtual() - 1) * this.PAGE_SIZE, this.paginaAtual() * this.PAGE_SIZE)
+  );
+
+  mudarPagina(p: number) {
+    this.paginaAtual.set(p);
+  }
+
+  capacidadeEfetiva(turma: Turma): number {
+    return Math.min(turma.capacidade_maxima ?? MAX_ALUNOS_POR_TURMA, MAX_ALUNOS_POR_TURMA);
+  }
+
+  isCheia(turma: Turma): boolean {
+    return (turma.totalAlunos ?? 0) >= this.capacidadeEfetiva(turma);
+  }
+
+  ocupacaoPercentual(turma: Turma): number {
+    const percentual = ((turma.totalAlunos ?? 0) / this.capacidadeEfetiva(turma)) * 100;
+    return Math.min(100, Math.round(percentual));
+  }
+
+  statusLabel(turma: Turma): string {
+    if (this.isCheia(turma)) return 'Cheia';
+    return 'Ativa';
+  }
+
+  statusClass(turma: Turma): string {
+    if (this.isCheia(turma)) return 'status--warn';
+    return 'status--ok';
+  }
 
   async carregarTurmas() {
     try {
@@ -43,6 +69,7 @@ export class TurmasProfessorComponent implements OnInit {
 
       const turmas = await this.professorService.getTurmasByProfessor(user.id);
       this.turmas.set(turmas);
+      this.paginaAtual.set(1);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Erro ao carregar turmas';

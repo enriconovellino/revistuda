@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of filteredUsers()">
+        <tr *ngFor="let user of usuariosPaginados()">
           <td class="ps-4">
             <div class="fw-semibold text-dark">{{ user.nome }}</div>
             <div class="text-muted small">{{ user.email }}</div>
@@ -75,16 +75,21 @@
               <button class="btn btn-sm btn-outline-danger" (click)="pedirRejeicao(user)">Rejeitar</button>
             </div>
             <div *ngIf="isProfessor(user) && user.approved">
-              <button class="btn btn-sm btn-outline-danger" (click)="pedirRevogacao(user)">Revogar acesso</button>
+              <button class="btn-danger-acao" (click)="pedirRevogacao(user)">Revogar acesso</button>
             </div>
             <div *ngIf="isAluno(user)">
-              <button class="btn btn-sm btn-outline-danger" (click)="pedirExclusao(user)">Excluir</button>
+              <button class="btn-danger-acao" (click)="pedirExclusao(user)">Excluir</button>
             </div>
             <span class="text-muted small" *ngIf="!isProfessor(user) && !isAluno(user) && user.approved">—</span>
           </td>
         </tr>
       </tbody>
     </table>
+    <app-paginator
+      [paginaAtual]="paginaAtual()"
+      [totalPaginas]="totalPaginas()"
+      (paginaMudou)="mudarPagina($event)">
+    </app-paginator>
   </div>
 
   <ng-template #vazio>

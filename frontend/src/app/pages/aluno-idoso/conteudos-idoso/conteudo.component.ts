@@ -17,9 +17,9 @@ import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-
 @Component({
   selector: 'app-aluno-modulo-detalhe',
   standalone: true,
-  imports: [CommonModule, FormsModule, EditarPerfilComponent],
-  templateUrl: './modulo-detalhe.component.html',
-  styleUrl: './modulo-detalhe.component.css',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './conteudo.component.html',
+  styleUrl: './conteudo.component.css',
 })
 export class AlunoModuloDetalheComponent implements OnInit {
   userName = signal<string>('Aluno');
@@ -31,9 +31,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   licoesConcluidas = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
-
   comentarioSalvo = signal<{ [conteudoId: number]: string }>({});
-
   comentarioSalvoId = signal<number | null>(null);
   editandoComentario = signal<{ [conteudoId: number]: boolean }>({});
 
@@ -49,27 +47,17 @@ export class AlunoModuloDetalheComponent implements OnInit {
   private atividadeService = inject(AtividadeService);
   private sanitizer = inject(DomSanitizer);
 
-  ngOnInit() {
-    if (typeof window !== 'undefined') {
-      if (window.localStorage) {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-          const user = JSON.parse(userStr);
-          this.userName.set(user.nome);
-        }
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.moduloId = Number(id);
+        this.loadData();
       }
-
-      this.route.paramMap.subscribe(params => {
-        const id = params.get('id');
-        if (id) {
-          this.moduloId = Number(id);
-          this.loadData();
-        }
-      });
-    }
+    });
   }
 
-  async loadData() {
+  async loadData(): Promise<void> {
     try {
       this.loading.set(true);
       this.error.set(null);
@@ -78,12 +66,12 @@ export class AlunoModuloDetalheComponent implements OnInit {
       this.modulo.set(mod);
 
       const allLicoes = await this.licaoService.getLicoes();
-      const filteredLicoes = allLicoes.filter(l => l.modulo_id === this.moduloId);
+      const filteredLicoes = allLicoes.filter((l: Licao) => l.modulo_id === this.moduloId);
       this.licoes.set(filteredLicoes);
 
       const allConteudos = await this.conteudoService.getConteudos();
       const mappedConteudos: { [key: number]: Conteudo[] } = {};
-      allConteudos.forEach(c => {
+      allConteudos.forEach((c: Conteudo) => {
         if (!mappedConteudos[c.licao_id]) {
           mappedConteudos[c.licao_id] = [];
         }
@@ -94,26 +82,18 @@ export class AlunoModuloDetalheComponent implements OnInit {
       });
       this.conteudosForLicao.set(mappedConteudos);
 
-      const allAtividades = await this.atividadeService.getAtividades();
-      const mappedAtividades: { [key: number]: Atividade[] } = {};
-      allAtividades.forEach(a => {
-        if (!mappedAtividades[a.licao_id]) {
-          mappedAtividades[a.licao_id] = [];
-        }
-        mappedAtividades[a.licao_id].push(a);
-      });
-      this.atividadesPorLicao.set(mappedAtividades);
-
       const conteudoIds = allConteudos.map(c => c.conteudo_id);
       const comentariosCarregados = await this.alunoService.getComentariosDoAluno(conteudoIds);
+
 
       this.comentarios.set(comentariosCarregados);
       this.comentarioSalvo.set(comentariosCarregados);
 
       this.licoesConcluidas.set(this.alunoService.getLicoesConcluidas(this.moduloId));
 
-    } catch (err: any) {
-      this.error.set(err.message || 'Erro ao carregar os dados do módulo.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erro ao carregar os dados do módulo.';
+      this.error.set(message);
     } finally {
       this.loading.set(false);
     }
@@ -133,7 +113,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
     return this.licoesConcluidas().includes(licaoId);
   }
 
-  toggleConcluida(licaoId: number) {
+  toggleConcluida(licaoId: number): void {
     const atualizadas = this.alunoService.toggleLicaoConcluida(this.moduloId, licaoId);
     this.licoesConcluidas.set(atualizadas);
   }
@@ -164,38 +144,40 @@ export class AlunoModuloDetalheComponent implements OnInit {
     return this.licoesConcluidas().length;
   }
 
+
   getComentario(conteudoId: number): string {
     return this.comentarios()[conteudoId] || '';
   }
 
-  onComentarioChange(conteudoId: number, texto: string) {
+  onComentarioChange(conteudoId: number, texto: string): void {
     this.comentarios.update(atual => ({ ...atual, [conteudoId]: texto }));
   }
 
   estaEditandoComentario(conteudoId: number): boolean {
     const jaSalvou = !!this.comentarioSalvo()[conteudoId];
     const editando = this.editandoComentario()[conteudoId];
-
     return !jaSalvou || !!editando;
   }
 
-  abrirEdicaoComentario(conteudoId: number) {
+  abrirEdicaoComentario(conteudoId: number): void {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
 
-  async salvarComentario(conteudoId: number) {
+  async salvarComentario(conteudoId: number): Promise<void> {
     const texto = this.getComentario(conteudoId);
 
     try {
       await this.alunoService.saveComentario(conteudoId, texto);
-    } catch {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro ao salvar comentário:', message);
       return;
     }
 
     this.comentarioSalvo.update(atual => ({ ...atual, [conteudoId]: texto }));
-
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: false }));
     this.comentarioSalvoId.set(conteudoId);
+
     setTimeout(() => {
       if (this.comentarioSalvoId() === conteudoId) {
         this.comentarioSalvoId.set(null);

@@ -2,6 +2,7 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../model/auth.model';
 import { AlunoService } from '../../services/aluno.service';
 import { ModuloService } from '../../services/modulo.service';
 import { LicaoService } from '../../services/licao.service';
@@ -9,9 +10,8 @@ import { AtividadeService } from '../../services/atividade.service';
 import { Modulo } from '../../model/modulo.model';
 import { Licao } from '../../model/licao.model';
 import { Atividade } from '../../model/atividade.model';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
-
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
 type DashboardView = 'home' | 'modulos' | 'atividades';
@@ -20,14 +20,14 @@ type StatusFiltro = 'todos' | 'a_fazer' | 'fazendo' | 'feito';
 @Component({
   selector: 'app-aluno-idoso',
   standalone: true,
-  imports: [CommonModule, FormsModule, EditarPerfilComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive, EditarPerfilComponent],
   templateUrl: './aluno-idoso.component.html',
   styleUrl: './aluno-idoso.component.scss'
 })
 export class AlunoIdosoComponent implements OnInit {
-  userName = signal('Aluno');
+  userName = signal<string>('Aluno');
   isEditProfileOpen = signal<boolean>(false);
-  fontSize = signal(1.2);
+  fontSize = signal<number>(1.2);
   currentView = signal<DashboardView>('home');
   searchQuery = signal<string>('');
   statusFiltro = signal<StatusFiltro>('todos');
@@ -43,8 +43,8 @@ export class AlunoIdosoComponent implements OnInit {
   filteredModulos = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     if (!query) return this.modulos();
-    return this.modulos().filter(m => 
-      m.titulo_modulo.toLowerCase().includes(query) || 
+    return this.modulos().filter(m =>
+      m.titulo_modulo.toLowerCase().includes(query) ||
       (m.descricao_modulo && m.descricao_modulo.toLowerCase().includes(query))
     );
   });
@@ -84,7 +84,7 @@ export class AlunoIdosoComponent implements OnInit {
     private atividadeService: AtividadeService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -97,7 +97,6 @@ export class AlunoIdosoComponent implements OnInit {
           this.currentView.set(view);
         }
       });
-
       await this.loadData();
     }
   }
@@ -143,10 +142,15 @@ export class AlunoIdosoComponent implements OnInit {
     return map[dificuldade?.toUpperCase()] ?? dificuldade;
   }
 
+  getDificuldadeClass(dificuldade: string): string {
+    const map: Record<string, string> = { FACIL: 'badge-facil', MEDIO: 'badge-medio', DIFICIL: 'badge-dificil' };
+    return map[dificuldade?.toUpperCase()] ?? 'badge-facil';
+  }
+
   getTipoAtividadeLabel(tipo: string): string {
-    const map: Record<string, string> = { 
-      'multipla_escolha': 'Múltipla Escolha', 
-      'associacao_imagens': 'Associação de Imagens' 
+    const map: Record<string, string> = {
+      'multipla_escolha': 'Múltipla Escolha',
+      'associacao_imagens': 'Associação de Imagens'
     };
     return map[tipo] ?? tipo;
   }
@@ -179,11 +183,6 @@ export class AlunoIdosoComponent implements OnInit {
     this.statusFiltro.set(value as StatusFiltro);
   }
 
-  getDificuldadeClass(dificuldade: string): string {
-    const map: Record<string, string> = { FACIL: 'badge-facil', MEDIO: 'badge-medio', DIFICIL: 'badge-dificil' };
-    return map[dificuldade?.toUpperCase()] ?? 'badge-facil';
-  }
-
   getImageUrl(url?: string): string {
     if (!url) return '';
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
@@ -192,19 +191,19 @@ export class AlunoIdosoComponent implements OnInit {
     return `${environment.apiUrl}${url}`;
   }
 
-  abrirEditarPerfil() {
+  abrirEditarPerfil(): void {
     this.isEditProfileOpen.set(true);
   }
 
-  fecharEditarPerfil() {
+  fecharEditarPerfil(): void {
     this.isEditProfileOpen.set(false);
   }
 
-  onProfileUpdated(updatedUser: any) {
+  onProfileUpdated(updatedUser: User): void {
     this.userName.set(updatedUser.nome);
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
   }
 }

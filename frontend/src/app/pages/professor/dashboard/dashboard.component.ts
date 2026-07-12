@@ -7,11 +7,12 @@ import { Modulo } from '../../../model/modulo.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
+import { StatCardComponent } from '../../../components/stat-card/stat-card.component';
 
 @Component({
   selector: 'app-professor-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, StatCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

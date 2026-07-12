@@ -34,7 +34,7 @@
 /* Grid de cards */
 .turma-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 1.25rem;
 }
 
@@ -42,11 +42,12 @@
   background: white;
   border: 1px solid #e6ecf3;
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(15, 39, 68, 0.05);
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   display: flex;
   flex-direction: column;
+  min-height: 320px;
 }
 
 .turma-card2:hover {
@@ -192,10 +193,11 @@
 .tc-occ {
   margin: 0.35rem 0 1rem;
   height: 10px;
+  margin-top: auto;
 }
 
 .tc-controls {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 0.85rem;
   border-top: 1px solid #eef2f7;
 }
@@ -210,4 +212,32 @@
 .form-select,
 .form-control {
   border-radius: 8px;
+}
+
+.btn-salvar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #0f2744, #1e3a8a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(15, 39, 68, 0.25);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 39, 68, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }

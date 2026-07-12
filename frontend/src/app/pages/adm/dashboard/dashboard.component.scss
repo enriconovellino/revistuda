@@ -1,10 +1,7 @@
 @use 'variables' as *;
 
-/* Centraliza o conteúdo do dashboard e evita que estique de ponta
-   a ponta em telas largas. */
 .dash-wrap {
-  max-width: 1180px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 /* Cards com identidade FGV: barra superior em degradê (marinho → azul
@@ -33,6 +30,7 @@
 
 .chart-card {
   background: linear-gradient(165deg, #ffffff 45%, #eef5fb 100%);
+  padding: 2rem;
 }
 
 .chart-card h5 {
@@ -106,7 +104,7 @@
 /* Rótulos do resumo executivo — afirmações, em tom escuro legível. */
 .resumo-label {
   color: #33475e;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 

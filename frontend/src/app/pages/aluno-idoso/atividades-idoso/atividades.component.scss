@@ -1,0 +1,91 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+.atividade-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.2s;
+}
+
+.atividade-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.atividade-icone {
+  width: 3.25rem;
+  height: 3.25rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #ffedd5;
+  color: #ea580c;
+  font-size: 1.3rem;
+}
+
+.atividade-info {
+  flex: 1;
+}
+
+.atividade-titulo {
+  color: #0f172a;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.atividade-descricao {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.atividade-tipo {
+  display: inline-block;
+  background: #fff3cd;
+  color: #664d03;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+.btn-primary-custom {
+  background-color: #ea580c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.3rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.btn-primary-custom:hover {
+  background-color: color.adjust(#ea580c, $lightness: -6%);
+}
+
+.loading-container {
+  padding: 4rem 2rem;
+}
+
+.empty-state {
+  padding: 2.5rem;
+  text-align: center;
+  color: #64748b;
+  background: white;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+}
