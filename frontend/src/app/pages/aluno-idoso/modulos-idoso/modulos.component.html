@@ -1,0 +1,48 @@
+<div class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="mb-0 fw-bold">Meus Cursos</h4>
+      <small class="text-muted">Escolha um curso para continuar seus estudos</small>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container text-center">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Carregando...</p>
+    </div>
+  }
+
+  @if (hasError() && !isLoading()) {
+    <div class="alert alert-danger d-flex justify-content-between align-items-center">
+      <span>Erro ao carregar módulos.</span>
+      <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
+    </div>
+  }
+
+  @if (!isLoading() && !hasError()) {
+    @if (modulos().length > 0) {
+      <div class="modulos-grid">
+        @for (modulo of modulos(); track modulo.modulo_id) {
+          <div class="modulo-card" (click)="acessarModulo(modulo.modulo_id)">
+            <div class="modulo-icone">
+              <i class="fi fi-br-book-alt"></i>
+            </div>
+            <h5 class="modulo-titulo">{{ modulo.titulo_modulo }}</h5>
+            <p class="modulo-descricao">
+              {{ modulo.descricao_modulo || 'Este módulo apresenta lições interativas para o seu aprendizado.' }}
+            </p>
+            <div class="modulo-footer">
+              <span class="modulo-licoes">{{ qtdLicoes(modulo.modulo_id) }} lições</span>
+              <button class="btn-primary-custom">ACESSAR <i class="fi fi-br-arrow-right"></i></button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p class="mb-0">Nenhum curso disponível no momento.</p>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,130 @@
+@if (isLoading()) {
+<div class="loading-container text-center">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Carregando...</p>
+</div>
+}
+
+@if (hasError() && !isLoading()) {
+<div class="error-container p-4">
+  <div class="alert alert-danger d-flex justify-content-between align-items-center">
+    <span>Erro ao carregar dados.</span>
+    <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
+  </div>
+</div>
+}
+
+@if (!isLoading() && !hasError()) {
+<div class="p-4">
+
+  @if (moduloAtual(); as modulo) {
+  <div class="banner-continuar" (click)="retomarAula()">
+    <div class="banner-info">
+      <span class="banner-tag">CONTINUAR AGORA</span>
+      <h2>{{ modulo.titulo_modulo }}</h2>
+      <p>{{ modulo.descricao_modulo }}</p>
+    </div>
+    <button class="btn-play">
+      <i class="fi fi-br-play play-icon"></i>
+      <span>RETOMAR AULA</span>
+    </button>
+  </div>
+  }
+
+  <div class="cards-resumo">
+    <div class="stat-card verde" (click)="irParaCursos()">
+      <div class="stat-card-top">
+        <div class="stat-card-titulo">
+          <div class="stat-icon">
+            <i class="fi fi-br-book-alt"></i>
+          </div>
+          <h5 class="stat-titulo">Meus Cursos</h5>
+        </div>
+        <div class="stat-numero">
+          <span class="numero">{{ modulos().length.toString().padStart(2, '0') }}</span>
+          <span class="stat-label">CURSOS</span>
+        </div>
+      </div>
+      <button class="btn-primary-custom">ABRIR <i class="fi fi-br-arrow-right"></i></button>
+    </div>
+
+    <div class="stat-card laranja" (click)="irParaTarefas()">
+      <div class="stat-card-top">
+        <div class="stat-card-titulo">
+          <div class="stat-icon">
+            <i class="fi fi-br-edit"></i>
+          </div>
+          <h5 class="stat-titulo">Minhas Tarefas</h5>
+        </div>
+        <div class="stat-numero">
+          <span class="numero">{{ atividades().length.toString().padStart(2, '0') }}</span>
+          <span class="stat-label">ATIVIDADES</span>
+        </div>
+      </div>
+      <button class="btn-primary-custom laranja">FAZER <i class="fi fi-br-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <div class="cards-progresso">
+    <div class="chart-card progresso-circular-card">
+      <span class="progresso-titulo">DOMÍNIO GERAL</span>
+
+      <div class="anel-wrapper">
+        <svg viewBox="0 0 160 160" class="anel-svg">
+          <circle cx="80" cy="80" r="70" class="anel-fundo" />
+          <circle
+            cx="80" cy="80" r="70"
+            class="anel-progresso"
+            [style.stroke-dasharray]="circumference"
+            [style.stroke-dashoffset]="dashOffset()"
+          />
+        </svg>
+        <div class="anel-texto">{{ dominioGeral() }}%</div>
+      </div>
+
+      <span class="progresso-mensagem">
+        @if (dominioGeral() >= 70) {
+          Excelente progresso!
+        } @else if (dominioGeral() >= 40) {
+          Bom progresso, continue!
+        } @else {
+          Vamos começar a estudar!
+        }
+      </span>
+    </div>
+
+    <div class="chart-card pendentes-card">
+      <h5 class="pendentes-titulo">Atividades Pendentes</h5>
+
+      @if (atividades().length > 0) {
+        <div class="pendentes-lista">
+          @for (atv of atividades().slice(0, 4); track atv.atividade_id) {
+            <div class="pendente-item" (click)="fazerAtividade(atv.atividade_id)">
+              <div class="pendente-icone">
+                <i class="fi fi-br-edit"></i>
+              </div>
+              <div class="pendente-info">
+                <span class="pendente-titulo-texto">{{ atv.titulo_atividade }}</span>
+              </div>
+              <i class="fi fi-br-arrow-right pendente-seta"></i>
+            </div>
+          }
+        </div>
+
+        @if (atividades().length > 4) {
+          <button class="btn-ver-todas" (click)="irParaTarefas()">
+            Ver todas ({{ atividades().length }})
+          </button>
+        }
+      } @else {
+        <div class="pendentes-vazio">
+          <p class="mb-0">Nenhuma atividade pendente 🎉</p>
+        </div>
+      }
+    </div>
+  </div>
+  </div>
+
+
+
+}

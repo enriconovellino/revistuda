@@ -9,17 +9,17 @@
     <nav class="sidebar-nav">
       <ul class="nav flex-column gap-1">
         <li class="nav-item">
-          <a class="nav-link" [class.active]="currentView() === 'home'" (click)="setView('home')">
+          <a class="nav-link" routerLink="/aluno-idoso" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
             Início
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [class.active]="currentView() === 'modulos'" (click)="setView('modulos')">
+          <a class="nav-link" routerLink="/aluno-idoso/modulos" routerLinkActive="active">
             Módulos
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [class.active]="currentView() === 'atividades'" (click)="setView('atividades')">
+          <a class="nav-link" routerLink="/aluno-idoso/atividades" routerLinkActive="active">
             Atividades
           </a>
         </li>
@@ -56,226 +56,7 @@
       </div>
     </div>
 
-    @if (isLoading()) {
-    <div class="loading-container text-center">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2 text-muted">Carregando...</p>
-    </div>
-    }
-
-    @if (hasError() && !isLoading()) {
-    <div class="error-container">
-      <div class="alert alert-danger d-flex justify-content-between align-items-center">
-        <span>Erro ao carregar dados.</span>
-        <button class="btn btn-sm btn-danger" (click)="loadData()" id="btn-retry">Tentar novamente</button>
-      </div>
-    </div>
-    }
-
-    @if (currentView() === 'home' && !isLoading()) {
-    <div class="p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 class="mb-0 fw-bold">Painel de Estudos</h4>
-          <small class="text-muted">{{ greetingTime() }}, {{ userName() }}! Seja bem-vindo de volta.</small>
-        </div>
-      </div>
-
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="text-muted small mb-1">Módulos Disponíveis</div>
-            <div class="fs-2 fw-bold" style="color: #0f2744;">{{ modulos().length }}</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card primary">
-            <div class="small mb-1 opacity-75">Módulo Atual</div>
-            <div class="fs-4 fw-bold text-truncate" [title]="moduloAtual() ? moduloAtual().titulo_modulo : 'Nenhum'">
-              {{ moduloAtual() ? moduloAtual().titulo_modulo : 'Nenhum' }}
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="text-muted small mb-1">Atividades Pendentes</div>
-            <div class="fs-2 fw-bold text-danger">{{ atividades().length }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-4">
-        <div class="col-md-7">
-          <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold mb-0">Módulo Atual</h5>
-              @if (moduloAtual()) {
-              <span class="badge-custom"
-                [class.badge-facil]="moduloAtual()!.dificuldade.toUpperCase() === 'FACIL' || moduloAtual()!.dificuldade.toLowerCase() === 'fácil'"
-                [class.badge-medio]="moduloAtual()!.dificuldade.toUpperCase() === 'MEDIO' || moduloAtual()!.dificuldade.toLowerCase() === 'médio'"
-                [class.badge-dificil]="moduloAtual()!.dificuldade.toUpperCase() === 'DIFICIL' || moduloAtual()!.dificuldade.toLowerCase() === 'difícil'">
-                {{ getDificuldadeLabel(moduloAtual()!.dificuldade) }}
-              </span>
-              }
-            </div>
-
-            @if (moduloAtual()) {
-            <div class="modulo-detalhe-home">
-              <h4 class="fw-bold mb-2">{{ moduloAtual()!.titulo_modulo }}</h4>
-              <p class="text-muted small mb-4">{{ moduloAtual()!.descricao_modulo || 'Este módulo apresenta lições
-                interativas para o seu aprendizado.' }}</p>
-
-              @if (licoesDoModuloAtual().length > 0) {
-              <h6 class="fw-bold mb-3">Lições deste módulo:</h6>
-              <div class="licoes-list">
-                @for (licao of licoesDoModuloAtual(); track licao.licao_id) {
-                <div class="licao-item">
-                  <span class="licao-num">{{ $index + 1 }}</span>
-                  <span class="fw-semibold small">{{ licao.titulo_licao }}</span>
-                </div>
-                }
-              </div>
-              } @else {
-              <p class="text-muted small italic">Sem lições cadastradas neste módulo.</p>
-              }
-            </div>
-            } @else {
-            <div class="empty-state">
-              <p class="mb-0">Nenhum módulo em andamento no momento.</p>
-            </div>
-            }
-          </div>
-        </div>
-
-
-        <div class="col-md-5">
-          <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold mb-0">Atividades</h5>
-              <a class="text-primary small fw-semibold" style="cursor:pointer;" (click)="setView('atividades')">Ver
-                todas</a>
-            </div>
-
-            @if (atividades().length > 0) {
-            <div class="d-flex flex-column gap-2">
-              @for (atv of atividades().slice(0, 5); track atv.atividade_id) {
-              <div class="turma-card">
-                <div class="turma-icon">📝</div>
-                <div class="flex-grow-1 min-width-0">
-                  <div class="fw-semibold small text-truncate" [title]="atv.titulo_atividade">{{ atv.titulo_atividade }}
-                  </div>
-                  <div class="text-muted text-truncate" style="font-size: 11px;">{{ getTipoAtividadeLabel(atv.tipo_atividade) }}</div>
-                </div>
-                <button class="btn-primary-custom btn-sm-custom"
-                  [id]="'btn-iniciar-' + atv.atividade_id"
-                  (click)="fazerAtividade(atv.atividade_id)">Iniciar</button>
-              </div>
-              }
-            </div>
-            } @else {
-            <div class="empty-state">
-              <p class="mb-0">Sem atividades pendentes.</p>
-            </div>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-    }
-
-
-    @if (currentView() === 'modulos' && !isLoading()) {
-    <div class="p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 class="mb-0 fw-bold">Módulos de Estudo</h4>
-          <small class="text-muted">Explore todos os módulos disponíveis</small>
-        </div>
-      </div>
-
-      @if (filteredModulos().length > 0) {
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (modulo of filteredModulos(); track modulo.modulo_id) {
-        <div class="col">
-          <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden; background: white;">
-
-            <img *ngIf="modulo.imagem_url" [src]="getImageUrl(modulo.imagem_url)" class="card-img-top"
-              alt="{{ modulo.titulo_modulo }}" style="height: 180px; object-fit: cover;">
-
-            @if (!modulo.imagem_url) {
-            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-              <span class="text-muted fs-4">📚</span>
-            </div>
-            }
-
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <span class="text-muted small fw-semibold">Módulo {{ $index + 1 }}</span>
-                  <span class="badge-custom"
-                    [class.badge-facil]="modulo.dificuldade.toUpperCase() === 'FACIL' || modulo.dificuldade.toLowerCase() === 'fácil'"
-                    [class.badge-medio]="modulo.dificuldade.toUpperCase() === 'MEDIO' || modulo.dificuldade.toLowerCase() === 'médio'"
-                    [class.badge-dificil]="modulo.dificuldade.toUpperCase() === 'DIFICIL' || modulo.dificuldade.toLowerCase() === 'difícil'">
-                    {{ getDificuldadeLabel(modulo.dificuldade) }}
-                  </span>
-                </div>
-                <h5 class="card-title fw-bold">{{ modulo.titulo_modulo }}</h5>
-                <p class="card-text text-muted small">{{ modulo.descricao_modulo || 'Este módulo apresenta lições
-                  interativas para o seu aprendizado.' }}</p>
-              </div>
-
-              <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
-                <span class="text-muted small fw-semibold">
-                  {{ licoes().filter(l => l.modulo_id === modulo.modulo_id).length }} lições
-                </span>
-                <button class="btn-primary-custom btn-sm-custom"
-               [id]="'btn-acessar-' + modulo.modulo_id"
-              (click)="acessarModulo(modulo.modulo_id)">Acessar</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        }
-      </div>
-      } @else {
-      <div class="empty-state">
-        <p class="mb-0">Nenhum módulo encontrado.</p>
-      </div>
-      }
-    </div>
-    }
-
-    @if (currentView() === 'atividades' && !isLoading()) {
-    <div class="p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 class="mb-0 fw-bold">Atividades</h4>
-          <small class="text-muted">Realize as atividades propostas para praticar</small>
-        </div>
-      </div>
-
-      @if (filteredAtividades().length > 0) {
-      <div class="d-flex flex-column gap-3">
-        @for (atv of filteredAtividades(); track atv.atividade_id) {
-        <div class="chart-card d-flex justify-content-between align-items-center" [id]="'atv-' + atv.atividade_id">
-          <div>
-            <h5 class="fw-bold mb-1">{{ atv.titulo_atividade }}</h5>
-            <p class="text-muted small mb-2" *ngIf="atv.descricao_atividade">{{ atv.descricao_atividade }}</p>
-             <span class="badge-custom badge-medio">{{ getTipoAtividadeLabel(atv.tipo_atividade) }}</span>
-          </div>
-          <button class="btn-primary-custom px-4" [id]="'btn-fazer-' + atv.atividade_id"
-            (click)="fazerAtividade(atv.atividade_id)">Fazer</button>
-        </div>
-        }
-      </div>
-      } @else {
-      <div class="empty-state">
-        <p class="mb-0">Nenhuma atividade encontrada.</p>
-      </div>
-      }
-    </div>
-    }
+    <router-outlet></router-outlet>
 
   </div>
 </div>
