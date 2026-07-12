@@ -1,0 +1,43 @@
+/* Contêiner sem caixa própria: as lições ficam direto na página,
+   evitando a sensação de caixa sobre caixa. */
+.chart-card {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.licao-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+}
+
+.licao-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.content-box {
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.empty-state {
+  color: #64748b;
+}
+
+.comentario-box textarea {
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 12px;
+}
+
+.comentario-box label {
+  font-size: 20px;
+}
+
+.comentario-box label i,
+.chart-card > h5 i {
+  margin-right: 6px;
+  color: #1E90FF;
+}
