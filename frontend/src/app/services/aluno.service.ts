@@ -27,6 +27,18 @@ export class AlunoService {
     return user.id ?? user.usuario_id ?? null;
   }
 
+  async iniciarAtividade(atividadeId: number): Promise<{ status: string; data_inicio: string | null; data_conclusao: string | null }> {
+    const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Falha ao iniciar atividade.');
+    }
+    return data;
+  }
+
   private progressKey(moduloId: number): string {
     const userId = this.getUserId() ?? 'anon';
     return `progresso_modulo_${moduloId}_user_${userId}`;

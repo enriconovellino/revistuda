@@ -42,7 +42,12 @@ export interface Atividade {
   itens_direitos?: ItemAssociacao[];
   relacoes_corretas?: RelacaoCorreta[];
   licao_id: number;
+  data_criacao?: string;
+  data_conclusao?: string | null;
+  status?: 'a_fazer' | 'fazendo' | 'feito';
+  modulo?: { modulo_id: number; titulo_modulo: string };
 }
+
 
 export interface MultiplaEscolha extends Atividade {
   tipo_atividade: 'multipla_escolha';

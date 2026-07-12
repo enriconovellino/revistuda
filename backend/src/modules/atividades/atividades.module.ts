@@ -7,6 +7,7 @@ import { GetAtividadeUseCase } from './domain/use-cases/get-atividade.use-casa';
 import { GetAllAtividadesUseCase } from './domain/use-cases/get-all-atividades.use-case';
 import { CreateAtividadeUseCase } from './domain/use-cases/create-atividade.use-case';
 import { ResponderAtividadeUseCase } from './domain/use-cases/responder-atividade.use-case';
+import { IniciarAtividadeUseCase } from './domain/use-cases/iniciar-atividade.use-case';
 import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
@@ -21,7 +22,8 @@ import { PrismaModule } from '@/prisma/prisma.module';
   GetAtividadeUseCase,
   UpdateAtividadeUseCase,
   DeleteAtividadeUseCase,
-  ResponderAtividadeUseCase
+  ResponderAtividadeUseCase,
+  IniciarAtividadeUseCase,
 ],
 
 })

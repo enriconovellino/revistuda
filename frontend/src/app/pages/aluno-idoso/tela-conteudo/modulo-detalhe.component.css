@@ -68,11 +68,13 @@
   padding: 0.75rem 1.5rem;
 }
 
+/* Contêiner sem caixa própria: as lições ficam direto na página,
+   evitando a sensação de caixa sobre caixa. */
 .chart-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .licao-card {

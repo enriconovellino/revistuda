@@ -15,6 +15,7 @@ import { environment } from '../../../environments/environment';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 
 type DashboardView = 'home' | 'modulos' | 'atividades';
+type StatusFiltro = 'todos' | 'a_fazer' | 'fazendo' | 'feito';
 
 @Component({
   selector: 'app-aluno-idoso',
@@ -29,6 +30,7 @@ export class AlunoIdosoComponent implements OnInit {
   fontSize = signal(1.2);
   currentView = signal<DashboardView>('home');
   searchQuery = signal<string>('');
+  statusFiltro = signal<StatusFiltro>('todos');
 
   modulos = signal<Modulo[]>([]);
   licoes = signal<Licao[]>([]);
@@ -49,11 +51,16 @@ export class AlunoIdosoComponent implements OnInit {
 
   filteredAtividades = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.atividades();
-    return this.atividades().filter(a => 
-      a.titulo_atividade.toLowerCase().includes(query) || 
-      (a.descricao_atividade && a.descricao_atividade.toLowerCase().includes(query))
-    );
+    const status = this.statusFiltro();
+    return this.atividades().filter(a => {
+      const statusAtual = a.status ?? 'a_fazer';
+      if (status !== 'todos' && statusAtual !== status) return false;
+      if (!query) return true;
+      const tituloOk = a.titulo_atividade.toLowerCase().includes(query);
+      const moduloOk = a.modulo?.titulo_modulo?.toLowerCase().includes(query) ?? false;
+      const descOk = a.descricao_atividade?.toLowerCase().includes(query) ?? false;
+      return tituloOk || moduloOk || descOk;
+    });
   });
 
   licoesDoModuloAtual = computed(() => {
@@ -142,6 +149,34 @@ export class AlunoIdosoComponent implements OnInit {
       'associacao_imagens': 'Associação de Imagens' 
     };
     return map[tipo] ?? tipo;
+  }
+
+  getStatusLabel(status?: string): string {
+    const map: Record<string, string> = {
+      a_fazer: 'A fazer',
+      fazendo: 'Fazendo',
+      feito: 'Feito',
+    };
+    return map[status ?? 'a_fazer'] ?? 'A fazer';
+  }
+
+  getStatusClass(status?: string): string {
+    const map: Record<string, string> = {
+      a_fazer: 'status-a-fazer',
+      fazendo: 'status-fazendo',
+      feito: 'status-feito',
+    };
+    return map[status ?? 'a_fazer'] ?? 'status-a-fazer';
+  }
+
+  getBotaoAtividadeLabel(status?: string): string {
+    if (status === 'feito') return 'Revisar';
+    if (status === 'fazendo') return 'Continuar';
+    return 'Fazer';
+  }
+
+  onStatusFiltroChange(value: string) {
+    this.statusFiltro.set(value as StatusFiltro);
   }
 
   getDificuldadeClass(dificuldade: string): string {

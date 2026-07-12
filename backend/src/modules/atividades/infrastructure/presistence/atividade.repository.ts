@@ -7,7 +7,9 @@ import { IAtividadeRepository } from '../../domain/ports/atividade-repository.po
 export class AtividadeRepository implements IAtividadeRepository {
   constructor(private prisma: PrismaService) { }
 
-  private mapToEntity(record: any): Atividade {
+  private mapToEntity(record: any, progresso?: { status: string; data_conclusao: Date | null } | null): Atividade {
+    let entity: Atividade;
+
     if (record.tipo_atividade === 'multipla_escolha') {
       const dbOpcoes = record.multipla_escolha?.opcoes ?? [];
       const opcoes = dbOpcoes.map((o: any) => new Opcao(
@@ -18,7 +20,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         o.multipla_escolha_id
       ));
 
-      return new MultiplaEscolha(
+      entity = new MultiplaEscolha(
         record.atividade_id,
         record.titulo_atividade,
         record.licao_id,
@@ -45,7 +47,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         }
       });
 
-      return new AssociacaoImagens(
+      entity = new AssociacaoImagens(
         record.atividade_id,
         record.titulo_atividade,
         record.licao_id,
@@ -53,8 +55,26 @@ export class AtividadeRepository implements IAtividadeRepository {
         itens,
         associacoesCorretas,
       );
+    } else {
+      throw new Error(`Tipo de atividade desconhecido: ${record.tipo_atividade}`);
     }
-    throw new Error(`Tipo de atividade desconhecido: ${record.tipo_atividade}`);
+
+    entity.data_criacao = record.data_criacao ?? undefined;
+    if (record.licao?.modulo) {
+      entity.modulo = {
+        modulo_id: record.licao.modulo.modulo_id,
+        titulo_modulo: record.licao.modulo.titulo_modulo,
+      };
+    }
+    if (progresso) {
+      entity.status = progresso.status as 'a_fazer' | 'fazendo' | 'feito';
+      entity.data_conclusao = progresso.data_conclusao;
+    } else {
+      entity.status = 'a_fazer';
+      entity.data_conclusao = null;
+    }
+
+    return entity;
   }
 
   async create(atividade: Atividade): Promise<Atividade> {
@@ -208,6 +228,16 @@ export class AtividadeRepository implements IAtividadeRepository {
     const records = await this.prisma.atividade.findMany({
       where: whereCondicao,
       include: {
+        licao: {
+          include: {
+            modulo: {
+              select: {
+                modulo_id: true,
+                titulo_modulo: true,
+              },
+            },
+          },
+        },
         multipla_escolha: {
           include: {
             opcoes: true,
@@ -224,7 +254,26 @@ export class AtividadeRepository implements IAtividadeRepository {
         },
       },
     });
-    return records.map((record) => this.mapToEntity(record));
+
+    let progressoMap = new Map<number, { status: string; data_conclusao: Date | null }>();
+    if (userId && records.length > 0) {
+      const progressos = await this.prisma.progressoAtividade.findMany({
+        where: {
+          aluno_id: userId,
+          atividade_id: { in: records.map((r) => r.atividade_id) },
+        },
+      });
+      progressoMap = new Map(
+        progressos.map((p) => [
+          p.atividade_id,
+          { status: p.status, data_conclusao: p.data_conclusao },
+        ]),
+      );
+    }
+
+    return records.map((record) =>
+      this.mapToEntity(record, progressoMap.get(record.atividade_id) ?? null),
+    );
   }
 
   async findById(id: number): Promise<Atividade | null> {
@@ -398,5 +447,77 @@ export class AtividadeRepository implements IAtividadeRepository {
         respostas: true
       }
     });
+  }
+
+  async iniciarProgresso(alunoId: number, atividadeId: number) {
+    const existente = await this.prisma.progressoAtividade.findUnique({
+      where: {
+        aluno_id_atividade_id: { aluno_id: alunoId, atividade_id: atividadeId },
+      },
+    });
+
+    if (existente?.status === 'feito') {
+      return {
+        status: 'feito' as const,
+        data_inicio: existente.data_inicio,
+        data_conclusao: existente.data_conclusao,
+      };
+    }
+
+    const agora = new Date();
+    const progresso = await this.prisma.progressoAtividade.upsert({
+      where: {
+        aluno_id_atividade_id: { aluno_id: alunoId, atividade_id: atividadeId },
+      },
+      create: {
+        aluno_id: alunoId,
+        atividade_id: atividadeId,
+        status: 'fazendo',
+        data_inicio: agora,
+      },
+      update: {
+        status: 'fazendo',
+        data_inicio: existente?.data_inicio ?? agora,
+      },
+    });
+
+    return {
+      status: progresso.status as 'fazendo',
+      data_inicio: progresso.data_inicio,
+      data_conclusao: progresso.data_conclusao,
+    };
+  }
+
+  async marcarFeito(alunoId: number, atividadeId: number) {
+    const agora = new Date();
+    const existente = await this.prisma.progressoAtividade.findUnique({
+      where: {
+        aluno_id_atividade_id: { aluno_id: alunoId, atividade_id: atividadeId },
+      },
+    });
+
+    const progresso = await this.prisma.progressoAtividade.upsert({
+      where: {
+        aluno_id_atividade_id: { aluno_id: alunoId, atividade_id: atividadeId },
+      },
+      create: {
+        aluno_id: alunoId,
+        atividade_id: atividadeId,
+        status: 'feito',
+        data_inicio: agora,
+        data_conclusao: agora,
+      },
+      update: {
+        status: 'feito',
+        data_inicio: existente?.data_inicio ?? agora,
+        data_conclusao: agora,
+      },
+    });
+
+    return {
+      status: 'feito' as const,
+      data_inicio: progresso.data_inicio,
+      data_conclusao: progresso.data_conclusao,
+    };
   }
 }
