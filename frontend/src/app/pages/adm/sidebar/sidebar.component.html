@@ -1,0 +1,35 @@
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <h5>ReviEstuda</h5>
+    <small>Plataforma Educacional</small>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav flex-column gap-1">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentView === 'dashboard'" (click)="setView('dashboard')">
+          Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentView === 'usuarios'" (click)="setView('usuarios')">
+          Usuários
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentView === 'turmas'" (click)="setView('turmas')">
+          Turmas
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentView === 'relatorios'" (click)="setView('relatorios')">
+          Relatórios
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
+  </div>
+</div>

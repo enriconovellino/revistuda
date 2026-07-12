@@ -8,15 +8,15 @@ import { Modulo } from '../../model/modulo.model';
 import { Turma } from '../../model/turma.model';
 import { ProfessorService } from '../../services/professor.service';
 import { ModuloService } from '../../services/modulo.service';
-import { DashboardTurmas } from './dashboard-turmas/dashboard-turmas';
-import { DashboardModulosComponent } from './dashboard-modulos/dashboard-modulos.component';
+import { TurmasProfessorComponent } from './turmas/turmas';
+import { ModulosProfessorComponent } from './modulos/modulos.component';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, DashboardTurmas, DashboardModulosComponent, EditarPerfilComponent],
+  imports: [CommonModule, FormsModule, TurmasProfessorComponent, ModulosProfessorComponent, EditarPerfilComponent],
   templateUrl: './professor.component.html',
   styleUrl: './professor.component.scss',
 })

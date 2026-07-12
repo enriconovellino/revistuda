@@ -187,11 +187,11 @@
     }
 
     @if (paginaAtual() === 'modulos') {
-    <app-dashboard-modulos [turma]="turmaSelecionada()" (voltar)="irParaTurmas()"></app-dashboard-modulos>
+    <app-modulos-professor [turma]="turmaSelecionada()" (voltar)="irParaTurmas()"></app-modulos-professor>
     }
 
     @if (paginaAtual() === 'turmas') {
-    <app-dashboard-turmas (turmaSelecionada)="selecionarTurma($event)"></app-dashboard-turmas>
+    <app-turmas-professor (turmaSelecionada)="selecionarTurma($event)"></app-turmas-professor>
     }
 
     }

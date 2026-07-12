@@ -1,0 +1,395 @@
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #0f2744;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo h5 {
+  color: white;
+  font-weight: 800;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.sidebar-logo small {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem;
+}
+
+.sidebar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white !important;
+}
+
+.sidebar-nav .nav-link.active {
+  background: white;
+  color: #0f2744 !important;
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.75rem 1.5rem;
+}
+
+/* ============================================
+   Botão Voltar
+   ============================================ */
+
+.voltar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1.5px solid #2563eb;
+  color: #1d4ed8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, color 0.15s ease;
+}
+
+.voltar-btn:hover {
+  background: #eff6ff;
+  border-color: #1d4ed8;
+  transform: translateX(-2px);
+}
+
+.voltar-btn-icon {
+  font-size: 1rem;
+  transition: transform 0.15s ease;
+}
+
+.voltar-btn:hover .voltar-btn-icon {
+  transform: translateX(-2px);
+}
+
+/* ============================================
+   Título da página
+   ============================================ */
+
+.page-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+/* ============================================
+   Cards de resumo (estilo escuro flutuante)
+   ============================================ */
+
+.stat-card-dark {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #0f2744;
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 8px 20px rgba(15, 39, 68, 0.25);
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card-dark:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(15, 39, 68, 0.32);
+}
+
+.stat-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #93c5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.stat-label {
+  color: #93c5fd;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 0.15rem;
+}
+
+.stat-value {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ============================================
+   Cards de conteúdo (filtros, lista)
+   ============================================ */
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0f2744;
+  box-shadow: 0 0 0 2px rgba(15, 39, 68, 0.1);
+}
+
+.btn-limpar-filtros {
+  width: 100%;
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-limpar-filtros:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.empty-state {
+  color: #64748b;
+}
+
+/* ============================================
+   Cards de comentário individual
+   ============================================ */
+
+.comentario-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0f2744;
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.comentario-card:hover {
+  box-shadow: 0 4px 14px rgba(15, 39, 68, 0.08);
+  transform: translateY(-1px);
+}
+
+.comentario-avatar {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #0f2744;
+  color: #93c5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.comentario-aluno-nome {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #0f2744;
+}
+
+.comentario-meta {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 0.1rem;
+}
+
+.comentario-data {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.comentario-texto {
+  margin: 0.5rem 0 0 3.1rem;
+  font-size: 0.88rem;
+  color: #1f2937;
+  white-space: pre-wrap;
+}
+
+.comentario-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
+
+.btn-responder {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1.5px solid #2563eb;
+  background: white;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-responder:hover {
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   Resposta já enviada (exibição)
+   ============================================ */
+
+.resposta-existente {
+  margin: 0.6rem 0 0 3.1rem;
+  padding: 0.7rem 0.9rem;
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  border-radius: 8px;
+}
+
+.resposta-existente-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.25rem;
+}
+
+.resposta-existente-texto {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #1f2937;
+}
+
+/* ============================================
+   Caixa de resposta (formulário)
+   ============================================ */
+
+.resposta-box {
+  margin-top: 0.75rem;
+  margin-left: 3.1rem;
+  padding: 0.9rem;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+}
+
+.resposta-alert {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  margin-bottom: 0.6rem;
+}
+
+.resposta-textarea {
+  width: 100%;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  color: #1f2937;
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.resposta-textarea:focus {
+  outline: none;
+  border-color: #0f2744;
+  box-shadow: 0 0 0 3px rgba(15, 39, 68, 0.1);
+}
+
+.resposta-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
+
+.btn-resposta-enviar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: #0f2744;
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-resposta-enviar:hover:not(:disabled) {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-resposta-enviar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

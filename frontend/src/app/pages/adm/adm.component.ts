@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { inject } from '@angular/core';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
-import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
-import { UsuariosAdminComponent } from './usuarios-admin/usuarios-admin.component';
-import { TurmasAdminComponent } from './turmas-admin/turmas-admin.component';
-import { RelatoriosAdminComponent } from './relatorios-admin/relatorios-admin.component';
+import { DashboardAdminComponent } from './dashboard/dashboard.component';
+import { UsuariosAdminComponent } from './usuarios/usuarios.component';
+import { TurmasAdminComponent } from './turmas/turmas.component';
+import { RelatoriosAdminComponent } from './relatorios/relatorios.component';
+import { SidebarAdminComponent } from './sidebar/sidebar.component';
 
 export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
 
@@ -21,6 +22,7 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
     UsuariosAdminComponent,
     TurmasAdminComponent,
     RelatoriosAdminComponent,
+    SidebarAdminComponent,
   ],
   templateUrl: './adm.component.html',
   styleUrl: './adm.component.scss'
