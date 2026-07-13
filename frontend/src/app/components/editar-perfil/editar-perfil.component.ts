@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject, output, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -15,9 +16,11 @@ export class EditarPerfilComponent implements OnInit {
   isOpen = input<boolean>(false);
   close = output<void>();
   saveSuccess = output<any>();
+  accountDeleted = output<void>();
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   nome = signal<string>('');
   email = signal<string>('');
@@ -28,6 +31,10 @@ export class EditarPerfilComponent implements OnInit {
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
   success = signal<boolean>(false);
+
+  confirmandoExclusao = signal<boolean>(false);
+  deletando = signal<boolean>(false);
+  deleteError = signal<string | null>(null);
 
   user: any = null;
 
@@ -49,14 +56,16 @@ export class EditarPerfilComponent implements OnInit {
     this.senhaAtual.set('');
     this.error.set(null);
     this.success.set(false);
+    this.confirmandoExclusao.set(false);
+    this.deleteError.set(null);
   }
 
-  // Detect when the input changes to reload user data
   ngOnChanges() {
     if (this.isOpen()) {
       this.loadUserData();
     }
   }
+  
 
   async onSave() {
     this.error.set(null);
@@ -98,6 +107,7 @@ export class EditarPerfilComponent implements OnInit {
         updateData.senha = this.senha();
         updateData.senha_atual = this.senhaAtual();
       }
+      
 
       const res = await this.userService.updateUser(this.user.id, updateData);
 
@@ -117,6 +127,30 @@ export class EditarPerfilComponent implements OnInit {
       this.error.set(err.message || 'Erro ao atualizar dados do perfil.');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async onDeleteAccount() {
+    this.deleteError.set(null);
+
+    try {
+      this.deletando.set(true);
+      await this.userService.deleteUser(this.user.id);
+
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+
+      this.accountDeleted.emit();
+      this.close.emit();
+      this.router.navigate(['/login']);
+
+    } catch (err: any) {
+      this.deleteError.set(err.message || 'Erro ao excluir a conta. Tente novamente.');
+    } finally {
+      this.deletando.set(false);
     }
   }
 
