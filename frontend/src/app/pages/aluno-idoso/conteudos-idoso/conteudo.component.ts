@@ -55,6 +55,11 @@ export class AlunoModuloDetalheComponent implements OnInit {
       const id = params.get('id');
       if (id) {
         this.moduloId = Number(id);
+        // Lê o índice da lição a ser exibida via query param (ex.: ?licao=2)
+        const licaoIdx = this.route.snapshot.queryParamMap.get('licao');
+        if (licaoIdx !== null && !isNaN(Number(licaoIdx))) {
+          this.licaoAtualIndex.set(Number(licaoIdx));
+        }
         this.loadData();
       }
     });
