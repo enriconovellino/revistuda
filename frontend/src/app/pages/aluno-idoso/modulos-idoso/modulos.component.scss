@@ -1,84 +1,132 @@
 @use 'sass:color';
 @use 'variables' as *;
 
+$verde-principal: #16a34a;
+$verde-claro: #f0fdf4;
+$verde-escuro: #15803d;
+
 .modulos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
 }
 
 .modulo-card {
   background: white;
-  border-radius: 18px;
-  padding: 1.75rem;
+  border-radius: 20px;
+  overflow: hidden;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
   border: 1px solid #f1f5f9;
+  border-top: 6px solid $verde-principal;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .modulo-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 14px 30px rgba(22, 163, 74, 0.15);
 }
 
-.modulo-icone {
-  width: 3.25rem;
-  height: 3.25rem;
+.modulo-capa {
+  width: 100%;
+  height: 160px;
+  background: $verde-claro;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  background: #dbeafe;
-  color: $azul-medio;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
+  overflow: hidden;
+  position: relative; 
+}
+
+.modulo-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modulo-icone-fallback {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: white;
+  color: $verde-principal;
+  font-size: 1.8rem;
+}
+
+.modulo-conteudo {
+  padding: 1.75rem;
 }
 
 .modulo-titulo {
   color: #0f172a;
   font-weight: 700;
+  font-size: 1.7rem;
   margin-bottom: 0.5rem;
 }
 
-.modulo-descricao {
-  color: #94a3b8;
-  font-size: 0.9rem;
+.modulo-progresso {
   margin-bottom: 1.5rem;
-  min-height: 2.7rem;
 }
 
-.modulo-footer {
+.progresso-info {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
-}
-
-.modulo-licoes {
+  font-size: 0.95rem;
   color: #64748b;
   font-weight: 600;
-  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
 }
 
-.btn-primary-custom {
-  background-color: $azul-escuro;
+.progresso-percentual {
+  color: $verde-escuro;
+  font-weight: 700;
+}
+
+.progresso-barra {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.progresso-preenchido {
+  height: 100%;
+  background: linear-gradient(90deg, $verde-principal, $verde-escuro);
+  border-radius: 50px;
+  transition: width 0.3s ease;
+}
+
+.btn-acessar {
+  width: 100%;
+  background-color: $verde-escuro;
   color: white;
   border: none;
-  padding: 0.55rem 1.1rem;
-  border-radius: 50px;
+  padding: 0.9rem 1.25rem;
+  border-radius: 14px;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 1.4rem;
   cursor: pointer;
   transition: all 0.2s;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.btn-primary-custom:hover {
-  background-color: color.adjust($azul-escuro, $lightness: 8%);
+.btn-acessar:hover {
+  background-color: color.adjust($verde-escuro, $lightness: -6%);
+}
+
+.btn-acessar.continuar {
+  background-color: $verde-principal;
+}
+
+.btn-acessar.continuar:hover {
+  background-color: color.adjust($verde-principal, $lightness: -6%);
 }
 
 .loading-container {
@@ -92,4 +140,28 @@
   background: white;
   border: 2px dashed #e2e8f0;
   border-radius: 12px;
+}
+.modulo-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.badge-facil {
+  background-color: #22c55e;
+}
+
+.badge-medio {
+  background-color: #f59e0b;
+}
+
+.badge-dificil {
+  background-color: #ef4444;
 }

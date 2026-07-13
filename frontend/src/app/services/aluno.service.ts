@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
+import { Modulo } from '../model/modulo.model';
+import { Atividade } from '../model/atividade.model';
+import { Licao } from '../model/licao.model';
 
 @Injectable({
   providedIn: 'root'
@@ -95,4 +98,34 @@ export class AlunoService {
 
     return resultado;
   }
-}
+
+  async getModulos(): Promise<Modulo[]> {
+    const response = await fetch(`${this.apiUrl}/modulos`, {
+      headers: this.getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Falha ao buscar módulos.');
+    }
+    return response.json();
+  }
+
+  async getAtividades(): Promise<Atividade[]> {
+    const response = await fetch(`${this.apiUrl}/atividades`, {
+      headers: this.getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Falha ao buscar atividades.');
+    }
+    return response.json();
+  }
+
+  async getLicoes(): Promise<Licao[]> {
+    const response = await fetch(`${this.apiUrl}/licoes`, {
+      headers: this.getHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Falha ao buscar lições.');
+    }
+    return response.json();
+  }
+} 

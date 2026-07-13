@@ -1,5 +1,4 @@
-/* Contêiner sem caixa própria: as lições ficam direto na página,
-   evitando a sensação de caixa sobre caixa. */
+/* Container geral */
 .chart-card {
   background: transparent;
   border-radius: 0;
@@ -7,37 +6,205 @@
   box-shadow: none;
 }
 
+.chart-card > h5 {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.chart-card > h5 i {
+  margin-right: 8px;
+  color: #ea580c;
+}
+
+/* Card de cabeçalho do módulo */
+.card {
+  border-top: 5px solid #ea580c !important;
+}
+
+/* Card de cada lição */
 .licao-card {
   transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 10px;
+  border-radius: 14px !important;
+  border: 1px solid #eef2f6 !important;
 }
 
 .licao-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
 }
 
+.licao-card h6 {
+  font-size: 1.15rem !important;
+}
+
+.licao-card .badge.bg-success {
+  background-color: #ea580c !important;
+  font-size: 0.8rem;
+  padding: 0.45em 0.8em;
+  border-radius: 50px;
+}
+
+/* Bloco de conteúdo dentro da lição */
 .content-box {
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: 12px !important;
+  border-color: #eef2f6 !important;
+}
+
+.content-box .badge.bg-secondary {
+  background-color: #64748b !important;
+  border-radius: 50px;
+  padding: 0.4em 0.75em;
+}
+
+/* Botão de marcar concluída — verde */
+.licao-card .btn-outline-success {
+  border: 2px solid #16a34a;
+  color: #16a34a;
+  border-radius: 12px;
+}
+
+.licao-card .btn-outline-success:hover {
+  background-color: #16a34a;
+  color: white;
+}
+
+.licao-card .btn-success {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  border-radius: 12px;
+}
+
+/* Área de comentários */
+.comentario-box {
+  background: #ffffff;
+}
+
+.comentario-box label {
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  color: #0f172a;
+}
+
+.comentario-box label i {
+  margin-right: 8px;
+  color: #ea580c;
+}
+
+.comentario-box textarea {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+}
+
+.comentario-box textarea:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 0.2rem rgba(234, 88, 12, 0.15);
+}
+
+.comentario-box .btn-outline-primary {
+  border: 2px solid #ea580c;
+  color: #ea580c;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.comentario-box .btn-outline-primary:hover {
+  background-color: #ea580c;
+  border-color: #ea580c;
+  color: white;
+}
+
+/* Comentário já salvo */
+.comentario-salvo-box {
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  border-radius: 12px;
+}
+
+.comentario-salvo-box p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #0f172a;
+}
+
+/* Botão de editar comentário — visual aprimorado */
+.comentario-editar-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  border: none;
+  padding: 0.5rem 1.15rem;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 3px 8px rgba(234, 88, 12, 0.3);
+}
+
+.comentario-editar-link i {
+  font-size: 0.85rem;
+}
+
+.comentario-editar-link:hover {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(234, 88, 12, 0.4);
+}
+
+.comentario-editar-link:active {
+  transform: translateY(0);
+}
+
+/* Bloco de "seguir para atividade" */
+.seguir-atividade-box {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border: 2px solid #fdba74;
+  border-radius: 16px;
+}
+
+.seguir-atividade-box .btn-success {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  border-radius: 14px;
+}
+
+.seguir-atividade-box .btn-success:hover {
+  background-color: #15803d;
+  border-color: #15803d;
 }
 
 .empty-state {
   color: #64748b;
 }
-
-.comentario-box textarea {
-  font-size: 16px;
-  line-height: 1.5;
-  padding: 12px;
+.btn-voltar-modulos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  color: #ea580c;
+  border: 1.5px solid #fdba74;
+  padding: 0.5rem 1.1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
-.comentario-box label {
-  font-size: 20px;
+.btn-voltar-modulos i {
+  font-size: 0.85rem;
 }
 
-.comentario-box label i,
-.chart-card > h5 i {
-  margin-right: 6px;
-  color: #1E90FF;
+.btn-voltar-modulos:hover {
+  background-color: #ea580c;
+  color: white;
+  border-color: #ea580c;
+  transform: translateX(-2px);
 }

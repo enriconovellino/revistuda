@@ -2,47 +2,67 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h4 class="mb-0 fw-bold">Meus Cursos</h4>
-      <small class="text-muted">Escolha um curso para continuar seus estudos</small>
     </div>
   </div>
 
   @if (isLoading()) {
-    <div class="loading-container text-center">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2 text-muted">Carregando...</p>
-    </div>
+  <div class="loading-container text-center">
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="mt-2 text-muted">Carregando...</p>
+  </div>
   }
 
   @if (hasError() && !isLoading()) {
-    <div class="alert alert-danger d-flex justify-content-between align-items-center">
-      <span>Erro ao carregar módulos.</span>
-      <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
-    </div>
+  <div class="alert alert-danger d-flex justify-content-between align-items-center">
+    <span>Erro ao carregar módulos.</span>
+    <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
+  </div>
   }
 
   @if (!isLoading() && !hasError()) {
-    @if (modulos().length > 0) {
-      <div class="modulos-grid">
-        @for (modulo of modulos(); track modulo.modulo_id) {
-          <div class="modulo-card" (click)="acessarModulo(modulo.modulo_id)">
-            <div class="modulo-icone">
-              <i class="fi fi-br-book-alt"></i>
-            </div>
-            <h5 class="modulo-titulo">{{ modulo.titulo_modulo }}</h5>
-            <p class="modulo-descricao">
-              {{ modulo.descricao_modulo || 'Este módulo apresenta lições interativas para o seu aprendizado.' }}
-            </p>
-            <div class="modulo-footer">
-              <span class="modulo-licoes">{{ qtdLicoes(modulo.modulo_id) }} lições</span>
-              <button class="btn-primary-custom">ACESSAR <i class="fi fi-br-arrow-right"></i></button>
-            </div>
-          </div>
+  @if (modulos().length > 0) {
+  <div class="modulos-grid">
+    @for (modulo of modulos(); track modulo.modulo_id) {
+    <div class="modulo-card" (click)="acessarModulo(modulo.modulo_id)">
+      <div class="modulo-capa">
+        @if (modulo.imagem_url) {
+        <img [src]="getImageUrl(modulo.imagem_url)" [alt]="modulo.titulo_modulo" class="modulo-imagem">
+        } @else {
+        <div class="modulo-icone-fallback">
+          <i class="fi fi-br-book-alt"></i>
+        </div>
         }
+        <span class="modulo-badge" [class.badge-facil]="modulo.dificuldade === 'fácil'"
+          [class.badge-medio]="modulo.dificuldade === 'médio'" [class.badge-dificil]="modulo.dificuldade === 'difícil'">
+          {{ modulo.dificuldade }}
+        </span>
       </div>
-    } @else {
-      <div class="empty-state">
-        <p class="mb-0">Nenhum curso disponível no momento.</p>
+
+      <div class="modulo-conteudo">
+        <h5 class="modulo-titulo">{{ modulo.titulo_modulo }}</h5>
+
+        <div class="modulo-progresso">
+          <div class="progresso-info">
+            <span>{{ modulo.licoesConcluidas }} de {{ modulo.totalLicoes }} lições</span>
+            <span class="progresso-percentual">{{ modulo.percentual }}%</span>
+          </div>
+
+          <div class="progresso-barra">
+            <div class="progresso-preenchido" [style.width.%]="modulo.percentual"></div>
+          </div>
+        </div>
+
+        <button class="btn-acessar" [class.continuar]="modulo.status === 'em_andamento'">
+          {{ textoBotao(modulo) }} <i class="fi fi-br-arrow-right"></i>
+        </button>
       </div>
+    </div>
     }
+  </div>
+  } @else {
+  <div class="empty-state">
+    <p class="mb-0">Nenhum curso disponível no momento.</p>
+  </div>
+  }
   }
 </div>

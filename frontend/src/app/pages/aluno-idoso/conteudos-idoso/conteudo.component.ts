@@ -133,7 +133,15 @@ export class AlunoModuloDetalheComponent implements OnInit {
   abrirEdicaoComentario(conteudoId: number): void {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
+  todasLicoesConcluidas(): boolean {
+  const total = this.licoes().length;
+  return total > 0 && this.totalConcluidas === total;
+}
 
+seguirParaAtividade(): void {
+  this.router.navigate(['/aluno-idoso/atividades'], { queryParams: { moduloId: this.moduloId } });
+}
+  
   async salvarComentario(conteudoId: number): Promise<void> {
     const texto = this.getComentario(conteudoId);
 
