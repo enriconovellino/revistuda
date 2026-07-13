@@ -248,6 +248,14 @@
             title="Marcar como correta" />
         </div>
         <small class="nova-licao-hint">Selecione o radio da opção correta.</small>
+
+        <div class="mb-3 mt-3">
+          <label class="nova-licao-label">Explicação da resposta correta <span class="text-danger">*</span></label>
+          <textarea class="nova-licao-textarea" rows="3"
+            placeholder="Explique por que a resposta correta está certa..."
+            [(ngModel)]="questao.explicacao" [name]="'explicacaoQuestao' + qi"></textarea>
+          <small class="nova-licao-hint">O aluno verá esta explicação após responder a questão.</small>
+        </div>
       </div>
 
       <!-- Associação de imagens -->

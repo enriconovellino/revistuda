@@ -12,7 +12,6 @@ import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
 import { Atividade } from '../../../model/atividade.model';
-import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-aluno-modulo-detalhe',
@@ -22,15 +21,16 @@ import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-
   styleUrl: './conteudo.component.css',
 })
 export class AlunoModuloDetalheComponent implements OnInit {
-  userName = signal<string>('Aluno');
   moduloId = 0;
   modulo = signal<Modulo | null>(null);
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
-  licoesConcluidas = signal<number[]>([]);
 
-  /** IDs dos conteúdos que o aluno já marcou como concluídos (salvo no banco) */
+  /** Índice da lição exibida atualmente (paginação) */
+  licaoAtualIndex = signal<number>(0);
+
+  /** IDs dos conteúdos que o aluno já marcou como concluídos (persistido no banco) */
   conteudosConcluidos = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
@@ -55,6 +55,11 @@ export class AlunoModuloDetalheComponent implements OnInit {
       const id = params.get('id');
       if (id) {
         this.moduloId = Number(id);
+        // Lê o índice da lição a ser exibida via query param (ex.: ?licao=2)
+        const licaoIdx = this.route.snapshot.queryParamMap.get('licao');
+        if (licaoIdx !== null && !isNaN(Number(licaoIdx))) {
+          this.licaoAtualIndex.set(Number(licaoIdx));
+        }
         this.loadData();
       }
     });
@@ -173,9 +178,28 @@ export class AlunoModuloDetalheComponent implements OnInit {
   }
 
 
-  toggleConcluida(licaoId: number): void {
-    const atualizadas = this.alunoService.toggleLicaoConcluida(this.moduloId, licaoId);
-    this.licoesConcluidas.set(atualizadas);
+  proximaLicao(): void {
+    if (this.licaoAtualIndex() < this.licoes().length - 1) {
+      this.licaoAtualIndex.update(i => i + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  licaoAnterior(): void {
+    if (this.licaoAtualIndex() > 0) {
+      this.licaoAtualIndex.update(i => i - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  get licaoAtual() {
+    return this.licoes()[this.licaoAtualIndex()] ?? null;
+  }
+  async marcarLicaoConcluida(licaoId: number): Promise<void> {
+    if (this.isConcluida(licaoId)) return; // já concluída
+    const conteudosDaLicao = this.conteudosForLicao()[licaoId] ?? [];
+    const pendentes = conteudosDaLicao.filter(c => !this.isConteudoConcluido(c.conteudo_id));
+    await Promise.all(pendentes.map(c => this.marcarConteudoConcluido(c.conteudo_id)));
   }
   // Métodos auxiliares de progresso e comentários
   get totalConcluidas(): number {
@@ -202,15 +226,6 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
 
-  todasLicoesConcluidas(): boolean {
-    const total = this.licoes().length;
-    return total > 0 && this.totalConcluidas === total;
-  }
-
-  seguirParaAtividade(): void {
-    this.router.navigate(['/aluno-idoso/atividades'], { queryParams: { moduloId: this.moduloId } });
-  }
-
   async salvarComentario(conteudoId: number): Promise<void> {
     const texto = this.getComentario(conteudoId);
 
@@ -235,30 +250,5 @@ export class AlunoModuloDetalheComponent implements OnInit {
 
   voltar() {
     this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
-  }
-
-  irParaView(view: string) {
-    this.router.navigate(['/aluno-idoso'], { queryParams: { view } });
-  }
-
-  logout() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.clear();
-    }
-    this.router.navigate(['/']);
-  }
-
-  isEditProfileOpen = signal<boolean>(false);
-
-  abrirEditarPerfil() {
-    this.isEditProfileOpen.set(true);
-  }
-
-  fecharEditarPerfil() {
-    this.isEditProfileOpen.set(false);
-  }
-
-  onProfileUpdated(updatedUser: any) {
-    this.userName.set(updatedUser.nome);
   }
 }

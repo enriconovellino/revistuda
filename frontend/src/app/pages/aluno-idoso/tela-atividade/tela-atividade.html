@@ -1,23 +1,6 @@
-<div class="tela-atividade" [style.font-size.rem]="fontSize()">
+<div class="tela-atividade">
 
-  <header class="atividade-header">
-    <button class="btn-voltar" (click)="voltarParaAtividades()" id="btn-voltar">
-      ← Voltar
-    </button>
 
-    <div class="header-titulo">
-      <h1 class="mb-0">Atividade</h1>
-      @if (atividade()) {
-        <small class="text-muted">{{ atividade()!.titulo_atividade }}</small>
-      }
-    </div>
-
-    <div class="font-controls">
-      <span class="text-muted small fw-semibold">Texto:</span>
-      <button class="font-btn" (click)="changeFontSize(-0.1)" title="Diminuir Texto">A-</button>
-      <button class="font-btn" (click)="changeFontSize(0.1)" title="Aumentar Texto">A+</button>
-    </div>
-  </header>
 
   <main class="atividade-conteudo">
 
@@ -178,6 +161,13 @@
             }
           </div>
 
+          @if (atividade()!.tipo_atividade === 'multipla_escolha' && atividade()!.explicacao) {
+            <div class="explicacao-box">
+              <strong>💡 Explicação:</strong>
+              <p class="mb-0 mt-1">{{ atividade()!.explicacao }}</p>
+            </div>
+          }
+
           @if (resultado() === 'erro' && atividade()!.tipo_atividade === 'associacao_imagens') {
             <div class="correcao-box">
               <h5 class="correcao-titulo">Combinação Correta:</h5>
@@ -221,12 +211,19 @@
               Enviar resposta
             </button>
           } @else {
-            <button class="btn-outline-custom btn-grande" (click)="tentarNovamente()" id="btn-tentar">
-              Tentar novamente
-            </button>
-            <button class="btn-primary-custom btn-grande" (click)="voltarParaAtividades()" id="btn-concluir">
-              Voltar para atividades
-            </button>
+            @if (proximaAtividadeId() !== null) {
+              <button class="btn-primary-custom btn-grande" (click)="irParaProximaAtividade()" id="btn-proxima">
+                Próxima Atividade →
+              </button>
+            } @else if (proximaLicaoNav() !== null) {
+              <button class="btn-primary-custom btn-grande" (click)="irParaProximaLicao()" id="btn-proxima-licao">
+                Próxima Lição →
+              </button>
+            } @else {
+              <button class="btn-outline-custom btn-grande" (click)="voltarParaCursos()" id="btn-concluir">
+                Voltar para Cursos
+              </button>
+            }
           }
         </div>
 

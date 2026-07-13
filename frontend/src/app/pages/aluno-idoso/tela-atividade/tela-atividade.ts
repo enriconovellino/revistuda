@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlunoService } from '../../../services/aluno.service';
 import { AtividadeService } from '../../../services/atividade.service';
+import { LicaoService } from '../../../services/licao.service';
+import { ConteudoService } from '../../../services/conteudo.service';
 import { Atividade, OpcaoAtividade, ItemAssociacao } from '../../../model/atividade.model';
 import { environment } from '../../../../environments/environment';
 
@@ -19,7 +21,6 @@ export class TelaAtividade implements OnInit {
   atividade = signal<Atividade | null>(null);
   isLoading = signal(true);
   hasError = signal(false);
-  fontSize = signal(1.2);
 
   // Múltipla escolha
   opcaoSelecionadaId = signal<number | null>(null);
@@ -30,6 +31,9 @@ export class TelaAtividade implements OnInit {
 
   respostaEnviada = signal(false);
   resultado = signal<ResultadoAtividade>(null);
+  proximaAtividadeId = signal<number | null>(null);
+  /** { moduloId, licaoIndex } da próxima lição não concluída no módulo */
+  proximaLicaoNav = signal<{ moduloId: number; licaoIndex: number } | null>(null);
 
   opcoesOrdenadas = computed(() => {
     const opcoes = this.atividade()?.opcoes ?? [];
@@ -40,6 +44,8 @@ export class TelaAtividade implements OnInit {
   private route = inject(ActivatedRoute);
   private alunoService = inject(AlunoService);
   private atividadeService = inject(AtividadeService);
+  private licaoService = inject(LicaoService);
+  private conteudoService = inject(ConteudoService);
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -61,14 +67,21 @@ export class TelaAtividade implements OnInit {
     this.resetarResposta();
 
     try {
-      const [atividade] = await Promise.all([
-        this.atividadeService.getAtividadeById(id),
-        this.alunoService.iniciarAtividade(id).catch(() => null),
-      ]);
+      const atividade = await this.atividadeService.getAtividadeById(id);
       if (!atividade) {
         this.hasError.set(true);
         return;
       }
+
+      // Bloqueia atividade já concluída
+      if (atividade.status === 'feito') {
+        this.router.navigate(['/aluno-idoso/atividades']);
+        return;
+      }
+
+      // Marca como "fazendo" no banco (ignora erro caso já esteja nesse estado)
+      await this.alunoService.iniciarAtividade(id).catch(() => null);
+
       this.atividade.set(atividade);
     } catch {
       this.hasError.set(true);
@@ -204,6 +217,8 @@ export class TelaAtividade implements OnInit {
       } catch (error) {
         console.error('Erro ao salvar resposta no banco:', error);
       }
+
+      await this.buscarProximaAtividade(atividade.licao_id, atividade.atividade_id);
     } else if (atividade.tipo_atividade === 'associacao_imagens') {
       const leftItens = atividade.itens_esquerdos ?? [];
       if (this.conexoes().size < leftItens.length) return; // Precisa preencher tudo
@@ -227,23 +242,95 @@ export class TelaAtividade implements OnInit {
       try {
         await this.atividadeService.responderAtividadeAssociacao(atividade.atividade_id, respostasFormatadas);
       } catch (error) {
-        console.error('Erro ao salvar resposta de associação no banco:', error);
+        console.error('Erro ao salvar resposta de associção no banco:', error);
       }
+
+      await this.buscarProximaAtividade(atividade.licao_id, atividade.atividade_id);
     }
   }
 
-  tentarNovamente() {
-    this.resetarResposta();
+  private async buscarProximaAtividade(licaoId: number, atividadeAtualId: number): Promise<void> {
+    try {
+      const todas = await this.atividadeService.getAtividades();
+      const proxima = todas.find(
+        a =>
+          a.licao_id === licaoId &&
+          a.atividade_id !== atividadeAtualId &&
+          (a.status === 'a_fazer' || a.status === 'fazendo')
+      );
+      this.proximaAtividadeId.set(proxima?.atividade_id ?? null);
+
+      // Se não há mais atividades nessa lição, busca a próxima lição
+      if (!proxima) {
+        const licaoAtual = todas.find(a => a.licao_id === licaoId);
+        const moduloId = licaoAtual?.modulo?.modulo_id;
+        if (moduloId) {
+          await this.buscarProximaLicao(licaoId, moduloId);
+        }
+      } else {
+        this.proximaLicaoNav.set(null);
+      }
+    } catch {
+      this.proximaAtividadeId.set(null);
+      this.proximaLicaoNav.set(null);
+    }
+  }
+
+  private async buscarProximaLicao(licaoAtualId: number, moduloId: number): Promise<void> {
+    try {
+      const [todasLicoes, todosConteudos, concluidosIds] = await Promise.all([
+        this.licaoService.getLicoes(),
+        this.conteudoService.getConteudos(),
+        this.conteudoService.getProgressoConteudos(moduloId),
+      ]);
+
+      const licoesDoModulo = todasLicoes.filter(l => l.modulo_id === moduloId);
+      const indexAtual = licoesDoModulo.findIndex(l => l.licao_id === licaoAtualId);
+
+      // Percorre as lições seguintes no mesmo módulo
+      for (let i = indexAtual + 1; i < licoesDoModulo.length; i++) {
+        const licao = licoesDoModulo[i];
+        const conteudosDaLicao = todosConteudos.filter(c => c.licao_id === licao.licao_id);
+        const todaConcluida =
+          conteudosDaLicao.length > 0 &&
+          conteudosDaLicao.every(c => concluidosIds.includes(c.conteudo_id));
+
+        if (!todaConcluida) {
+          this.proximaLicaoNav.set({ moduloId, licaoIndex: i });
+          return;
+        }
+      }
+      // Todas as lições subsequentes já concluídas (ou não há mais)
+      this.proximaLicaoNav.set(null);
+    } catch {
+      this.proximaLicaoNav.set(null);
+    }
+  }
+
+  irParaProximaAtividade(): void {
+    const id = this.proximaAtividadeId();
+    if (id !== null) {
+      this.router.navigate(['/aluno-idoso/atividade', id]);
+    }
+  }
+
+  irParaProximaLicao(): void {
+    const nav = this.proximaLicaoNav();
+    if (nav) {
+      this.router.navigate(['/aluno-idoso/modulo', nav.moduloId], {
+        queryParams: { licao: nav.licaoIndex }
+      });
+    }
   }
 
   voltarParaAtividades() {
-    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'atividades' } });
+    this.router.navigate(['/aluno-idoso/atividades']);
   }
 
-  changeFontSize(offset: number) {
-    const next = parseFloat((this.fontSize() + offset).toFixed(1));
-    if (next >= 0.9 && next <= 2.0) this.fontSize.set(next);
+  voltarParaCursos() {
+    this.router.navigate(['/aluno-idoso/modulos']);
   }
+
 
   getLetraLabel(letra: string): string {
     return letra.toUpperCase();

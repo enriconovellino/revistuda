@@ -14,6 +14,7 @@ export class AtividadePresenter {
       titulo_atividade: atividade.titulo_atividade,
       tipo_atividade: atividade.tipo_atividade,
       enunciado: atividade.enunciado || undefined,
+      explicacao: atividade.explicacao || undefined,
       licao_id: atividade.licao_id,
       data_criacao: atividade.data_criacao ?? undefined,
       modulo: atividade.modulo ?? undefined,
