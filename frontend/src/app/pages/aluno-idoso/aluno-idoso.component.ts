@@ -44,4 +44,8 @@ export class AlunoIdosoComponent implements OnInit {
   onProfileUpdated(updatedUser: User): void {
     this.userName.set(updatedUser.nome);
   }
-}
+
+  logout(): void {
+    this.authService.logout();
+  }
+}

@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar-idoso',
@@ -10,10 +9,4 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
-export class SidebarIdosoComponent {
-  private authService = inject(AuthService);
-
-  logout(): void {
-    this.authService.logout();
-  }
-}
+export class SidebarIdosoComponent {}
