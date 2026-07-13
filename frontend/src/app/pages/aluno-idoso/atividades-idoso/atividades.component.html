@@ -35,9 +35,15 @@
               }
               <span class="atividade-tipo">{{ getTipoAtividadeLabel(atv.tipo_atividade) }}</span>
             </div>
-            <button class="btn-primary-custom" (click)="fazerAtividade(atv.atividade_id)">
-              FAZER <i class="fi fi-br-arrow-right"></i>
-            </button>
+            @if (atv.status === 'feito') {
+              <span class="badge bg-success px-3 py-2 d-flex align-items-center gap-1" style="font-size: 13px; border-radius: 8px;">
+                ✓ Concluída
+              </span>
+            } @else {
+              <button class="btn-primary-custom" (click)="fazerAtividade(atv.atividade_id)">
+                FAZER <i class="fi fi-br-arrow-right"></i>
+              </button>
+            }
           </div>
         }
       </div>

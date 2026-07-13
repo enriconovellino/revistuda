@@ -28,7 +28,9 @@ export class AlunoModuloDetalheComponent implements OnInit {
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
-  licoesConcluidas = signal<number[]>([]);
+
+  /** IDs dos conteúdos que o aluno já marcou como concluídos (salvo no banco) */
+  conteudosConcluidos = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
   comentarioSalvo = signal<{ [conteudoId: number]: string }>({});
@@ -82,14 +84,27 @@ export class AlunoModuloDetalheComponent implements OnInit {
       });
       this.conteudosForLicao.set(mappedConteudos);
 
+      // Carregar atividades do módulo (somente as que não estão concluídas)
+      const allAtividades = await this.atividadeService.getAtividades();
+      const mappedAtividades: { [key: number]: Atividade[] } = {};
+      allAtividades
+        .filter((a: Atividade) => a.status !== 'feito')
+        .forEach((a: Atividade) => {
+          if (!mappedAtividades[a.licao_id]) {
+            mappedAtividades[a.licao_id] = [];
+          }
+          mappedAtividades[a.licao_id].push(a);
+        });
+      this.atividadesPorLicao.set(mappedAtividades);
+
+      // Carregar progresso dos conteúdos do banco
+      const concluidos = await this.conteudoService.getProgressoConteudos(this.moduloId);
+      this.conteudosConcluidos.set(concluidos);
+
       const conteudoIds = allConteudos.map(c => c.conteudo_id);
       const comentariosCarregados = await this.alunoService.getComentariosDoAluno(conteudoIds);
-
-
       this.comentarios.set(comentariosCarregados);
       this.comentarioSalvo.set(comentariosCarregados);
-
-      this.licoesConcluidas.set(this.alunoService.getLicoesConcluidas(this.moduloId));
 
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao carregar os dados do módulo.';
@@ -109,19 +124,35 @@ export class AlunoModuloDetalheComponent implements OnInit {
     return null;
   }
 
-  isConcluida(licaoId: number): boolean {
-    return this.licoesConcluidas().includes(licaoId);
+  /** Verifica se um conteúdo individual foi marcado como concluído */
+  isConteudoConcluido(conteudoId: number): boolean {
+    return this.conteudosConcluidos().includes(conteudoId);
   }
 
-  toggleConcluida(licaoId: number): void {
-    const atualizadas = this.alunoService.toggleLicaoConcluida(this.moduloId, licaoId);
-    this.licoesConcluidas.set(atualizadas);
+  /** Marca um conteúdo como visto/concluído no banco */
+  async marcarConteudoConcluido(conteudoId: number): Promise<void> {
+    if (this.isConteudoConcluido(conteudoId)) return; // já concluído
+    try {
+      await this.conteudoService.concluirConteudo(conteudoId);
+      this.conteudosConcluidos.update(atuais => [...atuais, conteudoId]);
+    } catch (err: unknown) {
+      console.error('Erro ao marcar conteúdo como concluído:', err);
+    }
+  }
+
+  /**
+   * A lição é considerada concluída quando TODOS os seus conteúdos foram marcados.
+   * Se a lição não tem conteúdos, considera-se inconcluída.
+   */
+  isConcluida(licaoId: number): boolean {
+    const conteudosDaLicao = this.conteudosForLicao()[licaoId] ?? [];
+    if (conteudosDaLicao.length === 0) return false;
+    return conteudosDaLicao.every(c => this.isConteudoConcluido(c.conteudo_id));
   }
 
   getAtividadeDaLicao(licaoId: number): Atividade | null {
     const atividades = this.atividadesPorLicao()[licaoId] ?? [];
     if (atividades.length === 0) return null;
-
     const pendente = atividades.find(a => a.status === 'a_fazer' || a.status === 'fazendo');
     return pendente ?? atividades[0];
   }
@@ -129,7 +160,6 @@ export class AlunoModuloDetalheComponent implements OnInit {
   getBotaoAtividadeLabel(licaoId: number): string {
     const atividade = this.getAtividadeDaLicao(licaoId);
     if (!atividade) return 'Realizar atividade';
-    if (atividade.status === 'feito') return 'Revisar atividade';
     if (atividade.status === 'fazendo') return 'Continuar atividade';
     return 'Realizar atividade';
   }
@@ -141,9 +171,8 @@ export class AlunoModuloDetalheComponent implements OnInit {
   }
 
   get totalConcluidas(): number {
-    return this.licoesConcluidas().length;
+    return this.licoes().filter(l => this.isConcluida(l.licao_id)).length;
   }
-
 
   getComentario(conteudoId: number): string {
     return this.comentarios()[conteudoId] || '';
