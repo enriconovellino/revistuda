@@ -220,3 +220,49 @@
   background: #1a3a5c;
   color: #fff;
 }
+
+/* Botões de navegação de paginação (Lição Anterior / Próxima Lição) */
+.btn-nav-licao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.btn-nav-proxima {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+}
+
+.btn-nav-proxima:hover:not(:disabled) {
+  background: linear-gradient(135deg, #15803d, #14532d);
+  transform: translateX(3px);
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.4);
+}
+
+.btn-nav-anterior {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+}
+
+.btn-nav-anterior:hover:not(:disabled) {
+  background: linear-gradient(135deg, #15803d, #14532d);
+  transform: translateX(-3px);
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.4);
+}
+
+.btn-nav-licao:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}

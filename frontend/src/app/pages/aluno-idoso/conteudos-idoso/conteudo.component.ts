@@ -28,9 +28,11 @@ export class AlunoModuloDetalheComponent implements OnInit {
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
-  licoesConcluidas = signal<number[]>([]);
 
-  /** IDs dos conteúdos que o aluno já marcou como concluídos (salvo no banco) */
+  /** Índice da lição exibida atualmente (paginação) */
+  licaoAtualIndex = signal<number>(0);
+
+  /** IDs dos conteúdos que o aluno já marcou como concluídos (persistido no banco) */
   conteudosConcluidos = signal<number[]>([]);
 
   comentarios = signal<{ [conteudoId: number]: string }>({});
@@ -173,9 +175,28 @@ export class AlunoModuloDetalheComponent implements OnInit {
   }
 
 
-  toggleConcluida(licaoId: number): void {
-    const atualizadas = this.alunoService.toggleLicaoConcluida(this.moduloId, licaoId);
-    this.licoesConcluidas.set(atualizadas);
+  proximaLicao(): void {
+    if (this.licaoAtualIndex() < this.licoes().length - 1) {
+      this.licaoAtualIndex.update(i => i + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  licaoAnterior(): void {
+    if (this.licaoAtualIndex() > 0) {
+      this.licaoAtualIndex.update(i => i - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  get licaoAtual() {
+    return this.licoes()[this.licaoAtualIndex()] ?? null;
+  }
+  async marcarLicaoConcluida(licaoId: number): Promise<void> {
+    if (this.isConcluida(licaoId)) return; // já concluída
+    const conteudosDaLicao = this.conteudosForLicao()[licaoId] ?? [];
+    const pendentes = conteudosDaLicao.filter(c => !this.isConteudoConcluido(c.conteudo_id));
+    await Promise.all(pendentes.map(c => this.marcarConteudoConcluido(c.conteudo_id)));
   }
   // Métodos auxiliares de progresso e comentários
   get totalConcluidas(): number {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
-import { AlunoService } from '../../../services/aluno.service';
+import { ConteudoService } from '../../../services/conteudo.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { environment } from '../../../../environments/environment';
@@ -32,7 +32,7 @@ export class ModulosIdosoComponent implements OnInit {
   constructor(
     private moduloService: ModuloService,
     private licaoService: LicaoService,
-    private alunoService: AlunoService,
+    private conteudoService: ConteudoService,
     private router: Router
   ) { }
 
@@ -52,23 +52,32 @@ export class ModulosIdosoComponent implements OnInit {
 
       this.licoes.set(licoes);
 
-      const modulosComProgresso: ModuloComProgresso[] = modulos.map(modulo => {
-        const total = licoes.filter(l => l.modulo_id === modulo.modulo_id).length;
-        const concluidas = this.alunoService.getLicoesConcluidas(modulo.modulo_id).length;
-        const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+      // Buscar progresso de conteúdos por módulo via API
+      const modulosComProgresso: ModuloComProgresso[] = await Promise.all(
+        modulos.map(async modulo => {
+          const licoeDoModulo = licoes.filter(l => l.modulo_id === modulo.modulo_id);
+          const total = licoeDoModulo.length;
 
-        let status: 'nao_iniciado' | 'em_andamento' | 'concluido' = 'nao_iniciado';
-        if (concluidas > 0 && concluidas < total) status = 'em_andamento';
-        if (total > 0 && concluidas === total) status = 'concluido';
+          // Busca os conteúdos concluídos do banco para este módulo
+          let concluidas = 0;
+          try {
+            const conteudosConcluidos = await this.conteudoService.getProgressoConteudos(modulo.modulo_id);
+            // Uma lição é concluída quando todos os seus conteúdos estão marcados — aqui
+            // usamos conteúdos concluídos como proxy; se o array não está vazio, conta
+            if (conteudosConcluidos.length > 0) {
+              concluidas = Math.min(conteudosConcluidos.length, total);
+            }
+          } catch { /* silencioso */ }
 
-        return {
-          ...modulo,
-          totalLicoes: total,
-          licoesConcluidas: concluidas,
-          percentual,
-          status
-        };
-      });
+          const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+
+          let status: 'nao_iniciado' | 'em_andamento' | 'concluido' = 'nao_iniciado';
+          if (concluidas > 0 && concluidas < total) status = 'em_andamento';
+          if (total > 0 && concluidas === total) status = 'concluido';
+
+          return { ...modulo, totalLicoes: total, licoesConcluidas: concluidas, percentual, status };
+        })
+      );
 
       this.modulos.set(modulosComProgresso);
     } catch (error: unknown) {

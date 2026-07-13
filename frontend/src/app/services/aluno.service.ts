@@ -1,9 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { Modulo } from '../model/modulo.model';
-import { Atividade } from '../model/atividade.model';
-import { Licao } from '../model/licao.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,27 +39,6 @@ export class AlunoService {
     return data;
   }
 
-  private progressKey(moduloId: number): string {
-    const userId = this.getUserId() ?? 'anon';
-    return `progresso_modulo_${moduloId}_user_${userId}`;
-  }
-
-  getLicoesConcluidas(moduloId: number): number[] {
-    const raw = localStorage.getItem(this.progressKey(moduloId));
-    return raw ? JSON.parse(raw) : [];
-  }
-
-  toggleLicaoConcluida(moduloId: number, licaoId: number): number[] {
-    const atuais = this.getLicoesConcluidas(moduloId);
-    const index = atuais.indexOf(licaoId);
-    if (index >= 0) {
-      atuais.splice(index, 1);
-    } else {
-      atuais.push(licaoId);
-    }
-    localStorage.setItem(this.progressKey(moduloId), JSON.stringify(atuais));
-    return atuais;
-  }
 
   async saveComentario(conteudoId: number, texto: string): Promise<void> {
     try {
