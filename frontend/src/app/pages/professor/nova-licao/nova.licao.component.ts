@@ -29,6 +29,7 @@ type TipoQuestao = 'multipla_escolha' | 'associacao_imagens';
 interface QuestaoForm {
   tipo: TipoQuestao;
   enunciado: string;
+  explicacao: string;
   opcoes: AtividadeFormOpcoes;
   respostaCorreta: OpcaoId;
   pares: ParAssociacao[];
@@ -41,6 +42,7 @@ function novaQuestaoVazia(): QuestaoForm {
   return {
     tipo: 'multipla_escolha',
     enunciado: '',
+    explicacao: '',
     opcoes: { a: '', b: '', c: '', d: '' },
     respostaCorreta: 'a',
     pares: [],
@@ -441,6 +443,11 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
         return null;
       }
 
+      if (!questao.explicacao.trim()) {
+        this.atividadeError.set(`Adicione uma explicação da resposta correta para a questão ${indice + 1}.`);
+        return null;
+      }
+
       return opcoesPreenchidas;
     }
 
@@ -512,7 +519,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       return;
     }
 
-    const payloads: { enunciado: string; tipo: TipoQuestao; opcoes?: OpcaoAtividade[]; pares?: ParAssociacao[] }[] = [];
+    const payloads: { enunciado: string; explicacao?: string; tipo: TipoQuestao; opcoes?: OpcaoAtividade[]; pares?: ParAssociacao[] }[] = [];
 
     for (let i = 0; i < this.atividadeQuestoes.length; i++) {
       const questao = this.atividadeQuestoes[i];
@@ -520,7 +527,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       if (resultado === null) return;
 
       if (questao.tipo === 'multipla_escolha') {
-        payloads.push({ enunciado: questao.enunciado.trim(), tipo: questao.tipo, opcoes: resultado as OpcaoAtividade[] });
+        payloads.push({ enunciado: questao.enunciado.trim(), explicacao: questao.explicacao.trim(), tipo: questao.tipo, opcoes: resultado as OpcaoAtividade[] });
       } else {
         payloads.push({ enunciado: questao.enunciado.trim(), tipo: questao.tipo, pares: resultado as ParAssociacao[] });
       }
@@ -536,6 +543,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
           titulo_atividade: multiQuestao ? `${this.atividadeTitulo.trim()} - Questão ${i + 1}` : this.atividadeTitulo.trim(),
           tipo_atividade: p.tipo,
           enunciado: p.enunciado,
+          explicacao: p.explicacao ?? null,
           opcoes: p.opcoes,
           pares_associacao: p.pares,
           licao_id: this.atividadeLicaoId!,

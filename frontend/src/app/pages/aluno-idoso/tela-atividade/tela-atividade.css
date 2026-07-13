@@ -220,6 +220,17 @@
   border: 1px solid #ffecb5;
 }
 
+.explicacao-box {
+  background: #f0f4ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #3730a3;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
 .acoes-rodape {
   display: flex;
   flex-wrap: wrap;

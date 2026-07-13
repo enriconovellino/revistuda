@@ -25,6 +25,7 @@ export class Atividade {
   titulo_atividade: string;
   tipo_atividade: string;
   enunciado: string | null;
+  explicacao: string | null;
   licao_id: number;
   data_criacao?: Date;
   modulo?: { modulo_id: number; titulo_modulo: string };
@@ -37,11 +38,13 @@ export class Atividade {
     tipo_atividade: string,
     licao_id: number,
     enunciado: string | null = null,
+    explicacao: string | null = null,
   ) {
     this.atividade_id = atividade_id;
     this.titulo_atividade = titulo_atividade;
     this.tipo_atividade = tipo_atividade;
     this.enunciado = enunciado;
+    this.explicacao = explicacao;
     this.licao_id = licao_id;
   }
 }
@@ -55,8 +58,9 @@ export class MultiplaEscolha extends Atividade {
     licao_id: number,
     enunciado: string | null = null,
     opcoes: Opcao[] = [],
+    explicacao: string | null = null,
   ) {
-    super(atividade_id, titulo_atividade, 'multipla_escolha', licao_id, enunciado);
+    super(atividade_id, titulo_atividade, 'multipla_escolha', licao_id, enunciado, explicacao);
     this.opcoes = opcoes;
   }
 }
