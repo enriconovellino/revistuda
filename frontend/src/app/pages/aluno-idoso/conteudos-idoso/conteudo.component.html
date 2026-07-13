@@ -1,7 +1,7 @@
 <div class="p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <button class="btn-voltar-modulos" (click)="voltar()">
-      <i class="fi fi-rr-arrow-small-left"></i> Voltar para Módulos
+      <i class="fi fi-rr-arrow-small-left"></i> Voltar para Cursos
     </button>
   </div>
 
@@ -44,7 +44,7 @@
     </div>
 
     <div class="chart-card">
-      <h5 class="fw-bold mb-4 text-dark"><i class="fi fi-rr-book-alt"></i> Lições do Módulo</h5>
+      <h5 class="fw-bold mb-4 text-dark"><i class="fi fi-rr-book-alt"></i> Lições do Curso</h5>
 
       <!-- Navegação de paginação -->
       <div class="d-flex justify-content-between align-items-center gap-3 mb-4" *ngIf="licoes().length > 0">
@@ -174,7 +174,7 @@
 
       <ng-template #noLicoes>
         <div class="empty-state py-5 text-center">
-          <p class="mb-0 text-muted">Nenhuma lição cadastrada neste módulo ainda.</p>
+          <p class="mb-0 text-muted">Nenhuma lição cadastrada neste curso ainda.</p>
         </div>
       </ng-template>
     </div>

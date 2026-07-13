@@ -12,7 +12,6 @@ import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
 import { Atividade } from '../../../model/atividade.model';
-import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-perfil.component';
 
 @Component({
   selector: 'app-aluno-modulo-detalhe',
@@ -22,7 +21,6 @@ import { EditarPerfilComponent } from '../../../components/editar-perfil/editar-
   styleUrl: './conteudo.component.css',
 })
 export class AlunoModuloDetalheComponent implements OnInit {
-  userName = signal<string>('Aluno');
   moduloId = 0;
   modulo = signal<Modulo | null>(null);
   licoes = signal<Licao[]>([]);
@@ -223,15 +221,6 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
 
-  todasLicoesConcluidas(): boolean {
-    const total = this.licoes().length;
-    return total > 0 && this.totalConcluidas === total;
-  }
-
-  seguirParaAtividade(): void {
-    this.router.navigate(['/aluno-idoso/atividades'], { queryParams: { moduloId: this.moduloId } });
-  }
-
   async salvarComentario(conteudoId: number): Promise<void> {
     const texto = this.getComentario(conteudoId);
 
@@ -256,30 +245,5 @@ export class AlunoModuloDetalheComponent implements OnInit {
 
   voltar() {
     this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
-  }
-
-  irParaView(view: string) {
-    this.router.navigate(['/aluno-idoso'], { queryParams: { view } });
-  }
-
-  logout() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.clear();
-    }
-    this.router.navigate(['/']);
-  }
-
-  isEditProfileOpen = signal<boolean>(false);
-
-  abrirEditarPerfil() {
-    this.isEditProfileOpen.set(true);
-  }
-
-  fecharEditarPerfil() {
-    this.isEditProfileOpen.set(false);
-  }
-
-  onProfileUpdated(updatedUser: any) {
-    this.userName.set(updatedUser.nome);
   }
 }
