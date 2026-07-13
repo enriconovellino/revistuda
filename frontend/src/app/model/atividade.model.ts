@@ -36,6 +36,7 @@ export interface Atividade {
   descricao_atividade?: string;
   tipo_atividade: string;
   enunciado?: string | null;
+  explicacao?: string | null;
   opcoes?: OpcaoAtividade[];
   pares_associacao?: ParAssociacao[];
   itens_esquerdos?: ItemAssociacao[];

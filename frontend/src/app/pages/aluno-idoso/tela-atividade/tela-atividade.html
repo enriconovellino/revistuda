@@ -178,6 +178,13 @@
             }
           </div>
 
+          @if (atividade()!.tipo_atividade === 'multipla_escolha' && atividade()!.explicacao) {
+            <div class="explicacao-box">
+              <strong>💡 Explicação:</strong>
+              <p class="mb-0 mt-1">{{ atividade()!.explicacao }}</p>
+            </div>
+          }
+
           @if (resultado() === 'erro' && atividade()!.tipo_atividade === 'associacao_imagens') {
             <div class="correcao-box">
               <h5 class="correcao-titulo">Combinação Correta:</h5>
@@ -221,9 +228,6 @@
               Enviar resposta
             </button>
           } @else {
-            <button class="btn-outline-custom btn-grande" (click)="tentarNovamente()" id="btn-tentar">
-              Tentar novamente
-            </button>
             <button class="btn-primary-custom btn-grande" (click)="voltarParaAtividades()" id="btn-concluir">
               Voltar para atividades
             </button>

@@ -61,14 +61,21 @@ export class TelaAtividade implements OnInit {
     this.resetarResposta();
 
     try {
-      const [atividade] = await Promise.all([
-        this.atividadeService.getAtividadeById(id),
-        this.alunoService.iniciarAtividade(id).catch(() => null),
-      ]);
+      const atividade = await this.atividadeService.getAtividadeById(id);
       if (!atividade) {
         this.hasError.set(true);
         return;
       }
+
+      // Bloqueia atividade já concluída
+      if (atividade.status === 'feito') {
+        this.router.navigate(['/aluno-idoso/atividades']);
+        return;
+      }
+
+      // Marca como "fazendo" no banco (ignora erro caso já esteja nesse estado)
+      await this.alunoService.iniciarAtividade(id).catch(() => null);
+
       this.atividade.set(atividade);
     } catch {
       this.hasError.set(true);
@@ -232,12 +239,9 @@ export class TelaAtividade implements OnInit {
     }
   }
 
-  tentarNovamente() {
-    this.resetarResposta();
-  }
 
   voltarParaAtividades() {
-    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'atividades' } });
+    this.router.navigate(['/aluno-idoso/atividades']);
   }
 
   changeFontSize(offset: number) {
