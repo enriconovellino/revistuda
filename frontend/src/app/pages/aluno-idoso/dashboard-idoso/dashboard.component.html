@@ -54,7 +54,7 @@
           <div class="stat-icon">
             <i class="fi fi-br-edit"></i>
           </div>
-          <h5 class="stat-titulo">Minhas Tarefas</h5>
+          <h5 class="stat-titulo">Minhas Atividades</h5>
         </div>
         <div class="stat-numero">
           <span class="numero">{{ atividadesPendentes().length.toString().padStart(2, '0') }}</span>
@@ -67,28 +67,34 @@
 
   <div class="cards-progresso">
     <div class="chart-card progresso-circular-card">
-      <span class="progresso-titulo">DOMÍNIO GERAL</span>
+      <span class="progresso-titulo">DESEMPENHO GERAL</span>
+
+      <div class="toggle-dominio">
+        <button class="toggle-btn" [class.ativo]="visaoDominio() === 'modulos'" (click)="alternarVisaoDominio('modulos')">
+          Módulos
+        </button>
+        <button class="toggle-btn" [class.ativo]="visaoDominio() === 'atividades'"
+          (click)="alternarVisaoDominio('atividades')">
+          Atividades
+        </button>
+      </div>
 
       <div class="anel-wrapper">
         <svg viewBox="0 0 160 160" class="anel-svg">
           <circle cx="80" cy="80" r="70" class="anel-fundo" />
-          <circle
-            cx="80" cy="80" r="70"
-            class="anel-progresso"
-            [style.stroke-dasharray]="circumference"
-            [style.stroke-dashoffset]="dashOffset()"
-          />
+          <circle cx="80" cy="80" r="70" class="anel-progresso" [style.stroke-dasharray]="circumference"
+            [style.stroke-dashoffset]="dashOffset()" />
         </svg>
         <div class="anel-texto">{{ dominioGeral() }}%</div>
       </div>
 
       <span class="progresso-mensagem">
         @if (dominioGeral() >= 70) {
-          Excelente progresso!
+        Excelente progresso!
         } @else if (dominioGeral() >= 40) {
-          Bom progresso, continue!
+        Bom progresso, continue!
         } @else {
-          Vamos começar a estudar!
+        Vamos começar a estudar!
         }
       </span>
     </div>
@@ -97,36 +103,36 @@
       <h5 class="pendentes-titulo">Atividades Pendentes</h5>
 
       @if (atividadesPendentes().length > 0) {
-        <div class="pendentes-lista">
-          @for (atv of atividadesPendentes().slice(0, 4); track atv.atividade_id) {
-            <div class="pendente-item" (click)="fazerAtividade(atv.atividade_id)">
-              <div class="pendente-icone">
-                <i class="fi fi-br-edit"></i>
-              </div>
-              <div class="pendente-info">
-                <span class="pendente-titulo-texto">{{ atv.titulo_atividade }}</span>
-                @if (atv.status === 'fazendo') {
-                  <span class="badge bg-warning text-dark" style="font-size: 10px;">Em andamento</span>
-                }
-              </div>
-              <i class="fi fi-br-arrow-right pendente-seta"></i>
-            </div>
-          }
+      <div class="pendentes-lista">
+        @for (atv of atividadesPendentes().slice(0, 4); track atv.atividade_id) {
+        <div class="pendente-item" (click)="fazerAtividade(atv.atividade_id)">
+          <div class="pendente-icone">
+            <i class="fi fi-br-edit"></i>
+          </div>
+          <div class="pendente-info">
+            <span class="pendente-titulo-texto">{{ atv.titulo_atividade }}</span>
+            @if (atv.status === 'fazendo') {
+            <span class="badge bg-warning text-dark" style="font-size: 10px;">Em andamento</span>
+            }
+          </div>
+          <i class="fi fi-br-arrow-right pendente-seta"></i>
         </div>
-
-        @if (atividadesPendentes().length > 4) {
-          <button class="btn-ver-todas" (click)="irParaTarefas()">
-            Ver todas ({{ atividadesPendentes().length }})
-          </button>
         }
+      </div>
+
+      @if (atividadesPendentes().length > 4) {
+      <button class="btn-ver-todas" (click)="irParaTarefas()">
+        Ver todas ({{ atividadesPendentes().length }})
+      </button>
+      }
       } @else {
-        <div class="pendentes-vazio">
-          <p class="mb-0">Nenhuma atividade pendente 🎉</p>
-        </div>
+      <div class="pendentes-vazio">
+        <p class="mb-0">Nenhuma atividade pendente 🎉</p>
+      </div>
       }
     </div>
   </div>
-  </div>
+</div>
 
 
 

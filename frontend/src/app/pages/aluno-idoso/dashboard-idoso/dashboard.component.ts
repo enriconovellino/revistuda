@@ -4,9 +4,12 @@ import { Router } from '@angular/router';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { AtividadeService } from '../../../services/atividade.service';
+import { AlunoService } from '../../../services/aluno.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Atividade } from '../../../model/atividade.model';
+
+type VisaoDominio = 'modulos' | 'atividades';
 
 @Component({
   selector: 'app-dashboard-aluno-idoso',
@@ -24,8 +27,7 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   atividades = signal<Atividade[]>([]);
   licoes = signal<Licao[]>([]);
 
-  progressoLeitura = signal<number>(0);
-  progressoVideos = signal<number>(0);
+  visaoDominio = signal<VisaoDominio>('modulos');
 
   moduloAtual = computed<Modulo | null>(() => this.modulos()[0] ?? null);
 
@@ -34,10 +36,40 @@ export class DashboardAlunoIdosoComponent implements OnInit {
     this.atividades().filter(a => a.status === 'a_fazer' || a.status === 'fazendo')
   );
 
+  /** % de lições concluídas em todos os módulos do aluno */
+  desempenhoModulos = computed<number>(() => {
+    const modulos = this.modulos();
+    const licoes = this.licoes();
+
+    if (modulos.length === 0 || licoes.length === 0) return 0;
+
+    let totalLicoes = 0;
+    let totalConcluidas = 0;
+
+    for (const modulo of modulos) {
+      const licoesDoModulo = licoes.filter(l => l.modulo_id === modulo.modulo_id);
+      const concluidas = this.alunoService.getLicoesConcluidas(modulo.modulo_id);
+
+      totalLicoes += licoesDoModulo.length;
+      totalConcluidas += licoesDoModulo.filter(l => concluidas.includes(l.licao_id)).length;
+    }
+
+    return totalLicoes > 0 ? Math.round((totalConcluidas / totalLicoes) * 100) : 0;
+  });
+
+  /** % de atividades concluídas */
+  desempenhoAtividades = computed<number>(() => {
+    const atividades = this.atividades();
+    if (atividades.length === 0) return 0;
+
+    const concluidas = atividades.filter(a => a.status === 'feito').length;
+    return Math.round((concluidas / atividades.length) * 100);
+  });
+
   dominioGeral = computed<number>(() => {
-    const leitura = this.progressoLeitura();
-    const atividades = this.progressoVideos();
-    return Math.round((leitura + atividades) / 2);
+    return this.visaoDominio() === 'modulos'
+      ? this.desempenhoModulos()
+      : this.desempenhoAtividades();
   });
 
   circumference = 2 * Math.PI * 70;
@@ -51,6 +83,7 @@ export class DashboardAlunoIdosoComponent implements OnInit {
     private moduloService: ModuloService,
     private atividadeService: AtividadeService,
     private licaoService: LicaoService,
+    private alunoService: AlunoService,
     private router: Router
   ) { }
 
@@ -81,6 +114,10 @@ export class DashboardAlunoIdosoComponent implements OnInit {
     }
   }
 
+  alternarVisaoDominio(visao: VisaoDominio): void {
+    this.visaoDominio.set(visao);
+  }
+
   retomarAula(): void {
     const modulo = this.moduloAtual();
     if (modulo) {
@@ -89,7 +126,6 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   }
 
   irParaCursos(): void {
-    // Vai direto para a tela de listagem "Meus Cursos / Módulos"
     this.router.navigate(['/aluno-idoso/modulos']);
   }
 
@@ -98,7 +134,6 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   }
 
   irParaTarefas(): void {
-    // Vai direto para a tela de listagem "Minhas Tarefas / Atividades"
     this.router.navigate(['/aluno-idoso/atividades']);
   }
 }
