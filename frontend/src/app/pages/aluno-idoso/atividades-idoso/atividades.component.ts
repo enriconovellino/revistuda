@@ -1,8 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AtividadeService } from '../../../services/atividade.service';
 import { Atividade } from '../../../model/atividade.model';
+import { Licao } from '../../../model/aluno.model';
+import { LicaoService } from '../../../services/licao.service';
 
 @Component({
   selector: 'app-atividades-idoso',
@@ -16,14 +18,21 @@ export class AtividadesIdosoComponent implements OnInit {
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);
   atividades = signal<Atividade[]>([]);
+  moduloId = signal<number | null>(null);
 
   constructor(
     private atividadeService: AtividadeService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private licaoService: LicaoService
   ) { }
 
   ngOnInit(): void {
-    this.loadData();
+    this.route.queryParamMap.subscribe(params => {
+      const moduloIdParam = params.get('moduloId');
+      this.moduloId.set(moduloIdParam ? Number(moduloIdParam) : null);
+      this.loadData();
+    });
   }
 
   async loadData(): Promise<void> {
@@ -31,8 +40,28 @@ export class AtividadesIdosoComponent implements OnInit {
     this.hasError.set(false);
 
     try {
-      const atividades = await this.atividadeService.getAtividades();
-      this.atividades.set(atividades);
+      const [todasAtividades, todasLicoes] = await Promise.all([
+        this.atividadeService.getAtividades(),
+        this.licaoService.getLicoes()
+      ]);
+
+      const moduloId = this.moduloId();
+
+      if (moduloId !== null) {
+        const licaoIdsDoModulo = new Set(
+          todasLicoes.filter((l: Licao) => l.modulo_id === moduloId).map((l: Licao) => l.licao_id)
+        );
+        const filtradas = todasAtividades.filter(a => licaoIdsDoModulo.has(a.licao_id));
+        this.atividades.set(filtradas);
+
+        // Se só tiver uma atividade nesse módulo, abre ela direto
+        if (filtradas.length === 1) {
+          this.fazerAtividade(filtradas[0].atividade_id);
+          return;
+        }
+      } else {
+        this.atividades.set(todasAtividades);
+      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao carregar atividades:', message);

@@ -1,7 +1,7 @@
 <div class="p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 px-3" (click)="voltar()">
-      <span>←</span> Voltar para Módulos
+    <button class="btn-voltar-modulos" (click)="voltar()">
+      <i class="fi fi-rr-arrow-small-left"></i> Voltar para Módulos
     </button>
   </div>
 
@@ -25,7 +25,8 @@
               {{ modulo()?.dificuldade | titlecase }}
             </span>
           </div>
-          <p class="text-muted mb-0" style="font-size: 14px;">{{ modulo()?.descricao_modulo || 'Sem descrição cadastrada' }}</p>
+          <p class="text-muted mb-0" style="font-size: 14px;">{{ modulo()?.descricao_modulo || 'Sem descrição
+            cadastrada' }}</p>
         </div>
 
         <div class="text-md-end">
@@ -47,45 +48,16 @@
 
       <div class="d-flex flex-column gap-4" *ngIf="licoes().length > 0; else noLicoes">
         <div class="licao-card p-4 border rounded bg-white shadow-sm" *ngFor="let licao of licoes()">
-          <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
-            <div class="d-flex align-items-center gap-2">
-              <span *ngIf="isConcluida(licao.licao_id)" class="badge bg-success">✓ Concluída</span>
-              <div>
-                <h6 class="fw-bold text-dark mb-1" style="font-size: 17px;">{{ licao.titulo_licao }}</h6>
-                <p class="text-muted small mb-0" *ngIf="licao.comentario">{{ licao.comentario }}</p>
-              </div>
-            </div>
-
-            <!-- Botão de atividade: só aparece quando lição está concluída e atividade não foi feita -->
-            <div class="d-flex flex-wrap gap-2 align-items-center">
-              <button *ngIf="isConcluida(licao.licao_id) && getAtividadeDaLicao(licao.licao_id)"
-                class="btn btn-lg fw-semibold px-4 btn-realizar-atividade" (click)="realizarAtividade(licao.licao_id)">
-                {{ getBotaoAtividadeLabel(licao.licao_id) }}
-              </button>
-              <span *ngIf="isConcluida(licao.licao_id) && !getAtividadeDaLicao(licao.licao_id)"
-                class="badge bg-secondary px-3 py-2" style="font-size: 13px;">
-                ✓ Atividade concluída
-              </span>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span *ngIf="isConcluida(licao.licao_id)" class="badge bg-success">✓ Concluída</span>
+            <div>
+              <h6 class="fw-bold text-dark mb-1" style="font-size: 17px;">{{ licao.titulo_licao }}</h6>
+              <p class="text-muted small mb-0" *ngIf="licao.comentario">{{ licao.comentario }}</p>
             </div>
           </div>
 
-          <!-- Conteúdos da lição -->
-          <div class="d-flex flex-column gap-3 mt-3">
+          <div class="d-flex flex-column gap-3">
             <div class="content-box p-3 border rounded" *ngFor="let conteudo of conteudosForLicao()[licao.licao_id]">
-
-              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                <span class="badge bg-secondary text-white" style="font-size: 10px;">{{
-                  conteudo.tipo_conteudo | titlecase }}</span>
-                <!-- Botão "Marcar como visto" por conteúdo -->
-                <button
-                  class="btn btn-sm fw-semibold"
-                  [class.btn-outline-success]="!isConteudoConcluido(conteudo.conteudo_id)"
-                  [class.btn-success]="isConteudoConcluido(conteudo.conteudo_id)"
-                  (click)="marcarConteudoConcluido(conteudo.conteudo_id)"
-                  [disabled]="isConteudoConcluido(conteudo.conteudo_id)">
-                  {{ isConteudoConcluido(conteudo.conteudo_id) ? '✓ Visto' : 'Marcar como visto' }}
-                </button>
-              </div>
 
               <div class="mb-2" *ngIf="conteudo.texto_conteudo">
                 <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.6; font-size: 14px;">{{
@@ -122,7 +94,7 @@
               </div>
 
               <div class="comentario-box mt-3 pt-3 border-top">
-                <label class="form-label small fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você
+                <label class="form-label fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você
                   entendeu?</label>
 
                 <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvoTpl">
@@ -134,21 +106,19 @@
                     <span class="text-success small fw-semibold" *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
                       ✓ Comentário salvo!
                     </span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="salvarComentario(conteudo.conteudo_id)">
+                    <button class="btn btn-outline-primary" (click)="salvarComentario(conteudo.conteudo_id)">
                       Salvar comentário
                     </button>
                   </div>
                 </div>
 
-                <ng-template #comentarioSalvoTpl>
-                  <div class="comentario-salvo-box p-3 rounded" style="background: #f8fafc;">
-                    <p class="mb-2 text-dark small" style="white-space: pre-wrap;">{{
+                <ng-template #comentarioSalvo>
+                  <div class="comentario-salvo-box p-3 rounded">
+                    <p class="mb-2 text-dark" style="white-space: pre-wrap;">{{
                       getComentario(conteudo.conteudo_id) }}</p>
                     <div class="d-flex justify-content-end">
-                      <button class="btn btn-link btn-sm p-0 text-primary"
-                        style="text-decoration: none; font-size: 12px;"
-                        (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
-                        ✏️ Editar comentário
+                      <button class="comentario-editar-link" (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
+                        <i class="fi fi-rr-pencil"></i> Editar comentário
                       </button>
                     </div>
                   </div>
@@ -157,6 +127,22 @@
 
             </div>
           </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <button class="btn btn-lg fw-semibold px-4" [class.btn-outline-success]="!isConcluida(licao.licao_id)"
+              [class.btn-success]="isConcluida(licao.licao_id)" (click)="toggleConcluida(licao.licao_id)">
+              {{ isConcluida(licao.licao_id) ? '✓ Marcada como concluída' : 'Marcar como concluída' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="seguir-atividade-box mt-2 p-4 text-center rounded" *ngIf="todasLicoesConcluidas()">
+          <p class="fw-semibold text-dark mb-3" style="font-size: 18px;">
+            Parabéns! Você concluiu todas as lições deste módulo.
+          </p>
+          <button class="btn btn-lg btn-success fw-semibold px-5" (click)="seguirParaAtividade()">
+            Seguir para Atividade
+          </button>
         </div>
       </div>
 

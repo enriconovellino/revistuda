@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
+import { Modulo } from '../model/modulo.model';
+import { Atividade } from '../model/atividade.model';
+import { Licao } from '../model/licao.model';
 
 @Injectable({
   providedIn: 'root'

@@ -1,5 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Modulo } from '../../../model/modulo.model';
@@ -64,6 +64,7 @@ export class ModulosProfessorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private professorService = inject(ProfessorService);
   private moduloService = inject(ModuloService);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
     this.route.queryParams.subscribe(async (params) => {
@@ -77,6 +78,10 @@ export class ModulosProfessorComponent implements OnInit {
   }
 
   async carregarTurmaSelecionada(turmaId: number) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     try {
       this.loading.set(true);
       const userStr = localStorage.getItem('user');

@@ -3,8 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
+import { AlunoService } from '../../../services/aluno.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
+import { environment } from '../../../../environments/environment';
+
+interface ModuloComProgresso extends Modulo {
+  totalLicoes: number;
+  licoesConcluidas: number;
+  percentual: number;
+  status: 'nao_iniciado' | 'em_andamento' | 'concluido';
+}
 
 @Component({
   selector: 'app-modulos-idoso',
@@ -17,12 +26,13 @@ export class ModulosIdosoComponent implements OnInit {
 
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);
-  modulos = signal<Modulo[]>([]);
+  modulos = signal<ModuloComProgresso[]>([]);
   licoes = signal<Licao[]>([]);
 
   constructor(
     private moduloService: ModuloService,
     private licaoService: LicaoService,
+    private alunoService: AlunoService,
     private router: Router
   ) { }
 
@@ -39,8 +49,28 @@ export class ModulosIdosoComponent implements OnInit {
         this.moduloService.getModulos(),
         this.licaoService.getLicoes()
       ]);
-      this.modulos.set(modulos);
+
       this.licoes.set(licoes);
+
+      const modulosComProgresso: ModuloComProgresso[] = modulos.map(modulo => {
+        const total = licoes.filter(l => l.modulo_id === modulo.modulo_id).length;
+        const concluidas = this.alunoService.getLicoesConcluidas(modulo.modulo_id).length;
+        const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+
+        let status: 'nao_iniciado' | 'em_andamento' | 'concluido' = 'nao_iniciado';
+        if (concluidas > 0 && concluidas < total) status = 'em_andamento';
+        if (total > 0 && concluidas === total) status = 'concluido';
+
+        return {
+          ...modulo,
+          totalLicoes: total,
+          licoesConcluidas: concluidas,
+          percentual,
+          status
+        };
+      });
+
+      this.modulos.set(modulosComProgresso);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao carregar módulos:', message);
@@ -50,8 +80,20 @@ export class ModulosIdosoComponent implements OnInit {
     }
   }
 
-  qtdLicoes(moduloId: number): number {
-    return this.licoes().filter(l => l.modulo_id === moduloId).length;
+  textoBotao(modulo: ModuloComProgresso): string {
+    switch (modulo.status) {
+      case 'em_andamento': return 'CONTINUAR';
+      case 'concluido': return 'REVISAR';
+      default: return 'INICIAR';
+    }
+  }
+
+  getImageUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url}`;
   }
 
   acessarModulo(moduloId: number): void {
