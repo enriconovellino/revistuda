@@ -1,8 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ModuloService } from '../../../services/modulo.service';
+import { LicaoService } from '../../../services/licao.service';
 import { AlunoService } from '../../../services/aluno.service';
-import { Modulo, Licao } from '../../../model/aluno.model';
+import { Modulo } from '../../../model/modulo.model';
+import { Licao } from '../../../model/licao.model';
 import { environment } from '../../../../environments/environment';
 
 interface ModuloComProgresso extends Modulo {
@@ -27,9 +30,11 @@ export class ModulosIdosoComponent implements OnInit {
   licoes = signal<Licao[]>([]);
 
   constructor(
+    private moduloService: ModuloService,
+    private licaoService: LicaoService,
     private alunoService: AlunoService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -40,15 +45,15 @@ export class ModulosIdosoComponent implements OnInit {
     this.hasError.set(false);
 
     try {
-      const [modulosData, licoesData] = await Promise.all([
-        this.alunoService.getModulos(),
-        this.alunoService.getLicoes()
+      const [modulos, licoes] = await Promise.all([
+        this.moduloService.getModulos(),
+        this.licaoService.getLicoes()
       ]);
 
-      this.licoes.set(licoesData);
+      this.licoes.set(licoes);
 
-      const modulosComProgresso: ModuloComProgresso[] = modulosData.map(modulo => {
-        const total = licoesData.filter(l => l.modulo_id === modulo.modulo_id).length;
+      const modulosComProgresso: ModuloComProgresso[] = modulos.map(modulo => {
+        const total = licoes.filter(l => l.modulo_id === modulo.modulo_id).length;
         const concluidas = this.alunoService.getLicoesConcluidas(modulo.modulo_id).length;
         const percentual = total > 0 ? Math.round((concluidas / total) * 100) : 0;
 

@@ -57,8 +57,8 @@
           <h5 class="stat-titulo">Minhas Tarefas</h5>
         </div>
         <div class="stat-numero">
-          <span class="numero">{{ atividades().length.toString().padStart(2, '0') }}</span>
-          <span class="stat-label">ATIVIDADES</span>
+          <span class="numero">{{ atividadesPendentes().length.toString().padStart(2, '0') }}</span>
+          <span class="stat-label">PENDENTES</span>
         </div>
       </div>
       <button class="btn-primary-custom laranja">FAZER <i class="fi fi-br-arrow-right"></i></button>
@@ -96,24 +96,27 @@
     <div class="chart-card pendentes-card">
       <h5 class="pendentes-titulo">Atividades Pendentes</h5>
 
-      @if (atividades().length > 0) {
+      @if (atividadesPendentes().length > 0) {
         <div class="pendentes-lista">
-          @for (atv of atividades().slice(0, 4); track atv.atividade_id) {
+          @for (atv of atividadesPendentes().slice(0, 4); track atv.atividade_id) {
             <div class="pendente-item" (click)="fazerAtividade(atv.atividade_id)">
               <div class="pendente-icone">
                 <i class="fi fi-br-edit"></i>
               </div>
               <div class="pendente-info">
                 <span class="pendente-titulo-texto">{{ atv.titulo_atividade }}</span>
+                @if (atv.status === 'fazendo') {
+                  <span class="badge bg-warning text-dark" style="font-size: 10px;">Em andamento</span>
+                }
               </div>
               <i class="fi fi-br-arrow-right pendente-seta"></i>
             </div>
           }
         </div>
 
-        @if (atividades().length > 4) {
+        @if (atividadesPendentes().length > 4) {
           <button class="btn-ver-todas" (click)="irParaTarefas()">
-            Ver todas ({{ atividades().length }})
+            Ver todas ({{ atividadesPendentes().length }})
           </button>
         }
       } @else {

@@ -76,4 +76,36 @@ export class ConteudoRepository implements IConteudoRepository {
   async delete(id: number): Promise<void> {
     await this.prisma.conteudo.delete({ where: { conteudo_id: id } });
   }
+
+  async concluirConteudo(
+    alunoId: number,
+    conteudoId: number,
+  ): Promise<{ conteudo_id: number; data_conclusao: Date }> {
+    const progresso = await this.prisma.progressoConteudo.upsert({
+      where: {
+        aluno_id_conteudo_id: { aluno_id: alunoId, conteudo_id: conteudoId },
+      },
+      create: { aluno_id: alunoId, conteudo_id: conteudoId },
+      update: { data_conclusao: new Date() },
+    });
+    return {
+      conteudo_id: progresso.conteudo_id,
+      data_conclusao: progresso.data_conclusao,
+    };
+  }
+
+  async getConteudosConcluidos(alunoId: number, moduloId: number): Promise<number[]> {
+    const progressos = await this.prisma.progressoConteudo.findMany({
+      where: {
+        aluno_id: alunoId,
+        conteudo: {
+          licao: {
+            modulo_id: moduloId,
+          },
+        },
+      },
+      select: { conteudo_id: true },
+    });
+    return progressos.map((p) => p.conteudo_id);
+  }
 }

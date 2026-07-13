@@ -28,6 +28,7 @@ model User {
   respostasMultiplaEscolha RespostaMultiplaEscolha[]
   comentarios  ComentarioAluno[]
   progressosAtividade ProgressoAtividade[]
+  progressosConteudo  ProgressoConteudo[]
 }
 
 // Feed de eventos do painel admin (cadastros, aprovações, designações).
@@ -68,7 +69,8 @@ model Conteudo {
   texto_conteudo String?
   licao_id       Int
   licao          Licao   @relation(fields: [licao_id], references: [licao_id])
-  comentarios    ComentarioAluno[] 
+  comentarios    ComentarioAluno[]
+  progressos     ProgressoConteudo[]
 }
 
 model Licao {
@@ -86,6 +88,7 @@ model Atividade {
   titulo_atividade     String
   tipo_atividade       String
   enunciado            String?
+  explicacao           String?
   data_criacao         DateTime @default(now())
   licao_id             Int
   licao                Licao    @relation(fields: [licao_id], references: [licao_id], onDelete: Cascade)
@@ -105,6 +108,17 @@ model ProgressoAtividade {
   atividade      Atividade @relation(fields: [atividade_id], references: [atividade_id], onDelete: Cascade)
 
   @@unique([aluno_id, atividade_id])
+}
+
+model ProgressoConteudo {
+  progresso_id   Int      @id @default(autoincrement())
+  aluno_id       Int
+  conteudo_id    Int
+  data_conclusao DateTime @default(now())
+  aluno          User     @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  conteudo       Conteudo @relation(fields: [conteudo_id], references: [conteudo_id], onDelete: Cascade)
+
+  @@unique([aluno_id, conteudo_id])
 }
 
 model MultiplaEscolha {

@@ -6,13 +6,13 @@
   box-shadow: none;
 }
 
-.chart-card > h5 {
+.chart-card>h5 {
   font-size: 1.3rem;
   display: flex;
   align-items: center;
 }
 
-.chart-card > h5 i {
+.chart-card>h5 i {
   margin-right: 8px;
   color: #ea580c;
 }
@@ -184,6 +184,7 @@
 .empty-state {
   color: #64748b;
 }
+
 .btn-voltar-modulos {
   display: inline-flex;
   align-items: center;
@@ -207,4 +208,15 @@
   color: white;
   border-color: #ea580c;
   transform: translateX(-2px);
+}
+
+.btn-realizar-atividade {
+  background: #0f2744;
+  color: #fff;
+  border: none;
+}
+
+.btn-realizar-atividade:hover {
+  background: #1a3a5c;
+  color: #fff;
 }

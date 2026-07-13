@@ -1,8 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AlunoService } from '../../../services/aluno.service';
-import { Atividade, Licao } from '../../../model/aluno.model';
+import { AtividadeService } from '../../../services/atividade.service';
+import { Atividade } from '../../../model/atividade.model';
+import { Licao } from '../../../model/aluno.model';
+import { LicaoService } from '../../../services/licao.service';
 
 @Component({
   selector: 'app-atividades-idoso',
@@ -19,10 +21,11 @@ export class AtividadesIdosoComponent implements OnInit {
   moduloId = signal<number | null>(null);
 
   constructor(
-    private alunoService: AlunoService,
+    private atividadeService: AtividadeService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private licaoService: LicaoService
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
@@ -38,8 +41,8 @@ export class AtividadesIdosoComponent implements OnInit {
 
     try {
       const [todasAtividades, todasLicoes] = await Promise.all([
-        this.alunoService.getAtividades(),
-        this.alunoService.getLicoes()
+        this.atividadeService.getAtividades(),
+        this.licaoService.getLicoes()
       ]);
 
       const moduloId = this.moduloId();
