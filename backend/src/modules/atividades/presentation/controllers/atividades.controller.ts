@@ -32,6 +32,7 @@ export class AtividadesController {
     const atividade = await this.createAtividadeUseCase.execute({
       ...createAtividadeDto,
       enunciado: createAtividadeDto.enunciado ?? null,
+      explicacao: createAtividadeDto.explicacao ?? null,
       opcoes: createAtividadeDto.opcoes ?? [],
     });
     return AtividadePresenter.toPresentation(atividade);

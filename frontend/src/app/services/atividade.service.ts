@@ -45,6 +45,7 @@ export class AtividadeService {
     titulo_atividade: string;
     tipo_atividade: string;
     enunciado?: string | null;
+    explicacao?: string | null;
     opcoes?: Atividade['opcoes'];
     pares_associacao?: Atividade['pares_associacao'];
     licao_id: number;

@@ -64,6 +64,11 @@ export class CreateAtividadeDto {
   enunciado?: string | null;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  explicacao?: string | null;
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateOpcaoDto)

@@ -26,6 +26,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         record.licao_id,
         record.enunciado,
         opcoes,
+        record.explicacao,
       );
     } else if (record.tipo_atividade === 'associacao_imagens') {
       const dbItens = record.associacao_imagens?.itens ?? [];
@@ -83,6 +84,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         titulo_atividade: atividade.titulo_atividade,
         tipo_atividade: atividade.tipo_atividade,
         enunciado: atividade.enunciado,
+        explicacao: atividade.explicacao,
         licao_id: atividade.licao_id,
         multipla_escolha: {
           create: {

@@ -1,36 +1,6 @@
 <div class="d-flex" [style.font-size.rem]="fontSize()" style="min-height: 100vh; background: #f5f7fb;">
 
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <h5>ReviEstuda</h5>
-      <small>Plataforma Educacional</small>
-    </div>
-
-    <nav class="sidebar-nav">
-      <ul class="nav flex-column gap-1">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/aluno-idoso" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: true}">
-            Início
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/aluno-idoso/modulos" routerLinkActive="active">
-            Módulos
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/aluno-idoso/atividades" routerLinkActive="active">
-            Atividades
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()"> Sair</button>
-    </div>
-  </div>
+  <app-sidebar-idoso></app-sidebar-idoso>
 
   <div class="content-wrapper">
 
