@@ -9,6 +9,8 @@ import {
   GetAllConteudosUseCase,
   GetConteudoUseCase,
   UpdateConteudoUseCase,
+  ConcluirConteudoUseCase,
+  GetProgressoConteudosUseCase,
 } from './domain/use-cases';
 
 @Module({
@@ -21,6 +23,8 @@ import {
     GetConteudoUseCase,
     UpdateConteudoUseCase,
     DeleteConteudoUseCase,
+    ConcluirConteudoUseCase,
+    GetProgressoConteudosUseCase,
   ],
 })
 export class ConteudosModule {}

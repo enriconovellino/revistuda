@@ -29,6 +29,11 @@ export class DashboardAlunoIdosoComponent implements OnInit {
 
   moduloAtual = computed<Modulo | null>(() => this.modulos()[0] ?? null);
 
+  /** Somente atividades a fazer ou em andamento */
+  atividadesPendentes = computed<Atividade[]>(() =>
+    this.atividades().filter(a => a.status === 'a_fazer' || a.status === 'fazendo')
+  );
+
   dominioGeral = computed<number>(() => {
     const leitura = this.progressoLeitura();
     const atividades = this.progressoVideos();

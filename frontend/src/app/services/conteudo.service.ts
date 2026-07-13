@@ -65,4 +65,28 @@ export class ConteudoService {
     }
     return resData as Conteudo;
   }
+
+  async concluirConteudo(conteudoId: number): Promise<{ conteudo_id: number; data_conclusao: string }> {
+    const response = await fetch(`${this.apiUrl}/conteudos/${conteudoId}/concluir`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao marcar conteúdo como concluído');
+    }
+    return data;
+  }
+
+  async getProgressoConteudos(moduloId: number): Promise<number[]> {
+    const response = await fetch(`${this.apiUrl}/conteudos/progresso?moduloId=${moduloId}`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar progresso dos conteúdos');
+    }
+    return data as number[];
+  }
 }
+
