@@ -10,6 +10,8 @@ import { Licao } from '../../../model/licao.model';
 import { Atividade } from '../../../model/atividade.model';
 import { Conteudo } from '../../../model/conteudo.model';
 
+type VisaoDominio = 'modulos' | 'atividades';
+
 @Component({
   selector: 'app-dashboard-aluno-idoso',
   standalone: true,
@@ -28,8 +30,7 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   conteudos = signal<Conteudo[]>([]);
   conteudosConcluidosIds = signal<number[]>([]);
 
-  progressoLeitura = signal<number>(0);
-  progressoVideos = signal<number>(0);
+  visaoDominio = signal<VisaoDominio>('modulos');
 
   moduloAtual = computed<Modulo | null>(() => this.modulos()[0] ?? null);
 
@@ -38,10 +39,42 @@ export class DashboardAlunoIdosoComponent implements OnInit {
     this.atividades().filter(a => a.status === 'a_fazer' || a.status === 'fazendo')
   );
 
+  /** % de lições concluídas em todos os módulos do aluno */
+  desempenhoModulos = computed<number>(() => {
+    const licoes = this.licoes();
+    const conteudos = this.conteudos();
+    const concluidos = this.conteudosConcluidosIds();
+
+    if (licoes.length === 0) return 0;
+
+    // Uma lição é concluída quando todos os seus conteúdos estão em conteudosConcluidosIds
+    let totalConcluidas = 0;
+    for (const licao of licoes) {
+      const conteudosDaLicao = conteudos.filter(c => c.licao_id === licao.licao_id);
+      if (
+        conteudosDaLicao.length > 0 &&
+        conteudosDaLicao.every(c => concluidos.includes(c.conteudo_id))
+      ) {
+        totalConcluidas++;
+      }
+    }
+
+    return Math.round((totalConcluidas / licoes.length) * 100);
+  });
+
+  /** % de atividades concluídas */
+  desempenhoAtividades = computed<number>(() => {
+    const atividades = this.atividades();
+    if (atividades.length === 0) return 0;
+
+    const concluidas = atividades.filter(a => a.status === 'feito').length;
+    return Math.round((concluidas / atividades.length) * 100);
+  });
+
   dominioGeral = computed<number>(() => {
-    const leitura = this.progressoLeitura();
-    const atividades = this.progressoVideos();
-    return Math.round((leitura + atividades) / 2);
+    return this.visaoDominio() === 'modulos'
+      ? this.desempenhoModulos()
+      : this.desempenhoAtividades();
   });
 
   circumference = 2 * Math.PI * 70;
@@ -97,6 +130,10 @@ export class DashboardAlunoIdosoComponent implements OnInit {
     }
   }
 
+  alternarVisaoDominio(visao: VisaoDominio): void {
+    this.visaoDominio.set(visao);
+  }
+
   retomarAula(): void {
     const modulos = this.modulos();
     const licoes = this.licoes();
@@ -129,7 +166,6 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   }
 
   irParaCursos(): void {
-    // Vai direto para a tela de listagem "Meus Cursos / Módulos"
     this.router.navigate(['/aluno-idoso/modulos']);
   }
 
@@ -138,7 +174,6 @@ export class DashboardAlunoIdosoComponent implements OnInit {
   }
 
   irParaTarefas(): void {
-    // Vai direto para a tela de listagem "Minhas Tarefas / Atividades"
     this.router.navigate(['/aluno-idoso/atividades']);
   }
 }
