@@ -28,6 +28,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
   licoes = signal<Licao[]>([]);
   conteudosForLicao = signal<{ [key: number]: Conteudo[] }>({});
   atividadesPorLicao = signal<{ [key: number]: Atividade[] }>({});
+  licoesConcluidas = signal<number[]>([]);
 
   /** IDs dos conteúdos que o aluno já marcou como concluídos (salvo no banco) */
   conteudosConcluidos = signal<number[]>([]);
@@ -70,6 +71,7 @@ export class AlunoModuloDetalheComponent implements OnInit {
       const allLicoes = await this.licaoService.getLicoes();
       const filteredLicoes = allLicoes.filter((l: Licao) => l.modulo_id === this.moduloId);
       this.licoes.set(filteredLicoes);
+
 
       const allConteudos = await this.conteudoService.getConteudos();
       const mappedConteudos: { [key: number]: Conteudo[] } = {};
@@ -170,6 +172,12 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.router.navigate(['/aluno-idoso/atividade', atividade.atividade_id]);
   }
 
+
+  toggleConcluida(licaoId: number): void {
+    const atualizadas = this.alunoService.toggleLicaoConcluida(this.moduloId, licaoId);
+    this.licoesConcluidas.set(atualizadas);
+  }
+  // Métodos auxiliares de progresso e comentários
   get totalConcluidas(): number {
     return this.licoes().filter(l => this.isConcluida(l.licao_id)).length;
   }
@@ -182,24 +190,27 @@ export class AlunoModuloDetalheComponent implements OnInit {
     this.comentarios.update(atual => ({ ...atual, [conteudoId]: texto }));
   }
 
+
   estaEditandoComentario(conteudoId: number): boolean {
     const jaSalvou = !!this.comentarioSalvo()[conteudoId];
     const editando = this.editandoComentario()[conteudoId];
     return !jaSalvou || !!editando;
   }
 
+
   abrirEdicaoComentario(conteudoId: number): void {
     this.editandoComentario.update(atual => ({ ...atual, [conteudoId]: true }));
   }
-  todasLicoesConcluidas(): boolean {
-  const total = this.licoes().length;
-  return total > 0 && this.totalConcluidas === total;
-}
 
-seguirParaAtividade(): void {
-  this.router.navigate(['/aluno-idoso/atividades'], { queryParams: { moduloId: this.moduloId } });
-}
-  
+  todasLicoesConcluidas(): boolean {
+    const total = this.licoes().length;
+    return total > 0 && this.totalConcluidas === total;
+  }
+
+  seguirParaAtividade(): void {
+    this.router.navigate(['/aluno-idoso/atividades'], { queryParams: { moduloId: this.moduloId } });
+  }
+
   async salvarComentario(conteudoId: number): Promise<void> {
     const texto = this.getComentario(conteudoId);
 

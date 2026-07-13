@@ -97,7 +97,7 @@
                 <label class="form-label fw-semibold text-dark mb-2"><i class="fi fi-sr-comments"></i> O que você
                   entendeu?</label>
 
-                <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvoTpl">
+                <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvo">
                   <textarea class="form-control" rows="4"
                     placeholder="Escreva aqui o que você entendeu sobre esse conteúdo..."
                     style="resize: vertical; min-height: 90px;" [ngModel]="getComentario(conteudo.conteudo_id)"
