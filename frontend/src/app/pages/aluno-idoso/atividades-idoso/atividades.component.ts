@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AtividadeService } from '../../../services/atividade.service';
@@ -9,6 +9,8 @@ import { Licao } from '../../../model/aluno.model';
 import { LicaoService } from '../../../services/licao.service';
 import { ComentarioAlunoProfessor } from '../../../model/professor.models';
 
+import { TutorialService } from '../../../services/tutorial.service';
+
 @Component({
   selector: 'app-atividades-idoso',
   standalone: true,
@@ -17,6 +19,16 @@ import { ComentarioAlunoProfessor } from '../../../model/professor.models';
   styleUrl: './atividades.component.scss'
 })
 export class AtividadesIdosoComponent implements OnInit {
+  public tutorialService = inject(TutorialService);
+
+  proximoPassoTutorial() {
+    this.tutorialService.avancarAtividades();
+  }
+
+  iniciarTutorialAtividades() {
+    this.tutorialService.active.set(true);
+    this.tutorialService.step.set('atividadesLista');
+  }
 
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);

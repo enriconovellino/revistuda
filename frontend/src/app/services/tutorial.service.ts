@@ -16,7 +16,10 @@ export type TutorialStep =
   | 'dashboardMeusCursos'
   | 'dashboardMinhasAtividades'
   | 'dashboardDesempenho'
-  | 'dashboardPendentes';
+  | 'dashboardPendentes'
+  | 'atividadesLista'
+  | 'atividadesFazer'
+  | 'atividadesPaginacao';
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +94,14 @@ export class TutorialService {
     } else if (current === 'dashboardDesempenho') {
       this.step.set('dashboardPendentes');
     } else if (current === 'dashboardPendentes') {
+      this.completeTutorialDefinitivo();
+    }
+  }
+
+  avancarAtividades(): void {
+    if (!this.active()) return;
+    const current = this.step();
+    if (current === 'atividadesLista') {
       this.completeTutorialDefinitivo();
     }
   }
