@@ -6,17 +6,19 @@ import { User } from '../../model/auth.model';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-aluno-idoso',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive, EditarPerfilComponent, SidebarIdosoComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive, EditarPerfilComponent, SidebarIdosoComponent, ConfirmDialogComponent],
   templateUrl: './aluno-idoso.component.html',
   styleUrl: './aluno-idoso.component.scss'
 })
 export class AlunoIdosoComponent implements OnInit {
   userName = signal<string>('Aluno');
   isEditProfileOpen = signal<boolean>(false);
+  isLogoutModalOpen = signal<boolean>(false);
   fontSize = signal<number>(1.2);
 
   constructor(private authService: AuthService) { }
@@ -45,7 +47,16 @@ export class AlunoIdosoComponent implements OnInit {
     this.userName.set(updatedUser.nome);
   }
 
+  abrirModalLogout(): void {
+    this.isLogoutModalOpen.set(true);
+  }
+
+  cancelarLogout(): void {
+    this.isLogoutModalOpen.set(false);
+  }
+
   logout(): void {
+    this.isLogoutModalOpen.set(false);
     this.authService.logout();
   }
 }

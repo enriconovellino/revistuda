@@ -34,6 +34,10 @@
   </nav>
 
   <div class="sidebar-footer">
-    <button class="btn btn-outline-light w-100 btn-sm" (click)="logout()">Sair</button>
+    <button class="btn btn-sair w-100 btn-sm" (click)="abrirModalLogout()">Sair</button>
   </div>
 </div>
+
+<app-confirm-dialog [isOpen]="isLogoutModalOpen()" title="Sair da conta"
+  message="Tem certeza que deseja sair da sua conta?" confirmLabel="Sair" variant="danger"
+  (confirmed)="logout()" (cancelled)="cancelarLogout()"></app-confirm-dialog>
