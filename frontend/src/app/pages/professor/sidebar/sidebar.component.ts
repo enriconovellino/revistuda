@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, Output, EventEmitter, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
@@ -8,12 +8,30 @@ import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confi
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive, ConfirmDialogComponent],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css',
+  styleUrl: './sidebar.component.scss',
 })
-export class SidebarProfessorComponent {
+export class SidebarProfessorComponent implements OnInit {
+  @Output() collapsedChange = new EventEmitter<boolean>();
+
   private router = inject(Router);
 
   isLogoutModalOpen = signal<boolean>(false);
+  collapsed = signal<boolean>(false);
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      this.collapsed.set(localStorage.getItem('sidebarCollapsed') === 'true');
+      this.collapsedChange.emit(this.collapsed());
+    }
+  }
+
+  toggleCollapse() {
+    this.collapsed.set(!this.collapsed());
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('sidebarCollapsed', String(this.collapsed()));
+    }
+    this.collapsedChange.emit(this.collapsed());
+  }
 
   isDashboardActive(): boolean {
     const url = this.router.url;

@@ -15,6 +15,7 @@ import { Usuario } from '../../model/professor.models';
 export class ProfessorComponent implements OnInit {
   userName = signal<string>('Professor');
   isEditProfileOpen = signal<boolean>(false);
+  sidebarCollapsed = signal<boolean>(false);
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {

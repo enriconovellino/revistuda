@@ -1,34 +1,44 @@
-<div class="sidebar">
+<div class="sidebar" [class.collapsed]="collapsed()">
   <div class="sidebar-logo">
-    <h5>ReviEstuda</h5>
-    <small>Plataforma Educacional</small>
+    <div class="sidebar-logo-inner">
+      <div class="sidebar-brand" *ngIf="!collapsed()">
+        <h5>ReviEstuda</h5>
+        <small>Plataforma Educacional</small>
+      </div>
+      <div class="sidebar-brand-icon" *ngIf="collapsed()">
+        <span class="brand-icon-letter">R</span>
+      </div>
+      <button class="sidebar-toggle-btn" (click)="toggleCollapse()" [title]="collapsed() ? 'Expandir menu' : 'Minimizar menu'">
+        <i [class]="collapsed() ? 'fi fi-rr-angle-double-right' : 'fi fi-rr-angle-double-left'"></i>
+      </button>
+    </div>
   </div>
 
   <nav class="sidebar-nav">
     <ul class="nav flex-column gap-1">
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Início' : ''">
         <a class="nav-link" routerLink="/aluno-idoso" routerLinkActive="active"
           [routerLinkActiveOptions]="{exact: true}">
           <i class="fi fi-sr-apps"></i>
-          Início
+          <span *ngIf="!collapsed()"> Início</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Cursos' : ''">
         <a class="nav-link" routerLink="/aluno-idoso/modulos" routerLinkActive="active">
           <i class="fi fi-rr-book-alt"></i>
-          Cursos
+          <span *ngIf="!collapsed()"> Cursos</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Atividades' : ''">
         <a class="nav-link" routerLink="/aluno-idoso/atividades" routerLinkActive="active">
           <i class="fi fi-rr-edit"></i>
-          Atividades
+          <span *ngIf="!collapsed()"> Atividades</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Minha Conta' : ''">
         <a class="nav-link" (click)="onAbrirPerfilClick()">
           <i class="fi fi-bs-user"></i>
-          Minha Conta
+          <span *ngIf="!collapsed()"> Minha Conta</span>
         </a>
       </li>
     </ul>
