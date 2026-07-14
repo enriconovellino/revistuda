@@ -9,10 +9,7 @@
         + Nova Lição
       </button>
       <button class="btn btn-primary px-4 py-2 fw-semibold" (click)="toggleAtividadeForm()" type="button">
-         Nova Atividade
-      </button>
-      <button class="btn btn-primary px-4 py-2 fw-semibold" (click)="toggleConteudoForm()" type="button">
-        ⊕ Novo Conteúdo
+        + Nova Atividade
       </button>
     </div>
   </div>
@@ -75,10 +72,7 @@
     </div>
   </div>
 
-  <app-paginator
-    *ngIf="licoes().length > 0"
-    [paginaAtual]="paginaAtual()"
-    [totalPaginas]="totalPaginas()"
+  <app-paginator *ngIf="licoes().length > 0" [paginaAtual]="paginaAtual()" [totalPaginas]="totalPaginas()"
     (paginaMudou)="mudarPagina($event)">
   </app-paginator>
 </div>
@@ -95,8 +89,8 @@
 
     <div class="mb-3">
       <label class="nova-licao-label">Título da Lição <span class="text-danger">*</span></label>
-      <input type="text" class="nova-licao-input" placeholder="Ex: Lição 1: Somando Números"
-        [(ngModel)]="titulo" name="tituloLicao" />
+      <input type="text" class="nova-licao-input" placeholder="Ex: Lição 1: Somando Números" [(ngModel)]="titulo"
+        name="tituloLicao" />
     </div>
 
     <div class="mb-3">
@@ -105,26 +99,39 @@
         name="comentarioLicao" />
     </div>
 
-    <div class="mb-3">
-      <label class="nova-licao-label">Texto do Conteúdo</label>
-      <textarea class="nova-licao-textarea" rows="4" placeholder="Digite o texto explicativo da lição..."
-        [(ngModel)]="texto" name="textoLicao"></textarea>
+    <div class="nova-licao-secao-header d-flex justify-content-between align-items-center mb-2">
+      <label class="nova-licao-label mb-0">Conteúdos da Lição</label>
+      <button type="button" class="nova-licao-link-add" (click)="addConteudo()">+ Adicionar Conteúdo</button>
     </div>
 
-    <div class="mb-3">
-      <label class="nova-licao-label">Tipo de Mídia</label>
-      <select class="nova-licao-select" [(ngModel)]="midiaType" name="midiaTypeLicao">
-        <option value="Texto">Sem Mídia (Apenas Texto)</option>
-        <option value="Vídeo">Vídeo (Youtube)</option>
-        <option value="Áudio">Áudio</option>
-      </select>
-    </div>
+    <div class="nova-licao-questao" *ngFor="let c of conteudosForm; let ci = index">
+      <div class="nova-licao-questao-header">
+        <span class="nova-licao-questao-tag">Conteúdo {{ ci + 1 }}</span>
+        <button class="nova-licao-link-delete" type="button" *ngIf="conteudosForm.length > 1"
+          (click)="removeConteudo(ci)">Remover</button>
+      </div>
 
-    <div class="mb-4" *ngIf="midiaType !== 'Texto'">
-      <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
-      <input type="text" class="nova-licao-input"
-        [placeholder]="midiaType === 'Vídeo' ? 'Ex: https://www.youtube.com/watch?v=...' : 'Ex: https://exemplo.com/audio.mp3'"
-        [(ngModel)]="url" name="urlLicao" />
+      <div class="mb-3">
+        <label class="nova-licao-label">Texto</label>
+        <textarea class="nova-licao-textarea" rows="3" placeholder="Digite o texto explicativo..." [(ngModel)]="c.texto"
+          [name]="'conteudoTexto' + ci"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="nova-licao-label">Tipo de Mídia</label>
+        <select class="nova-licao-select" [(ngModel)]="c.midiaType" [name]="'midiaType' + ci">
+          <option value="Texto">Sem Mídia (Apenas Texto)</option>
+          <option value="Vídeo">Vídeo (Youtube)</option>
+          <option value="Áudio">Áudio</option>
+        </select>
+      </div>
+
+      <div class="mb-3" *ngIf="c.midiaType !== 'Texto'">
+        <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
+        <input type="text" class="nova-licao-input"
+          [placeholder]="c.midiaType === 'Vídeo' ? 'Ex: https://www.youtube.com/watch?v=...' : 'Ex: https://exemplo.com/audio.mp3'"
+          [(ngModel)]="c.url" [name]="'url' + ci" />
+      </div>
     </div>
 
     <button class="nova-licao-btn" (click)="criarLicao()" [disabled]="saving()">
@@ -134,56 +141,7 @@
   </div>
 </div>
 
-<!-- ================= Modal: Novo Conteúdo ================= -->
-<div class="nova-licao-modal-backdrop" *ngIf="showConteudoForm()" (click)="toggleConteudoForm()">
-  <div class="nova-licao-modal" (click)="$event.stopPropagation()">
-    <div class="nova-licao-modal-header">
-      <h6 class="nova-licao-subform-title">Novo Conteúdo</h6>
-      <button class="nova-licao-modal-close" (click)="toggleConteudoForm()" type="button">✕</button>
-    </div>
 
-    <div class="nova-licao-alert" *ngIf="conteudoError()">{{ conteudoError() }}</div>
-
-    <div class="mb-3">
-      <label class="nova-licao-label">Lição <span class="text-danger">*</span></label>
-      <select class="nova-licao-select" [(ngModel)]="conteudoLicaoId" name="conteudoLicao">
-        <option *ngFor="let l of licoes()" [ngValue]="l.licao_id">
-          {{ l.titulo_licao }} ({{ countConteudos(l.licao_id) }}/{{ maxItensPorLicao }})
-        </option>
-      </select>
-      <small class="nova-licao-hint" *ngIf="conteudoLimiteAtingido(conteudoLicaoId)">
-        Essa lição já atingiu o limite de {{ maxItensPorLicao }} conteúdos.
-      </small>
-    </div>
-
-    <div class="mb-3">
-      <label class="nova-licao-label">Texto do Conteúdo</label>
-      <textarea class="nova-licao-textarea" rows="3" placeholder="Digite o texto do conteúdo..."
-        [(ngModel)]="conteudoTexto" name="conteudoTexto"></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="nova-licao-label">Tipo de Mídia</label>
-      <select class="nova-licao-select" [(ngModel)]="conteudoMidiaType" name="conteudoMidiaType">
-        <option value="Texto">Sem Mídia (Apenas Texto)</option>
-        <option value="Vídeo">Vídeo (Youtube)</option>
-        <option value="Áudio">Áudio</option>
-      </select>
-    </div>
-
-    <div class="mb-3" *ngIf="conteudoMidiaType !== 'Texto'">
-      <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
-      <input type="text" class="nova-licao-input" placeholder="Insira o link da mídia..."
-        [(ngModel)]="conteudoUrl" name="conteudoUrl" />
-    </div>
-
-    <button class="nova-licao-btn" (click)="adicionarConteudo()"
-      [disabled]="savingConteudo() || conteudoLimiteAtingido(conteudoLicaoId)">
-      <span class="spinner-border spinner-border-sm" role="status" *ngIf="savingConteudo()"></span>
-      {{ savingConteudo() ? 'Salvando...' : 'Salvar Conteúdo' }}
-    </button>
-  </div>
-</div>
 
 <!-- ================= Modal: Nova Atividade (múltiplas questões) ================= -->
 <div class="nova-licao-modal-backdrop" *ngIf="showAtividadeForm()" (click)="toggleAtividadeForm()">
@@ -209,10 +167,11 @@
 
     <div class="mb-3">
       <label class="nova-licao-label">Título da Atividade <span class="text-danger">*</span></label>
-      <input type="text" class="nova-licao-input" placeholder="Ex: Quiz de revisão"
-        [(ngModel)]="atividadeTitulo" name="atividadeTitulo" />
+      <input type="text" class="nova-licao-input" placeholder="Ex: Quiz de revisão" [(ngModel)]="atividadeTitulo"
+        name="atividadeTitulo" />
       <small class="nova-licao-hint" *ngIf="atividadeQuestoes.length > 1">
-        Com mais de 1 questão, cada uma vira um item separado numerado (ex: "{{ atividadeTitulo || 'Título' }} - Questão 1").
+        Com mais de 1 questão, cada uma vira um item separado numerado (ex: "{{ atividadeTitulo || 'Título' }} - Questão
+        1").
       </small>
     </div>
 
@@ -251,8 +210,7 @@
 
         <div class="mb-3 mt-3">
           <label class="nova-licao-label">Explicação da resposta correta <span class="text-danger">*</span></label>
-          <textarea class="nova-licao-textarea" rows="3"
-            placeholder="Explique por que a resposta correta está certa..."
+          <textarea class="nova-licao-textarea" rows="3" placeholder="Explique por que a resposta correta está certa..."
             [(ngModel)]="questao.explicacao" [name]="'explicacaoQuestao' + qi"></textarea>
           <small class="nova-licao-hint">O aluno verá esta explicação após responder a questão.</small>
         </div>
@@ -284,8 +242,8 @@
                 <input type="file" class="nova-licao-input" accept="image/*"
                   (change)="onFileSelected($event, par.esquerdo)" />
                 <div *ngIf="par.esquerdo.uploading" class="nova-licao-hint">Enviando...</div>
-                <img *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading" [src]="getImageUrl(par.esquerdo.imagem_url)"
-                  class="nova-licao-par-preview" />
+                <img *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading"
+                  [src]="getImageUrl(par.esquerdo.imagem_url)" class="nova-licao-par-preview" />
               </div>
             </div>
 
@@ -301,8 +259,8 @@
                 <input type="file" class="nova-licao-input" accept="image/*"
                   (change)="onFileSelected($event, par.direito)" />
                 <div *ngIf="par.direito.uploading" class="nova-licao-hint">Enviando...</div>
-                <img *ngIf="par.direito.imagem_url && !par.direito.uploading" [src]="getImageUrl(par.direito.imagem_url)"
-                  class="nova-licao-par-preview" />
+                <img *ngIf="par.direito.imagem_url && !par.direito.uploading"
+                  [src]="getImageUrl(par.direito.imagem_url)" class="nova-licao-par-preview" />
               </div>
             </div>
           </div>
