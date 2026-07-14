@@ -9,7 +9,13 @@ export type TutorialStep =
   | 'preencherNome' 
   | 'preencherEmailCadastro' 
   | 'preencherSenhaCadastro' 
-  | 'step3';
+  | 'irParaLogin'
+  | 'step3'
+  | 'dashboardContinuar'
+  | 'dashboardMeusCursos'
+  | 'dashboardMinhasAtividades'
+  | 'dashboardDesempenho'
+  | 'dashboardPendentes';
 
 @Injectable({
   providedIn: 'root'
@@ -59,11 +65,36 @@ export class TutorialService {
     } else if (campoAtual === 'emailCadastro' && this.step() === 'preencherEmailCadastro') {
       this.step.set('preencherSenhaCadastro');
     } else if (campoAtual === 'senhaCadastro' && this.step() === 'preencherSenhaCadastro') {
-      this.step.set('step3');
+      this.step.set('irParaLogin');
     }
   }
 
   completeTutorial(): void {
+    // Ao completar o login/cadastro, avançamos o tutorial para o dashboard
+    this.step.set('dashboardContinuar');
+    this.showSuccessFeedback.set(true);
+    setTimeout(() => {
+      this.showSuccessFeedback.set(false);
+    }, 4000);
+  }
+
+  avancarDashboard(): void {
+    if (!this.active()) return;
+    const current = this.step();
+    if (current === 'dashboardContinuar') {
+      this.step.set('dashboardMeusCursos');
+    } else if (current === 'dashboardMeusCursos') {
+      this.step.set('dashboardMinhasAtividades');
+    } else if (current === 'dashboardMinhasAtividades') {
+      this.step.set('dashboardDesempenho');
+    } else if (current === 'dashboardDesempenho') {
+      this.step.set('dashboardPendentes');
+    } else if (current === 'dashboardPendentes') {
+      this.completeTutorialDefinitivo();
+    }
+  }
+
+  completeTutorialDefinitivo(): void {
     this.active.set(false);
     this.step.set('none');
     this.showSuccessFeedback.set(false);

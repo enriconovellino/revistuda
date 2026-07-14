@@ -89,6 +89,9 @@ export class LoginIdosoComponent implements OnDestroy {
     this.modoLogin.set(login);
     this.erro.set(null);
     this.pararVoz();
+    if (this.tutorialService.active() && login && this.tutorialService.step() === 'irParaLogin') {
+      this.tutorialService.step.set('step3');
+    }
   }
 
   toggleSenha() { this.mostrarSenha = !this.mostrarSenha; }
@@ -256,6 +259,12 @@ export class LoginIdosoComponent implements OnDestroy {
       this.carregando.set(true);
       this.erro.set(null);
       const data = await this.authService.login({ email: this.email, senha: this.senha });
+      
+      // Concluir o tutorial se estiver ativo
+      if (this.tutorialService.active()) {
+        this.tutorialService.completeTutorial();
+      }
+
       this.authService.redirectUserBasedOnRole(data.user);
     } catch (err: unknown) {
       this.erro.set(getErrorMessage(err, 'E-mail ou senha incorretos.'));

@@ -558,3 +558,65 @@ $fonte-base:  1.15em;
     box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
   }
 }
+
+.tooltip-tutorial-balao {
+  position: absolute;
+  top: -55px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17a2b8;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  animation: bounce 1.5s infinite;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #17a2b8 transparent;
+    display: block;
+    width: 0;
+  }
+
+  /* Estilos específicos para tooltips posicionados embaixo */
+  &.tooltip-bottom {
+    top: auto !important;
+    bottom: -55px !important;
+    animation: bounce-bottom 1.5s infinite !important;
+
+    &::after {
+      bottom: auto !important;
+      top: -8px !important;
+      border-width: 0 8px 8px !important;
+      border-color: transparent transparent #17a2b8 !important;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -8px);
+  }
+}
+
+@keyframes bounce-bottom {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, 8px);
+  }
+}

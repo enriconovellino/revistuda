@@ -14,17 +14,44 @@
 </div>
 }
 
+
+
+<!-- Botão no topo do dashboard para iniciar/reiniciar o tutorial à vontade -->
+<div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center" *ngIf="!tutorialService.active()">
+  <span class="text-muted fw-bold" style="font-size: 1.15rem;"><i class="fi fi-sr-info text-info me-2"></i> Precisa de ajuda para entender a tela?</span>
+  <button type="button" class="btn btn-info text-white border-2 px-3 fw-bold btn-sm" (click)="iniciarTutorialDashboard()">
+    <i class="fi fi-rr-graduation-cap me-1"></i> Iniciar Tutorial da Tela
+  </button>
+</div>
+
+<div class="feedback-sucesso-tutorial" *ngIf="tutorialService.showSuccessFeedback()">
+  <div class="feedback-box">
+    <i class="fi fi-sr-checkbox"></i>
+    <span>Parabéns! Login efetuado com sucesso.</span>
+  </div>
+</div>
+
+<!-- Overlay para escurecer o fundo no Tutorial Guiado por Destaque -->
+<div class="tutorial-backdrop-overlay" *ngIf="tutorialService.active() && tutorialService.step().startsWith('dashboard')"></div>
+
 @if (!isLoading() && !hasError()) {
-<div class="p-4">
+<div class="p-4" [class.com-tutorial]="tutorialService.active() && tutorialService.step().startsWith('dashboard')">
 
   @if (moduloAtual(); as modulo) {
-  <div class="banner-continuar" (click)="retomarAula()">
-    <div class="banner-info">
+  <div class="banner-continuar position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardContinuar'">
+    <!-- Tooltip explicativo com Botão de Avanço -->
+    <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardContinuar'">
+      <div class="d-flex flex-column gap-2 text-center">
+        <span>Clique abaixo para ir para o próximo passo!</span>
+        <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+      </div>
+    </div>
+    <div class="banner-info" (click)="retomarAula()">
       <span class="banner-tag">CONTINUAR AGORA</span>
       <h2>{{ modulo.titulo_modulo }}</h2>
       <p>{{ modulo.descricao_modulo }}</p>
     </div>
-    <button class="btn-play">
+    <button class="btn-play" (click)="retomarAula()">
       <i class="fi fi-br-play play-icon"></i>
       <span>RETOMAR AULA</span>
     </button>
@@ -32,8 +59,15 @@
   }
 
   <div class="cards-resumo">
-    <div class="stat-card verde" (click)="irParaCursos()">
-      <div class="stat-card-top">
+    <div class="stat-card verde position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardMeusCursos'">
+      <!-- Tooltip explicativo com Botão de Avanço -->
+      <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardMeusCursos'">
+        <div class="d-flex flex-column gap-2 text-center">
+          <span>Aqui ficam as matérias.</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        </div>
+      </div>
+      <div class="stat-card-top" (click)="irParaCursos()">
         <div class="stat-card-titulo">
           <div class="stat-icon">
             <i class="fi fi-br-book-alt"></i>
@@ -45,11 +79,18 @@
           <span class="stat-label">CURSOS</span>
         </div>
       </div>
-      <button class="btn-primary-custom">ABRIR <i class="fi fi-br-arrow-right"></i></button>
+      <button class="btn-primary-custom" (click)="irParaCursos()">ABRIR <i class="fi fi-br-arrow-right"></i></button>
     </div>
 
-    <div class="stat-card laranja" (click)="irParaTarefas()">
-      <div class="stat-card-top">
+    <div class="stat-card laranja position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardMinhasAtividades'">
+      <!-- Tooltip explicativo com Botão de Avanço -->
+      <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardMinhasAtividades'">
+        <div class="d-flex flex-column gap-2 text-center">
+          <span>Aqui ficam as atividades.</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        </div>
+      </div>
+      <div class="stat-card-top" (click)="irParaTarefas()">
         <div class="stat-card-titulo">
           <div class="stat-icon">
             <i class="fi fi-br-edit"></i>
@@ -61,12 +102,19 @@
           <span class="stat-label">PENDENTES</span>
         </div>
       </div>
-      <button class="btn-primary-custom laranja">FAZER <i class="fi fi-br-arrow-right"></i></button>
+      <button class="btn-primary-custom laranja" (click)="irParaTarefas()">FAZER <i class="fi fi-br-arrow-right"></i></button>
     </div>
   </div>
 
   <div class="cards-progresso">
-    <div class="chart-card progresso-circular-card">
+    <div class="chart-card progresso-circular-card position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardDesempenho'">
+      <!-- Tooltip explicativo com Botão de Avanço -->
+      <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardDesempenho'">
+        <div class="d-flex flex-column gap-2 text-center">
+          <span>Seu rendimento em estudos.</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        </div>
+      </div>
       <h5 class="progresso-titulo">Desempenho Geral</h5>
 
       <div class="toggle-dominio">
@@ -99,7 +147,14 @@
       </span>
     </div>
 
-    <div class="chart-card pendentes-card">
+    <div class="chart-card pendentes-card position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardPendentes'">
+      <!-- Tooltip explicativo com Botão de Avanço -->
+      <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardPendentes'">
+        <div class="d-flex flex-column gap-2 text-center">
+          <span>Seu mural de pendências.</span>
+          <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial()">Entendi, começar!</button>
+        </div>
+      </div>
       <h5 class="pendentes-titulo">Atividades Pendentes</h5>
 
       @if (atividadesPendentes().length > 0) {
@@ -133,7 +188,4 @@
     </div>
   </div>
 </div>
-
-
-
 }

@@ -204,6 +204,8 @@
 .content-wrapper {
   margin-left: 15rem;
   flex-grow: 1;
+  max-width: calc(100vw - 15rem);
+  overflow-x: hidden;
 }
 
 /* OTHER STYLES */

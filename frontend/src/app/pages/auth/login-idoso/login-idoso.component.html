@@ -29,8 +29,11 @@
       <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'preencherSenhaCadastro'">
         <strong>Tarefa:</strong> Muito bem! Agora clique no campo <strong>"Crie uma senha"</strong> destacado abaixo.
       </p>
+      <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'irParaLogin'">
+        <strong>Tarefa:</strong> Muito bem! Você preencheu tudo. Agora clique no botão <strong>"Já tenho conta — Entrar"</strong> destacado abaixo para ir ao login.
+      </p>
       <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'step3'">
-        <strong>Tarefa:</strong> Muito bem! Você conseguiu preencher. Agora clique no link <strong>Voltar</strong>.
+        <strong>Tarefa:</strong> Muito bem! Você conseguiu. Agora clique no botão <strong>"Entrar"</strong> destacado abaixo para terminar o tutorial.
       </p>
     </div>
     <button type="button" class="btn-cancelar-tutorial" (click)="tutorialService.cancelTutorial()">
@@ -63,10 +66,18 @@
       <div class="bloco-pergunta-tutorial" *ngIf="tutorialService.active() && tutorialService.step() === 'pergunta'">
         <h3 class="titulo-pergunta-tut">Você já tem e-mail e senha cadastrados?</h3>
         <div class="d-flex flex-column gap-3 mt-4">
-          <button type="button" class="btn-resposta-tut btn-ja-tenho" (click)="escolhaContaTutorial(true)">
+          <button type="button" class="btn-resposta-tut btn-ja-tenho position-relative" (click)="escolhaContaTutorial(true)">
+            <!-- Tooltip explicativo -->
+            <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'pergunta'">
+              Clique aqui se já tem cadastro!
+            </div>
             <i class="fi fi-sr-checkbox me-2"></i> Sim, já tenho conta
           </button>
-          <button type="button" class="btn-resposta-tut btn-criar" (click)="escolhaContaTutorial(false)">
+          <button type="button" class="btn-resposta-tut btn-criar position-relative" (click)="escolhaContaTutorial(false)">
+            <!-- Tooltip explicativo -->
+            <div class="tooltip-tutorial-balao tooltip-bottom" *ngIf="tutorialService.active() && tutorialService.step() === 'pergunta'">
+              Clique aqui para criar uma conta!
+            </div>
             <i class="fi fi-sr-add-document me-2"></i> Não, preciso cadastrar
           </button>
         </div>
@@ -82,7 +93,11 @@
 
           <div class="campo-grupo">
             <label class="campo-label" for="email">Seu e-mail</label>
-            <div class="campo-input-wrap" [class.campo-erro]="emailTocado && !email.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherEmail'">
+            <div class="campo-input-wrap position-relative" [class.campo-erro]="emailTocado && !email.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherEmail'">
+              <!-- Tooltip explicativo -->
+              <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'preencherEmail'">
+                Clique e escreva seu e-mail aqui!
+              </div>
               <i class="fi fi-rr-envelope campo-icone"></i>
               <input id="email" type="email" class="campo-input" placeholder="exemplo@email.com" [(ngModel)]="email"
                 (blur)="marcarTocado('email')" (focus)="interagirComCampos('email')" autocomplete="email" maxlength="50" />
@@ -92,7 +107,11 @@
 
           <div class="campo-grupo">
             <label class="campo-label" for="senha">Sua senha</label>
-            <div class="campo-input-wrap" [class.campo-erro]="senhaTocada && !senha.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherSenha'">
+            <div class="campo-input-wrap position-relative" [class.campo-erro]="senhaTocada && !senha.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherSenha'">
+              <!-- Tooltip explicativo -->
+              <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'preencherSenha'">
+                Clique e escreva sua senha aqui!
+              </div>
               <i class="fi fi-rr-lock campo-icone"></i>
               <input id="senha" [type]="mostrarSenha ? 'text' : 'password'" class="campo-input"
                 placeholder="Digite sua senha" [(ngModel)]="senha" (blur)="marcarTocado('senha')" (focus)="interagirComCampos('senha')"
@@ -114,7 +133,11 @@
             </span>
           </button>
 
-          <button type="button" class="btn-entrar" (click)="login()" [disabled]="carregando()">
+          <button type="button" class="btn-entrar position-relative" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'step3'" (click)="login()" [disabled]="carregando()">
+            <!-- Tooltip explicativo -->
+            <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'step3'">
+              Clique aqui para terminar!
+            </div>
             <span *ngIf="!carregando()">Entrar <i class="fi fi-rr-arrow-right"></i></span>
           </button>
 
@@ -128,7 +151,11 @@
 
           <div class="campo-grupo">
             <label class="campo-label" for="nome">Seu nome completo</label>
-            <div class="campo-input-wrap" [class.campo-erro]="nomeTocado && !nome.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherNome'">
+            <div class="campo-input-wrap position-relative" [class.campo-erro]="nomeTocado && !nome.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherNome'">
+              <!-- Tooltip explicativo -->
+              <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'preencherNome'">
+                Clique e escreva seu nome completo aqui!
+              </div>
               <i class="fi fi-rr-user campo-icone"></i>
               <input id="nome" type="text" class="campo-input" placeholder="Como devemos te chamar?" [(ngModel)]="nome"
                 (blur)="marcarTocado('nome')" (focus)="interagirComCampos('nome')" autocomplete="name" maxlength="100" />
@@ -138,7 +165,11 @@
 
           <div class="campo-grupo">
             <label class="campo-label" for="emailCadastro">Seu e-mail</label>
-            <div class="campo-input-wrap" [class.campo-erro]="emailCadastroTocado && !emailCadastro.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherEmailCadastro'">
+            <div class="campo-input-wrap position-relative" [class.campo-erro]="emailCadastroTocado && !emailCadastro.trim()" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherEmailCadastro'">
+              <!-- Tooltip explicativo -->
+              <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'preencherEmailCadastro'">
+                Clique e escreva seu e-mail aqui!
+              </div>
               <i class="fi fi-rr-envelope campo-icone"></i>
               <input id="emailCadastro" type="email" class="campo-input" placeholder="exemplo@email.com"
                 [(ngModel)]="emailCadastro" (blur)="marcarTocado('emailCadastro')" (focus)="interagirComCampos('emailCadastro')" autocomplete="email" maxlength="50" />
@@ -148,7 +179,11 @@
 
           <div class="campo-grupo">
             <label class="campo-label" for="senhaCadastro">Crie uma senha</label>
-            <div class="campo-input-wrap" [class.campo-erro]="senhaCadastroTocada && senhaCadastro.trim().length < 6" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherSenhaCadastro'">
+            <div class="campo-input-wrap position-relative" [class.campo-erro]="senhaCadastroTocada && senhaCadastro.trim().length < 6" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'preencherSenhaCadastro'">
+              <!-- Tooltip explicativo -->
+              <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'preencherSenhaCadastro'">
+                Crie e digite uma senha aqui!
+              </div>
               <i class="fi fi-rr-lock campo-icone"></i>
               <input id="senhaCadastro" [type]="mostrarSenhaCadastro ? 'text' : 'password'" class="campo-input"
                 placeholder="Mínimo 6 caracteres" [(ngModel)]="senhaCadastro" (blur)="marcarTocado('senhaCadastro')"
@@ -176,7 +211,11 @@
             <span *ngIf="!carregando()">Cadastrar <i class="fi fi-rr-arrow-right"></i></span>
           </button>
 
-          <button type="button" class="btn-cadastrar" (click)="setModo(true)">
+          <button type="button" class="btn-cadastrar position-relative" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'irParaLogin'" (click)="setModo(true)">
+            <!-- Tooltip explicativo -->
+            <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'irParaLogin'">
+              Clique aqui para ir para a tela de entrar!
+            </div>
             Já tenho conta — Entrar
           </button>
         </ng-container>
@@ -192,7 +231,6 @@
         <!-- Link Voltar no fim do card sem quebrar estrutura -->
         <div class="text-center mt-4">
           <a class="text-primary small fw-semibold link-voltar-nav" style="cursor: pointer; font-size: 1.1rem; text-decoration: underline;" 
-             [class.highlight-voltar]="tutorialService.active() && tutorialService.step() === 'step3'"
              (click)="voltarTutorial()">
             ← Voltar para a tela inicial
           </a>

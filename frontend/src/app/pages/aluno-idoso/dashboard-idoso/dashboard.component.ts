@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { AtividadeService } from '../../../services/atividade.service';
 import { ConteudoService } from '../../../services/conteudo.service';
+import { TutorialService } from '../../../services/tutorial.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Atividade } from '../../../model/atividade.model';
@@ -20,6 +21,16 @@ type VisaoDominio = 'modulos' | 'atividades';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardAlunoIdosoComponent implements OnInit {
+  public tutorialService = inject(TutorialService);
+
+  proximoPassoTutorial() {
+    this.tutorialService.avancarDashboard();
+  }
+
+  iniciarTutorialDashboard() {
+    this.tutorialService.active.set(true);
+    this.tutorialService.step.set('dashboardContinuar');
+  }
 
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);
