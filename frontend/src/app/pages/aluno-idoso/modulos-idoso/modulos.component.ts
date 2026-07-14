@@ -1,9 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { ConteudoService } from '../../../services/conteudo.service';
+import { TutorialService } from '../../../services/tutorial.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { environment } from '../../../../environments/environment';
@@ -23,6 +24,16 @@ interface ModuloComProgresso extends Modulo {
   styleUrl: './modulos.component.scss'
 })
 export class ModulosIdosoComponent implements OnInit {
+  public tutorialService = inject(TutorialService);
+
+  proximoPassoTutorial() {
+    this.tutorialService.avancarCursos();
+  }
+
+  iniciarTutorialCursos() {
+    this.tutorialService.active.set(true);
+    this.tutorialService.step.set('cursosLista');
+  }
 
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);

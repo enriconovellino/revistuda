@@ -17,6 +17,38 @@
   border-bottom: 1px solid #e2e8f0;
   background: white;
 }
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.btn-voltar-topo {
+  background: $azul-escuro;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 1px 3px rgba(15, 39, 68, 0.15);
+
+  i {
+    font-size: 1rem;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    background: color.adjust($azul-escuro, $lightness: 10%);
+    box-shadow: 0 4px 10px rgba(15, 39, 68, 0.3);
+  }
+}
+
 .header-boas-vindas {
   text-align: center;
   font-size: 1.4rem;
@@ -202,8 +234,11 @@
 
 /* MAIN CONTAINER SCALING MARGIN */
 .content-wrapper {
+  margin-left: 15rem;
   flex-grow: 1;
   min-width: 0;
+  max-width: calc(100vw - 15rem);
+  overflow-x: hidden;
 }
 
 /* OTHER STYLES */
@@ -249,6 +284,7 @@
   background: #ecfdf5;
   color: #047857;
 }
+
 /* BOTÃO SAIR NO HEADER */
 .btn-sair-topo {
   background: rgba(239, 68, 68, 0.1);

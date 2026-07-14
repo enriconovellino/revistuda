@@ -1,4 +1,15 @@
-<div class="p-4">
+<!-- Botão no topo do dashboard para iniciar/reiniciar o tutorial à vontade -->
+<div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center mb-4" *ngIf="!tutorialService.active()" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+  <span class="text-muted fw-bold" style="font-size: 1.15rem;"><i class="fi fi-sr-info text-info me-2"></i> Precisa de ajuda para entender esta tela?</span>
+  <button type="button" class="btn btn-info text-white border-2 px-3 fw-bold btn-sm" (click)="iniciarTutorialCursos()">
+    <i class="fi fi-rr-graduation-cap me-1"></i> Iniciar Tutorial da Tela
+  </button>
+</div>
+
+<!-- Overlay para escurecer o fundo no Tutorial Guiado por Destaque -->
+<div class="tutorial-backdrop-overlay" *ngIf="tutorialService.active() && tutorialService.step().startsWith('cursos')"></div>
+
+<div class="p-4" [class.com-tutorial]="tutorialService.active() && tutorialService.step().startsWith('cursos')">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h4 class="mb-0 fw-bold">Meus Cursos</h4>
@@ -22,8 +33,16 @@
   @if (!isLoading() && !hasError()) {
   @if (modulos().length > 0) {
   <div class="modulos-grid">
-    @for (modulo of modulos(); track modulo.modulo_id) {
-    <div class="modulo-card" (click)="acessarModulo(modulo.modulo_id)">
+    @for (modulo of modulos(); track modulo.modulo_id; let first = $first) {
+    <div class="modulo-card position-relative" [class.highlight-tutorial-item]="first && tutorialService.active() && tutorialService.step() === 'cursosLista'" (click)="tutorialService.active() ? proximoPassoTutorial() : acessarModulo(modulo.modulo_id)">
+      <!-- Tooltip explicativo com Botão de Avanço finalizando o tutorial -->
+      <div class="tooltip-tutorial-balao" *ngIf="first && tutorialService.active() && tutorialService.step() === 'cursosLista'">
+        <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+          <span>Aqui você vê os seus cursos! Clique no card para abrir o curso e começar a estudar as lições.</span>
+          <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial(); $event.stopPropagation()">Concluir Tutorial!</button>
+        </div>
+      </div>
+
       <div class="modulo-capa">
         @if (modulo.imagem_url) {
         <img [src]="getImageUrl(modulo.imagem_url)" [alt]="modulo.titulo_modulo" class="modulo-imagem">

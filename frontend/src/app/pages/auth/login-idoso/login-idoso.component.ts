@@ -1,8 +1,9 @@
-import { Component, signal, OnDestroy } from '@angular/core';
+import { Component, signal, OnDestroy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { TutorialService } from '../../../services/tutorial.service';
 
 // A Web Speech API não tem tipos oficiais no TS por padrão — declaramos
 // aqui só o mínimo necessário para não precisar usar "any".
@@ -73,6 +74,8 @@ export class LoginIdosoComponent implements OnDestroy {
   campoAlvo = signal<string | null>(null);
   mensagemVoz = signal<string | null>(null);
 
+  public tutorialService = inject(TutorialService);
+
   private recognition: SpeechRecognitionLike | null = null;
 
   constructor(
@@ -86,6 +89,9 @@ export class LoginIdosoComponent implements OnDestroy {
     this.modoLogin.set(login);
     this.erro.set(null);
     this.pararVoz();
+    if (this.tutorialService.active() && login && this.tutorialService.step() === 'irParaLogin') {
+      this.tutorialService.step.set('step3');
+    }
   }
 
   toggleSenha() { this.mostrarSenha = !this.mostrarSenha; }
@@ -253,6 +259,12 @@ export class LoginIdosoComponent implements OnDestroy {
       this.carregando.set(true);
       this.erro.set(null);
       const data = await this.authService.login({ email: this.email, senha: this.senha });
+      
+      // Concluir o tutorial se estiver ativo
+      if (this.tutorialService.active()) {
+        this.tutorialService.completeTutorial();
+      }
+
       this.authService.redirectUserBasedOnRole(data.user);
     } catch (err: unknown) {
       this.erro.set(getErrorMessage(err, 'E-mail ou senha incorretos.'));
@@ -277,6 +289,12 @@ export class LoginIdosoComponent implements OnDestroy {
         senha: this.senhaCadastro,
         permission: 'ALUNO_IDOSO'
       });
+      
+      // Se estiver no tutorial, completamos a etapa de cadastro e colocamos em modo login para ele realizar a entrada oficial
+      if (this.tutorialService.active() && this.tutorialService.step() === 'clicarCadastrar') {
+        this.tutorialService.step.set('preencherEmail');
+      }
+
       this.setModo(true);
     } catch (err: unknown) {
       this.erro.set(getErrorMessage(err, 'Erro ao cadastrar.'));
@@ -287,5 +305,25 @@ export class LoginIdosoComponent implements OnDestroy {
 
   irParaEsqueciSenha() {
     this.router.navigate(['/esqueci-senha']);
+  }
+
+  interagirComCampos(campo: 'email' | 'senha' | 'nome' | 'emailCadastro' | 'senhaCadastro') {
+    if (this.tutorialService.active()) {
+      this.tutorialService.avancarPreenchimento(campo);
+    }
+  }
+
+  escolhaContaTutorial(tem: boolean) {
+    this.tutorialService.setEscolhaConta(tem);
+    this.setModo(tem);
+  }
+
+  voltarTutorial() {
+    if (this.tutorialService.active() && this.tutorialService.step() === 'step3') {
+      this.tutorialService.completeTutorial();
+    } else {
+      this.tutorialService.cancelTutorial();
+    }
+    this.router.navigate(['/']);
   }
 }

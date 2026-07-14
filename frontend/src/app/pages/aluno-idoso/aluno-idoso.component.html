@@ -5,7 +5,11 @@
   <div class="content-wrapper" [style.margin-left]="sidebarCollapsed() ? '68px' : '15rem'" style="transition: margin-left 0.25s ease;">
 
    <div class="main-header">
-  <div class="header-spacer"></div>
+     <div class="header-left">
+       <button *ngIf="showBackButton()" (click)="voltar()" class="btn-voltar-topo">
+         <i class="fi fi-rr-arrow-small-left"></i> Voltar para Tela Inicial
+       </button>
+     </div>
 
   <div class="header-boas-vindas"> Seja 
     Bem-vindo, <strong>{{ userName() }}</strong>
