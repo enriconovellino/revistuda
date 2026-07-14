@@ -4,29 +4,34 @@
 
   <div class="content-wrapper">
 
-    <div class="main-header d-flex justify-content-between align-items-center">
-      <button class="btn-sair-topo" (click)="logout()">Sair</button>
+   <div class="main-header">
+  <div class="header-spacer"></div>
 
-      <div class="d-flex align-items-center gap-4">
-        <div class="font-controls">
-          <span class="text-muted small fw-semibold">Texto:</span>
-          <button class="font-btn" (click)="changeFontSize(-0.1)" id="font-decrease" title="Diminuir Texto">A-</button>
-          <button class="font-btn" (click)="changeFontSize(0.1)" id="font-increase" title="Aumentar Texto">A+</button>
-        </div>
+  <div class="header-boas-vindas"> Seja 
+    Bem-vindo, <strong>{{ userName() }}</strong>
+  </div>
 
-        <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
-          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-            style="width: 36px; height: 36px; background: #0f2744 !important;">
-            {{ userName().charAt(0).toUpperCase() }}
-          </div>
-          <div>
-            <div class="fw-semibold small">{{ userName() }}</div>
-            <div class="text-muted" style="font-size: 11px;">Aluno(a)</div>
-          </div>
-        </div>
+  <div class="header-acoes">
+    <div class="font-controls">
+      <span class="text-muted small fw-semibold">Texto:</span>
+      <button class="font-btn" (click)="changeFontSize(-0.1)" id="font-decrease" title="Diminuir Texto">A-</button>
+      <button class="font-btn" (click)="changeFontSize(0.1)" id="font-increase" title="Aumentar Texto">A+</button>
+    </div>
+
+    <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
+      <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+        style="width: 36px; height: 36px; background: #0f2744 !important;">
+        {{ userName().charAt(0).toUpperCase() }}
+      </div>
+      <div>
+        <div class="fw-semibold small">{{ userName() }}</div>
+        <div class="text-muted" style="font-size: 11px;">Aluno(a)</div>
       </div>
     </div>
 
+    <button class="btn-sair-topo" (click)="logout()">Sair</button>
+  </div>
+</div>
     <router-outlet></router-outlet>
 
   </div>
