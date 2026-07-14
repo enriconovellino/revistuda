@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, signal, inject, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ProfessorService } from '../../../services/professor.service';
 import { LicaoService } from '../../../services/licao.service';
 import { ConteudoService } from '../../../services/conteudo.service';
@@ -233,6 +233,26 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     }
   }
 
+  // --- Submits (chamados pelo (ngSubmit) dos <form> no template) ---
+  // ✅ Garante que, ao clicar em "Criar Lição"/"Salvar Atividade" sem preencher nada,
+  //    TODOS os campos exibam erro de uma vez (não só os que o usuário já tocou).
+
+  onSubmitLicao(form: NgForm) {
+    if (form.invalid) {
+      form.form.markAllAsTouched();
+      return;
+    }
+    this.criarLicao();
+  }
+
+  onSubmitAtividade(form: NgForm) {
+    if (form.invalid) {
+      form.form.markAllAsTouched();
+      return;
+    }
+    this.adicionarAtividade();
+  }
+
   // --- Criar Lição ---
 
   async criarLicao() {
@@ -243,7 +263,16 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       return;
     }
 
+    if (!this.comentario.trim()) {
+      this.error.set('A descrição da lição é obrigatória.');
+      return;
+    }
+
     for (const c of this.conteudosForm) {
+      if (!c.texto.trim()) {
+        this.error.set('O texto de um dos conteúdos está vazio.');
+        return;
+      }
       if (c.midiaType !== 'Texto' && !c.url.trim()) {
         this.error.set('Um dos conteúdos tem tipo de mídia selecionado sem URL.');
         return;
