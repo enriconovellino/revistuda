@@ -190,3 +190,139 @@
   min-width: 5rem;
   text-align: center;
 }
+
+/* Estilos do Tutorial nas Atividades do Idoso */
+.banner-tutorial {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #17a2b8;
+  color: white;
+  z-index: 1030;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-tutorial-conteudo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  gap: 1rem;
+}
+
+.tutorial-passo-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tutorial-passo-badge {
+  background: white;
+  color: #17a2b8;
+  font-weight: 800;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tutorial-instrucao-texto {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.btn-cancelar-tutorial {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid white;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: white;
+    color: #17a2b8;
+  }
+}
+
+
+
+.tutorial-backdrop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1010;
+  pointer-events: auto;
+}
+
+.highlight-tutorial-item {
+  position: relative !important;
+  z-index: 1020 !important;
+  border: 4px solid #17a2b8 !important;
+  box-shadow: 0 0 35px rgba(23, 162, 184, 1) !important;
+  animation: pulsar-tutorial-item 2s infinite ease-in-out;
+  cursor: pointer;
+}
+
+@keyframes pulsar-tutorial-item {
+  0% {
+    box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(23, 162, 184, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
+  }
+}
+
+.tooltip-tutorial-balao {
+  position: absolute;
+  top: -110px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17a2b8;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  z-index: 1080;
+  animation: bounce 1.5s infinite;
+  min-width: 280px;
+  text-align: center;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #17a2b8 transparent;
+    display: block;
+    width: 0;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -8px);
+  }
+}
