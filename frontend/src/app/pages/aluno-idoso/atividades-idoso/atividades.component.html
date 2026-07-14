@@ -4,62 +4,84 @@
   </div>
 
   @if (isLoading()) {
-    <div class="loading-container text-center">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2 text-muted">Carregando...</p>
-    </div>
+  <div class="loading-container text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Carregando...</p>
+  </div>
   }
 
   @if (hasError() && !isLoading()) {
-    <div class="alert alert-danger d-flex justify-content-between align-items-center">
-      <span>Erro ao carregar atividades.</span>
-      <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
-    </div>
+  <div class="alert alert-danger d-flex justify-content-between align-items-center">
+    <span>Erro ao carregar atividades.</span>
+    <button class="btn btn-sm btn-danger" (click)="loadData()">Tentar novamente</button>
+  </div>
   }
 
   @if (!isLoading() && !hasError()) {
-    @if (atividades().length > 0) {
-      <div class="d-flex flex-column gap-3">
-        @for (atv of atividadesPaginadas; track atv.atividade_id) {
-          <div class="atividade-card">
-            <div class="atividade-icone">
-              <i class="fi fi-br-edit"></i>
-            </div>
-            <div class="atividade-info">
-              <h5 class="atividade-titulo">{{ atv.titulo_atividade }}</h5>
-              @if (atv.descricao_atividade) {
-                <p class="atividade-descricao">{{ atv.descricao_atividade }}</p>
-              }
-              <span class="atividade-tipo">{{ getTipoAtividadeLabel(atv.tipo_atividade) }}</span>
-            </div>
-            @if (atv.status === 'feito') {
-              <span class="badge bg-success px-3 py-2 d-flex align-items-center gap-1" style="font-size: 13px; border-radius: 8px;">
-                ✓ Concluída
-              </span>
-            } @else {
-              <button class="btn-primary-custom" (click)="fazerAtividade(atv.atividade_id)">
-                FAZER <i class="fi fi-br-arrow-right"></i>
-              </button>
-            }
-          </div>
+  @if (atividades().length > 0) {
+  <div class="d-flex flex-column gap-3">
+    @for (atv of atividadesPaginadas; track atv.atividade_id) {
+    <div class="atividade-wrapper">
+      <div class="atividade-card">
+        <div class="atividade-icone">
+          <i class="fi fi-br-edit"></i>
+        </div>
+        <div class="atividade-info">
+          <h5 class="atividade-titulo">{{ atv.titulo_atividade }}</h5>
+          @if (atv.descricao_atividade) {
+          <p class="atividade-descricao">{{ atv.descricao_atividade }}</p>
+          }
+          <span class="atividade-tipo">{{ getTipoAtividadeLabel(atv.tipo_atividade) }}</span>
+        </div>
+        @if (atv.status === 'feito') {
+        <span class="badge bg-success px-3 py-2 d-flex align-items-center gap-1"
+          style="font-size: 13px; border-radius: 8px;">
+          ✓ Concluída
+        </span>
+        } @else {
+        <button class="btn-primary-custom" (click)="fazerAtividade(atv.atividade_id)">
+          FAZER <i class="fi fi-br-arrow-right"></i>
+        </button>
         }
       </div>
 
-      @if (totalPaginas > 1) {
-        <div class="paginacao">
-          <button class="btn-pag" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()" id="btn-pag-anterior">
-            ← Anterior
-          </button>
-          <span class="pag-info">{{ paginaAtual() }} / {{ totalPaginas }}</span>
-          <button class="btn-pag" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()" id="btn-pag-proxima">
-            Próxima →
-          </button>
+      @if (getComentarioDaAtividade(atv.atividade_id); as comentario) {
+      <div class="comentario-atividade-box">
+        <div class="comentario-atividade-linha">
+          <i class="fi fi-sr-comments"></i>
+          <span class="comentario-atividade-label">Seu comentário:</span>
         </div>
-      }
-    } @else {
-      <div class="empty-state">
-        <p class="mb-0">Nenhuma atividade disponível no momento.</p>
+        <p class="comentario-atividade-texto">{{ comentario.texto }}</p>
+
+        @if (comentario.resposta) {
+        <div class="resposta-professor-box">
+          <span class="resposta-professor-label">Resposta do professor:</span>
+          <p class="resposta-professor-texto">{{ comentario.resposta }}</p>
+        </div>
+        } @else {
+        <span class="comentario-sem-resposta">Aguardando resposta do professor</span>
+        }
       </div>
+      }
+    </div>
     }
+  </div>
+
+  @if (totalPaginas > 1) {
+  <div class="paginacao">
+    <button class="btn-pag" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()" id="btn-pag-anterior">
+      ← Anterior
+    </button>
+    <span class="pag-info">{{ paginaAtual() }} / {{ totalPaginas }}</span>
+    <button class="btn-pag" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()" id="btn-pag-proxima">
+      Próxima →
+    </button>
+  </div>
+  }
+  } @else {
+  <div class="empty-state">
+    <p class="mb-0">Nenhuma atividade disponível no momento.</p>
+  </div>
+  }
   }
 </div>

@@ -90,6 +90,70 @@
   border-radius: 12px;
 }
 
+.atividade-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.comentario-atividade-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 1rem 1.25rem;
+  margin-top: -0.5rem;
+}
+
+.comentario-atividade-linha {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.comentario-atividade-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #475569;
+}
+
+.comentario-atividade-texto {
+  font-size: 1.05rem;
+  color: #334155;
+  margin: 0 0 0.6rem;
+  white-space: pre-wrap;
+}
+
+.resposta-professor-box {
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.resposta-professor-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1d4ed8;
+  margin-bottom: 0.25rem;
+}
+
+.resposta-professor-texto {
+  font-size: 1.05rem;
+  color: #1e3a5f;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.comentario-sem-resposta {
+  display: inline-block;
+  font-size: 0.95rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
 .paginacao {
   display: flex;
   justify-content: center;

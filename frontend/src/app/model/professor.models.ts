@@ -17,6 +17,8 @@ export interface ComentarioAlunoProfessor {
   conteudoId: number;
   createdAt: string;
   updatedAt: string;
+  resposta?: string | null;
+  respostaAt?: string | null;
   aluno: { id: number; nome: string };
   conteudo: { conteudo_id: number; nome_conteudo: string; licao_id: number };
 }

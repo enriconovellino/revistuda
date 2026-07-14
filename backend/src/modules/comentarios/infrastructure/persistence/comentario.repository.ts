@@ -50,6 +50,8 @@ export class ComentarioRepository implements IComentarioRepository {
       conteudoId: c.conteudoId,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
+      resposta: c.resposta,
+      respostaAt: c.respostaAt,
       aluno: c.aluno,
       conteudo: c.conteudo,
     }));
@@ -78,10 +80,13 @@ export class ComentarioRepository implements IComentarioRepository {
       conteudoId: c.conteudoId,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
+      resposta: c.resposta,
+      respostaAt: c.respostaAt,
       aluno: c.aluno,
       conteudo: c.conteudo,
     }));
   }
+
   async responder(id: number, resposta: string): Promise<Comentario> {
     const salvo = await this.prisma.comentarioAluno.update({
       where: { id },
@@ -95,8 +100,8 @@ export class ComentarioRepository implements IComentarioRepository {
       salvo.conteudoId,
       salvo.createdAt,
       salvo.updatedAt,
-      salvo.resposta,     
-      salvo.respostaAt,   
+      salvo.resposta,
+      salvo.respostaAt,
     );
   }
 
