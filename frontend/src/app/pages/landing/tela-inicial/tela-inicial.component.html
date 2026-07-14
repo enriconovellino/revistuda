@@ -10,23 +10,40 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarRevistuda">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0  ms-4">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0  ms-4 align-items-center">
         <li class="nav-item">
          <a class="nav-link active" href="#">Sobre nós</a>
         </li>
       </ul>
+      <!-- Botão para Iniciar Tutorial -->
+      <button *ngIf="!tutorialService.active()" type="button" class="btn btn-outline-info text-white border-2 px-3 fw-bold" (click)="iniciarTutorial()">
+        <i class="fi fi-rr-graduation-cap me-1"></i> Aprender Fazendo (Tutorial)
+      </button>
     </div>
   </div>
 </nav>
 
-<div class="boas-vindas-page">
+<!-- Banner do Tutorial se ativo -->
+<div class="banner-tutorial" *ngIf="tutorialService.active()">
+  <div class="banner-tutorial-conteudo animate-pulse">
+    <div class="tutorial-passo-info">
+      <span class="tutorial-passo-badge">Passo 1</span>
+      <p class="tutorial-instrucao-texto"><strong>Tarefa:</strong> Clique no botão <strong>"Sou Idoso"</strong> abaixo para prosseguir de forma prática.</p>
+    </div>
+    <button type="button" class="btn-cancelar-tutorial" (click)="cancelarTutorial()">
+      <i class="fi fi-rr-cross-small"></i> Sair do Tutorial
+    </button>
+  </div>
+</div>
+
+<div class="boas-vindas-page" [class.com-tutorial]="tutorialService.active()">
   <div class="conteudo-central">
 
     <h1 class="pergunta-principal">Quem é você?</h1>
     <p class="subtexto">Toque no botão que representa você para continuar.</p>
 
     <div class="grid-perfis">
-      <button type="button" class="card-perfil" (click)="escolherPerfil('idoso')">
+      <button type="button" class="card-perfil" [class.highlight-perfil]="tutorialService.active() && tutorialService.step() === 'step1'" (click)="escolherPerfil('idoso')">
         <span class="icone-perfil bg-azul-escuro"><i class="fi fi-sr-hiking"></i></span>
         <span class="titulo-perfil">Sou Idoso</span>
       </button>

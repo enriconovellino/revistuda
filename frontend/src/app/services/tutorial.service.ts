@@ -1,0 +1,79 @@
+import { Injectable, signal } from '@angular/core';
+
+export type TutorialStep = 
+  | 'none' 
+  | 'step1' 
+  | 'pergunta' 
+  | 'preencherEmail' 
+  | 'preencherSenha' 
+  | 'preencherNome' 
+  | 'preencherEmailCadastro' 
+  | 'preencherSenhaCadastro' 
+  | 'step3';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TutorialService {
+  active = signal<boolean>(false);
+  step = signal<TutorialStep>('none');
+  showSuccessFeedback = signal<boolean>(false);
+  temConta = signal<boolean | null>(null);
+
+  startTutorial(): void {
+    this.active.set(true);
+    this.step.set('step1');
+    this.showSuccessFeedback.set(false);
+    this.temConta.set(null);
+  }
+
+  nextStep(): void {
+    const current = this.step();
+    if (current === 'step1') {
+      this.showSuccessFeedback.set(true);
+      this.step.set('pergunta');
+      setTimeout(() => {
+        this.showSuccessFeedback.set(false);
+      }, 4000);
+    }
+  }
+
+  setEscolhaConta(tem: boolean): void {
+    this.temConta.set(tem);
+    if (tem) {
+      this.step.set('preencherEmail');
+    } else {
+      this.step.set('preencherNome');
+    }
+  }
+
+  avancarPreenchimento(campoAtual: 'email' | 'senha' | 'nome' | 'emailCadastro' | 'senhaCadastro'): void {
+    if (!this.active()) return;
+    
+    if (campoAtual === 'email' && this.step() === 'preencherEmail') {
+      this.step.set('preencherSenha');
+    } else if (campoAtual === 'senha' && this.step() === 'preencherSenha') {
+      this.step.set('step3');
+    } else if (campoAtual === 'nome' && this.step() === 'preencherNome') {
+      this.step.set('preencherEmailCadastro');
+    } else if (campoAtual === 'emailCadastro' && this.step() === 'preencherEmailCadastro') {
+      this.step.set('preencherSenhaCadastro');
+    } else if (campoAtual === 'senhaCadastro' && this.step() === 'preencherSenhaCadastro') {
+      this.step.set('step3');
+    }
+  }
+
+  completeTutorial(): void {
+    this.active.set(false);
+    this.step.set('none');
+    this.showSuccessFeedback.set(false);
+    this.temConta.set(null);
+  }
+
+  cancelTutorial(): void {
+    this.active.set(false);
+    this.step.set('none');
+    this.showSuccessFeedback.set(false);
+    this.temConta.set(null);
+  }
+}
