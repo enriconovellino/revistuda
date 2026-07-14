@@ -41,9 +41,9 @@
   <div class="banner-continuar position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardContinuar'">
     <!-- Tooltip explicativo com Botão de Avanço -->
     <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardContinuar'">
-      <div class="d-flex flex-column gap-2 text-center">
-        <span>Clique abaixo para ir para o próximo passo!</span>
-        <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+      <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+        <span style="font-size: 0.95rem; line-height: 1.4;">Clique aqui quando quiser continuar estudando sua última aula assistida de forma rápida!</span>
+        <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
       </div>
     </div>
     <div class="banner-info" (click)="retomarAula()">
@@ -62,9 +62,9 @@
     <div class="stat-card verde position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardMeusCursos'">
       <!-- Tooltip explicativo com Botão de Avanço -->
       <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardMeusCursos'">
-        <div class="d-flex flex-column gap-2 text-center">
-          <span>Aqui ficam as matérias.</span>
-          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+          <span style="font-size: 0.95rem; line-height: 1.4;">Aqui você encontra todos os seus cursos e matérias disponíveis para estudar.</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
         </div>
       </div>
       <div class="stat-card-top" (click)="irParaCursos()">
@@ -85,9 +85,9 @@
     <div class="stat-card laranja position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardMinhasAtividades'">
       <!-- Tooltip explicativo com Botão de Avanço -->
       <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardMinhasAtividades'">
-        <div class="d-flex flex-column gap-2 text-center">
-          <span>Aqui ficam as atividades.</span>
-          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+          <span style="font-size: 0.95rem; line-height: 1.4;">Acompanhe aqui a quantidade de atividades escolares que você ainda tem para realizar.</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
         </div>
       </div>
       <div class="stat-card-top" (click)="irParaTarefas()">
@@ -110,9 +110,9 @@
     <div class="chart-card progresso-circular-card position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardDesempenho'">
       <!-- Tooltip explicativo com Botão de Avanço -->
       <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardDesempenho'">
-        <div class="d-flex flex-column gap-2 text-center">
-          <span>Seu rendimento em estudos.</span>
-          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Próximo item →</button>
+        <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+          <span style="font-size: 0.95rem; line-height: 1.4;">Este círculo mostra a sua nota e desempenho geral em porcentagem nos estudos!</span>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
         </div>
       </div>
       <h5 class="progresso-titulo">Desempenho Geral</h5>
@@ -150,9 +150,9 @@
     <div class="chart-card pendentes-card position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'dashboardPendentes'">
       <!-- Tooltip explicativo com Botão de Avanço -->
       <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'dashboardPendentes'">
-        <div class="d-flex flex-column gap-2 text-center">
-          <span>Seu mural de pendências.</span>
-          <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial()">Entendi, começar!</button>
+        <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+          <span style="font-size: 0.95rem; line-height: 1.4;">Aqui você visualiza uma lista rápida das suas lições e atividades que precisam ser feitas hoje!</span>
+          <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial()">Concluir Tutorial!</button>
         </div>
       </div>
       <h5 class="pendentes-titulo">Atividades Pendentes</h5>
