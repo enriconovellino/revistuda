@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <button class="btn-sair-topo" (click)="logout()">Sair</button>
+    <button class="btn-sair-topo" (click)="abrirModalLogout()">Sair</button>
   </div>
 </div>
     <router-outlet></router-outlet>
@@ -39,3 +39,7 @@
 
 <app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
   (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>
+
+<app-confirm-dialog [isOpen]="isLogoutModalOpen()" title="Sair da conta"
+  message="Tem certeza que deseja sair da sua conta?" confirmLabel="Sair" variant="danger"
+  (confirmed)="logout()" (cancelled)="cancelarLogout()"></app-confirm-dialog>
