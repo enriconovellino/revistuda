@@ -49,6 +49,16 @@ function novaQuestaoVazia(): QuestaoForm {
   };
 }
 
+interface ConteudoForm {
+  texto: string;
+  midiaType: string;
+  url: string;
+}
+
+function novoConteudoVazio(): ConteudoForm {
+  return { texto: '', midiaType: 'Texto', url: '' };
+}
+
 @Component({
   selector: 'app-nova-licao',
   standalone: true,
@@ -110,20 +120,9 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   showLicaoForm = signal<boolean>(false);
   titulo = '';
   comentario = '';
-  texto = '';
-  url = '';
-  midiaType = 'Texto';
+  conteudosForm: ConteudoForm[] = [novoConteudoVazio()];
   saving = signal<boolean>(false);
   error = signal<string | null>(null);
-
-  // --- Modal: Novo Conteúdo ---
-  showConteudoForm = signal<boolean>(false);
-  conteudoLicaoId: number | null = null;
-  conteudoTexto = '';
-  conteudoUrl = '';
-  conteudoMidiaType = 'Texto';
-  conteudoError = signal<string | null>(null);
-  savingConteudo = signal<boolean>(false);
 
   // --- Modal: Nova Atividade (com múltiplas questões) ---
   showAtividadeForm = signal<boolean>(false);
@@ -189,11 +188,6 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     return this.atividadesForLicao()[licaoId]?.length || 0;
   }
 
-  conteudoLimiteAtingido(licaoId: number | null): boolean {
-    if (licaoId === null) return false;
-    return this.countConteudos(licaoId) >= this.maxItensPorLicao;
-  }
-
   atividadeLimiteAtingido(licaoId: number | null): boolean {
     if (licaoId === null) return false;
     return this.countAtividades(licaoId) >= this.maxItensPorLicao;
@@ -224,21 +218,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       this.error.set(null);
       this.titulo = '';
       this.comentario = '';
-      this.texto = '';
-      this.url = '';
-      this.midiaType = 'Texto';
-    }
-  }
-
-  toggleConteudoForm() {
-    const next = !this.showConteudoForm();
-    this.showConteudoForm.set(next);
-    if (next) {
-      this.conteudoError.set(null);
-      this.conteudoLicaoId = this.licoes()[0]?.licao_id ?? null;
-      this.conteudoTexto = '';
-      this.conteudoUrl = '';
-      this.conteudoMidiaType = 'Texto';
+      this.conteudosForm = [novoConteudoVazio()];
     }
   }
 
@@ -263,12 +243,11 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       return;
     }
 
-    const hasText = this.texto.trim().length > 0;
-    const hasMedia = this.midiaType !== 'Texto' && this.url.trim().length > 0;
-
-    if (this.midiaType !== 'Texto' && !this.url.trim()) {
-      this.error.set('Você selecionou um tipo de mídia, mas não inseriu a URL.');
-      return;
+    for (const c of this.conteudosForm) {
+      if (c.midiaType !== 'Texto' && !c.url.trim()) {
+        this.error.set('Um dos conteúdos tem tipo de mídia selecionado sem URL.');
+        return;
+      }
     }
 
     try {
@@ -280,14 +259,18 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
         modulo_id: this.moduloId,
       });
 
-      if (hasText || hasMedia) {
-        await this.conteudoService.createConteudo({
-          nome_conteudo: `Conteúdo da Lição: ${licao.titulo_licao}`,
-          tipo_conteudo: this.midiaType,
-          url_conteudo: this.midiaType !== 'Texto' ? this.url.trim() : undefined,
-          texto_conteudo: hasText ? this.texto.trim() : undefined,
-          licao_id: licao.licao_id,
-        });
+      for (const c of this.conteudosForm) {
+        const hasText = c.texto.trim().length > 0;
+        const hasMedia = c.midiaType !== 'Texto' && c.url.trim().length > 0;
+        if (hasText || hasMedia) {
+          await this.conteudoService.createConteudo({
+            nome_conteudo: `Conteúdo da Lição: ${licao.titulo_licao}`,
+            tipo_conteudo: c.midiaType,
+            url_conteudo: c.midiaType !== 'Texto' ? c.url.trim() : undefined,
+            texto_conteudo: hasText ? c.texto.trim() : undefined,
+            licao_id: licao.licao_id,
+          });
+        }
       }
 
       this.showLicaoForm.set(false);
@@ -311,52 +294,15 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     }
   }
 
-  // --- Adicionar Conteúdo (a uma lição existente) ---
+  // --- Conteúdos dentro do modal de Nova Lição ---
 
-  async adicionarConteudo() {
-    this.conteudoError.set(null);
+  addConteudo(): void {
+    this.conteudosForm.push(novoConteudoVazio());
+  }
 
-    if (this.conteudoLicaoId === null) {
-      this.conteudoError.set('Selecione a lição.');
-      return;
-    }
-
-    if (this.conteudoLimiteAtingido(this.conteudoLicaoId)) {
-      this.conteudoError.set(`Essa lição já atingiu o limite de ${this.maxItensPorLicao} conteúdos.`);
-      return;
-    }
-
-    const hasText = this.conteudoTexto.trim().length > 0;
-    const hasMedia = this.conteudoMidiaType !== 'Texto' && this.conteudoUrl.trim().length > 0;
-
-    if (!hasText && !hasMedia) {
-      this.conteudoError.set('Preencha o texto e/ou a URL da mídia.');
-      return;
-    }
-
-    if (this.conteudoMidiaType !== 'Texto' && !this.conteudoUrl.trim()) {
-      this.conteudoError.set('URL da mídia é obrigatória.');
-      return;
-    }
-
-    try {
-      this.savingConteudo.set(true);
-      const licao = this.licoes().find(l => l.licao_id === this.conteudoLicaoId);
-
-      await this.conteudoService.createConteudo({
-        nome_conteudo: `Conteúdo da Lição: ${licao?.titulo_licao || ''}`,
-        tipo_conteudo: this.conteudoMidiaType,
-        url_conteudo: this.conteudoMidiaType !== 'Texto' ? this.conteudoUrl.trim() : undefined,
-        texto_conteudo: hasText ? this.conteudoTexto.trim() : undefined,
-        licao_id: this.conteudoLicaoId,
-      });
-
-      this.showConteudoForm.set(false);
-      await this.loadItens();
-    } catch (err: unknown) {
-      this.conteudoError.set(getErrorMessage(err, 'Erro ao adicionar conteúdo.'));
-    } finally {
-      this.savingConteudo.set(false);
+  removeConteudo(index: number): void {
+    if (this.conteudosForm.length > 1) {
+      this.conteudosForm.splice(index, 1);
     }
   }
 
@@ -367,7 +313,7 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       await this.conteudoService.deleteConteudo(conteudoId);
       await this.loadItens();
     } catch (err: unknown) {
-      this.conteudoError.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
+      this.error.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
     }
   }
 

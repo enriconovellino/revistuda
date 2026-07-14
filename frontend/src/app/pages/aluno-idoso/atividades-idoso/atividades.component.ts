@@ -26,6 +26,18 @@ export class AtividadesIdosoComponent implements OnInit {
   /** Comentário do aluno (com resposta do professor, se houver) por atividade_id */
   comentariosPorAtividade = signal<{ [atividadeId: number]: ComentarioAlunoProfessor }>({});
 
+  readonly ITENS_POR_PAGINA = 5;
+  paginaAtual = signal<number>(1);
+
+  get totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.atividades().length / this.ITENS_POR_PAGINA));
+  }
+
+  get atividadesPaginadas(): Atividade[] {
+    const inicio = (this.paginaAtual() - 1) * this.ITENS_POR_PAGINA;
+    return this.atividades().slice(inicio, inicio + this.ITENS_POR_PAGINA);
+  }
+
   constructor(
     private atividadeService: AtividadeService,
     private router: Router,
@@ -81,7 +93,16 @@ export class AtividadesIdosoComponent implements OnInit {
       this.hasError.set(true);
     } finally {
       this.isLoading.set(false);
+      this.paginaAtual.set(1); // reset ao recarregar
     }
+  }
+
+  paginaAnterior(): void {
+    if (this.paginaAtual() > 1) this.paginaAtual.update(p => p - 1);
+  }
+
+  proximaPagina(): void {
+    if (this.paginaAtual() < this.totalPaginas) this.paginaAtual.update(p => p + 1);
   }
 
   private async carregarComentarios(atividades: Atividade[], todosConteudos: { conteudo_id: number; licao_id: number }[]): Promise<void> {

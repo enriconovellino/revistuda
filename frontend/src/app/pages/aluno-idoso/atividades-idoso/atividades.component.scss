@@ -89,6 +89,7 @@
   border: 2px dashed #e2e8f0;
   border-radius: 12px;
 }
+
 .atividade-wrapper {
   display: flex;
   flex-direction: column;
@@ -151,4 +152,41 @@
   font-size: 0.95rem;
   color: #94a3b8;
   font-style: italic;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.btn-pag {
+  background-color: #0f2744;
+  color: white;
+  border: none;
+  padding: 0.65rem 1.75rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust(#0f2744, $lightness: 8%);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.pag-info {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  min-width: 5rem;
+  text-align: center;
 }
