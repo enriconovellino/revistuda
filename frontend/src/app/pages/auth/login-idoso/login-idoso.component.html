@@ -9,6 +9,8 @@
       <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'preencherNome'">Passo 2 - Nome</span>
       <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'preencherEmailCadastro'">Passo 2 - E-mail</span>
       <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'preencherSenhaCadastro'">Passo 2 - Senha</span>
+      <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'clicarCadastrar'">Passo 2 - Cadastrar</span>
+      <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'irParaLogin'">Passo 2 - Ir para Entrar</span>
       <span class="tutorial-passo-badge" *ngIf="tutorialService.step() === 'step3'">Passo 3</span>
       
       <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'pergunta'">
@@ -28,6 +30,9 @@
       </p>
       <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'preencherSenhaCadastro'">
         <strong>Tarefa:</strong> Muito bem! Agora clique no campo <strong>"Crie uma senha"</strong> destacado abaixo.
+      </p>
+      <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'clicarCadastrar'">
+        <strong>Tarefa:</strong> Perfeito! Agora clique no botão <strong>"Cadastrar"</strong> destacado em amarelo abaixo para criar sua conta.
       </p>
       <p class="tutorial-instrucao-texto" *ngIf="tutorialService.step() === 'irParaLogin'">
         <strong>Tarefa:</strong> Muito bem! Você preencheu tudo. Agora clique no botão <strong>"Já tenho conta — Entrar"</strong> destacado abaixo para ir ao login.
@@ -207,7 +212,11 @@
             </span>
           </button>
 
-          <button type="button" class="btn-entrar" (click)="cadastrar()" [disabled]="carregando()">
+          <button type="button" class="btn-entrar position-relative" [class.highlight-campo]="tutorialService.active() && tutorialService.step() === 'clicarCadastrar'" (click)="cadastrar()" [disabled]="carregando()">
+            <!-- Tooltip explicativo -->
+            <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'clicarCadastrar'">
+              Clique aqui para finalizar seu cadastro!
+            </div>
             <span *ngIf="!carregando()">Cadastrar <i class="fi fi-rr-arrow-right"></i></span>
           </button>
 

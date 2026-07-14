@@ -9,6 +9,7 @@ export type TutorialStep =
   | 'preencherNome' 
   | 'preencherEmailCadastro' 
   | 'preencherSenhaCadastro' 
+  | 'clicarCadastrar'
   | 'irParaLogin'
   | 'step3'
   | 'dashboardContinuar'
@@ -65,7 +66,7 @@ export class TutorialService {
     } else if (campoAtual === 'emailCadastro' && this.step() === 'preencherEmailCadastro') {
       this.step.set('preencherSenhaCadastro');
     } else if (campoAtual === 'senhaCadastro' && this.step() === 'preencherSenhaCadastro') {
-      this.step.set('irParaLogin');
+      this.step.set('clicarCadastrar');
     }
   }
 

@@ -289,6 +289,12 @@ export class LoginIdosoComponent implements OnDestroy {
         senha: this.senhaCadastro,
         permission: 'ALUNO_IDOSO'
       });
+      
+      // Se estiver no tutorial, completamos a etapa de cadastro e colocamos em modo login para ele realizar a entrada oficial
+      if (this.tutorialService.active() && this.tutorialService.step() === 'clicarCadastrar') {
+        this.tutorialService.step.set('preencherEmail');
+      }
+
       this.setModo(true);
     } catch (err: unknown) {
       this.erro.set(getErrorMessage(err, 'Erro ao cadastrar.'));
