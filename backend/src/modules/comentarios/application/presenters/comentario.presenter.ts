@@ -26,6 +26,8 @@ export class ComentarioComAlunoPresenter {
   texto!: string;
   createdAt!: Date;
   updatedAt!: Date;
+  resposta!: string | null;
+  respostaAt!: Date | null;
   aluno!: { id: number; nome: string };
   conteudo!: { conteudo_id: number; nome_conteudo: string; licao_id: number };
 
@@ -35,6 +37,8 @@ export class ComentarioComAlunoPresenter {
     presenter.texto = comentario.texto;
     presenter.createdAt = comentario.createdAt;
     presenter.updatedAt = comentario.updatedAt;
+    presenter.resposta = comentario.resposta ?? null;
+    presenter.respostaAt = comentario.respostaAt ?? null;
     presenter.aluno = comentario.aluno;
     presenter.conteudo = comentario.conteudo;
     return presenter;

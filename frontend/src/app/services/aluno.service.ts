@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
+import { ComentarioAlunoProfessor } from '../model/professor.models';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,6 @@ import { AuthService } from './auth.service';
 export class AlunoService {
   private apiUrl = environment.apiUrl;
   private authService = inject(AuthService);
-
 
   constructor() { }
 
@@ -39,7 +39,6 @@ export class AlunoService {
     return data;
   }
 
-
   async saveComentario(conteudoId: number, texto: string): Promise<void> {
     try {
       const response = await fetch(`${this.apiUrl}/comentarios`, {
@@ -68,6 +67,26 @@ export class AlunoService {
         const comentarios: Array<{ texto: string; aluno: { id: number } }> = await response.json();
         const meuComentario = comentarios.find(c => c.aluno.id === userId);
         if (meuComentario) resultado[conteudoId] = meuComentario.texto;
+      } catch {
+      }
+    }));
+
+    return resultado;
+  }
+  async getComentariosCompletosDoAluno(conteudoIds: number[]): Promise<{ [conteudoId: number]: ComentarioAlunoProfessor }> {
+    const resultado: { [conteudoId: number]: ComentarioAlunoProfessor } = {};
+    const userId = this.getUserId();
+    if (!userId) return resultado;
+
+    await Promise.all(conteudoIds.map(async (conteudoId) => {
+      try {
+        const response = await fetch(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`, {
+          headers: this.getHeaders()
+        });
+        if (!response.ok) return;
+        const comentarios: ComentarioAlunoProfessor[] = await response.json();
+        const meuComentario = comentarios.find(c => c.aluno.id === userId);
+        if (meuComentario) resultado[conteudoId] = meuComentario;
       } catch {
       }
     }));

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -13,7 +13,13 @@ import { AuthService } from '../../../services/auth.service';
 export class SidebarIdosoComponent {
   private authService = inject(AuthService);
 
+  abrirPerfil = output<void>();
+
   logout(): void {
     this.authService.logout();
+  }
+
+  onAbrirPerfilClick(): void {
+    this.abrirPerfil.emit();
   }
 }
