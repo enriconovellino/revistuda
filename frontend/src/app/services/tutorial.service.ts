@@ -19,7 +19,8 @@ export type TutorialStep =
   | 'dashboardPendentes'
   | 'atividadesLista'
   | 'atividadesFazer'
-  | 'atividadesPaginacao';
+  | 'atividadesPaginacao'
+  | 'cursosLista';
 
 @Injectable({
   providedIn: 'root'
@@ -102,6 +103,14 @@ export class TutorialService {
     if (!this.active()) return;
     const current = this.step();
     if (current === 'atividadesLista') {
+      this.completeTutorialDefinitivo();
+    }
+  }
+
+  avancarCursos(): void {
+    if (!this.active()) return;
+    const current = this.step();
+    if (current === 'cursosLista') {
       this.completeTutorialDefinitivo();
     }
   }
