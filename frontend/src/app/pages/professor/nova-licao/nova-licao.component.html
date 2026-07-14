@@ -51,6 +51,7 @@
         </div>
         <p class="gestao-item-card-text">{{ c.texto_conteudo || 'Sem texto — apenas mídia' }}</p>
         <div class="gestao-item-card-footer">
+          <button class="gestao-link-edit" (click)="openEditConteudo(c, $event)">Editar</button>
           <button class="gestao-link-delete" (click)="deleteConteudo(c.conteudo_id, $event)">Excluir</button>
         </div>
       </div>
@@ -62,6 +63,7 @@
         <h6 class="gestao-item-card-title">{{ a.titulo_atividade }}</h6>
         <p class="gestao-item-card-text">{{ a.enunciado }}</p>
         <div class="gestao-item-card-footer">
+          <button class="gestao-link-edit" (click)="openEditAtividade(a, $event)">Editar</button>
           <button class="gestao-link-delete" (click)="deleteAtividade(a.atividade_id, $event)">Excluir</button>
         </div>
       </div>
@@ -415,5 +417,166 @@
 
       </div>
     </form>
+  </div>
+</div>
+
+
+<!-- ================= Modal: Editar Conteúdo ================= -->
+<div class="nova-licao-modal-backdrop" *ngIf="showEditConteudoForm()" (click)="closeEditConteudo()">
+  <div class="nova-licao-modal" (click)="$event.stopPropagation()">
+    <div class="nova-licao-modal-header">
+      <h6 class="nova-licao-subform-title">Editar Conteúdo</h6>
+      <button class="nova-licao-modal-close" (click)="closeEditConteudo()" type="button">✕</button>
+    </div>
+
+    <div class="nova-licao-alert" *ngIf="editConteudoError()">{{ editConteudoError() }}</div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Texto</label>
+      <textarea class="nova-licao-textarea" rows="3" placeholder="Digite o texto explicativo..."
+        [(ngModel)]="editConteudoTexto" name="editConteudoTexto"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Tipo de Mídia</label>
+      <select class="nova-licao-select" [(ngModel)]="editConteudoMidiaType" name="editConteudoMidiaType">
+        <option value="Texto">Sem Mídia (Apenas Texto)</option>
+        <option value="Vídeo">Vídeo (Youtube)</option>
+        <option value="Áudio">Áudio</option>
+      </select>
+    </div>
+
+    <div class="mb-3" *ngIf="editConteudoMidiaType !== 'Texto'">
+      <label class="nova-licao-label">URL da Mídia <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input"
+        [placeholder]="editConteudoMidiaType === 'Vídeo' ? 'Ex: https://www.youtube.com/watch?v=...' : 'Ex: https://exemplo.com/audio.mp3'"
+        [(ngModel)]="editConteudoUrl" name="editConteudoUrl" />
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="nova-licao-btn" style="flex:1" (click)="salvarEdicaoConteudo()" [disabled]="savingEditConteudo()">
+        <span class="spinner-border spinner-border-sm" role="status" *ngIf="savingEditConteudo()"></span>
+        {{ savingEditConteudo() ? 'Salvando...' : 'Salvar Alterações' }}
+      </button>
+      <button class="nova-licao-btn nova-licao-btn-cancel" style="flex:1" (click)="closeEditConteudo()" type="button">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= Modal: Editar Atividade ================= -->
+<div class="nova-licao-modal-backdrop" *ngIf="showEditAtividadeForm()" (click)="closeEditAtividade()">
+  <div class="nova-licao-modal nova-licao-modal-lg" (click)="$event.stopPropagation()">
+    <div class="nova-licao-modal-header">
+      <h6 class="nova-licao-subform-title">Editar Atividade</h6>
+      <button class="nova-licao-modal-close" (click)="closeEditAtividade()" type="button">✕</button>
+    </div>
+
+    <div class="nova-licao-alert" *ngIf="editAtividadeError()">{{ editAtividadeError() }}</div>
+
+    <div class="mb-3">
+      <label class="nova-licao-label">Título da Atividade <span class="text-danger">*</span></label>
+      <input type="text" class="nova-licao-input" placeholder="Ex: Quiz de revisão"
+        [(ngModel)]="editAtividadeTitulo" name="editAtividadeTitulo" />
+    </div>
+
+    <!-- Questão única -->
+    <div class="nova-licao-questao">
+      <div class="nova-licao-questao-header">
+        <span class="nova-licao-questao-tag">Questão</span>
+      </div>
+
+      <div class="mb-3">
+        <label class="nova-licao-label">Tipo</label>
+        <select class="nova-licao-select" [(ngModel)]="editAtividadeQuestao.tipo" name="editTipoQuestao">
+          <option value="multipla_escolha">Múltipla Escolha</option>
+          <option value="associacao_imagens">Associação de Imagens</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="nova-licao-label">Enunciado <span class="text-danger">*</span></label>
+        <textarea class="nova-licao-textarea" rows="2" placeholder="Digite a pergunta..."
+          [(ngModel)]="editAtividadeQuestao.enunciado" name="editEnunciado"></textarea>
+      </div>
+
+      <!-- Múltipla escolha -->
+      <div class="mb-2" *ngIf="editAtividadeQuestao.tipo === 'multipla_escolha'">
+        <label class="nova-licao-label">Opções (mín. 2, máx. 4)</label>
+        <div class="nova-licao-opcao-row" *ngFor="let id of opcaoIds; let i = index">
+          <span class="nova-licao-opcao-label">{{ opcaoLabels[i] }}</span>
+          <input type="text" class="nova-licao-input" [placeholder]="'Opção ' + opcaoLabels[i]"
+            [(ngModel)]="editAtividadeQuestao.opcoes[id]" [name]="'editOpcao' + id" />
+          <input type="radio" [name]="'editRespostaCorreta'" [value]="id"
+            [(ngModel)]="editAtividadeQuestao.respostaCorreta" title="Marcar como correta" />
+        </div>
+        <small class="nova-licao-hint">Selecione o radio da opção correta.</small>
+
+        <div class="mb-3 mt-3">
+          <label class="nova-licao-label">Explicação da resposta correta <span class="text-danger">*</span></label>
+          <textarea class="nova-licao-textarea" rows="3"
+            placeholder="Explique por que a resposta correta está certa..."
+            [(ngModel)]="editAtividadeQuestao.explicacao" name="editExplicacao"></textarea>
+          <small class="nova-licao-hint">O aluno verá esta explicação após responder a questão.</small>
+        </div>
+      </div>
+
+      <!-- Associação de imagens -->
+      <div class="mb-2" *ngIf="editAtividadeQuestao.tipo === 'associacao_imagens'">
+        <label class="nova-licao-label d-flex justify-content-between align-items-center">
+          Pares de Associação (mín. 2)
+          <button type="button" class="nova-licao-link-add" (click)="addParImagem(editAtividadeQuestao)">+ Par</button>
+        </label>
+
+        <div class="nova-licao-par" *ngFor="let par of editAtividadeQuestao.pares; let pi = index">
+          <div class="nova-licao-par-header">
+            <span>Par #{{ pi + 1 }}</span>
+            <button type="button" class="nova-licao-link-delete" (click)="removeParImagem(editAtividadeQuestao, pi)">Remover</button>
+          </div>
+          <div class="nova-licao-par-cols">
+            <div class="nova-licao-par-col">
+              <label class="nova-licao-hint">Esquerdo</label>
+              <select class="nova-licao-select" [(ngModel)]="par.esquerdo.tipo" [name]="'editEsqTipo' + pi">
+                <option value="texto">Texto</option>
+                <option value="imagem">Imagem</option>
+              </select>
+              <input *ngIf="par.esquerdo.tipo === 'texto'" type="text" class="nova-licao-input"
+                placeholder="Texto esquerdo" [(ngModel)]="par.esquerdo.texto" [name]="'editEsqTexto' + pi" />
+              <div *ngIf="par.esquerdo.tipo === 'imagem'">
+                <input type="file" class="nova-licao-input" accept="image/*"
+                  (change)="onFileSelected($event, par.esquerdo)" />
+                <div *ngIf="par.esquerdo.uploading" class="nova-licao-hint">Enviando...</div>
+                <img *ngIf="par.esquerdo.imagem_url && !par.esquerdo.uploading"
+                  [src]="getImageUrl(par.esquerdo.imagem_url)" class="nova-licao-par-preview" />
+              </div>
+            </div>
+            <div class="nova-licao-par-col">
+              <label class="nova-licao-hint">Direito</label>
+              <select class="nova-licao-select" [(ngModel)]="par.direito.tipo" [name]="'editDirTipo' + pi">
+                <option value="texto">Texto</option>
+                <option value="imagem">Imagem</option>
+              </select>
+              <input *ngIf="par.direito.tipo === 'texto'" type="text" class="nova-licao-input"
+                placeholder="Texto direito" [(ngModel)]="par.direito.texto" [name]="'editDirTexto' + pi" />
+              <div *ngIf="par.direito.tipo === 'imagem'">
+                <input type="file" class="nova-licao-input" accept="image/*"
+                  (change)="onFileSelected($event, par.direito)" />
+                <div *ngIf="par.direito.uploading" class="nova-licao-hint">Enviando...</div>
+                <img *ngIf="par.direito.imagem_url && !par.direito.uploading"
+                  [src]="getImageUrl(par.direito.imagem_url)" class="nova-licao-par-preview" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button class="nova-licao-btn" style="flex:1" (click)="salvarEdicaoAtividade()" [disabled]="savingEditAtividade()">
+        <span class="spinner-border spinner-border-sm" role="status" *ngIf="savingEditAtividade()"></span>
+        {{ savingEditAtividade() ? 'Salvando...' : 'Salvar Alterações' }}
+      </button>
+      <button class="nova-licao-btn nova-licao-btn-cancel" style="flex:1" (click)="closeEditAtividade()" type="button">Cancelar</button>
+    </div>
   </div>
 </div>
