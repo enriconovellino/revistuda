@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // ============================================
 // Tokens
 // ============================================
@@ -118,7 +120,7 @@ $radius: 12px;
   transition: background 0.15s ease, border-color 0.15s ease;
 
   &:hover {
-    background: darken($blue-soft, 2%);
+    background: color.adjust($blue-soft, $lightness: -2%);
     border-color: rgba($blue, 0.4);
   }
 }
@@ -406,12 +408,27 @@ $radius: 12px;
 .nova-licao-modal {
   background: white;
   border-radius: 16px;
-  padding: 1.5rem;
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+  form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+}
+
+.nova-licao-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 1.5rem 1.5rem;
 }
 
 .nova-licao-modal-lg {
@@ -422,6 +439,7 @@ $radius: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1.5rem 1.5rem 0;
   margin-bottom: 1rem;
 
   .nova-licao-subform-title {
@@ -459,6 +477,7 @@ $radius: 12px;
   border: 1px dashed $border;
   border-radius: $radius;
   margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 .nova-licao-questao-header {
@@ -519,7 +538,7 @@ $radius: 12px;
   border-radius: $radius;
 
   &:hover {
-    background: darken($blue-soft, 3%);
+    background: color.adjust($blue-soft, $lightness: -3%);
   }
 }
 
@@ -554,4 +573,16 @@ $radius: 12px;
   object-fit: contain;
   margin-top: 0.3rem;
   border-radius: 4px;
+}
+.nova-licao-error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 4px;
+}
+
+.nova-licao-input.is-invalid,
+.nova-licao-select.is-invalid,
+.nova-licao-textarea.is-invalid {
+  border-color: #dc3545 !important;
 }
