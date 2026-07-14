@@ -31,6 +31,7 @@ export class AdmComponent implements OnInit {
   userName = signal('Administrador');
   isEditProfileOpen = signal<boolean>(false);
   currentView = signal<AdmView>('dashboard');
+  sidebarCollapsed = signal<boolean>(false);
 
   private router = inject(Router);
 

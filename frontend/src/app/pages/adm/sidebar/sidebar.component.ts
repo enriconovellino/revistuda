@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
@@ -12,13 +12,30 @@ import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confi
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
-export class SidebarAdminComponent {
+export class SidebarAdminComponent implements OnInit {
   @Input({ required: true }) currentView!: AdmView;
   @Output() currentViewChange = new EventEmitter<AdmView>();
+  @Output() collapsedChange = new EventEmitter<boolean>();
 
   private router = inject(Router);
 
   isLogoutModalOpen = signal<boolean>(false);
+  collapsed = signal<boolean>(false);
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      this.collapsed.set(localStorage.getItem('sidebarCollapsed') === 'true');
+      this.collapsedChange.emit(this.collapsed());
+    }
+  }
+
+  toggleCollapse() {
+    this.collapsed.set(!this.collapsed());
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('sidebarCollapsed', String(this.collapsed()));
+    }
+    this.collapsedChange.emit(this.collapsed());
+  }
 
   setView(view: AdmView) {
     this.currentViewChange.emit(view);

@@ -1,40 +1,53 @@
-<div class="sidebar">
+<div class="sidebar" [class.collapsed]="collapsed()">
   <div class="sidebar-logo">
-    <h5>ReviEstuda</h5>
-    <small>Plataforma Educacional</small>
+    <div class="sidebar-logo-inner">
+      <div class="sidebar-brand" *ngIf="!collapsed()">
+        <h5>ReviEstuda</h5>
+        <small>Plataforma Educacional</small>
+      </div>
+      <div class="sidebar-brand-icon" *ngIf="collapsed()">
+        <span class="brand-icon-letter">R</span>
+      </div>
+      <button class="sidebar-toggle-btn" (click)="toggleCollapse()" [title]="collapsed() ? 'Expandir menu' : 'Minimizar menu'">
+        <i [class]="collapsed() ? 'fi fi-rr-angle-double-right' : 'fi fi-rr-angle-double-left'"></i>
+      </button>
+    </div>
   </div>
 
   <nav class="sidebar-nav">
     <ul class="nav flex-column gap-1">
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Dashboard' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'dashboard'" (click)="setView('dashboard')">
           <i class="fi fi-rr-apps-add"></i>
-          <span>Dashboard</span>
+          <span *ngIf="!collapsed()">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Usuários' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'usuarios'" (click)="setView('usuarios')">
           <i class="fi fi-rr-user"></i>
-          <span>Usuários</span>
+          <span *ngIf="!collapsed()">Usuários</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Turmas' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'turmas'" (click)="setView('turmas')">
           <i class="fi fi-rr-users"></i>
-          <span>Turmas</span>
+          <span *ngIf="!collapsed()">Turmas</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Relatórios' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'relatorios'" (click)="setView('relatorios')">
           <i class="fi fi-rr-document-signed"></i>
-          <span>Relatórios</span>
+          <span *ngIf="!collapsed()">Relatórios</span>
         </a>
       </li>
     </ul>
   </nav>
 
   <div class="sidebar-footer">
-    <button class="btn btn-sair w-100 btn-sm" (click)="abrirModalLogout()">Sair</button>
+    <button class="btn btn-sair w-100 btn-sm" (click)="abrirModalLogout()" [title]="collapsed() ? 'Sair' : ''">
+      <i class="fi fi-rr-exit"></i>
+      <span *ngIf="!collapsed()"> Sair</span>
+    </button>
   </div>
 </div>
 

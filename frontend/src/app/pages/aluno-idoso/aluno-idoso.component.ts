@@ -20,6 +20,7 @@ export class AlunoIdosoComponent implements OnInit {
   isEditProfileOpen = signal<boolean>(false);
   isLogoutModalOpen = signal<boolean>(false);
   fontSize = signal<number>(1.2);
+  sidebarCollapsed = signal<boolean>(false);
 
   constructor(private authService: AuthService) { }
 

@@ -1,7 +1,8 @@
 <div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
-  <app-sidebar-admin [currentView]="currentView()" (currentViewChange)="currentView.set($event)"></app-sidebar-admin>
+  <app-sidebar-admin [currentView]="currentView()" (currentViewChange)="currentView.set($event)"
+    (collapsedChange)="sidebarCollapsed.set($event)"></app-sidebar-admin>
 
-  <div class="flex-grow-1" style="margin-left: 240px;">
+  <div class="flex-grow-1" [style.margin-left]="sidebarCollapsed() ? '68px' : '240px'" style="transition: margin-left 0.25s ease;">
     <div class="main-header d-flex justify-content-between align-items-center">
       <div>
         <span class="text-muted fw-semibold small">Administração</span>
