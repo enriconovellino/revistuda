@@ -1,9 +1,9 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../model/auth.model';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
@@ -20,6 +20,9 @@ export class AlunoIdosoComponent implements OnInit {
   isEditProfileOpen = signal<boolean>(false);
   isLogoutModalOpen = signal<boolean>(false);
   fontSize = signal<number>(1.2);
+  showBackButton = signal<boolean>(false);
+
+  private router = inject(Router);
 
   constructor(private authService: AuthService) { }
 
@@ -28,6 +31,19 @@ export class AlunoIdosoComponent implements OnInit {
       const user = this.authService.getUser();
       if (user) this.userName.set(user.nome);
     }
+
+    this.checkRoute(this.router.url);
+    this.router.events.subscribe(() => {
+      this.checkRoute(this.router.url);
+    });
+  }
+
+  checkRoute(url: string) {
+    this.showBackButton.set(url.includes('/modulo'));
+  }
+
+  voltar() {
+    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
   }
 
   changeFontSize(offset: number) {
