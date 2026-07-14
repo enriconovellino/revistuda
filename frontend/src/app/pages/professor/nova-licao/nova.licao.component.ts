@@ -132,6 +132,23 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   atividadeError = signal<string | null>(null);
   savingAtividade = signal<boolean>(false);
 
+  // --- Modal: Editar Conteúdo ---
+  showEditConteudoForm = signal<boolean>(false);
+  editConteudoTarget = signal<Conteudo | null>(null);
+  editConteudoTexto = '';
+  editConteudoMidiaType = 'Texto';
+  editConteudoUrl = '';
+  editConteudoError = signal<string | null>(null);
+  savingEditConteudo = signal<boolean>(false);
+
+  // --- Modal: Editar Atividade ---
+  showEditAtividadeForm = signal<boolean>(false);
+  editAtividadeTarget = signal<Atividade | null>(null);
+  editAtividadeTitulo = '';
+  editAtividadeQuestao: QuestaoForm = novaQuestaoVazia();
+  editAtividadeError = signal<string | null>(null);
+  savingEditAtividade = signal<boolean>(false);
+
   ngOnInit() {
     this.loadItens();
   }
@@ -522,5 +539,119 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     if (tipo === 'multipla_escolha') return 'Múltipla Escolha';
     if (tipo === 'associacao_imagens') return 'Associação de Imagens';
     return tipo;
+  }
+
+  // --- Editar Conteúdo ---
+
+  openEditConteudo(c: Conteudo, event: Event) {
+    event.stopPropagation();
+    this.editConteudoTarget.set(c);
+    this.editConteudoTexto = c.texto_conteudo ?? '';
+    this.editConteudoMidiaType = c.tipo_conteudo ?? 'Texto';
+    this.editConteudoUrl = c.url_conteudo ?? '';
+    this.editConteudoError.set(null);
+    this.showEditConteudoForm.set(true);
+  }
+
+  closeEditConteudo() {
+    this.showEditConteudoForm.set(false);
+    this.editConteudoTarget.set(null);
+  }
+
+  async salvarEdicaoConteudo() {
+    const target = this.editConteudoTarget();
+    if (!target) return;
+    if (this.editConteudoMidiaType !== 'Texto' && !this.editConteudoUrl.trim()) {
+      this.editConteudoError.set('Informe a URL da mídia.');
+      return;
+    }
+    try {
+      this.savingEditConteudo.set(true);
+      this.editConteudoError.set(null);
+      await this.conteudoService.updateConteudo(target.conteudo_id, {
+        texto_conteudo: this.editConteudoTexto.trim() || null,
+        tipo_conteudo: this.editConteudoMidiaType,
+        url_conteudo: this.editConteudoMidiaType !== 'Texto' ? this.editConteudoUrl.trim() : null,
+      });
+      this.closeEditConteudo();
+      await this.loadItens();
+    } catch (err: unknown) {
+      this.editConteudoError.set(getErrorMessage(err, 'Erro ao atualizar conteúdo.'));
+    } finally {
+      this.savingEditConteudo.set(false);
+    }
+  }
+
+  // --- Editar Atividade ---
+
+  openEditAtividade(a: Atividade, event: Event) {
+    event.stopPropagation();
+    this.editAtividadeTarget.set(a);
+    this.editAtividadeTitulo = a.titulo_atividade;
+    this.editAtividadeError.set(null);
+
+    const q: QuestaoForm = novaQuestaoVazia();
+    q.tipo = a.tipo_atividade as TipoQuestao;
+    q.enunciado = a.enunciado ?? '';
+    q.explicacao = a.explicacao ?? '';
+
+    if (a.tipo_atividade === 'multipla_escolha' && a.opcoes) {
+      const ids: OpcaoId[] = ['a', 'b', 'c', 'd'];
+      a.opcoes.forEach((op, i) => {
+        const key = (op.letra ?? ids[i]) as OpcaoId;
+        q.opcoes[key] = op.texto_opcao;
+        if (op.correta) q.respostaCorreta = key;
+      });
+    } else if (a.tipo_atividade === 'associacao_imagens') {
+      q.pares = (a.pares_associacao ?? []).map(p => ({
+        esquerdo: { tipo: p.esquerdo.tipo, texto: p.esquerdo.texto ?? '', imagem_url: p.esquerdo.imagem_url ?? '' },
+        direito:  { tipo: p.direito.tipo,  texto: p.direito.texto  ?? '', imagem_url: p.direito.imagem_url  ?? '' },
+      }));
+    }
+
+    this.editAtividadeQuestao = q;
+    this.showEditAtividadeForm.set(true);
+  }
+
+  closeEditAtividade() {
+    this.showEditAtividadeForm.set(false);
+    this.editAtividadeTarget.set(null);
+  }
+
+  async salvarEdicaoAtividade() {
+    const target = this.editAtividadeTarget();
+    if (!target) return;
+    if (!this.editAtividadeTitulo.trim()) {
+      this.editAtividadeError.set('O título da atividade é obrigatório.');
+      return;
+    }
+    const resultado = this.validarQuestao(this.editAtividadeQuestao, 0);
+    if (resultado === null) return;
+
+    // Re-use the atividadeError signal for validation feedback from validarQuestao
+    if (this.atividadeError()) {
+      this.editAtividadeError.set(this.atividadeError());
+      this.atividadeError.set(null);
+      return;
+    }
+
+    try {
+      this.savingEditAtividade.set(true);
+      this.editAtividadeError.set(null);
+      const q = this.editAtividadeQuestao;
+      await this.atividadeService.updateAtividade(target.atividade_id, {
+        titulo_atividade: this.editAtividadeTitulo.trim(),
+        enunciado: q.enunciado.trim(),
+        explicacao: q.tipo === 'multipla_escolha' ? q.explicacao.trim() : null,
+        opcoes: q.tipo === 'multipla_escolha' ? (resultado as OpcaoAtividade[]) : undefined,
+        pares_associacao: q.tipo === 'associacao_imagens' ? (resultado as ParAssociacao[]) : undefined,
+      });
+      this.closeEditAtividade();
+      await this.loadItens();
+    } catch (err: unknown) {
+      this.editAtividadeError.set(getErrorMessage(err, 'Erro ao atualizar atividade.'));
+    } finally {
+      this.savingEditAtividade.set(false);
+    }
   }
 }
