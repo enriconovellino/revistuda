@@ -29,6 +29,17 @@ export class AtividadeService {
     return data as Atividade[];
   }
 
+  async getProximasAtividades(): Promise<Atividade[]> {
+    const response = await fetch(`${this.apiUrl}/atividades/professor/proximas`, {
+      headers: this.getHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar próximas atividades');
+    }
+    return data as Atividade[];
+  }
+
   async getAtividadeById(id: number): Promise<Atividade | null> {
     try {
       const response = await fetch(`${this.apiUrl}/atividades/${id}`, {

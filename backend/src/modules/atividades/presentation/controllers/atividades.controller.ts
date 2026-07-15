@@ -49,6 +49,25 @@ export class AtividadesController {
     return AtividadePresenter.toCollection(atividades);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('professor/proximas')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar as próximas 3 atividades do professor' })
+  @ApiResponse({ status: 200, description: 'Atividades listadas com sucesso' })
+  async findProximas(@Request() req) {
+    const userId = req.user.sub;
+    const atividades = await this.getAllAtividadesUseCase.execute(userId);
+    
+    const ordenadas = atividades.sort((a, b) => {
+      const dateA = a.data_criacao ? new Date(a.data_criacao).getTime() : 0;
+      const dateB = b.data_criacao ? new Date(b.data_criacao).getTime() : 0;
+      return dateB - dateA;
+    });
+
+    const limitadas = ordenadas.slice(0, 3);
+    return AtividadePresenter.toCollection(limitadas);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar atividade por ID' })
   @ApiResponse({ status: 200, description: 'Atividade encontrada com sucesso' })
