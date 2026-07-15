@@ -5,6 +5,23 @@
   box-sizing: border-box;
 }
 
+/* ANIMAÇÃO DO NOME NO NAVBAR */
+@keyframes navbarNameEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-name-enter {
+  opacity: 0;
+  animation: navbarNameEnter 1.4s ease-out 0.15s forwards;
+}
+
 /* HEADER */
 .main-header {
   position: sticky;
