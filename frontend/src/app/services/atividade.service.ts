@@ -20,9 +20,7 @@ export class AtividadeService {
   }
 
   async getProximasAtividades(): Promise<Atividade[]> {
-    const response = await fetch(`${this.apiUrl}/atividades/professor/proximas`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/professor/proximas`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar próximas atividades');
