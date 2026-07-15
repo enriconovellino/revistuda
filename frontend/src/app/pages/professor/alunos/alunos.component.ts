@@ -57,6 +57,14 @@ export class AlunosProfessorComponent implements OnInit {
 
   totalPaginas = computed(() => Math.max(1, Math.ceil(this.alunosFiltrados().length / this.PAGE_SIZE)));
 
+  mediaAcertos = computed(() => {
+    const lista = this.alunos();
+    const comRespostas = lista.filter((a) => a.desempenho.totalRespostas > 0);
+    if (!comRespostas.length) return 0;
+    const soma = comRespostas.reduce((acc, a) => acc + a.desempenho.taxaAcerto, 0);
+    return Math.round(soma / comRespostas.length);
+  });
+
   alunosPaginados = computed(() =>
     this.alunosFiltrados().slice(
       (this.paginaAtual() - 1) * this.PAGE_SIZE,
@@ -72,6 +80,35 @@ export class AlunosProfessorComponent implements OnInit {
     const { acertos, totalRespostas } = aluno.desempenho;
     if (!totalRespostas) return '—';
     return `${acertos}/${totalRespostas} (${aluno.desempenho.taxaAcerto}%)`;
+  }
+
+  getInitials(nome: string): string {
+    return nome
+      .split(' ')
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? '')
+      .join('');
+  }
+
+  statusClass(aluno: AlunoProfessor): string {
+    if (!aluno.desempenho.totalRespostas) return 'status-inativo';
+    const t = aluno.desempenho.taxaAcerto;
+    if (t >= 80) return 'status-destaque';
+    if (t >= 50) return 'status-ativo';
+    return 'status-alerta';
+  }
+
+  statusLabel(aluno: AlunoProfessor): string {
+    if (!aluno.desempenho.totalRespostas) return 'Inativo';
+    const t = aluno.desempenho.taxaAcerto;
+    if (t >= 80) return 'Em Destaque';
+    if (t >= 50) return 'Ativo';
+    return 'Alerta';
+  }
+
+  ultimaAtividade(aluno: AlunoProfessor): string {
+    if (!aluno.desempenho.totalRespostas) return 'Nunca acessou';
+    return 'Recentemente';
   }
 
   taxaClass(aluno: AlunoProfessor): string {

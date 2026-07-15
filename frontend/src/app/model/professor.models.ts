@@ -61,6 +61,7 @@ export interface DesempenhoAluno {
 export interface AlunoProfessor {
   aluno_id: number;
   nome: string;
+  email: string;
   turma_id: number;
   nome_turma: string;
   desempenho: DesempenhoAluno;
