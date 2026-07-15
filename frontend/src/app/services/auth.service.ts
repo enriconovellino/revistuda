@@ -191,10 +191,15 @@ export class AuthService {
     return !!this.getAccessToken();
   }
 
-  logout() {
+  /** Limpa a sessão sem redirecionar — use quando precisar invalidar tokens mas manter o usuário na página. */
+  clearSession() {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.clear();
     }
+  }
+
+  logout() {
+    this.clearSession();
     this.router.navigate(['/']);
   }
 

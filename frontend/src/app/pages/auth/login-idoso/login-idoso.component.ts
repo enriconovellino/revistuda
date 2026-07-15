@@ -263,7 +263,7 @@ export class LoginIdosoComponent implements OnDestroy {
       // Verifica se o usuário é realmente um aluno idoso
       const permissions: string[] = data.user.permissions || [];
       if (!permissions.includes('ALUNO_IDOSO')) {
-        this.authService.logout();
+        this.authService.clearSession();
         this.erro.set('Esta entrada é exclusiva para alunos. Use a tela de login correta para o seu perfil.');
         return;
       }
