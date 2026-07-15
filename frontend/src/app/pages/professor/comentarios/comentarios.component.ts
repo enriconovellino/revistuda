@@ -61,6 +61,31 @@ export class ComentariosAlunosComponent implements OnInit {
     });
   });
 
+  itensPorPagina = 4;
+  paginaAtualLista = signal<number>(1);
+
+  comentariosPaginados = computed(() => {
+    const inicio = (this.paginaAtualLista() - 1) * this.itensPorPagina;
+    const fim = inicio + this.itensPorPagina;
+    return this.comentariosFiltrados().slice(inicio, fim);
+  });
+
+  totalPaginas = computed(() => {
+    return Math.ceil(this.comentariosFiltrados().length / this.itensPorPagina);
+  });
+
+  proximaPagina() {
+    if (this.paginaAtualLista() < this.totalPaginas()) {
+      this.paginaAtualLista.update(p => p + 1);
+    }
+  }
+
+  paginaAnterior() {
+    if (this.paginaAtualLista() > 1) {
+      this.paginaAtualLista.update(p => p - 1);
+    }
+  }
+
   totalComentarios = computed(() => this.comentarios().length);
   totalAlunosUnicos = computed(() => new Set(this.comentarios().map(c => c.aluno.id)).size);
   totalModulosComComentario = computed(() => new Set(this.comentarios().map(c => c.modulo.modulo_id)).size);
@@ -92,15 +117,18 @@ export class ComentariosAlunosComponent implements OnInit {
   onTurmaChange(value: string) {
     this.turmaFiltro.set(value ? Number(value) : null);
     this.moduloFiltro.set(null);
+    this.paginaAtualLista.set(1);
   }
 
   onModuloChange(value: string) {
     this.moduloFiltro.set(value ? Number(value) : null);
+    this.paginaAtualLista.set(1);
   }
 
   limparFiltros() {
     this.turmaFiltro.set(null);
     this.moduloFiltro.set(null);
+    this.paginaAtualLista.set(1);
   }
 
   // --- Iniciais do aluno (avatar) ---

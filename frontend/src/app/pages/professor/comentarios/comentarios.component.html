@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
-    <h4 class="mb-0 fw-bold">Comentários dos Alunos</h4>
-    <small class="text-muted">Acompanhe as observações e dê feedbacks para as lições.</small>
+    <h4 class="mb-1 fw-bold text-dark-navy">Comentários dos Alunos</h4>
+    <small class="text-muted-custom">Acompanhe e responda ao feedback enviado pelos seus alunos em tempo real.</small>
   </div>
 </div>
 
@@ -15,29 +15,56 @@
 
 <div *ngIf="!loading() && !error()">
 
+    <!-- Banner Visão Geral de Engajamento -->
+    <div class="banner-engajamento mb-4">
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <span class="badge-atualizado mb-2">ATUALIZADO AGORA</span>
+        <h3 class="banner-title mb-0">Visão Geral de Engajamento</h3>
+      </div>
+    </div>
+
     <!-- Resumo geral -->
     <div class="row g-3 mb-4">
       <div class="col-md-4">
-        <app-stat-card label="Total de Comentários" [value]="totalComentarios()" badgeClass="badge-navy">
-          <i icon class="fi fi-rr-comment-alt"></i>
-        </app-stat-card>
+        <div class="stat-card-custom">
+          <div class="stat-card-icon-container">
+            <i class="fi fi-rr-comment-alt"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-label">TOTAL</span>
+            <span class="stat-card-value">{{ totalComentarios() }}</span>
+          </div>
+        </div>
       </div>
       <div class="col-md-4">
-        <app-stat-card label="Alunos que Comentaram" [value]="totalAlunosUnicos()" badgeClass="badge-purple">
-          <i icon class="fi fi-rr-graduation-cap"></i>
-        </app-stat-card>
+        <div class="stat-card-custom">
+          <div class="stat-card-icon-container">
+            <i class="fi fi-rr-graduation-cap"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-label">ALUNOS</span>
+            <span class="stat-card-value">{{ totalAlunosUnicos() }}</span>
+          </div>
+        </div>
       </div>
       <div class="col-md-4">
-        <app-stat-card label="Módulos com Comentários" [value]="totalModulosComComentario()" badgeClass="badge-teal">
-          <i icon class="fi fi-rr-book-alt"></i>
-        </app-stat-card>
+        <div class="stat-card-custom">
+          <div class="stat-card-icon-container">
+            <i class="fi fi-rr-book-alt"></i>
+          </div>
+          <div class="stat-card-info">
+            <span class="stat-card-label">MÓDULOS</span>
+            <span class="stat-card-value">{{ totalModulosComComentario() }}</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Filtros -->
     <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
-      <div class="turma-select-wrap">
-        <select class="form-select form-select-sm" (change)="onTurmaChange($any($event.target).value)">
+      <div class="select-wrap-custom">
+        <select class="form-select-custom" (change)="onTurmaChange($any($event.target).value)">
           <option value="">Todas as turmas</option>
           <option *ngFor="let turma of turmasDisponiveis()" [value]="turma.turma_id" [selected]="turmaFiltro() === turma.turma_id">
             {{ turma.nome_turma }}
@@ -45,8 +72,8 @@
         </select>
       </div>
 
-      <div class="turma-select-wrap">
-        <select class="form-select form-select-sm" (change)="onModuloChange($any($event.target).value)">
+      <div class="select-wrap-custom">
+        <select class="form-select-custom" (change)="onModuloChange($any($event.target).value)">
           <option value="">Todos os módulos</option>
           <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id" [selected]="moduloFiltro() === modulo.modulo_id">
             {{ modulo.titulo_modulo }}
@@ -54,69 +81,93 @@
         </select>
       </div>
 
+      <button class="btn-filtros-custom" (click)="limparFiltros()">
+        <i class="fi fi-rr-filter"></i> Filtros
+      </button>
     </div>
 
     <!-- Lista de comentários -->
-    <div class="chart-card">
+    <div class="comentarios-lista-container">
       <div class="d-flex flex-column gap-3" *ngIf="comentariosFiltrados().length > 0; else semComentarios">
-        <div class="comentario-card" *ngFor="let comentario of comentariosFiltrados()">
-          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-            <div class="d-flex align-items-start gap-3">
-              <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
+        <div class="comentario-card-custom" *ngFor="let comentario of comentariosPaginados()">
+          
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="comentario-avatar-custom">{{ getIniciais(comentario.aluno.nome) }}</div>
               <div>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                  <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
-                  <span class="badge-status" [ngClass]="comentario.resposta ? 'badge-status-respondido' : 'badge-status-pendente'">
-                    <i class="fi" [ngClass]="comentario.resposta ? 'fi-rr-check' : 'fi-rr-clock'"></i>
-                    {{ comentario.resposta ? 'Respondido' : 'Pendente' }}
+                  <span class="comentario-aluno-nome-custom">{{ comentario.aluno.nome }}</span>
+                  
+                  <span class="badge-status-custom" [ngClass]="comentario.resposta ? 'badge-status-respondido' : 'badge-status-pendente'">
+                    {{ comentario.resposta ? 'RESPONDIDO' : 'PENDENTE' }}
                   </span>
-                </div>
-                <div class="comentario-meta">
-                  {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
-                  {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
+                  
+                  <span class="comentario-meta-custom">
+                    • {{ comentario.turma.nome_turma }} | {{ comentario.modulo.titulo_modulo }}
+                  </span>
                 </div>
               </div>
             </div>
-            <span class="comentario-data">
-              {{ comentario.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            
+            <span class="comentario-data-custom">
+              {{ comentario.updatedAt | date:'dd/MM, HH:mm' }}
             </span>
           </div>
 
-          <p class="comentario-texto">{{ comentario.texto }}</p>
+          <p class="comentario-texto-custom">"{{ comentario.texto }}"</p>
 
-          <div class="resposta-existente" *ngIf="comentario.resposta">
-            <div class="resposta-existente-label">
+          <!-- Resposta existente -->
+          <div class="resposta-existente-custom" *ngIf="comentario.resposta && respostaAbertaId() !== comentario.id">
+            <div class="resposta-existente-label-custom">
               <i class="fi fi-rr-corner-down-right"></i> Sua resposta
             </div>
-            <p class="resposta-existente-texto">{{ comentario.resposta }}</p>
+            <p class="resposta-existente-texto-custom">{{ comentario.resposta }}</p>
           </div>
 
-          <div class="comentario-footer">
+          <!-- Ações do comentário (Responder) -->
+          <div class="comentario-footer-custom" *ngIf="respostaAbertaId() !== comentario.id">
             <button
-              class="btn-responder"
+              class="btn-responder-custom"
               [ngClass]="{
-                'btn-responder-respondido': comentario.resposta && respostaAbertaId() !== comentario.id
+                'btn-responder-respondido': comentario.resposta
               }"
               type="button"
               (click)="toggleResposta(comentario.id)">
-              <i class="fi"
-                [ngClass]="respostaAbertaId() === comentario.id ? 'fi-rr-cross-small' : (comentario.resposta ? 'fi-rr-check' : 'fi-rr-comment-alt-dots')"></i>
-              {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Respondido' : 'Responder') }}
+              <i class="fi fi-rr-reply"></i>
+              {{ comentario.resposta ? 'Responder novamente' : 'Responder' }}
             </button>
           </div>
 
-          <div class="resposta-box" *ngIf="respostaAbertaId() === comentario.id">
+          <!-- Caixa para responder -->
+          <div class="resposta-box-custom animate-slide-down" *ngIf="respostaAbertaId() === comentario.id">
             <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
-            <textarea class="resposta-textarea" rows="2" placeholder="Escreva sua resposta..."
+            <textarea class="resposta-textarea-custom" rows="3" placeholder="Escreva sua resposta..."
               [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
-            <div class="resposta-actions">
-              <button class="btn-resposta-enviar" type="button" [disabled]="enviandoResposta()"
+            <div class="resposta-actions-custom">
+              <button class="btn-resposta-cancelar-custom" type="button" (click)="toggleResposta(comentario.id)">
+                Cancelar
+              </button>
+              <button class="btn-resposta-enviar-custom" type="button" [disabled]="enviandoResposta()"
                 (click)="enviarResposta(comentario)">
                 <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
                 {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
               </button>
             </div>
           </div>
+
+        </div>
+
+        <!-- Paginação -->
+        <div class="pagination-container-custom d-flex justify-content-between align-items-center mt-4" *ngIf="totalPaginas() > 1">
+          <button class="btn-pagination-custom" [disabled]="paginaAtualLista() === 1" (click)="paginaAnterior()">
+            <i class="fi fi-rr-angle-small-left"></i> Anterior
+          </button>
+          <span class="pagination-info-custom">
+            Página <strong>{{ paginaAtualLista() }}</strong> de {{ totalPaginas() }}
+          </span>
+          <button class="btn-pagination-custom" [disabled]="paginaAtualLista() === totalPaginas()" (click)="proximaPagina()">
+            Próxima <i class="fi fi-rr-angle-small-right"></i>
+          </button>
         </div>
       </div>
 
@@ -126,4 +177,5 @@
         </div>
       </ng-template>
     </div>
-  </div>
+
+</div>
