@@ -82,7 +82,9 @@
       <div class="chart-card h-100">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h5 class="fw-bold mb-0">Ocupação das turmas</h5>
-          <button class="btn btn-link btn-sm text-decoration-none" (click)="irPara.emit('turmas')">Ver todas →</button>
+          <button class="btn-ver-todas" (click)="irPara.emit('turmas')">
+            Ver todas <i class="fi fi-rr-arrow-right"></i>
+          </button>
         </div>
 
         <div class="d-flex flex-column gap-3" *ngIf="turmas().length > 0; else semTurmas">
@@ -115,7 +117,9 @@
             <i class="fi fi-rr-bell text-warning fs-5"></i>
             <h5 class="fw-bold mb-0">Solicitações pendentes</h5>
           </div>
-          <button class="btn btn-link btn-sm text-decoration-none" (click)="irPara.emit('usuarios')">Ver todas →</button>
+          <button class="btn-ver-todas" (click)="irPara.emit('usuarios')">
+            Ver todas <i class="fi fi-rr-arrow-right"></i>
+          </button>
         </div>
 
         <div class="d-flex flex-column gap-3" *ngIf="pendingUsers().length > 0; else noPending">

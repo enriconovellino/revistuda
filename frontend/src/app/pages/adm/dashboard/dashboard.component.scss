@@ -209,3 +209,52 @@
   background-color: #1c3d64;
   box-shadow: 0 6px 20px rgba(15, 39, 68, 0.4);
 }
+
+.btn-ver-todas {
+  background: #e2ecf7; /* Fundo azul claro suave padrão do sistema */
+  border: 1px solid rgba(15, 39, 68, 0.16);
+  color: #0f2744;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  i {
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 1em;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: #0f2744;
+    color: #ffffff;
+    border-color: #0f2744;
+
+    i {
+      transform: translateX(2px);
+      color: #ffffff;
+    }
+  }
+}
+
+/* Alinhamento global para ícones em headers e botões */
+.d-flex.align-items-center i.fi {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 1em;
+  vertical-align: middle;
+}
+
+
