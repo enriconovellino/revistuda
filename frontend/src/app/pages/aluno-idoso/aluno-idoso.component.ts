@@ -1,9 +1,11 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../model/auth.model';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
@@ -15,7 +17,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
   templateUrl: './aluno-idoso.component.html',
   styleUrl: './aluno-idoso.component.scss'
 })
-export class AlunoIdosoComponent implements OnInit {
+export class AlunoIdosoComponent implements OnInit, OnDestroy {
   userName = signal<string>('Aluno');
   isEditProfileOpen = signal<boolean>(false);
   isLogoutModalOpen = signal<boolean>(false);
@@ -24,6 +26,7 @@ export class AlunoIdosoComponent implements OnInit {
   showBackButton = signal<boolean>(false);
 
   private router = inject(Router);
+  private routerSub?: Subscription;
 
   constructor(private authService: AuthService) { }
 
@@ -34,9 +37,22 @@ export class AlunoIdosoComponent implements OnInit {
     }
 
     this.checkRoute(this.router.url);
-    this.router.events.subscribe(() => {
+
+    // Assina todos os eventos de rota: verifica sub-rota ativa E intercepta popstate para fora de /aluno-idoso
+    this.routerSub = this.router.events.subscribe(e => {
       this.checkRoute(this.router.url);
+
+      if (e instanceof NavigationStart &&
+          e.navigationTrigger === 'popstate' &&
+          !e.url.startsWith('/aluno-idoso')) {
+        this.router.navigate([this.router.url]);
+        this.isLogoutModalOpen.set(true);
+      }
     });
+  }
+
+  ngOnDestroy() {
+    this.routerSub?.unsubscribe();
   }
 
   checkRoute(url: string) {
