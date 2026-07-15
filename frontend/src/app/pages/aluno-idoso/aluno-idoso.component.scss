@@ -239,6 +239,14 @@
   min-width: 0;
   max-width: calc(100vw - 15rem);
   overflow-x: hidden;
+  transition: margin-left 0.25s ease, max-width 0.25s ease;
+}
+
+.sidebar-collapsed {
+  .content-wrapper {
+    margin-left: 68px;
+    max-width: calc(100vw - 68px);
+  }
 }
 
 /* OTHER STYLES */
