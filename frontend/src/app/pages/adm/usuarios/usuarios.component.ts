@@ -74,6 +74,31 @@ export class UsuariosAdminComponent implements OnInit {
     });
   }
 
+  totalAlunos = computed(() => this.users().filter(u => this.isAluno(u)).length);
+  totalProfessores = computed(() => this.users().filter(u => this.isProfessor(u)).length);
+  totalPendentes = computed(() => this.users().filter(u => !u.approved).length);
+  totalUsuarios = computed(() => this.users().length);
+  paginas = computed(() => Array.from({ length: this.totalPaginas() }, (_, i) => i + 1));
+
+  alunoSendoEditado = signal<number | null>(null);
+
+  getIniciais(nome: string): string {
+    if (!nome) return '';
+    const partes = nome.trim().split(/\s+/);
+    if (partes.length >= 2) {
+      return (partes[0][0] + partes[1][0]).toUpperCase();
+    }
+    return partes[0].slice(0, 2).toUpperCase();
+  }
+
+  alternarEdicao(userId: number) {
+    if (this.alunoSendoEditado() === userId) {
+      this.alunoSendoEditado.set(null);
+    } else {
+      this.alunoSendoEditado.set(userId);
+    }
+  }
+
   mudarPagina(p: number) { this.paginaAtual.set(p); }
 
   async ngOnInit() {

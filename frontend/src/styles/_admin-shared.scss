@@ -53,10 +53,24 @@
 }
 
 .chart-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid rgba(15, 39, 68, 0.16);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #0f2744; /* Azul FGV escuro sólido */
 }
 
 .empty-state {
@@ -112,3 +126,43 @@
     color: white;
   }
 }
+
+/* Custom Badges */
+.badge-custom {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  text-align: center;
+
+  &.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  &.warning {
+    background: #fff3e0;
+    color: #e65100;
+  }
+  
+  &.danger {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  &.primary {
+    background: #0f2744;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    padding: 0;
+    font-size: 0.85rem;
+  }
+}
+
