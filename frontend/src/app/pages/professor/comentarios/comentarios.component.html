@@ -81,7 +81,7 @@
         </select>
       </div>
 
-      <button class="btn-filtros-custom" (click)="limparFiltros()">
+      <button class="btn btn-outline-dark d-flex align-items-center gap-2" (click)="limparFiltros()">
         <i class="fi fi-rr-filter"></i> Filtros
       </button>
     </div>
@@ -127,10 +127,8 @@
           <!-- Ações do comentário (Responder) -->
           <div class="comentario-footer-custom" *ngIf="respostaAbertaId() !== comentario.id">
             <button
-              class="btn-responder-custom"
-              [ngClass]="{
-                'btn-responder-respondido': comentario.resposta
-              }"
+              class="btn btn-sm d-flex align-items-center gap-2"
+              [ngClass]="comentario.resposta ? 'btn-outline-success' : 'btn-outline-primary'"
               type="button"
               (click)="toggleResposta(comentario.id)">
               <i class="fi fi-rr-reply"></i>
@@ -143,11 +141,11 @@
             <div class="resposta-alert" *ngIf="respostaError()">{{ respostaError() }}</div>
             <textarea class="resposta-textarea-custom" rows="3" placeholder="Escreva sua resposta..."
               [(ngModel)]="respostaTexto" name="respostaTexto"></textarea>
-            <div class="resposta-actions-custom">
-              <button class="btn-resposta-cancelar-custom" type="button" (click)="toggleResposta(comentario.id)">
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              <button class="btn btn-outline-dark btn-sm px-3" type="button" (click)="toggleResposta(comentario.id)">
                 Cancelar
               </button>
-              <button class="btn-resposta-enviar-custom" type="button" [disabled]="enviandoResposta()"
+              <button class="btn btn-primary btn-sm px-4 d-flex align-items-center gap-2" type="button" [disabled]="enviandoResposta()"
                 (click)="enviarResposta(comentario)">
                 <span class="spinner-border spinner-border-sm" role="status" *ngIf="enviandoResposta()"></span>
                 {{ enviandoResposta() ? 'Enviando...' : 'Enviar Resposta' }}
@@ -158,14 +156,14 @@
         </div>
 
         <!-- Paginação -->
-        <div class="pagination-container-custom d-flex justify-content-between align-items-center mt-4" *ngIf="totalPaginas() > 1">
-          <button class="btn-pagination-custom" [disabled]="paginaAtualLista() === 1" (click)="paginaAnterior()">
+        <div class="d-flex justify-content-between align-items-center mt-4" *ngIf="totalPaginas() > 1">
+          <button class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2" [disabled]="paginaAtualLista() === 1" (click)="paginaAnterior()">
             <i class="fi fi-rr-angle-small-left"></i> Anterior
           </button>
-          <span class="pagination-info-custom">
+          <span class="text-muted small">
             Página <strong>{{ paginaAtualLista() }}</strong> de {{ totalPaginas() }}
           </span>
-          <button class="btn-pagination-custom" [disabled]="paginaAtualLista() === totalPaginas()" (click)="proximaPagina()">
+          <button class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2" [disabled]="paginaAtualLista() === totalPaginas()" (click)="proximaPagina()">
             Próxima <i class="fi fi-rr-angle-small-right"></i>
           </button>
         </div>
