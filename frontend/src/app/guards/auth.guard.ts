@@ -3,7 +3,7 @@ import { Router, CanActivateFn } from '@angular/router';
 import { isPlatformServer } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = async () => {
   const platformId = inject(PLATFORM_ID);
   if (isPlatformServer(platformId)) {
     return true;
@@ -12,10 +12,31 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAuthenticated()) {
+  const accessToken = authService.getAccessToken();
+
+  if (!accessToken) {
+    router.navigate(['/']);
+    return false;
+  }
+
+  if (!authService.isTokenExpired(accessToken)) {
     return true;
   }
 
-  router.navigate(['/']);
-  return false;
+  const refreshToken = typeof window !== 'undefined' && window.localStorage
+    ? localStorage.getItem('refreshToken')
+    : null;
+
+  if (!refreshToken) {
+    authService.logout();
+    return false;
+  }
+
+  try {
+    await authService.refresh(refreshToken);
+    return true;
+  } catch {
+    authService.logout();
+    return false;
+  }
 };

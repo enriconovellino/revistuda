@@ -10,41 +10,27 @@ export class ModuloService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-  }
-
   async getModulos(): Promise<Modulo[]> {
-    const response = await fetch(`${this.apiUrl}/modulos`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/modulos`);
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar Modulos');
     }
-
     return data as Modulo[];
   }
 
   async createModulo(
     modulo: Omit<Modulo, 'modulo_id'> & { turma_id: number },
   ): Promise<Modulo> {
-    const response = await fetch(`${this.apiUrl}/modulos`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/modulos`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(modulo),
     });
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao criar módulo');
     }
-
     return data as Modulo;
   }
 
@@ -52,26 +38,22 @@ export class ModuloService {
     id: number,
     modulo: Partial<Omit<Modulo, 'modulo_id'>>,
   ): Promise<Modulo> {
-    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/modulos/${id}`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(modulo),
     });
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao atualizar módulo');
     }
-
     return data as Modulo;
   }
 
   async deleteModulo(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/modulos/${id}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
     });
-
     if (!response.ok) {
       const data = await response.json();
       throw new Error(data.message || 'Erro ao deletar módulo');
@@ -79,9 +61,7 @@ export class ModuloService {
   }
 
   async getModuloById(id: number): Promise<Modulo> {
-    const response = await fetch(`${this.apiUrl}/modulos/${id}`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/modulos/${id}`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar módulo');

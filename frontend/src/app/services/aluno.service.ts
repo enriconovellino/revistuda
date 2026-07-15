@@ -12,14 +12,6 @@ export class AlunoService {
 
   constructor() { }
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-    };
-  }
-
   private getUserId(): number | null {
     const userStr = localStorage.getItem('user');
     if (!userStr) return null;
@@ -28,9 +20,9 @@ export class AlunoService {
   }
 
   async iniciarAtividade(atividadeId: number): Promise<{ status: string; data_inicio: string | null; data_conclusao: string | null }> {
-    const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
     });
     const data = await response.json();
     if (!response.ok) {
@@ -41,9 +33,9 @@ export class AlunoService {
 
   async saveComentario(conteudoId: number, texto: string): Promise<void> {
     try {
-      const response = await fetch(`${this.apiUrl}/comentarios`, {
+      const response = await this.authService.fetchWithAuth(`${this.apiUrl}/comentarios`, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conteudoId, texto: texto.trim() })
       });
       if (!response.ok) throw new Error('Falha ao salvar comentário.');
@@ -60,9 +52,7 @@ export class AlunoService {
 
     await Promise.all(conteudoIds.map(async (conteudoId) => {
       try {
-        const response = await fetch(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`, {
-          headers: this.getHeaders()
-        });
+        const response = await this.authService.fetchWithAuth(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`);
         if (!response.ok) return;
         const comentarios: Array<{ texto: string; aluno: { id: number } }> = await response.json();
         const meuComentario = comentarios.find(c => c.aluno.id === userId);
@@ -73,6 +63,7 @@ export class AlunoService {
 
     return resultado;
   }
+
   async getComentariosCompletosDoAluno(conteudoIds: number[]): Promise<{ [conteudoId: number]: ComentarioAlunoProfessor }> {
     const resultado: { [conteudoId: number]: ComentarioAlunoProfessor } = {};
     const userId = this.getUserId();
@@ -80,9 +71,7 @@ export class AlunoService {
 
     await Promise.all(conteudoIds.map(async (conteudoId) => {
       try {
-        const response = await fetch(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`, {
-          headers: this.getHeaders()
-        });
+        const response = await this.authService.fetchWithAuth(`${this.apiUrl}/comentarios/conteudo/${conteudoId}`);
         if (!response.ok) return;
         const comentarios: ComentarioAlunoProfessor[] = await response.json();
         const meuComentario = comentarios.find(c => c.aluno.id === userId);
@@ -93,4 +82,4 @@ export class AlunoService {
 
     return resultado;
   }
-}
+}
