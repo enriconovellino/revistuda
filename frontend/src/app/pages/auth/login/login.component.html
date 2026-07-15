@@ -30,7 +30,7 @@
           <label for="loginSenha" class="form-label"><i class="fi fi-rr-lock me-1"></i>Sua senha</label>
           <div class="position-relative">
             <input [type]="mostrarSenhaLogin ? 'text' : 'password'" class="form-control" id="loginSenha"
-              formControlName="senha" placeholder="••••••••"
+              formControlName="senha" placeholder="Digite sua senha"
               [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched" maxlength="100">
             <i class="fi position-absolute icone-olho" [class.fi-rr-eye]="!mostrarSenhaLogin"
               [class.fi-rr-eye-crossed]="mostrarSenhaLogin" (click)="mostrarSenhaLogin = !mostrarSenhaLogin"></i>
