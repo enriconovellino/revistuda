@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
+
+:host {
+  --color-bg: #F6F7FB;
+  --color-surface: #FFFFFF;
+  --color-ink: #3158bb;
+  --color-ink-soft: #4a5d88;
+  --color-primary: #35467D;
+  --color-primary-soft: #E7EBFA;
+  --color-success: #2F8F63;
+  --color-success-soft: #E3F5EC;
+  --color-warning: #C9822A;
+  --color-warning-soft: #FCEFDD;
+  --color-border: #E1E5F0;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 4px 16px rgba(35, 42, 59, 0.06);
+
+  display: block;
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  min-height: 100%;
+}
+
+h4.fw-bold {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.9rem;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+// --- Botões de navegação entre Atividades / Comentários ---
+.btn-nav-secundario {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  transition: all 0.18s ease;
+  cursor: pointer;
+
+  i {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background-color: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  &.ativo {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+}
+
+// --- Badges de resumo (topo) ---
+.resumo-badge {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.resumo-total {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.resumo-respondido {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.resumo-pendente {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+// --- Badge de status individual ---
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 999px;
+  line-height: 1.4;
+}
+
+.badge-status-respondido {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.badge-status-pendente {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+// --- Card de comentário: o "fio de conversa" ---
+.comentario-atividade-box {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: 22px 24px;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(35, 42, 59, 0.09);
+  }
+}
+
+.comentario-atividade-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  i {
+    color: var(--color-warning);
+    font-size: 1.05rem;
+  }
+}
+
+.comentario-atividade-label {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-ink);
+}
+
+.comentario-conteudo-ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-ink-soft);
+  margin-left: 26px;
+
+  i {
+    color: var(--color-warning);
+    font-size: 0.85rem;
+  }
+}
+
+.comentario-atividade-texto {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--color-ink);
+  margin: 0 0 14px 0;
+  padding: 14px 18px;
+  background-color: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  border-top-left-radius: 4px;
+}
+
+// Fio vertical conectando a fala do aluno à resposta do professor
+.resposta-professor-box {
+  position: relative;
+  margin-left: 20px;
+  padding: 14px 18px 14px 22px;
+  background-color: var(--color-success-soft);
+  border-radius: var(--radius-md);
+  border-top-left-radius: 4px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: -14px;
+    width: 2px;
+    height: calc(100% + 4px);
+    background: linear-gradient(to bottom, var(--color-border), var(--color-warning));
+    border-radius: 2px;
+  }
+}
+
+.resposta-professor-label {
+  display: block;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-success);
+  margin-bottom: 4px;
+}
+
+.resposta-professor-texto {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.comentario-sem-resposta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-warning);
+  margin-left: 20px;
+
+  i {
+    color: var(--color-warning);
+  }
+}
+
+// --- Estados vazio / carregando / erro ---
+.loading-container,
+.empty-state {
+  padding: 48px 24px;
+  color: var(--color-ink-soft);
+}
+
+.empty-state {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--color-border);
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+}
+
+.alert-danger {
+  border-radius: var(--radius-md);
+  border: none;
+  background-color: #FCEAEA;
+  color: #B23A3A;
+  font-weight: 700;
+  padding: 16px 20px;
+}

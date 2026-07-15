@@ -21,6 +21,8 @@ import { ModulosProfessorComponent } from './pages/professor/modulos/modulos.com
 
 import { ModulosIdosoComponent } from './pages/aluno-idoso/modulos-idoso/modulos.component';
 import { AtividadesIdosoComponent } from './pages/aluno-idoso/atividades-idoso/atividades.component';
+import { ComentariosIdosoComponent } from './pages/aluno-idoso/comentario-idoso/comentarios.component';
+
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
   { path: 'login', component: LoginComponent },
@@ -29,18 +31,19 @@ export const routes: Routes = [
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
 
 
-  {
-    path: 'aluno-idoso',
-    component: AlunoIdosoComponent,
-    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])],
-    children: [
-      { path: '', component: DashboardAlunoIdosoComponent },
-      { path: 'modulos', component: ModulosIdosoComponent },
-      { path: 'atividades', component: AtividadesIdosoComponent },
-      { path: 'modulo/:id', component: AlunoModuloDetalheComponent },
-      { path: 'atividade/:id', component: TelaAtividade },
-    ]
-  },
+ {
+  path: 'aluno-idoso',
+  component: AlunoIdosoComponent,
+  canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])],
+  children: [
+    { path: '', component: DashboardAlunoIdosoComponent },
+    { path: 'modulos', component: ModulosIdosoComponent },
+    { path: 'atividades', component: AtividadesIdosoComponent },
+    { path: 'comentarios', component: ComentariosIdosoComponent },
+    { path: 'modulo/:id', component: AlunoModuloDetalheComponent },
+    { path: 'atividade/:id', component: TelaAtividade },
+  ]
+},
 
   {
     path: 'professor',
