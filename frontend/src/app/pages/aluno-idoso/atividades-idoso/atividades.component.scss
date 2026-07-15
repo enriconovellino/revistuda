@@ -273,6 +273,7 @@
   box-shadow: 0 0 35px rgba(23, 162, 184, 1) !important;
   animation: pulsar-tutorial-item 2s infinite ease-in-out;
   cursor: pointer;
+  overflow: visible !important;
 }
 
 @keyframes pulsar-tutorial-item {
