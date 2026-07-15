@@ -5,6 +5,7 @@ import { AlunoIdosoComponent } from './pages/aluno-idoso/aluno-idoso.component';
 import { ProfessorComponent } from './pages/professor/professor.component';
 import { AdmComponent } from './pages/adm/adm.component';
 import { TelaInicialComponent } from './pages/landing/tela-inicial/tela-inicial.component';
+import { SobreNosComponent } from './pages/landing/sobre-nos/sobre-nos.component';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { ModuloDetalheComponent } from './pages/professor/modulo-detalhe/modulo-detalhe.component';
@@ -30,6 +31,7 @@ import { RelatoriosAdminComponent } from './pages/adm/relatorios/relatorios.comp
 
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
+  { path: 'sobre-nos', component: SobreNosComponent },
   { path: 'login', component: LoginComponent },
   { path: 'login-idoso', component: LoginIdosoComponent },
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
