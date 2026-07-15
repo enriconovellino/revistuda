@@ -342,3 +342,32 @@
   opacity: 0.65;
   cursor: not-allowed;
 }
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  line-height: 1.4;
+}
+
+.badge-status-respondido {
+  background-color: #e6f7ee;
+  color: #1a9d5c;
+}
+
+.badge-status-pendente {
+  background-color: #fff3e0;
+  color: #c98a1a;
+}
+.btn-responder-respondido {
+  background-color: #e6f7ee;
+  color: #1a9d5c;
+  border-color: #b3e6cc;
+}
+
+.btn-responder-respondido:hover {
+  background-color: #d2f0e0;
+}

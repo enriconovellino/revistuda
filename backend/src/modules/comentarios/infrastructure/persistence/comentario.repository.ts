@@ -148,6 +148,8 @@ export class ComentarioRepository implements IComentarioRepository {
       texto: c.texto,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
+      resposta: c.resposta,
+      respostaAt: c.respostaAt,
       aluno: c.aluno,
       conteudo: {
         conteudo_id: c.conteudo.conteudo_id,
