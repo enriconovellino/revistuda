@@ -82,7 +82,7 @@
       <div class="chart-card h-100">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h5 class="fw-bold mb-0">Ocupação das turmas</h5>
-          <button class="btn-ver-todas" (click)="irPara.emit('turmas')">
+          <button class="btn-ver-todas" (click)="irPara('turmas')">
             Ver todas <i class="fi fi-rr-arrow-right"></i>
           </button>
         </div>
@@ -117,7 +117,7 @@
             <i class="fi fi-rr-bell text-warning fs-5"></i>
             <h5 class="fw-bold mb-0">Solicitações pendentes</h5>
           </div>
-          <button class="btn-ver-todas" (click)="irPara.emit('usuarios')">
+          <button class="btn-ver-todas" (click)="irPara('usuarios')">
             Ver todas <i class="fi fi-rr-arrow-right"></i>
           </button>
         </div>
@@ -169,7 +169,7 @@
   </div>
 
   <!-- Floating Action Button (FAB) -->
-  <button class="fab-btn" (click)="irPara.emit('turmas')" title="Adicionar Nova Turma">
+  <button class="fab-btn" (click)="irPara('turmas')" title="Adicionar Nova Turma">
     <i class="fi fi-rr-plus"></i>
   </button>
 

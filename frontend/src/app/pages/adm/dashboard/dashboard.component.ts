@@ -1,5 +1,6 @@
-import { Component, OnInit, computed, inject, output, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
 import { AtividadeRecente, AtividadeRecenteService } from '../../../services/atividade-recente.service';
@@ -17,7 +18,11 @@ import { StatCardComponent } from '../../../components/stat-card/stat-card.compo
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardAdminComponent implements OnInit {
-  irPara = output<AdmView>();
+  private router = inject(Router);
+
+  irPara(view: AdmView) {
+    this.router.navigate(['/adm', view]);
+  }
 
   private userService = inject(UserService);
   private turmaService = inject(TurmaService);

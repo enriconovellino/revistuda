@@ -1,53 +1,59 @@
 <div class="mb-4">
-  <h4 class="mb-0 fw-bold">Relatórios</h4>
+  <h4 class="mb-0 fw-bold" style="color: #0f2744;">Relatórios</h4>
   <small class="text-muted">Desempenho consolidado a partir das respostas de atividades de múltipla escolha.</small>
 </div>
 
 <ng-container *ngIf="!loading() && overview() as data; else carregando">
-  <div class="row g-3 mb-4">
+  <!-- Linha de Cartões de Estatísticas -->
+  <div class="row g-3 mb-5">
     <div class="col-6 col-md">
-      <div class="stat-card text-center">
-        <div class="text-muted small mb-1">Alunos</div>
-        <div class="fs-4 fw-bold text-dark">{{ data.totalAlunos }}</div>
+      <div class="stat-card">
+        <div class="stat-card-label">Alunos</div>
+        <div class="stat-card-value">{{ data.totalAlunos }}</div>
       </div>
     </div>
     <div class="col-6 col-md">
-      <div class="stat-card text-center">
-        <div class="text-muted small mb-1">Professores</div>
-        <div class="fs-4 fw-bold text-dark">{{ data.totalProfessores }}</div>
+      <div class="stat-card">
+        <div class="stat-card-label">Professores</div>
+        <div class="stat-card-value">{{ data.totalProfessores }}</div>
       </div>
     </div>
     <div class="col-6 col-md">
-      <div class="stat-card text-center">
-        <div class="text-muted small mb-1">Módulos</div>
-        <div class="fs-4 fw-bold text-dark">{{ data.totalModulos }}</div>
+      <div class="stat-card">
+        <div class="stat-card-label">Módulos</div>
+        <div class="stat-card-value">{{ data.totalModulos }}</div>
       </div>
     </div>
     <div class="col-6 col-md">
-      <div class="stat-card text-center">
-        <div class="text-muted small mb-1">Lições</div>
-        <div class="fs-4 fw-bold text-dark">{{ data.totalLicoes }}</div>
+      <div class="stat-card">
+        <div class="stat-card-label">Lições</div>
+        <div class="stat-card-value">{{ data.totalLicoes }}</div>
       </div>
     </div>
     <div class="col-6 col-md">
-      <div class="stat-card text-center">
-        <div class="text-muted small mb-1">Atividades respondidas</div>
-        <div class="fs-4 fw-bold text-dark">{{ data.totalAtividadesRespondidas }}</div>
+      <div class="stat-card">
+        <div class="stat-card-label">Atividades</div>
+        <div class="stat-card-value">{{ data.totalAtividadesRespondidas }}</div>
       </div>
     </div>
   </div>
 
-  <div class="row g-4">
+  <!-- Cards de Gráficos/Médias -->
+  <div class="row g-4 mb-5">
     <div class="col-md-6">
-      <div class="chart-card">
-        <h5 class="fw-bold mb-4">Média por turma</h5>
+      <div class="chart-card h-100">
+        <div class="card-header-custom">
+          <h5 class="fw-bold">Média por turma</h5>
+          <i class="fi fi-rr-users"></i>
+        </div>
         <div class="d-flex flex-column gap-3" *ngIf="data.mediaPorTurma.length > 0; else semTurmas">
           <div *ngFor="let item of data.mediaPorTurma">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="small fw-semibold text-dark">{{ item.nome }}</span>
-              <span class="small text-muted" *ngIf="item.media !== null">{{ item.media }}%</span>
+              <span class="small fw-bold text-dark" *ngIf="item.media !== null">{{ item.media }}%</span>
               <span class="small text-muted fst-italic" *ngIf="item.media === null">Sem dados</span>
             </div>
+            <!-- Mantendo a regra original de exibição da barra -->
             <div class="occ-bar" *ngIf="item.media !== null">
               <div class="occ-bar-fill" [class.warn]="item.media < 70" [style.width.%]="item.media"></div>
             </div>
@@ -60,15 +66,19 @@
     </div>
 
     <div class="col-md-6">
-      <div class="chart-card">
-        <h5 class="fw-bold mb-4">Média por módulo</h5>
+      <div class="chart-card h-100">
+        <div class="card-header-custom">
+          <h5 class="fw-bold">Média por módulo</h5>
+          <i class="fi fi-rr-book"></i>
+        </div>
         <div class="d-flex flex-column gap-3" *ngIf="data.mediaPorModulo.length > 0; else semModulos">
           <div *ngFor="let item of data.mediaPorModulo">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="small fw-semibold text-dark">{{ item.nome }}</span>
-              <span class="small text-muted" *ngIf="item.media !== null">{{ item.media }}%</span>
+              <span class="small fw-bold text-dark" *ngIf="item.media !== null">{{ item.media }}%</span>
               <span class="small text-muted fst-italic" *ngIf="item.media === null">Sem dados</span>
             </div>
+            <!-- Mantendo a regra original de exibição da barra -->
             <div class="occ-bar" *ngIf="item.media !== null">
               <div class="occ-bar-fill" [class.warn]="item.media < 70" [style.width.%]="item.media"></div>
             </div>
@@ -77,6 +87,49 @@
         <ng-template #semModulos>
           <div class="empty-state py-3"><p class="mb-0 small">Nenhum módulo cadastrado.</p></div>
         </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rodapé com Recursos / Informações Adicionais -->
+  <div class="row g-4 pt-4 border-top mt-2">
+    <div class="col-md-4">
+      <div class="d-flex align-items-start gap-3">
+        <div class="feature-icon-wrapper">
+          <i class="fi fi-rr-stats"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Métricas Consolidadas</h6>
+          <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+            Visão geral quantitativa de alunos, professores, módulos, lições e respostas registradas.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="d-flex align-items-start gap-3">
+        <div class="feature-icon-wrapper">
+          <i class="fi fi-rr-users"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Médias por Turma</h6>
+          <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+            Acompanhamento do rendimento acadêmico médio de cada turma ativa no sistema.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="d-flex align-items-start gap-3">
+        <div class="feature-icon-wrapper">
+          <i class="fi fi-rr-book-alt"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Médias por Módulo</h6>
+          <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+            Análise do desempenho dos alunos em cada módulo para identificar áreas de melhoria.
+          </p>
+        </div>
       </div>
     </div>
   </div>
