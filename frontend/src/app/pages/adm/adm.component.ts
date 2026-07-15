@@ -1,7 +1,6 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, signal, OnInit, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { inject } from '@angular/core';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { DashboardAdminComponent } from './dashboard/dashboard.component';
@@ -17,6 +16,7 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
   standalone: true,
   imports: [
     CommonModule,
+    RouterOutlet,
     EditarPerfilComponent,
     DashboardAdminComponent,
     UsuariosAdminComponent,
@@ -30,7 +30,6 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
 export class AdmComponent implements OnInit {
   userName = signal('Administrador');
   isEditProfileOpen = signal<boolean>(false);
-  currentView = signal<AdmView>('dashboard');
   sidebarCollapsed = signal<boolean>(false);
 
   private router = inject(Router);
@@ -48,7 +47,7 @@ export class AdmComponent implements OnInit {
   }
 
   irPara(view: AdmView) {
-    this.currentView.set(view);
+    this.router.navigate(['/adm', view]);
   }
 
   abrirEditarPerfil() {

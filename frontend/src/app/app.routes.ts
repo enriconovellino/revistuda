@@ -21,6 +21,11 @@ import { ModulosProfessorComponent } from './pages/professor/modulos/modulos.com
 
 import { ModulosIdosoComponent } from './pages/aluno-idoso/modulos-idoso/modulos.component';
 import { AtividadesIdosoComponent } from './pages/aluno-idoso/atividades-idoso/atividades.component';
+import { DashboardAdminComponent } from './pages/adm/dashboard/dashboard.component';
+import { UsuariosAdminComponent } from './pages/adm/usuarios/usuarios.component';
+import { TurmasAdminComponent } from './pages/adm/turmas/turmas.component';
+import { RelatoriosAdminComponent } from './pages/adm/relatorios/relatorios.component';
+
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
   { path: 'login', component: LoginComponent },
@@ -59,7 +64,14 @@ export const routes: Routes = [
   {
     path: 'adm',
     component: AdmComponent,
-    canActivate: [authGuard, roleGuard(['ADM'])]
+    canActivate: [authGuard, roleGuard(['ADM'])],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardAdminComponent },
+      { path: 'usuarios', component: UsuariosAdminComponent },
+      { path: 'turmas', component: TurmasAdminComponent },
+      { path: 'relatorios', component: RelatoriosAdminComponent },
+    ]
   },
   { path: '**', redirectTo: 'login' }
 ];

@@ -17,25 +17,25 @@
   <nav class="sidebar-nav">
     <ul class="nav flex-column gap-1">
       <li class="nav-item" [title]="collapsed() ? 'Dashboard' : ''">
-        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'dashboard'" (click)="setView('dashboard')">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/adm/dashboard" routerLinkActive="active">
           <i class="fi fi-rr-apps-add"></i>
           <span *ngIf="!collapsed()">Dashboard</span>
         </a>
       </li>
       <li class="nav-item" [title]="collapsed() ? 'Usuários' : ''">
-        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'usuarios'" (click)="setView('usuarios')">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/adm/usuarios" routerLinkActive="active">
           <i class="fi fi-rr-user"></i>
           <span *ngIf="!collapsed()">Usuários</span>
         </a>
       </li>
       <li class="nav-item" [title]="collapsed() ? 'Turmas' : ''">
-        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'turmas'" (click)="setView('turmas')">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/adm/turmas" routerLinkActive="active">
           <i class="fi fi-rr-users"></i>
           <span *ngIf="!collapsed()">Turmas</span>
         </a>
       </li>
       <li class="nav-item" [title]="collapsed() ? 'Relatórios' : ''">
-        <a class="nav-link d-flex align-items-center gap-2" [class.active]="currentView === 'relatorios'" (click)="setView('relatorios')">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/adm/relatorios" routerLinkActive="active">
           <i class="fi fi-rr-document-signed"></i>
           <span *ngIf="!collapsed()">Relatórios</span>
         </a>

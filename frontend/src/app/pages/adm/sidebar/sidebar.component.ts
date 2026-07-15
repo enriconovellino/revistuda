@@ -1,20 +1,17 @@
-import { Component, Input, Output, EventEmitter, signal, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { inject } from '@angular/core';
-import { AdmView } from '../adm.component';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-sidebar-admin',
   standalone: true,
-  imports: [CommonModule, ConfirmDialogComponent],
+  imports: [CommonModule, ConfirmDialogComponent, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarAdminComponent implements OnInit {
-  @Input({ required: true }) currentView!: AdmView;
-  @Output() currentViewChange = new EventEmitter<AdmView>();
   @Output() collapsedChange = new EventEmitter<boolean>();
 
   private router = inject(Router);
@@ -35,10 +32,6 @@ export class SidebarAdminComponent implements OnInit {
       localStorage.setItem('sidebarCollapsed', String(this.collapsed()));
     }
     this.collapsedChange.emit(this.collapsed());
-  }
-
-  setView(view: AdmView) {
-    this.currentViewChange.emit(view);
   }
 
   abrirModalLogout() {
