@@ -10,18 +10,8 @@ export class LicaoService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-  }
-
   async getLicoes(): Promise<Licao[]> {
-    const response = await fetch(`${this.apiUrl}/licoes`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/licoes`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar lições');
@@ -30,9 +20,9 @@ export class LicaoService {
   }
 
   async createLicao(data: { titulo_licao: string; comentario?: string; modulo_id: number }): Promise<Licao> {
-    const response = await fetch(`${this.apiUrl}/licoes`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/licoes`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const resData = await response.json();
@@ -43,9 +33,8 @@ export class LicaoService {
   }
 
   async deleteLicao(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/licoes/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/licoes/${id}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
     });
     if (!response.ok) {
       const data = await response.json();
