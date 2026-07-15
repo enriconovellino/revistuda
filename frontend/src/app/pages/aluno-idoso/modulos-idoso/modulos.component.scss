@@ -186,6 +186,7 @@ $verde-escuro: #15803d;
   animation: pulsar-tutorial-item 2s infinite ease-in-out;
   cursor: pointer;
   background: #ffffff !important;
+  overflow: visible !important;
 }
 
 @keyframes pulsar-tutorial-item {

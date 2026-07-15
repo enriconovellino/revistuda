@@ -469,13 +469,40 @@ $fonte-base:  1.15em;
 }
 
 .link-voltar-nav {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  display: inline-flex;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.45rem 1.2rem;
+  background: transparent;
+  color: $azul-escuro;
+  border: 1.5px solid rgba(15, 39, 68, 0.35);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: .4em;
   transition: all 0.2s ease;
-  
+  text-decoration: none;
+
   &:hover {
-    color: $azul-medio !important;
+    background: #eef3fb;
+    color: $azul-escuro;
+    border-color: $azul-escuro;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 }
 
