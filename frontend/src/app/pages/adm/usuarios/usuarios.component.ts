@@ -178,8 +178,8 @@ export class UsuariosAdminComponent implements OnInit {
     this.actionError.set(null);
     try {
       await this.userService.updateUser(user.id, { turma_id: turmaId });
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao mover aluno de turma');
+    } catch (err) {
+      this.actionError.set(err instanceof Error ? err.message : 'Erro ao mover aluno de turma');
     } finally {
       await this.loadData(false);
       this.actionLoading.set(false);
@@ -281,8 +281,8 @@ export class UsuariosAdminComponent implements OnInit {
       }
       this.acaoPendente.set(null);
       await this.loadData(false);
-    } catch (err: any) {
-      this.actionError.set(err.message || 'Erro ao executar ação');
+    } catch (err) {
+      this.actionError.set(err instanceof Error ? err.message : 'Erro ao executar ação');
     } finally {
       this.actionLoading.set(false);
     }
@@ -341,8 +341,8 @@ export class UsuariosAdminComponent implements OnInit {
       // Fechar modal e recarregar dados do grid
       this.showCreateModal.set(false);
       await this.loadData(false);
-    } catch (err: any) {
-      this.createError.set(err.message || 'Erro ao cadastrar usuário.');
+    } catch (err) {
+      this.createError.set(err instanceof Error ? err.message : 'Erro ao cadastrar usuário.');
     } finally {
       this.createLoading.set(false);
     }

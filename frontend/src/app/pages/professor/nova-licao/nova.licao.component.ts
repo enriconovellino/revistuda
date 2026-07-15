@@ -426,8 +426,8 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     return `${environment.apiUrl}${url}`;
   }
 
-  async onFileSelected(event: any, item: ItemPar) {
-    const file: File = event.target.files[0];
+  async onFileSelected(event: Event, item: ItemPar) {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
     try {
@@ -435,8 +435,8 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       this.cdr.detectChanges();
       const res = await this.professorService.uploadImage(file);
       item.imagem_url = res.url;
-    } catch (err: any) {
-      this.atividadeError.set(err.message || 'Erro ao enviar imagem');
+    } catch (err) {
+      this.atividadeError.set(getErrorMessage(err, 'Erro ao enviar imagem'));
     } finally {
       item.uploading = false;
       this.cdr.detectChanges();

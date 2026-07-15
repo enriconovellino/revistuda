@@ -82,7 +82,7 @@ export class AtividadeService {
     }
   }
 
-  async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
+  async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<unknown> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -98,7 +98,7 @@ export class AtividadeService {
   async responderAtividadeAssociacao(
     atividadeId: number,
     respostas: { item_1_id: number; item_2_id: number }[],
-  ): Promise<any> {
+  ): Promise<unknown> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

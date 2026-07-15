@@ -2,8 +2,9 @@ import { Component, OnInit, signal, inject, output, input } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
+import { UserService, UpdateUserData } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { Usuario } from '../../model/professor.models';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -15,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
 export class EditarPerfilComponent implements OnInit {
   isOpen = input<boolean>(false);
   close = output<void>();
-  saveSuccess = output<any>();
+  saveSuccess = output<Usuario>();
   accountDeleted = output<void>();
 
   private userService = inject(UserService);
@@ -36,7 +37,7 @@ export class EditarPerfilComponent implements OnInit {
   deletando = signal<boolean>(false);
   deleteError = signal<string | null>(null);
 
-  user: any = null;
+  user: Usuario | null = null;
 
   ngOnInit() {
     this.loadUserData();
@@ -46,9 +47,10 @@ export class EditarPerfilComponent implements OnInit {
     if (typeof window !== 'undefined' && window.localStorage) {
       const userStr = localStorage.getItem('user');
       if (userStr) {
-        this.user = JSON.parse(userStr);
-        this.nome.set(this.user.nome);
-        this.email.set(this.user.email);
+        const parsedUser = JSON.parse(userStr) as Usuario;
+        this.user = parsedUser;
+        this.nome.set(parsedUser.nome);
+        this.email.set(parsedUser.email);
       }
     }
     this.senha.set('');
@@ -96,9 +98,14 @@ export class EditarPerfilComponent implements OnInit {
       return;
     }
 
+    if (!this.user) {
+      this.error.set('Usuário não carregado. Feche e abra novamente o modal.');
+      return;
+    }
+
     try {
       this.loading.set(true);
-      const updateData: any = {
+      const updateData: UpdateUserData = {
         nome: this.nome().trim(),
         email: this.email().trim()
       };
@@ -107,7 +114,7 @@ export class EditarPerfilComponent implements OnInit {
         updateData.senha = this.senha();
         updateData.senha_atual = this.senhaAtual();
       }
-      
+
 
       const res = await this.userService.updateUser(this.user.id, updateData);
 
@@ -123,8 +130,8 @@ export class EditarPerfilComponent implements OnInit {
         this.close.emit();
       }, 1200);
 
-    } catch (err: any) {
-      this.error.set(err.message || 'Erro ao atualizar dados do perfil.');
+    } catch (err) {
+      this.error.set(err instanceof Error ? err.message : 'Erro ao atualizar dados do perfil.');
     } finally {
       this.loading.set(false);
     }
@@ -132,6 +139,11 @@ export class EditarPerfilComponent implements OnInit {
 
   async onDeleteAccount() {
     this.deleteError.set(null);
+
+    if (!this.user) {
+      this.deleteError.set('Usuário não carregado. Feche e abra novamente o modal.');
+      return;
+    }
 
     try {
       this.deletando.set(true);
@@ -147,8 +159,8 @@ export class EditarPerfilComponent implements OnInit {
       this.close.emit();
       this.router.navigate(['/login']);
 
-    } catch (err: any) {
-      this.deleteError.set(err.message || 'Erro ao excluir a conta. Tente novamente.');
+    } catch (err) {
+      this.deleteError.set(err instanceof Error ? err.message : 'Erro ao excluir a conta. Tente novamente.');
     } finally {
       this.deletando.set(false);
     }

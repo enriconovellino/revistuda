@@ -2,7 +2,7 @@ import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../model/auth.model';
+import { Usuario } from '../../model/professor.models';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -76,7 +76,7 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
     this.isEditProfileOpen.set(false);
   }
 
-  onProfileUpdated(updatedUser: User): void {
+  onProfileUpdated(updatedUser: Usuario): void {
     this.userName.set(updatedUser.nome);
   }
 
