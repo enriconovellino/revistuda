@@ -149,6 +149,12 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
   editAtividadeError = signal<string | null>(null);
   savingEditAtividade = signal<boolean>(false);
 
+  // --- Modal de confirmação genérico (substitui confirm() nativo) ---
+  showConfirmModal = signal<boolean>(false);
+  confirmModalTitulo = signal<string>('');
+  confirmModalMensagem = signal<string>('');
+  private confirmModalAction: (() => void) | null = null;
+
   ngOnInit() {
     this.loadItens();
   }
@@ -250,10 +256,6 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     }
   }
 
-  // --- Submits (chamados pelo (ngSubmit) dos <form> no template) ---
-  // ✅ Garante que, ao clicar em "Criar Lição"/"Salvar Atividade" sem preencher nada,
-  //    TODOS os campos exibam erro de uma vez (não só os que o usuário já tocou).
-
   onSubmitLicao(form: NgForm) {
     if (form.invalid) {
       form.form.markAllAsTouched();
@@ -329,15 +331,41 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
     }
   }
 
+  // --- Modal de confirmação genérico ---
+
+  private abrirConfirmacao(titulo: string, mensagem: string, action: () => void) {
+    this.confirmModalTitulo.set(titulo);
+    this.confirmModalMensagem.set(mensagem);
+    this.confirmModalAction = action;
+    this.showConfirmModal.set(true);
+  }
+
+  fecharConfirmacao() {
+    this.showConfirmModal.set(false);
+    this.confirmModalAction = null;
+  }
+
+  confirmarAcao() {
+    const action = this.confirmModalAction;
+    this.showConfirmModal.set(false);
+    this.confirmModalAction = null;
+    if (action) action();
+  }
+
   async deleteLicao(licaoId: number, event: Event) {
     event.stopPropagation();
-    if (!confirm('Deseja realmente excluir esta lição? Todos os conteúdos e atividades dela também serão excluídos.')) return;
-    try {
-      await this.licaoService.deleteLicao(licaoId);
-      await this.loadItens();
-    } catch (err: unknown) {
-      this.error.set(getErrorMessage(err, 'Erro ao excluir lição.'));
-    }
+    this.abrirConfirmacao(
+      'Excluir lição',
+      'Deseja realmente excluir esta lição? Todos os conteúdos e atividades dela também serão excluídos.',
+      async () => {
+        try {
+          await this.licaoService.deleteLicao(licaoId);
+          await this.loadItens();
+        } catch (err: unknown) {
+          this.error.set(getErrorMessage(err, 'Erro ao excluir lição.'));
+        }
+      }
+    );
   }
 
   // --- Conteúdos dentro do modal de Nova Lição ---
@@ -354,13 +382,18 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
 
   async deleteConteudo(conteudoId: number, event: Event) {
     event.stopPropagation();
-    if (!confirm('Deseja realmente excluir este conteúdo?')) return;
-    try {
-      await this.conteudoService.deleteConteudo(conteudoId);
-      await this.loadItens();
-    } catch (err: unknown) {
-      this.error.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
-    }
+    this.abrirConfirmacao(
+      'Excluir conteúdo',
+      'Deseja realmente excluir este conteúdo?',
+      async () => {
+        try {
+          await this.conteudoService.deleteConteudo(conteudoId);
+          await this.loadItens();
+        } catch (err: unknown) {
+          this.error.set(getErrorMessage(err, 'Erro ao excluir conteúdo.'));
+        }
+      }
+    );
   }
 
   // --- Nova Atividade: gestão das questões dentro do modal ---
@@ -481,10 +514,6 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
       },
     }));
   }
-
-  // Nota: o backend guarda 1 questão por registro de Atividade.
-  // Uma "atividade" com várias questões vira N registros criados em sequência,
-  // todos com o mesmo título e numerados no enunciado, para agrupar visualmente.
   async adicionarAtividade() {
     this.atividadeError.set(null);
 
@@ -553,13 +582,18 @@ export class NovaLicaoComponent implements OnInit, OnChanges {
 
   async deleteAtividade(atividadeId: number, event: Event) {
     event.stopPropagation();
-    if (!confirm('Deseja realmente excluir esta atividade?')) return;
-    try {
-      await this.atividadeService.deleteAtividade(atividadeId);
-      await this.loadItens();
-    } catch (err: unknown) {
-      this.atividadeError.set(getErrorMessage(err, 'Erro ao excluir atividade.'));
-    }
+    this.abrirConfirmacao(
+      'Excluir atividade',
+      'Deseja realmente excluir esta atividade?',
+      async () => {
+        try {
+          await this.atividadeService.deleteAtividade(atividadeId);
+          await this.loadItens();
+        } catch (err: unknown) {
+          this.atividadeError.set(getErrorMessage(err, 'Erro ao excluir atividade.'));
+        }
+      }
+    );
   }
 
   // --- Helpers de exibição nos cards ---
