@@ -56,7 +56,7 @@ export class ProfessorComponent implements OnInit, OnDestroy {
     this.isEditProfileOpen.set(false);
   }
 
-  onProfileUpdated(updatedUser: any) {
+  onProfileUpdated(updatedUser: Usuario) {
     this.userName.set(updatedUser.nome);
   }
 
