@@ -10,18 +10,8 @@ export class ConteudoService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-  }
-
   async getConteudos(): Promise<Conteudo[]> {
-    const response = await fetch(`${this.apiUrl}/conteudos`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar conteúdos');
@@ -30,9 +20,9 @@ export class ConteudoService {
   }
 
   async createConteudo(data: { nome_conteudo: string; tipo_conteudo: string; url_conteudo?: string; texto_conteudo?: string; licao_id: number }): Promise<Conteudo> {
-    const response = await fetch(`${this.apiUrl}/conteudos`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const resData = await response.json();
@@ -43,9 +33,8 @@ export class ConteudoService {
   }
 
   async deleteConteudo(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/conteudos/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos/${id}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
     });
     if (!response.ok) {
       const data = await response.json();
@@ -54,9 +43,9 @@ export class ConteudoService {
   }
 
   async updateConteudo(id: number, data: Partial<Conteudo>): Promise<Conteudo> {
-    const response = await fetch(`${this.apiUrl}/conteudos/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos/${id}`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const resData = await response.json();
@@ -67,9 +56,9 @@ export class ConteudoService {
   }
 
   async concluirConteudo(conteudoId: number): Promise<{ conteudo_id: number; data_conclusao: string }> {
-    const response = await fetch(`${this.apiUrl}/conteudos/${conteudoId}/concluir`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos/${conteudoId}/concluir`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
     });
     const data = await response.json();
     if (!response.ok) {
@@ -79,9 +68,7 @@ export class ConteudoService {
   }
 
   async getProgressoConteudos(moduloId: number): Promise<number[]> {
-    const response = await fetch(`${this.apiUrl}/conteudos/progresso?moduloId=${moduloId}`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/conteudos/progresso?moduloId=${moduloId}`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar progresso dos conteúdos');
@@ -89,4 +76,3 @@ export class ConteudoService {
     return data as number[];
   }
 }
-

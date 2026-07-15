@@ -16,19 +16,9 @@ export class AtividadeRecenteService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-    };
-  }
-
   async getAtividadesRecentes(): Promise<AtividadeRecente[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/atividades-recentes`, {
-        headers: this.getHeaders()
-      });
+      const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades-recentes`);
       if (!response.ok) return [];
       return await response.json();
     } catch {

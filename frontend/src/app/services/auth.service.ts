@@ -60,6 +60,54 @@ export class AuthService {
     return data;
   }
 
+  async fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return fetch(url, options);
+    }
+
+    const accessToken = this.getAccessToken();
+    const authOptions = this.injectToken(options, accessToken);
+
+    let response = await fetch(url, authOptions);
+
+    if (response.status !== 401) {
+      return response;
+    }
+
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      this.logout();
+      throw new Error('Sessão expirada. Faça login novamente.');
+    }
+
+    try {
+      const tokens = await this.refresh(refreshToken);
+      const retryOptions = this.injectToken(options, tokens.accessToken);
+      response = await fetch(url, retryOptions);
+
+      if (response.status === 401) {
+        this.logout();
+        throw new Error('Sessão expirada. Faça login novamente.');
+      }
+
+      return response;
+    } catch {
+      this.logout();
+      throw new Error('Sessão expirada. Faça login novamente.');
+    }
+  }
+
+  private injectToken(options: RequestInit, token: string | null): RequestInit {
+    if (!token) return options;
+    return {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+      },
+    };
+  }
+
   async getMe(): Promise<User> {
     const token = this.getAccessToken();
     if (!token) {
@@ -127,6 +175,16 @@ export class AuthService {
       return userStr ? JSON.parse(userStr) : null;
     }
     return null;
+  }
+
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const nowInSeconds = Math.floor(Date.now() / 1000);
+      return payload.exp < nowInSeconds;
+    } catch {
+      return true;
+    }
   }
 
   isAuthenticated(): boolean {

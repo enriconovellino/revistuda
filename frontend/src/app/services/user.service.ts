@@ -9,21 +9,9 @@ export class UserService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    const user = this.authService.getUser();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-      ...(user ? { 'X-USER-ID': user.id.toString() } : {})
-    };
-  }
-
   async getUsers(): Promise<any[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/users`, {
-        headers: this.getHeaders()
-      });
+      const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users`);
       if (!response.ok) return [];
       return await response.json();
     } catch {
@@ -32,9 +20,9 @@ export class UserService {
   }
 
   async approveUser(id: number): Promise<any> {
-    const response = await fetch(`${this.apiUrl}/users/${id}/approve`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}/approve`, {
       method: 'PUT',
-      headers: this.getHeaders()
+      headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
       const data = await response.json();
@@ -44,9 +32,9 @@ export class UserService {
   }
 
   async rejectUser(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/users/${id}/reject`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}/reject`, {
       method: 'PUT',
-      headers: this.getHeaders()
+      headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
       throw new Error('Falha ao recusar usuário');
@@ -54,9 +42,9 @@ export class UserService {
   }
 
   async revokeProfessorAccess(id: number): Promise<{ user: any; turmasDesalocadas: number }> {
-    const response = await fetch(`${this.apiUrl}/users/${id}/revoke`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}/revoke`, {
       method: 'PUT',
-      headers: this.getHeaders()
+      headers: { 'Content-Type': 'application/json' },
     });
     const data = await response.json();
     if (!response.ok) {
@@ -66,9 +54,9 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/users/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}`, {
       method: 'DELETE',
-      headers: this.getHeaders()
+      headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {
       let message = 'Falha ao excluir usuário';
@@ -81,9 +69,9 @@ export class UserService {
   }
 
   async updateUser(id: number, userData: any): Promise<any> {
-    const response = await fetch(`${this.apiUrl}/users/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData)
     });
     const data = await response.json();
@@ -93,4 +81,3 @@ export class UserService {
     return data;
   }
 }
-
