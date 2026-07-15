@@ -91,9 +91,9 @@ export class LoginComponent implements OnInit {
 
       this.authService.redirectUserBasedOnRole(data.user);
 
-    } catch (err: any) {
+    } catch (err) {
 
-      this.error.set(err.message || 'Erro de conexão com o servidor');
+      this.error.set(err instanceof Error ? err.message : 'Erro de conexão com o servidor');
 
     } finally {
 
@@ -147,9 +147,9 @@ export class LoginComponent implements OnInit {
 
       }, 2500);
 
-    } catch (err: any) {
+    } catch (err) {
 
-      this.error.set(err.message || 'Erro de conexão com o servidor');
+      this.error.set(err instanceof Error ? err.message : 'Erro de conexão com o servidor');
 
     } finally {
 

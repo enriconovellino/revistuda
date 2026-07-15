@@ -210,8 +210,8 @@ export class ModulosProfessorComponent implements OnInit {
     this.router.navigate(['/professor/modulo', id]);
   }
 
-  async onFileSelected(event: any) {
-    const file: File = event.target.files[0];
+  async onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
     try {
@@ -219,8 +219,8 @@ export class ModulosProfessorComponent implements OnInit {
       this.erroModulo.set(null);
       const res = await this.professorService.uploadImage(file);
       this.novaImagemUrl = res.url;
-    } catch (err: any) {
-      this.erroModulo.set(err.message || 'Erro ao enviar imagem');
+    } catch (err) {
+      this.erroModulo.set(err instanceof Error ? err.message : 'Erro ao enviar imagem');
     } finally {
       this.uploadingImage.set(false);
     }

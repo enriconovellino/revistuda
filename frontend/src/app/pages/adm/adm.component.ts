@@ -11,6 +11,7 @@ import { UsuariosAdminComponent } from './usuarios/usuarios.component';
 import { TurmasAdminComponent } from './turmas/turmas.component';
 import { RelatoriosAdminComponent } from './relatorios/relatorios.component';
 import { SidebarAdminComponent } from './sidebar/sidebar.component';
+import { Usuario } from '../../model/professor.models';
 
 export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
 
@@ -80,7 +81,7 @@ export class AdmComponent implements OnInit, OnDestroy {
     this.isEditProfileOpen.set(false);
   }
 
-  onProfileUpdated(updatedUser: any) {
+  onProfileUpdated(updatedUser: Usuario) {
     this.userName.set(updatedUser.nome);
   }
 

@@ -1,6 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
+import { Usuario } from '../model/professor.models';
+
+export interface UpdateUserData {
+  nome?: string;
+  email?: string;
+  senha?: string;
+  senha_atual?: string;
+  turma_id?: number | null;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +18,7 @@ export class UserService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  async getUsers(): Promise<any[]> {
+  async getUsers(): Promise<Usuario[]> {
     try {
       const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users`);
       if (!response.ok) return [];
@@ -19,7 +28,7 @@ export class UserService {
     }
   }
 
-  async approveUser(id: number): Promise<any> {
+  async approveUser(id: number): Promise<Usuario> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}/approve`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -41,7 +50,7 @@ export class UserService {
     }
   }
 
-  async revokeProfessorAccess(id: number): Promise<{ user: any; turmasDesalocadas: number }> {
+  async revokeProfessorAccess(id: number): Promise<{ user: Usuario; turmasDesalocadas: number }> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}/revoke`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -68,7 +77,7 @@ export class UserService {
     }
   }
 
-  async updateUser(id: number, userData: any): Promise<any> {
+  async updateUser(id: number, userData: UpdateUserData): Promise<Usuario> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/users/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

@@ -1,3 +1,5 @@
+import { SafeResourceUrl } from '@angular/platform-browser';
+
 export interface Conteudo {
     conteudo_id: number;
     nome_conteudo: string;
@@ -5,5 +7,5 @@ export interface Conteudo {
     url_conteudo?: string | null;
     texto_conteudo?: string | null;
     licao_id: number;
-    safeUrl?: any;
+    safeUrl?: SafeResourceUrl | null;
 }
