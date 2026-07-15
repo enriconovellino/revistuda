@@ -2,7 +2,7 @@ import { Component, computed, OnInit, AfterViewInit, signal, PLATFORM_ID, Inject
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
-import { Usuario, EstatisticasProfessor } from '../../../model/professor.models';
+import { Usuario, EstatisticasProfessor, AlunoProfessor } from '../../../model/professor.models';
 import { Modulo } from '../../../model/modulo.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
@@ -29,6 +29,8 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     erros: 0,
     naoRespondeu: 0,
   });
+
+  alunos = signal<AlunoProfessor[]>([]);
 
   taxaAcertos = computed(() => {
     const stats = this.estatisticas();
@@ -59,6 +61,10 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     await this.carregarDados();
     if (this.userId) {
       await this.carregarEstatisticas(this.userId);
+      try {
+        const alunos = await this.professorService.getMeusAlunos();
+        this.alunos.set(alunos);
+      } catch { /* silencioso */ }
     }
   }
 
@@ -201,5 +207,37 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
       return url;
     }
     return `${environment.apiUrl}${url}`;
+  }
+
+  async baixarRelatorio() {
+    const agora = new Date();
+    const nomeArquivo = `relatorio-dashboard-${agora.toISOString().slice(0, 10)}.png`;
+
+    // Elemento alvo: o painel principal do dashboard
+    const elemento = document.querySelector('.dash-prof') as HTMLElement | null;
+    if (!elemento) {
+      alert('Não foi possível localizar o conteúdo do dashboard.');
+      return;
+    }
+
+    try {
+      // Import dinâmico para não aumentar o bundle inicial
+      const { default: html2canvas } = await import('html2canvas');
+
+      const canvas = await html2canvas(elemento, {
+        useCORS: true,
+        scale: 2,           // alta resolução
+        backgroundColor: '#f8fafc',
+        logging: false,
+      });
+
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = nomeArquivo;
+      link.click();
+    } catch (err) {
+      console.error('Erro ao gerar imagem do relatório:', err);
+      alert('Erro ao gerar a imagem. Verifique o console para detalhes.');
+    }
   }
 }
