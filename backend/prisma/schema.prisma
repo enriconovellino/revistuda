@@ -69,7 +69,7 @@ model Conteudo {
   url_conteudo   String?
   texto_conteudo String?
   licao_id       Int
-  licao          Licao   @relation(fields: [licao_id], references: [licao_id])
+  licao          Licao   @relation(fields: [licao_id], references: [licao_id], onDelete: Cascade)
   comentarios    ComentarioAluno[]
   progressos     ProgressoConteudo[]
 }
@@ -219,7 +219,7 @@ model ComentarioAluno {
   respostaAt   DateTime?
 
   aluno        User     @relation(fields: [alunoId], references: [id])
-  conteudo     Conteudo @relation(fields: [conteudoId], references: [conteudo_id])
+  conteudo     Conteudo @relation(fields: [conteudoId], references: [conteudo_id], onDelete: Cascade)
 
   @@unique([alunoId, conteudoId]) 
 }

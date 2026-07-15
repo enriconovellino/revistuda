@@ -21,6 +21,8 @@ import { ModulosProfessorComponent } from './pages/professor/modulos/modulos.com
 
 import { ModulosIdosoComponent } from './pages/aluno-idoso/modulos-idoso/modulos.component';
 import { AtividadesIdosoComponent } from './pages/aluno-idoso/atividades-idoso/atividades.component';
+import { ComentariosIdosoComponent } from './pages/aluno-idoso/comentario-idoso/comentarios.component';
+
 import { DashboardAdminComponent } from './pages/adm/dashboard/dashboard.component';
 import { UsuariosAdminComponent } from './pages/adm/usuarios/usuarios.component';
 import { TurmasAdminComponent } from './pages/adm/turmas/turmas.component';
@@ -42,6 +44,7 @@ export const routes: Routes = [
       { path: '', component: DashboardAlunoIdosoComponent },
       { path: 'modulos', component: ModulosIdosoComponent },
       { path: 'atividades', component: AtividadesIdosoComponent },
+      { path: 'comentarios', component: ComentariosIdosoComponent },
       { path: 'modulo/:id', component: AlunoModuloDetalheComponent },
       { path: 'atividade/:id', component: TelaAtividade },
     ]

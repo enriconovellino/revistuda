@@ -12,8 +12,16 @@
 <div class="tutorial-backdrop-overlay" *ngIf="tutorialService.active() && tutorialService.step().startsWith('atividades')"></div>
 
 <div class="p-4" [class.com-tutorial]="tutorialService.active() && tutorialService.step().startsWith('atividades')">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <h4 class="mb-0 fw-bold">Minhas Atividades</h4>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn-nav-secundario" (click)="irParaAtividades()">
+        <i class="fi fi-br-edit me-1"></i> Atividades
+      </button>
+      <button type="button" class="btn-nav-secundario" (click)="irParaComentarios()">
+        <i class="fi fi-sr-comments me-1"></i> Comentários
+      </button>
+    </div>
   </div>
 
   @if (isLoading()) {
@@ -65,25 +73,6 @@
         </button>
         }
       </div>
-
-      @if (getComentarioDaAtividade(atv.atividade_id); as comentario) {
-      <div class="comentario-atividade-box">
-        <div class="comentario-atividade-linha">
-          <i class="fi fi-sr-comments"></i>
-          <span class="comentario-atividade-label">Seu comentário:</span>
-        </div>
-        <p class="comentario-atividade-texto">{{ comentario.texto }}</p>
-
-        @if (comentario.resposta) {
-        <div class="resposta-professor-box">
-          <span class="resposta-professor-label">Resposta do professor:</span>
-          <p class="resposta-professor-texto">{{ comentario.resposta }}</p>
-        </div>
-        } @else {
-        <span class="comentario-sem-resposta">Aguardando resposta do professor</span>
-        }
-      </div>
-      }
     </div>
     }
   </div>
