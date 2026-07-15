@@ -147,25 +147,6 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.btn-filtros-custom {
-  background: white;
-  border: 1.5px solid #2563eb;
-  color: #2563eb;
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0.55rem 1.25rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.btn-filtros-custom:hover {
-  background: #eff6ff;
-  transform: translateY(-1px);
-}
-
 /* ============================================
    Cards de Comentários
    ============================================ */
@@ -288,40 +269,6 @@
   justify-content: flex-end;
 }
 
-.btn-responder-custom {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  border: 1.5px solid #2563eb;
-  background: white;
-  color: #2563eb;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.45rem 1.1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-responder-custom i {
-  font-size: 0.85rem;
-}
-
-.btn-responder-custom:hover {
-  background: #eff6ff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.08);
-}
-
-.btn-responder-custom.btn-responder-respondido {
-  border-color: #10b981;
-  color: #10b981;
-}
-
-.btn-responder-custom.btn-responder-respondido:hover {
-  background: #ecfdf5;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.08);
-}
 
 /* ============================================
    Caixa de Responder (Formulário)
@@ -353,55 +300,6 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.resposta-actions-custom {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.btn-resposta-cancelar-custom {
-  border: 1.5px solid #cbd5e1;
-  background: white;
-  color: #64748b;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.45rem 1.1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-resposta-cancelar-custom:hover {
-  background: #f1f5f9;
-  color: #334155;
-}
-
-.btn-resposta-enviar-custom {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  border: none;
-  background: #0f2744;
-  color: white;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.5rem 1.25rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-resposta-enviar-custom:hover:not(:disabled) {
-  background: #1e3a8a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 39, 68, 0.2);
-}
-
-.btn-resposta-enviar-custom:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
 
 .resposta-alert {
   background: #fef2f2;
