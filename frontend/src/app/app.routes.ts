@@ -23,6 +23,11 @@ import { ModulosIdosoComponent } from './pages/aluno-idoso/modulos-idoso/modulos
 import { AtividadesIdosoComponent } from './pages/aluno-idoso/atividades-idoso/atividades.component';
 import { ComentariosIdosoComponent } from './pages/aluno-idoso/comentario-idoso/comentarios.component';
 
+import { DashboardAdminComponent } from './pages/adm/dashboard/dashboard.component';
+import { UsuariosAdminComponent } from './pages/adm/usuarios/usuarios.component';
+import { TurmasAdminComponent } from './pages/adm/turmas/turmas.component';
+import { RelatoriosAdminComponent } from './pages/adm/relatorios/relatorios.component';
+
 export const routes: Routes = [
   { path: '', component: TelaInicialComponent },
   { path: 'login', component: LoginComponent },
@@ -31,19 +36,19 @@ export const routes: Routes = [
   { path: 'redefinir-senha', component: RedefinirSenhaComponent },
 
 
- {
-  path: 'aluno-idoso',
-  component: AlunoIdosoComponent,
-  canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])],
-  children: [
-    { path: '', component: DashboardAlunoIdosoComponent },
-    { path: 'modulos', component: ModulosIdosoComponent },
-    { path: 'atividades', component: AtividadesIdosoComponent },
-    { path: 'comentarios', component: ComentariosIdosoComponent },
-    { path: 'modulo/:id', component: AlunoModuloDetalheComponent },
-    { path: 'atividade/:id', component: TelaAtividade },
-  ]
-},
+  {
+    path: 'aluno-idoso',
+    component: AlunoIdosoComponent,
+    canActivate: [authGuard, roleGuard(['ALUNO_IDOSO'])],
+    children: [
+      { path: '', component: DashboardAlunoIdosoComponent },
+      { path: 'modulos', component: ModulosIdosoComponent },
+      { path: 'atividades', component: AtividadesIdosoComponent },
+      { path: 'comentarios', component: ComentariosIdosoComponent },
+      { path: 'modulo/:id', component: AlunoModuloDetalheComponent },
+      { path: 'atividade/:id', component: TelaAtividade },
+    ]
+  },
 
   {
     path: 'professor',
@@ -62,7 +67,14 @@ export const routes: Routes = [
   {
     path: 'adm',
     component: AdmComponent,
-    canActivate: [authGuard, roleGuard(['ADM'])]
+    canActivate: [authGuard, roleGuard(['ADM'])],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardAdminComponent },
+      { path: 'usuarios', component: UsuariosAdminComponent },
+      { path: 'turmas', component: TurmasAdminComponent },
+      { path: 'relatorios', component: RelatoriosAdminComponent },
+    ]
   },
   { path: '**', redirectTo: 'login' }
 ];

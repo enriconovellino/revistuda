@@ -1,17 +1,17 @@
 @use 'variables' as *;
 
 // ============================================================
-// Sidebar layout & collapse
+// Professor sidebar — collapse support
 // ============================================================
 
 $sidebar-width-full: 240px;
 $sidebar-width-collapsed: 68px;
-$sidebar-bg: $azul-escuro;
+$bg: #0f2744;
 
 .sidebar {
   width: $sidebar-width-full;
   min-height: 100vh;
-  background: $sidebar-bg;
+  background: $bg;
   position: fixed;
   top: 0;
   left: 0;
@@ -143,7 +143,7 @@ $sidebar-bg: $azul-escuro;
 
 .sidebar-nav .nav-link.active {
   background: white;
-  color: $azul-escuro !important;
+  color: $bg !important;
   font-weight: 700;
   letter-spacing: 0.01em;
 }

@@ -19,6 +19,7 @@ model User {
   permissions  String[] @default([])
   refreshToken String?
   approved     Boolean  @default(true)
+  rejected     Boolean  @default(false)
   turma_id     Int?
   turma        Turma?   @relation("AlunosDaTurma", fields: [turma_id], references: [turma_id])
   turmasComoProfessor Turma[] @relation("ProfessorDaTurma")

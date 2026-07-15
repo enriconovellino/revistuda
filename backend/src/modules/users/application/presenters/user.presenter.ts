@@ -6,6 +6,7 @@ export class UserPresenter {
   email!: string;
   permissions!: string[];
   approved!: boolean;
+  rejected!: boolean;
   turmaId?: number | null;
 
   static toPresentation(user: User): UserPresenter {
@@ -15,6 +16,7 @@ export class UserPresenter {
     presenter.email = user.email;
     presenter.permissions = user.permissions;
     presenter.approved = user.approved;
+    presenter.rejected = user.rejected;
     presenter.turmaId = user.turma_id;
     return presenter;
   }

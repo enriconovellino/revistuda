@@ -5,15 +5,17 @@ export class User {
   senha!: string;
   permissions!: string[];
   approved!: boolean;
+  rejected!: boolean;
   turma_id?: number | null;
 
-  constructor(id: number, nome: string, email: string, senha: string, permissions: string[] = [], approved: boolean = true, turma_id?: number | null) {
+  constructor(id: number, nome: string, email: string, senha: string, permissions: string[] = [], approved: boolean = true, turma_id?: number | null, rejected: boolean = false) {
     this.id = id;
     this.nome = nome;
     this.email = email;
     this.senha = senha;
     this.permissions = permissions;
     this.approved = approved;
+    this.rejected = rejected;
     this.turma_id = turma_id;
   }
 

@@ -1,40 +1,53 @@
-<div class="sidebar">
+<div class="sidebar" [class.collapsed]="collapsed()">
   <div class="sidebar-logo">
-    <h5>ReviEstuda</h5>
-    <small>Plataforma Educacional</small>
+    <div class="sidebar-logo-inner">
+      <div class="sidebar-brand" *ngIf="!collapsed()">
+        <h5>ReviEstuda</h5>
+        <small>Plataforma Educacional</small>
+      </div>
+      <div class="sidebar-brand-icon" *ngIf="collapsed()">
+        <span class="brand-icon-letter">R</span>
+      </div>
+      <button class="sidebar-toggle-btn" (click)="toggleCollapse()" [title]="collapsed() ? 'Expandir menu' : 'Minimizar menu'">
+        <i [class]="collapsed() ? 'fi fi-rr-angle-double-right' : 'fi fi-rr-angle-double-left'"></i>
+      </button>
+    </div>
   </div>
 
   <nav class="sidebar-nav">
     <ul class="nav flex-column gap-1">
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Dashboard' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="isDashboardActive()" routerLink="/professor/dashboard">
           <i class="fi fi-rr-apps-add"></i>
-          <span>Dashboard</span>
+          <span *ngIf="!collapsed()">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Turmas' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="isTurmasActive()" routerLink="/professor/turmas">
           <i class="fi fi-rr-users"></i>
-          <span>Turmas</span>
+          <span *ngIf="!collapsed()">Turmas</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Alunos' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="isAlunosActive()" routerLink="/professor/alunos">
           <i class="fi fi-rr-graduation-cap"></i>
-          <span>Alunos</span>
+          <span *ngIf="!collapsed()">Alunos</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" [title]="collapsed() ? 'Comentários' : ''">
         <a class="nav-link d-flex align-items-center gap-2" [class.active]="isComentariosActive()" routerLink="/professor/comentarios">
           <i class="fi fi-rr-document-signed"></i>
-          <span>Comentários</span>
+          <span *ngIf="!collapsed()">Comentários</span>
         </a>
       </li>
     </ul>
   </nav>
 
   <div class="sidebar-footer">
-    <button class="btn btn-sair w-100 btn-sm" (click)="abrirModalLogout()">Sair</button>
+    <button class="btn btn-sair w-100 btn-sm" (click)="abrirModalLogout()" [title]="collapsed() ? 'Sair' : ''">
+      <i class="fi fi-rr-exit"></i>
+      <span *ngIf="!collapsed()"> Sair</span>
+    </button>
   </div>
 </div>
 

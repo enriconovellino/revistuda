@@ -1,10 +1,16 @@
 <div class="d-flex" style="min-height: 100vh; background: #f5f7fb;">
-  <app-sidebar-admin [currentView]="currentView()" (currentViewChange)="currentView.set($event)"></app-sidebar-admin>
+  <app-sidebar-admin (collapsedChange)="sidebarCollapsed.set($event)"></app-sidebar-admin>
 
-  <div class="flex-grow-1" style="margin-left: 240px;">
-    <div class="main-header d-flex justify-content-between align-items-center">
+  <div class="flex-grow-1" [style.margin-left]="sidebarCollapsed() ? '68px' : '240px'" style="transition: margin-left 0.25s ease;">
+    <div class="main-header d-flex justify-content-between align-items-center position-relative">
       <div>
-        <span class="text-muted fw-semibold small">Administração</span>
+        <span class="text-muted fw-semibold small">Painel Admin</span>
+      </div>
+
+      <div class="position-absolute start-50 top-50 translate-middle text-center w-auto">
+        <span class="fw-bold" style="color: #0f2744; font-size: 1.35rem; letter-spacing: -0.02em;">
+          Bem-vindo, {{ userName() }}
+        </span>
       </div>
       <div class="d-flex align-items-center gap-3">
         <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
@@ -17,17 +23,24 @@
             <div class="text-muted" style="font-size: 11px;">Administrador</div>
           </div>
         </div>
+
+        <button class="btn btn-danger btn-sm d-flex align-items-center gap-1 text-white border-0 btn-sair-header" 
+                (click)="abrirModalLogout()" title="Sair da conta">
+          <i class="fi fi-rr-exit" style="font-size: 0.95rem;"></i>
+          <span>Sair</span>
+        </button>
       </div>
     </div>
 
     <div class="p-4">
-      <app-dashboard-admin *ngIf="currentView() === 'dashboard'" (irPara)="irPara($event)"></app-dashboard-admin>
-      <app-usuarios-admin *ngIf="currentView() === 'usuarios'"></app-usuarios-admin>
-      <app-turmas-admin *ngIf="currentView() === 'turmas'"></app-turmas-admin>
-      <app-relatorios-admin *ngIf="currentView() === 'relatorios'"></app-relatorios-admin>
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>
 
 <app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
   (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>
+
+<app-confirm-dialog [isOpen]="isLogoutModalOpen()" title="Sair da conta"
+  message="Tem certeza que deseja sair da sua conta?" confirmLabel="Sair" variant="danger"
+  (confirmed)="logout()" (cancelled)="cancelarLogout()"></app-confirm-dialog>

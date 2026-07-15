@@ -1,8 +1,15 @@
 @use 'sass:color';
 @use 'variables' as *;
 
+// ============================================================
+// Aluno idoso sidebar — collapse support
+// ============================================================
+
+$sidebar-width-full: 15rem;
+$sidebar-width-collapsed: 68px;
+
 .sidebar {
-  width: 15rem;
+  width: $sidebar-width-full;
   min-height: 100vh;
   background: $azul-escuro;
   position: fixed;
@@ -11,37 +18,122 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
+  transition: width 0.25s ease;
+  overflow: hidden;
 }
+
+.sidebar.collapsed {
+  width: $sidebar-width-collapsed;
+}
+
+// ---- Logo area ----
 
 .sidebar-logo {
-  padding: 1.5rem;
+  padding: 1rem 1rem 1rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
-.sidebar-logo h5 {
+.sidebar-logo-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sidebar-brand h5 {
   color: white;
   font-weight: 800;
   margin: 0;
   font-size: 1.25rem;
+  white-space: nowrap;
 }
 
-.sidebar-logo small {
+.sidebar-brand small {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
+  white-space: nowrap;
 }
+
+.sidebar-brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.brand-icon-letter {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+}
+
+// ---- Toggle button ----
+
+.sidebar-toggle-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  font-size: 0.75rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+  }
+}
+
+.sidebar.collapsed .sidebar-logo-inner {
+  justify-content: center;
+  flex-direction: column-reverse;
+  gap: 0.4rem;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+  width: 36px;
+  height: 36px;
+}
+
+// ---- Nav ----
 
 .sidebar-nav {
   flex: 1;
-  padding: 1rem;
+  padding: 1rem 0.75rem;
+  overflow: hidden;
 }
 
 .sidebar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.7) !important;
-  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.82) !important;
+  padding: 0.75rem 0.85rem;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: all 0.2s;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+  text-decoration: none;
+
+  i {
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    width: 18px;
+    text-align: center;
+  }
 }
 
 .sidebar-nav .nav-link:hover {
@@ -52,8 +144,21 @@
 .sidebar-nav .nav-link.active {
   background: white;
   color: $azul-escuro !important;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
+
+.sidebar.collapsed .sidebar-nav {
+  padding: 1rem 0.5rem;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-link {
+  justify-content: center;
+  padding: 0.75rem;
+  gap: 0;
+}
+
+// ---- Footer ----
 
 .sidebar-footer {
   padding: 1rem;

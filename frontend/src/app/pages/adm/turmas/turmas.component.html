@@ -3,8 +3,9 @@
     <h4 class="mb-0 fw-bold">Gerenciar Turmas</h4>
     <small class="text-muted">Aloque ou desaloque professores e altere a capacidade das turmas registradas.</small>
   </div>
-  <button class="btn btn-primary px-4 py-2 fw-semibold" (click)="showCreateForm.set(!showCreateForm())">
-    {{ showCreateForm() ? 'Cancelar' : '+ Nova Turma' }}
+  <button class="btn btn-nova-turma d-flex align-items-center gap-2" (click)="showCreateForm.set(!showCreateForm())">
+    <i class="fi fi-rr-plus"></i>
+    Nova Turma
   </button>
 </div>
 
@@ -38,8 +39,14 @@
           <option *ngFor="let prof of professors()" [value]="prof.id">{{ prof.nome }}</option>
         </select>
       </div>
-      <div class="col-12 mt-3 d-flex justify-content-end">
-        <button class="btn btn-sm btn-success px-4" (click)="createTurma()">Criar Turma</button>
+      <div class="col-12 mt-3 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="showCreateForm.set(false)" [disabled]="loading()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary btn-sm px-4" (click)="createTurma()" [disabled]="loading()">
+          <span *ngIf="!loading()">Criar Turma</span>
+          <span *ngIf="loading()">Aguarde...</span>
+        </button>
       </div>
     </div>
   </div>

@@ -16,15 +16,27 @@ export class UserRepository implements IUserRepository {
         senha: user.senha,
         permissions: user.permissions,
         approved: user.approved,
+        rejected: user.rejected,
       },
     });
 
-    return new User(createdUser.id, createdUser.nome, createdUser.email, createdUser.senha, createdUser.permissions, createdUser.approved, createdUser.turma_id);
+    return new User(
+      createdUser.id,
+      createdUser.nome,
+      createdUser.email,
+      createdUser.senha,
+      createdUser.permissions,
+      createdUser.approved,
+      createdUser.turma_id,
+      createdUser.rejected,
+    );
   }
 
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany();
-    return users.map((u) => new User(u.id, u.nome, u.email, u.senha, u.permissions, u.approved, u.turma_id));
+    return users.map(
+      (u) => new User(u.id, u.nome, u.email, u.senha, u.permissions, u.approved, u.turma_id, u.rejected),
+    );
   }
 
   async findById(id: number): Promise<User | null> {
@@ -36,7 +48,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id, user.rejected);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -48,7 +60,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id);
+    return new User(user.id, user.nome, user.email, user.senha, user.permissions, user.approved, user.turma_id, user.rejected);
   }
 
   async update(id: number, data: Partial<User>): Promise<User> {
@@ -76,11 +88,21 @@ export class UserRepository implements IUserRepository {
         senha: data.senha,
         permissions: data.permissions,
         approved: data.approved,
+        rejected: data.rejected,
         turma_id: data.turma_id,
       },
     });
 
-    return new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved, updatedUser.turma_id);
+    return new User(
+      updatedUser.id,
+      updatedUser.nome,
+      updatedUser.email,
+      updatedUser.senha,
+      updatedUser.permissions,
+      updatedUser.approved,
+      updatedUser.turma_id,
+      updatedUser.rejected,
+    );
   }
 
   async delete(id: number): Promise<void> {
@@ -93,7 +115,7 @@ export class UserRepository implements IUserRepository {
     const [updatedUser, { count }] = await this.prisma.$transaction([
       this.prisma.user.update({
         where: { id },
-        data: { approved: false, refreshToken: null },
+        data: { approved: false, rejected: false, refreshToken: null },
       }),
       this.prisma.turma.updateMany({
         where: { professor_id: id },
@@ -102,7 +124,16 @@ export class UserRepository implements IUserRepository {
     ]);
 
     return {
-      user: new User(updatedUser.id, updatedUser.nome, updatedUser.email, updatedUser.senha, updatedUser.permissions, updatedUser.approved, updatedUser.turma_id),
+      user: new User(
+        updatedUser.id,
+        updatedUser.nome,
+        updatedUser.email,
+        updatedUser.senha,
+        updatedUser.permissions,
+        updatedUser.approved,
+        updatedUser.turma_id,
+        updatedUser.rejected,
+      ),
       turmasDesalocadas: count,
     };
   }

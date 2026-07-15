@@ -44,8 +44,8 @@ export class UserService {
   }
 
   async rejectUser(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/users/${id}`, {
-      method: 'DELETE',
+    const response = await fetch(`${this.apiUrl}/users/${id}/reject`, {
+      method: 'PUT',
       headers: this.getHeaders()
     });
     if (!response.ok) {

@@ -18,6 +18,10 @@ export class UpdateUserDto {
   @IsOptional()
   approved?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  rejected?: boolean;
+
   @IsString()
   @IsOptional()
   @MaxLength(30)

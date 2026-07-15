@@ -1,9 +1,9 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, signal, OnInit, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { inject } from '@angular/core';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { DashboardAdminComponent } from './dashboard/dashboard.component';
 import { UsuariosAdminComponent } from './usuarios/usuarios.component';
 import { TurmasAdminComponent } from './turmas/turmas.component';
@@ -17,7 +17,9 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
   standalone: true,
   imports: [
     CommonModule,
+    RouterOutlet,
     EditarPerfilComponent,
+    ConfirmDialogComponent,
     DashboardAdminComponent,
     UsuariosAdminComponent,
     TurmasAdminComponent,
@@ -30,7 +32,8 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
 export class AdmComponent implements OnInit {
   userName = signal('Administrador');
   isEditProfileOpen = signal<boolean>(false);
-  currentView = signal<AdmView>('dashboard');
+  isLogoutModalOpen = signal<boolean>(false);
+  sidebarCollapsed = signal<boolean>(false);
 
   private router = inject(Router);
 
@@ -47,7 +50,7 @@ export class AdmComponent implements OnInit {
   }
 
   irPara(view: AdmView) {
-    this.currentView.set(view);
+    this.router.navigate(['/adm', view]);
   }
 
   abrirEditarPerfil() {
@@ -62,7 +65,16 @@ export class AdmComponent implements OnInit {
     this.userName.set(updatedUser.nome);
   }
 
+  abrirModalLogout() {
+    this.isLogoutModalOpen.set(true);
+  }
+
+  cancelarLogout() {
+    this.isLogoutModalOpen.set(false);
+  }
+
   logout() {
+    this.isLogoutModalOpen.set(false);
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.clear();
     }
