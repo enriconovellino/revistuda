@@ -11,6 +11,7 @@ export interface DesempenhoAluno {
 export interface AlunoProfessor {
   aluno_id: number;
   nome: string;
+  email: string;
   turma_id: number;
   nome_turma: string;
   desempenho: DesempenhoAluno;
@@ -26,7 +27,7 @@ export class GetAlunosByProfessorUseCase {
       select: {
         turma_id: true,
         nome_turma: true,
-        alunos: { select: { id: true, nome: true } },
+        alunos: { select: { id: true, nome: true, email: true } },
       },
     });
 
@@ -85,6 +86,7 @@ export class GetAlunosByProfessorUseCase {
         resultado.push({
           aluno_id: aluno.id,
           nome: aluno.nome,
+          email: aluno.email,
           turma_id: turma.turma_id,
           nome_turma: turma.nome_turma,
           desempenho: {

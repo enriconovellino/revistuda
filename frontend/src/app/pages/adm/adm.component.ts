@@ -1,5 +1,7 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
+import { Router, RouterOutlet, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
@@ -29,13 +31,14 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
   templateUrl: './adm.component.html',
   styleUrl: './adm.component.scss'
 })
-export class AdmComponent implements OnInit {
+export class AdmComponent implements OnInit, OnDestroy {
   userName = signal('Administrador');
   isEditProfileOpen = signal<boolean>(false);
   isLogoutModalOpen = signal<boolean>(false);
   sidebarCollapsed = signal<boolean>(false);
 
   private router = inject(Router);
+  private routerSub?: Subscription;
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -47,6 +50,22 @@ export class AdmComponent implements OnInit {
         }
       }
     }
+
+    // Intercepta o botão "Voltar" do browser SOMENTE quando
+    // a navegação levar para fora do painel /adm
+    this.routerSub = this.router.events.pipe(
+      filter(e => e instanceof NavigationStart &&
+                  (e as NavigationStart).navigationTrigger === 'popstate' &&
+                  !(e as NavigationStart).url.startsWith('/adm'))
+    ).subscribe(() => {
+      // Cancela a navegação voltando para a rota atual
+      this.router.navigate([this.router.url]);
+      this.isLogoutModalOpen.set(true);
+    });
+  }
+
+  ngOnDestroy() {
+    this.routerSub?.unsubscribe();
   }
 
   irPara(view: AdmView) {

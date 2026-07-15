@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-revistuda fixed-top">
+<nav class="navbar navbar-expand-lg navbar-revistuda fixed-top entrada-navbar">
   <div class="container-fluid px-4">
     <a class="navbar-brand-revistuda" href="#">
       <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
@@ -39,11 +39,11 @@
 <div class="boas-vindas-page" [class.com-tutorial]="tutorialService.active()">
   <div class="conteudo-central">
 
-    <h1 class="pergunta-principal">Quem é você?</h1>
-    <p class="subtexto">Toque no botão que representa você para continuar.</p>
+    <h1 class="pergunta-principal entrada-titulo">Quem é você?</h1>
+    <p class="subtexto entrada-subtexto">Toque no botão que representa você para continuar.</p>
 
     <div class="grid-perfis">
-      <button type="button" class="card-perfil position-relative" [class.highlight-perfil]="tutorialService.active() && tutorialService.step() === 'step1'" (click)="escolherPerfil('idoso')">
+      <button type="button" class="card-perfil position-relative entrada-card-1" [class.highlight-perfil]="tutorialService.active() && tutorialService.step() === 'step1'" (click)="escolherPerfil('idoso')">
         <!-- Tooltip explicativo -->
         <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'step1'">
           Clique aqui para começar!
@@ -52,12 +52,12 @@
         <span class="titulo-perfil">Sou Idoso</span>
       </button>
 
-      <button type="button" class="card-perfil" (click)="escolherPerfil('professor')">
+      <button type="button" class="card-perfil entrada-card-2" (click)="escolherPerfil('professor')">
         <span class="icone-perfil bg-azul-claro"><i class="fi fi-rr-graduation-cap"></i></span>
         <span class="titulo-perfil">Sou Professor</span>
       </button>
 
-      <button type="button" class="card-perfil" (click)="escolherPerfil('adm')">
+      <button type="button" class="card-perfil entrada-card-3" (click)="escolherPerfil('adm')">
         <span class="icone-perfil bg-azul-escuro"><i class="fi fi-bs-stats"></i></span>
         <span class="titulo-perfil">Sou Administrador</span>
       </button>

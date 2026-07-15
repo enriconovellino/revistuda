@@ -10,18 +10,8 @@ export class AtividadeService {
   private authService = inject(AuthService);
   private apiUrl = environment.apiUrl;
 
-  private getHeaders(): HeadersInit {
-    const token = this.authService.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-  }
-
   async getAtividades(): Promise<Atividade[]> {
-    const response = await fetch(`${this.apiUrl}/atividades`, {
-      headers: this.getHeaders(),
-    });
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Erro ao buscar atividades');
@@ -29,11 +19,18 @@ export class AtividadeService {
     return data as Atividade[];
   }
 
+  async getProximasAtividades(): Promise<Atividade[]> {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/professor/proximas`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao buscar próximas atividades');
+    }
+    return data as Atividade[];
+  }
+
   async getAtividadeById(id: number): Promise<Atividade | null> {
     try {
-      const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
-        headers: this.getHeaders(),
-      });
+      const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${id}`);
       if (!response.ok) return null;
       return await response.json();
     } catch {
@@ -50,9 +47,9 @@ export class AtividadeService {
     pares_associacao?: Atividade['pares_associacao'];
     licao_id: number;
   }): Promise<Atividade> {
-    const response = await fetch(`${this.apiUrl}/atividades`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const resData = await response.json();
@@ -63,9 +60,9 @@ export class AtividadeService {
   }
 
   async updateAtividade(id: number, data: Partial<Atividade>): Promise<Atividade> {
-    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${id}`, {
       method: 'PUT',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const resData = await response.json();
@@ -76,9 +73,8 @@ export class AtividadeService {
   }
 
   async deleteAtividade(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/atividades/${id}`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${id}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
     });
     if (!response.ok) {
       const data = await response.json();
@@ -87,9 +83,9 @@ export class AtividadeService {
   }
 
   async responderAtividadeMultiplaEscolha(atividadeId: number, opcaoId: number): Promise<any> {
-    const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/responder`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ opcao_id: opcaoId }),
     });
     const data = await response.json();
@@ -103,9 +99,9 @@ export class AtividadeService {
     atividadeId: number,
     respostas: { item_1_id: number; item_2_id: number }[],
   ): Promise<any> {
-    const response = await fetch(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
+    const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/responder-associacao`, {
       method: 'POST',
-      headers: this.getHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ respostas }),
     });
     const data = await response.json();

@@ -2,12 +2,13 @@ import { Component, computed, OnInit, AfterViewInit, signal, PLATFORM_ID, Inject
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
-import { Usuario, EstatisticasProfessor } from '../../../model/professor.models';
+import { Usuario, EstatisticasProfessor, AlunoProfessor } from '../../../model/professor.models';
 import { Modulo } from '../../../model/modulo.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
 import { StatCardComponent } from '../../../components/stat-card/stat-card.component';
+import { AtividadeService } from '../../../services/atividade.service';
 
 @Component({
   selector: 'app-professor-dashboard',
@@ -29,12 +30,24 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     naoRespondeu: 0,
   });
 
+  alunos = signal<AlunoProfessor[]>([]);
+
+  taxaAcertos = computed(() => {
+    const stats = this.estatisticas();
+    const total = stats.acertos + stats.erros;
+    if (total === 0) return 0;
+    return Math.round((stats.acertos / total) * 100);
+  });
+
+  proximasAtividades = signal<{ data: string; mes: string; titulo: string; info: string }[]>([]);
+
   private graficoChart: Chart | null = null;
   private userId: number | null = null;
 
   private router = inject(Router);
   private professorService = inject(ProfessorService);
   private moduloService = inject(ModuloService);
+  private atividadeService = inject(AtividadeService);
   @Inject(PLATFORM_ID) private platformId = inject(PLATFORM_ID);
 
   async ngOnInit() {
@@ -48,12 +61,18 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     await this.carregarDados();
     if (this.userId) {
       await this.carregarEstatisticas(this.userId);
+      try {
+        const alunos = await this.professorService.getMeusAlunos();
+        this.alunos.set(alunos);
+      } catch { /* silencioso */ }
     }
   }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.renderizarGrafico();
+      setTimeout(() => {
+        this.renderizarGrafico();
+      }, 150);
     }
   }
 
@@ -62,6 +81,7 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
       this.loading.set(true);
       const modulos = await this.moduloService.getModulos();
       this.modulos.set(modulos);
+      await this.carregarAtividades();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao carregar dados';
       this.error.set(message);
@@ -70,11 +90,37 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  async carregarAtividades() {
+    try {
+      const atividades = await this.atividadeService.getProximasAtividades();
+      const mapeadas = (atividades || []).map(atv => {
+        const dateObj = atv.data_criacao ? new Date(atv.data_criacao) : new Date();
+        const dia = dateObj.getDate().toString().padStart(2, '0');
+        const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+        const mes = meses[dateObj.getMonth()];
+        const horas = dateObj.getHours().toString().padStart(2, '0');
+        const minutos = dateObj.getMinutes().toString().padStart(2, '0');
+        
+        return {
+          data: dia,
+          mes: mes,
+          titulo: atv.titulo_atividade,
+          info: `${atv.modulo?.titulo_modulo || 'Geral'} • ${horas}:${minutos}`
+        };
+      });
+      this.proximasAtividades.set(mapeadas.slice(0, 3));
+    } catch (err: unknown) {
+      console.error('Erro ao carregar atividades do banco:', err);
+    }
+  }
+
   async carregarEstatisticas(professorId: number) {
     try {
       const stats = await this.professorService.getEstatisticas(professorId);
       this.estatisticas.set(stats);
-      this.renderizarGrafico();
+      setTimeout(() => {
+        this.renderizarGrafico();
+      }, 100);
     } catch (err: unknown) {
       console.error('Erro ao carregar estatísticas:', err instanceof Error ? err.message : err);
     }
@@ -87,12 +133,12 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
 
     const canvas = document.getElementById('graficoDesempenho') as HTMLCanvasElement | null;
     if (!canvas) {
+      console.warn('Canvas graficoDesempenho nao encontrado no DOM. Tentando renderizar novamente em breve.');
       return;
     }
 
     const stats = this.estatisticas();
     const valores = [stats.acertos, stats.erros, stats.naoRespondeu];
-    const total = valores.reduce((soma, v) => soma + v, 0);
 
     if (this.graficoChart) {
       this.graficoChart.destroy();
@@ -101,22 +147,6 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
 
     Chart.register(...registerables);
 
-    const percentPlugin = {
-      id: 'percentLabels',
-      afterDatasetsDraw: (chart: Chart) => {
-        const { ctx } = chart;
-        chart.getDatasetMeta(0).data.forEach((bar: any, index: number) => {
-          const valor = valores[index];
-          const percent = total > 0 ? Math.round((valor / total) * 100) : 0;
-          ctx.save();
-          ctx.font = 'bold 13px Inter, sans-serif';
-          ctx.fillStyle = '#0f2744';
-          ctx.textAlign = 'center';
-          ctx.fillText(`${percent}%`, bar.x, bar.y - 8);
-          ctx.restore();
-        });
-      },
-    };
     this.graficoChart = new Chart(canvas, {
       type: 'bar',
       data: {
@@ -124,8 +154,8 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
         datasets: [
           {
             data: valores,
-            backgroundColor: ['#16a34a', '#dc2626', '#94a3b8'],
-            borderRadius: 6,
+            backgroundColor: ['#00ba88', '#bf0000', '#94a3b8'],
+            borderRadius: 8,
             barThickness: 45,
             categoryPercentage: 1.0,
             barPercentage: 1.0,
@@ -136,22 +166,34 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 24 },
+          padding: { top: 10 },
         },
         plugins: {
           legend: { display: false },
         },
         scales: {
           x: {
+            grid: {
+              display: false,
+            },
             ticks: {
-              font: { size: 14, weight: 'bold' },
-              color: '#0f2744',
+              font: { size: 12, family: 'Inter, sans-serif' },
+              color: '#94a3b8',
             },
           },
-          y: { beginAtZero: true, ticks: { stepSize: 1 } },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: '#f1f5f9',
+            },
+            ticks: {
+              stepSize: 1,
+              color: '#94a3b8',
+              font: { size: 12, family: 'Inter, sans-serif' },
+            },
+          },
         },
       },
-      plugins: [percentPlugin],
     });
   }
 
@@ -165,5 +207,37 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
       return url;
     }
     return `${environment.apiUrl}${url}`;
+  }
+
+  async baixarRelatorio() {
+    const agora = new Date();
+    const nomeArquivo = `relatorio-dashboard-${agora.toISOString().slice(0, 10)}.png`;
+
+    // Elemento alvo: o painel principal do dashboard
+    const elemento = document.querySelector('.dash-prof') as HTMLElement | null;
+    if (!elemento) {
+      alert('Não foi possível localizar o conteúdo do dashboard.');
+      return;
+    }
+
+    try {
+      // Import dinâmico para não aumentar o bundle inicial
+      const { default: html2canvas } = await import('html2canvas');
+
+      const canvas = await html2canvas(elemento, {
+        useCORS: true,
+        scale: 2,           // alta resolução
+        backgroundColor: '#f8fafc',
+        logging: false,
+      });
+
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = nomeArquivo;
+      link.click();
+    } catch (err) {
+      console.error('Erro ao gerar imagem do relatório:', err);
+      alert('Erro ao gerar a imagem. Verifique o console para detalhes.');
+    }
   }
 }

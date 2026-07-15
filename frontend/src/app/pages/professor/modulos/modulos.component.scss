@@ -1,5 +1,41 @@
 @use '../../../../styles/variables' as *;
 
+// ── Botão "+ Novo Módulo" — mesmo estilo do gestao-btn-criar ──
+$accent: #2563eb;
+$accent-dark: #1d4ed8;
+
+.btn-novo-modulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, $accent, $accent-dark);
+  color: white;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba($accent, 0.28);
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba($accent, 0.35);
+  }
+}
+
+.btn-novo-modulo-cancelar {
+  background: linear-gradient(135deg, #64748b, #475569);
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(71, 85, 105, 0.35);
+  }
+}
+
+
 .modulo-card-v2 {
   background: white;
   border-radius: 16px;
@@ -301,9 +337,9 @@
 /* ===================================================== */
 
 // Tokens
-$accent: #0d9488; // teal — acento "estudo/progresso"
-$accent-dark: #0f766e;
-$accent-soft: #e6f6f4;
+$accent: $azul-fgv; // azul padrão do sistema
+$accent-dark: $azul-escuro;
+$accent-soft: #eef2f9; // tom suave de azul
 $ink: #1f2937;
 $muted: #6b7280;
 $border: #e5e7eb;
