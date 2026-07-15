@@ -3,6 +3,10 @@
     <h4 class="mb-0 fw-bold">Gestão de Usuários</h4>
     <small class="text-muted">Aprove cadastros, acompanhe status e gerencie professores e alunos.</small>
   </div>
+  <button class="btn btn-primary px-4 py-2 fw-semibold d-flex align-items-center gap-2" (click)="abrirModalCriarUsuario()">
+    <i class="fi fi-rr-user-add"></i>
+    Novo Usuário
+  </button>
 </div>
 
 <div class="alert alert-danger py-2 small" *ngIf="actionError()">{{ actionError() }}</div>
@@ -199,3 +203,65 @@
 <app-confirm-dialog [isOpen]="acaoPendente() !== null" [title]="dialogTitle()" [message]="dialogMessage()"
   [confirmLabel]="dialogConfirmLabel()" [variant]="dialogVariant()" [loading]="actionLoading()"
   (confirmed)="confirmarAcao()" (cancelled)="cancelarAcao()"></app-confirm-dialog>
+
+<!-- Modal de Criar Usuário -->
+<div class="modal-overlay" *ngIf="showCreateModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h5 class="fw-bold mb-0 text-dark">Cadastrar Novo Usuário</h5>
+      <button class="btn-close-modal" (click)="fecharModalCriarUsuario()" [disabled]="createLoading()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-danger py-2 small" *ngIf="createError()">{{ createError() }}</div>
+
+      <form (submit)="$event.preventDefault(); criarUsuario()">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Nome Completo <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" placeholder="Ex: Maria Souza"
+            [ngModel]="novoUsuarioNome()" (ngModelChange)="novoUsuarioNome.set($event)" name="nome" required [disabled]="createLoading()" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">E-mail <span class="text-danger">*</span></label>
+          <input type="email" class="form-control" placeholder="Ex: maria@email.com"
+            [ngModel]="novoUsuarioEmail()" (ngModelChange)="novoUsuarioEmail.set($event)" name="email" required [disabled]="createLoading()" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Senha <span class="text-danger">*</span></label>
+          <input type="password" class="form-control" placeholder="Mínimo 6 caracteres"
+            [ngModel]="novoUsuarioSenha()" (ngModelChange)="novoUsuarioSenha.set($event)" name="senha" required [disabled]="createLoading()" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Perfil / Cargo <span class="text-danger">*</span></label>
+          <select class="form-select" [ngModel]="novoUsuarioPermission()" (ngModelChange)="novoUsuarioPermission.set($event)" name="permission" required [disabled]="createLoading()">
+            <option value="ALUNO_IDOSO">Aluno(a) Idoso</option>
+            <option value="ALUNO_CRIANCA">Aluno(a) Criança</option>
+            <option value="PROFESSOR">Professor(a)</option>
+            <option value="ADM">Administrador</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-bold">Status Inicial <span class="text-danger">*</span></label>
+          <select class="form-select" [ngModel]="novoUsuarioAprovado() ? 'true' : 'false'" (ngModelChange)="novoUsuarioAprovado.set($event === 'true')" name="aprovado" required [disabled]="createLoading()">
+            <option value="true">Aprovado (Ativo)</option>
+            <option value="false">Pendente</option>
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="fecharModalCriarUsuario()" [disabled]="createLoading()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="createLoading()">
+            <span *ngIf="!createLoading()">Cadastrar</span>
+            <span *ngIf="createLoading()">Aguarde...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { TurmaService } from '../../../services/turma.service';
+import { AuthService } from '../../../services/auth.service';
 import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
@@ -26,10 +27,21 @@ interface AcaoPendente {
 export class UsuariosAdminComponent implements OnInit {
   private userService = inject(UserService);
   private turmaService = inject(TurmaService);
+  private authService = inject(AuthService);
 
   loading = signal<boolean>(false);
   actionLoading = signal<boolean>(false);
   actionError = signal<string | null>(null);
+
+  // Signals para a modal de criação de usuário
+  showCreateModal = signal<boolean>(false);
+  novoUsuarioNome = signal<string>('');
+  novoUsuarioEmail = signal<string>('');
+  novoUsuarioSenha = signal<string>('');
+  novoUsuarioPermission = signal<string>('ALUNO_IDOSO');
+  novoUsuarioAprovado = signal<boolean>(true);
+  createError = signal<string | null>(null);
+  createLoading = signal<boolean>(false);
 
   users = signal<Usuario[]>([]);
   turmas = signal<Turma[]>([]);
@@ -273,6 +285,66 @@ export class UsuariosAdminComponent implements OnInit {
       this.actionError.set(err.message || 'Erro ao executar ação');
     } finally {
       this.actionLoading.set(false);
+    }
+  }
+
+  abrirModalCriarUsuario() {
+    this.createError.set(null);
+    this.novoUsuarioNome.set('');
+    this.novoUsuarioEmail.set('');
+    this.novoUsuarioSenha.set('');
+    this.novoUsuarioPermission.set('ALUNO_IDOSO');
+    this.novoUsuarioAprovado.set(true);
+    this.showCreateModal.set(true);
+  }
+
+  fecharModalCriarUsuario() {
+    if (this.createLoading()) return;
+    this.showCreateModal.set(false);
+    this.createError.set(null);
+  }
+
+  async criarUsuario() {
+    if (this.createLoading()) return;
+
+    const nome = this.novoUsuarioNome().trim();
+    const email = this.novoUsuarioEmail().trim();
+    const senha = this.novoUsuarioSenha().trim();
+    const permission = this.novoUsuarioPermission();
+
+    if (!nome || !email || !senha) {
+      this.createError.set('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if (senha.length < 6) {
+      this.createError.set('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    this.createLoading.set(true);
+    this.createError.set(null);
+
+    try {
+      const res = await this.authService.register({
+        nome,
+        email,
+        senha,
+        permission
+      });
+
+      // Se foi solicitado aprovação imediata e o usuário criado necessita de aprovação
+      if (this.novoUsuarioAprovado() && res.user && !res.user.approved) {
+        await this.userService.approveUser(res.user.id);
+      }
+
+      // Fechar modal e recarregar dados do grid
+      this.showCreateModal.set(false);
+      await this.loadData(false);
+    } catch (err: any) {
+      this.createError.set(err.message || 'Erro ao cadastrar usuário.');
+    } finally {
+      this.createLoading.set(false);
     }
   }
 }
