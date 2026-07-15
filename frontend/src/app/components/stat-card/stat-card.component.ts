@@ -17,4 +17,5 @@ export class StatCardComponent {
   @Input() attnDanger = false;
   @Input() width?: string;
   @Input() height?: string;
+  @Input() noTopBar = false;
 }

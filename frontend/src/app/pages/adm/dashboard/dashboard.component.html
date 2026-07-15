@@ -8,23 +8,23 @@
   <!-- Linha 1: 4 stat cards principais (preenche toda a largura) -->
   <div class="row g-4 mb-4">
     <div class="col-lg-3 col-6">
-      <app-stat-card label="Turmas" [value]="turmas().length" badgeClass="badge-teal" [horizontal]="true">
-        <svg icon viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+      <app-stat-card label="Turmas" [value]="turmas().length" badgeClass="badge-navy" [horizontal]="true" [noTopBar]="true">
+        <i icon class="fi fi-rr-users"></i>
       </app-stat-card>
     </div>
     <div class="col-lg-3 col-6">
-      <app-stat-card label="Professores" [value]="totalProfessores()" badgeClass="badge-navy" [horizontal]="true">
-        <svg icon viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20c0-4 3.4-6.6 7.5-6.6s7.5 2.6 7.5 6.6"/></svg>
+      <app-stat-card label="Professores" [value]="totalProfessores()" badgeClass="badge-navy" [horizontal]="true" [noTopBar]="true">
+        <i icon class="fi fi-rr-graduation-cap"></i>
       </app-stat-card>
     </div>
     <div class="col-lg-3 col-6">
-      <app-stat-card label="Alunos" [value]="totalAlunos()" badgeClass="badge-purple" [horizontal]="true">
-        <svg icon viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.6 2.9-6 5.5-6s5.5 2.4 5.5 6"/><circle cx="17.2" cy="9" r="2.4"/><path d="M15.8 14.3c2.3.3 4.2 2.4 4.2 5.7"/></svg>
+      <app-stat-card label="Alunos" [value]="totalAlunos()" badgeClass="badge-navy" [horizontal]="true" [noTopBar]="true">
+        <i icon class="fi fi-rr-user"></i>
       </app-stat-card>
     </div>
     <div class="col-lg-3 col-6">
-      <app-stat-card label="Solicitações" [value]="pendingUsers().length" badgeClass="badge-orange" [attn]="pendingUsers().length > 0" [horizontal]="true">
-        <svg icon viewBox="0 0 24 24"><path d="M4 12.5 6 5h12l2 7.5"/><path d="M4 12.5h5l1.3 2.4h3.4L15 12.5h5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>
+      <app-stat-card label="Solicitações" [value]="pendingUsers().length" badgeClass="badge-orange" [attn]="pendingUsers().length > 0" [horizontal]="true" [noTopBar]="true">
+        <i icon class="fi fi-rr-envelope"></i>
       </app-stat-card>
     </div>
   </div>
@@ -34,13 +34,13 @@
     <div class="col-lg-6">
       <div class="d-flex flex-column gap-4 h-100">
         <div class="flex-fill">
-          <app-stat-card label="Turmas sem professor" [value]="turmasSemProfessor().length" badgeClass="badge-danger" [horizontal]="true" [attnDanger]="turmasSemProfessor().length > 0">
-            <svg icon viewBox="0 0 24 24"><path d="M12 4 21.5 20h-19z"/><line x1="12" y1="10" x2="12" y2="14.5"/><line x1="12" y1="17" x2="12" y2="17.05"/></svg>
+          <app-stat-card label="Turmas sem professor" [value]="turmasSemProfessor().length" badgeClass="badge-danger" [horizontal]="true" [attnDanger]="true">
+            <i icon class="fi fi-rr-triangle-warning"></i>
           </app-stat-card>
         </div>
         <div class="flex-fill">
-          <app-stat-card label="Vagas disponíveis" [value]="vagasDisponiveis()" badgeClass="badge-teal" [horizontal]="true">
-            <svg icon viewBox="0 0 24 24"><path d="M6 4h12v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"/><path d="M6 13v6M18 13v6M6 19h12"/></svg>
+          <app-stat-card class="card-vagas" label="Vagas disponíveis" [value]="vagasDisponiveis()" badgeClass="badge-success" [horizontal]="true">
+            <i icon class="fi fi-rr-checkbox"></i>
           </app-stat-card>
         </div>
       </div>
@@ -48,28 +48,28 @@
     <div class="col-lg-6">
       <div class="chart-card h-100">
         <h5 class="fw-bold mb-3">Resumo executivo</h5>
-        <div class="d-flex flex-column gap-4">
-          <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-column gap-3">
+          <div class="resumo-row d-flex justify-content-between align-items-center py-2">
             <span class="resumo-label">Cadastros aguardando aprovação</span>
-            <span class="badge" [class.bg-warning]="pendingUsers().length > 0" [class.bg-success]="pendingUsers().length === 0">
+            <span class="badge-custom" [class.warning]="pendingUsers().length > 0" [class.success]="pendingUsers().length === 0">
               {{ pendingUsers().length > 0 ? pendingUsers().length : 'Nenhuma' }}
             </span>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="resumo-row d-flex justify-content-between align-items-center py-2">
             <span class="resumo-label">Turmas sem professor</span>
-            <span class="badge" [class.bg-danger]="turmasSemProfessor().length > 0" [class.bg-success]="turmasSemProfessor().length === 0">
+            <span class="badge-custom" [class.danger]="turmasSemProfessor().length > 0" [class.success]="turmasSemProfessor().length === 0">
               {{ turmasSemProfessor().length > 0 ? turmasSemProfessor().length : 'Nenhuma' }}
             </span>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="resumo-row d-flex justify-content-between align-items-center py-2">
             <span class="resumo-label">Turmas lotadas</span>
-            <span class="badge" [class.bg-warning]="turmasLotadas().length > 0" [class.bg-success]="turmasLotadas().length === 0">
+            <span class="badge-custom" [class.warning]="turmasLotadas().length > 0" [class.success]="turmasLotadas().length === 0">
               {{ turmasLotadas().length > 0 ? turmasLotadas().length : 'Nenhuma' }}
             </span>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="resumo-row d-flex justify-content-between align-items-center py-2">
             <span class="resumo-label">Vagas disponíveis</span>
-            <span class="badge bg-primary">{{ vagasDisponiveis() }}</span>
+            <span class="badge-custom primary">{{ vagasDisponiveis() }}</span>
           </div>
         </div>
       </div>
@@ -111,7 +111,10 @@
     <div class="col-lg-4">
       <div class="chart-card h-100">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h5 class="fw-bold mb-0">🔔 Solicitações pendentes</h5>
+          <div class="d-flex align-items-center gap-2">
+            <i class="fi fi-rr-bell text-warning fs-5"></i>
+            <h5 class="fw-bold mb-0">Solicitações pendentes</h5>
+          </div>
           <button class="btn btn-link btn-sm text-decoration-none" (click)="irPara.emit('usuarios')">Ver todas →</button>
         </div>
 
@@ -125,22 +128,25 @@
         </div>
 
         <ng-template #noPending>
-          <div class="empty-state py-3">
-            <p class="mb-0 text-muted small">Nenhuma solicitação de cadastro pendente.</p>
+          <div class="empty-state-dashed">
+            <i class="fi fi-rr-picture empty-icon"></i>
+            <p class="empty-text">Nenhuma solicitação de cadastro pendente.</p>
           </div>
         </ng-template>
       </div>
     </div>
 
     <div class="col-lg-4">
-      <div class="chart-card h-100">
+      <div class="chart-card h-100" style="position: relative;">
         <h5 class="fw-bold mb-4">Atividades recentes</h5>
 
         <div class="d-flex flex-column" *ngIf="atividadesRecentes().length > 0; else semAtividades">
           <div class="atividade-item" *ngFor="let atividade of atividadesVisiveis()">
-            <span class="atividade-icone">{{ iconeAtividade(atividade.tipo) }}</span>
-            <span class="atividade-texto">{{ atividade.descricao }}</span>
-            <span class="atividade-tempo">{{ tempoRelativo(atividade.data) }}</span>
+            <i class="fi fi-rr-thumbtack pin-icon"></i>
+            <div class="atividade-content">
+              <span class="atividade-texto">{{ atividade.descricao }}</span>
+              <span class="atividade-tempo">{{ tempoRelativo(atividade.data) }}</span>
+            </div>
           </div>
 
           <button class="btn btn-link btn-sm text-decoration-none align-self-center mt-2" *ngIf="atividadesOcultas() > 0"
@@ -157,5 +163,10 @@
       </div>
     </div>
   </div>
+
+  <!-- Floating Action Button (FAB) -->
+  <button class="fab-btn" (click)="irPara.emit('turmas')" title="Adicionar Nova Turma">
+    <i class="fi fi-rr-plus"></i>
+  </button>
 
 </div>
