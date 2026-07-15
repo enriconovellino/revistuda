@@ -15,6 +15,8 @@ export interface ComentarioResumo {
   texto: string;
   createdAt: Date;
   updatedAt: Date;
+  resposta: string | null;
+  respostaAt: Date | null;
   aluno: { id: number; nome: string };
   conteudo: { conteudo_id: number; nome_conteudo: string };
   licao: { licao_id: number; titulo_licao: string };

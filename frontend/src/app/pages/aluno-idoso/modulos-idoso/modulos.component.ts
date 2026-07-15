@@ -116,6 +116,12 @@ export class ModulosIdosoComponent implements OnInit {
     return `${environment.apiUrl}${url}`;
   }
 
+  onImagemErro(modulo: ModuloComProgresso): void {
+    this.modulos.update(lista =>
+      lista.map(m => m.modulo_id === modulo.modulo_id ? { ...m, imagem_url: undefined } : m)
+    );
+  }
+
   acessarModulo(moduloId: number): void {
     this.router.navigate(['/aluno-idoso/modulo', moduloId]);
   }

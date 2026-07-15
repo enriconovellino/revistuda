@@ -64,7 +64,13 @@
             <div class="d-flex align-items-start gap-3">
               <div class="comentario-avatar">{{ getIniciais(comentario.aluno.nome) }}</div>
               <div>
-                <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <span class="comentario-aluno-nome">{{ comentario.aluno.nome }}</span>
+                  <span class="badge-status" [ngClass]="comentario.resposta ? 'badge-status-respondido' : 'badge-status-pendente'">
+                    <i class="fi" [ngClass]="comentario.resposta ? 'fi-rr-check' : 'fi-rr-clock'"></i>
+                    {{ comentario.resposta ? 'Respondido' : 'Pendente' }}
+                  </span>
+                </div>
                 <div class="comentario-meta">
                   {{ comentario.turma.nome_turma }} · {{ comentario.modulo.titulo_modulo }} ·
                   {{ comentario.licao.titulo_licao }} · {{ comentario.conteudo.nome_conteudo }}
@@ -86,10 +92,16 @@
           </div>
 
           <div class="comentario-footer">
-            <button class="btn-responder" type="button" (click)="toggleResposta(comentario.id)">
-              <i class="fi fi-rr-comment-alt-dots"></i>
-              {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Editar Resposta' :
-              'Responder') }}
+            <button
+              class="btn-responder"
+              [ngClass]="{
+                'btn-responder-respondido': comentario.resposta && respostaAbertaId() !== comentario.id
+              }"
+              type="button"
+              (click)="toggleResposta(comentario.id)">
+              <i class="fi"
+                [ngClass]="respostaAbertaId() === comentario.id ? 'fi-rr-cross-small' : (comentario.resposta ? 'fi-rr-check' : 'fi-rr-comment-alt-dots')"></i>
+              {{ respostaAbertaId() === comentario.id ? 'Cancelar' : (comentario.resposta ? 'Respondido' : 'Responder') }}
             </button>
           </div>
 

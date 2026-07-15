@@ -48,11 +48,14 @@ export class ComentarioComAlunoPresenter {
     return comentarios.map((c) => ComentarioComAlunoPresenter.toPresentation(c));
   }
 }
+
 export class ComentarioResumoPresenter {
   id!: number;
   texto!: string;
   createdAt!: Date;
   updatedAt!: Date;
+  resposta!: string | null;
+  respostaAt!: Date | null;
   aluno!: { id: number; nome: string };
   conteudo!: { conteudo_id: number; nome_conteudo: string };
   licao!: { licao_id: number; titulo_licao: string };
@@ -65,6 +68,8 @@ export class ComentarioResumoPresenter {
     presenter.texto = comentario.texto;
     presenter.createdAt = comentario.createdAt;
     presenter.updatedAt = comentario.updatedAt;
+    presenter.resposta = comentario.resposta ?? null;
+    presenter.respostaAt = comentario.respostaAt ?? null;
     presenter.aluno = comentario.aluno;
     presenter.conteudo = comentario.conteudo;
     presenter.licao = comentario.licao;

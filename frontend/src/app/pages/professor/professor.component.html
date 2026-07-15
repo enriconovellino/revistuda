@@ -2,16 +2,34 @@
   <app-sidebar-professor (collapsedChange)="sidebarCollapsed.set($event)"></app-sidebar-professor>
 
   <div class="flex-grow-1" [style.margin-left]="sidebarCollapsed() ? '68px' : '240px'" style="transition: margin-left 0.25s ease;">
-    <div class="main-header d-flex align-items-center justify-content-end">
-      <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
-        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-          style="width: 36px; height: 36px; background: #0f2744 !important;">
-          {{ userName().charAt(0).toUpperCase() }}
+    <div class="main-header d-flex justify-content-between align-items-center position-relative">
+      <div>
+        <span class="text-muted fw-semibold small">Painel Professor</span>
+      </div>
+
+      <div class="position-absolute start-50 top-50 translate-middle text-center w-auto">
+        <span class="fw-bold" style="color: #0f2744; font-size: 1.35rem; letter-spacing: -0.02em;">
+          Bem-vindo, {{ userName() }}
+        </span>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+            style="width: 36px; height: 36px; background: #0f2744 !important;">
+            {{ userName().charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <div class="fw-semibold small">{{ userName() }}</div>
+            <div class="text-muted" style="font-size: 11px;">Professor</div>
+          </div>
         </div>
-        <div>
-          <div class="fw-semibold small">{{ userName() }}</div>
-          <div class="text-muted" style="font-size: 11px;">Professor</div>
-        </div>
+
+        <button class="btn btn-danger btn-sm d-flex align-items-center gap-1 text-white border-0 btn-sair-header"
+                (click)="abrirModalLogout()" title="Sair da conta">
+          <i class="fi fi-rr-exit" style="font-size: 0.95rem;"></i>
+          <span>Sair</span>
+        </button>
       </div>
     </div>
 
@@ -23,3 +41,7 @@
 
 <app-editar-perfil [isOpen]="isEditProfileOpen()" (close)="fecharEditarPerfil()"
   (saveSuccess)="onProfileUpdated($event)"></app-editar-perfil>
+
+<app-confirm-dialog [isOpen]="isLogoutModalOpen()" title="Sair da conta"
+  message="Tem certeza que deseja sair da sua conta?" confirmLabel="Sair" variant="danger"
+  (confirmed)="logout()" (cancelled)="cancelarLogout()"></app-confirm-dialog>

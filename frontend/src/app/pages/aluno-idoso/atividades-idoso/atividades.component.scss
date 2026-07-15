@@ -1,241 +1,244 @@
-@use 'sass:color';
-@use 'variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
 
-.atividade-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
-  border: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  transition: all 0.2s;
+:host {
+  --color-bg: #F6F7FB;
+  --color-surface: #FFFFFF;
+  --color-ink: #1d3d8d;
+  --color-ink-soft: #2d58b4;
+  --color-primary: #35467D;
+  --color-primary-soft: #E7EBFA;
+  --color-success: #e47c1a;
+  --color-success-soft: #E3F5EC;
+  --color-warning: #db8113;
+  --color-warning-soft: #FCEFDD;
+  --color-border: #E1E5F0;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 4px 16px rgba(35, 42, 59, 0.06);
+
+  display: block;
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  min-height: 100%;
 }
 
-.atividade-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+h4.fw-bold {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.9rem;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+// --- Aviso do tutorial ---
+.bg-white.border-bottom {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card) !important;
+
+  span {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    color: var(--color-ink);
+
+    i {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.btn-info {
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700 !important;
+  padding: 10px 18px !important;
+
+  &:hover {
+    background-color: #2B3968 !important;
+  }
+}
+
+// --- Botões de navegação ---
+.btn-nav-secundario {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  transition: all 0.18s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+}
+
+// --- Card de atividade: aba lateral de status, como uma pasta ---
+.atividade-wrapper {
+  position: relative;
+}
+
+.atividade-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  // Aba de status na lateral esquerda
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--color-warning);
+  }
+
+  &:has(.bg-success)::before {
+    background: var(--color-success);
+  }
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(35, 42, 59, 0.1);
+    transform: translateY(-1px);
+  }
 }
 
 .atividade-icone {
-  width: 3.25rem;
-  height: 3.25rem;
   flex-shrink: 0;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  background: #ffedd5;
-  color: #ea580c;
-  font-size: 1.3rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 1.4rem;
 }
 
 .atividade-info {
   flex: 1;
+  min-width: 0;
 }
 
 .atividade-titulo {
-  color: #0f172a;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--color-ink);
+  margin-bottom: 4px;
 }
 
 .atividade-descricao {
-  color: #94a3b8;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.98rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .atividade-tipo {
   display: inline-block;
-  background: #fff3cd;
-  color: #664d03;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.65rem;
-  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.badge.bg-success {
+  background-color: var(--color-success) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 800 !important;
 }
 
 .btn-primary-custom {
-  background-color: #ea580c;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.3rem;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-
-.btn-primary-custom:hover {
-  background-color: color.adjust(#ea580c, $lightness: -6%);
-}
-
-.loading-container {
-  padding: 4rem 2rem;
-}
-
-.empty-state {
-  padding: 2.5rem;
-  text-align: center;
-  color: #64748b;
-  background: white;
-  border: 2px dashed #e2e8f0;
-  border-radius: 12px;
-}
-
-.atividade-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.comentario-atividade-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  padding: 1rem 1.25rem;
-  margin-top: -0.5rem;
-}
-
-.comentario-atividade-linha {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.4rem;
-}
-
-.comentario-atividade-label {
-  font-weight: 700;
+  gap: 8px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 800;
   font-size: 1rem;
-  color: #475569;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: #2B3968;
+    transform: translateY(-1px);
+  }
 }
 
-.comentario-atividade-texto {
-  font-size: 1.05rem;
-  color: #334155;
-  margin: 0 0 0.6rem;
-  white-space: pre-wrap;
-}
-
-.resposta-professor-box {
-  background: #eff6ff;
-  border-left: 3px solid #3b82f6;
-  border-radius: 6px;
-  padding: 0.6rem 0.85rem;
-  margin-top: 0.5rem;
-}
-
-.resposta-professor-label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #1d4ed8;
-  margin-bottom: 0.25rem;
-}
-
-.resposta-professor-texto {
-  font-size: 1.05rem;
-  color: #1e3a5f;
-  margin: 0;
-  white-space: pre-wrap;
-}
-
-.comentario-sem-resposta {
-  display: inline-block;
-  font-size: 0.95rem;
-  color: #94a3b8;
-  font-style: italic;
-}
-
+// --- Paginação ---
 .paginacao {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 1.25rem;
-  margin-top: 2rem;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
 }
 
 .btn-pag {
-  background-color: #0f2744;
-  color: white;
-  border: none;
-  padding: 0.65rem 1.75rem;
-  border-radius: 50px;
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  color: var(--color-ink);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s ease;
 
   &:hover:not(:disabled) {
-    background-color: color.adjust(#0f2744, $lightness: 8%);
+    background-color: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   &:disabled {
-    opacity: 0.35;
+    opacity: 0.4;
     cursor: not-allowed;
   }
 }
 
 .pag-info {
-  font-size: 1rem;
+  font-family: 'Baloo 2', sans-serif;
   font-weight: 600;
-  color: #475569;
-  min-width: 5rem;
-  text-align: center;
+  color: var(--color-ink-soft);
 }
 
-/* Estilos do Tutorial nas Atividades do Idoso */
-.banner-tutorial {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: #17a2b8;
-  color: white;
-  z-index: 1030;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.banner-tutorial-conteudo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  gap: 1rem;
-}
-
-.tutorial-passo-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.tutorial-passo-badge {
-  background: white;
-  color: #17a2b8;
-  font-weight: 800;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.tutorial-instrucao-texto {
-  margin: 0;
-  font-size: 1.1rem;
+// --- Estados vazio / carregando / erro ---
+.loading-container,
+.empty-state {
+  padding: 48px 24px;
+  color: var(--color-ink-soft);
 }
 
 .btn-cancelar-tutorial {
@@ -280,9 +283,11 @@
   0% {
     box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.6);
   }
+
   70% {
     box-shadow: 0 0 0 12px rgba(23, 162, 184, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
   }
@@ -304,26 +309,15 @@
   animation: bounce 1.5s infinite;
   min-width: 280px;
   text-align: center;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 8px 8px 0;
-    border-style: solid;
-    border-color: #17a2b8 transparent;
-    display: block;
-    width: 0;
-  }
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, -8px);
-  }
+.alert-danger {
+  border-radius: var(--radius-md);
+  border: none;
+  background-color: #FCEAEA;
+  color: #B23A3A;
+  font-weight: 700;
+  padding: 16px 20px;
 }

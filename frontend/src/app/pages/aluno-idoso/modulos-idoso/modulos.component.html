@@ -45,7 +45,7 @@
 
       <div class="modulo-capa">
         @if (modulo.imagem_url) {
-        <img [src]="getImageUrl(modulo.imagem_url)" [alt]="modulo.titulo_modulo" class="modulo-imagem">
+        <img [src]="getImageUrl(modulo.imagem_url)" [alt]="modulo.titulo_modulo" class="modulo-imagem" (error)="onImagemErro(modulo)">
         } @else {
         <div class="modulo-icone-fallback">
           <i class="fi fi-br-book-alt"></i>

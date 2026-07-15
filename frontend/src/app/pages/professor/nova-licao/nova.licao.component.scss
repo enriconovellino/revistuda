@@ -248,7 +248,6 @@ $radius: 12px;
 .gestao-item-card-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
   margin-top: auto;
 }
 
@@ -292,27 +291,6 @@ $radius: 12px;
   padding: 0.3rem 0.65rem;
   font-size: 0.74rem;
   box-shadow: none;
-}
-
-// Botão de editar — estilo azul
-.gestao-link-edit {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  border: 1.5px solid transparent;
-  background: $accent;
-  color: white;
-  font-size: 0.74rem;
-  font-weight: 600;
-  padding: 0.3rem 0.65rem;
-  border-radius: 8px;
-  white-space: nowrap;
-  transition: filter 0.15s ease, transform 0.15s ease;
-
-  &:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-  }
 }
 
 // ============================================
@@ -412,19 +390,6 @@ $radius: 12px;
   }
 }
 
-// Variante neutra para "Cancelar" nos modais de edição
-.nova-licao-btn-cancel {
-  background: #f3f4f6;
-  color: $ink;
-  box-shadow: none;
-
-  &:hover:not(:disabled) {
-    background: #e5e7eb;
-    filter: none;
-    transform: none;
-  }
-}
-
 // ============================================
 // Modais
 // ============================================
@@ -516,19 +481,25 @@ $radius: 12px;
 }
 
 .nova-licao-questao-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  margin-bottom: 0.75rem;
-}
 
-.nova-licao-questao-tag {
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: $accent-dark;
-  background: $accent-soft;
-  border-radius: 6px;
-  padding: 0.15rem 0.5rem;
+  .nova-licao-questao-tag {
+    grid-column: 2;
+    justify-self: center;
+    background: $blue-soft;
+    color: $blue-dark;
+    font-weight: 700;
+    font-size: 1.02rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .nova-licao-link-delete {
+    grid-column: 3;
+    justify-self: end;
+  }
 }
 
 .nova-licao-link-add {
@@ -603,11 +574,57 @@ $radius: 12px;
 }
 
 .nova-licao-par-preview {
-  height: 32px;
-  max-width: 60px;
-  object-fit: contain;
-  margin-top: 0.3rem;
-  border-radius: 4px;
+  height: 44px;
+  max-width: 80px;
+  object-fit: cover;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid $border;
+  display: block;
+}
+
+// --- Input de arquivo (upload de imagem nos pares de associação) ---
+
+input[type='file'].nova-licao-input {
+  background: #f9fafb;
+  border: 1.5px dashed $border;
+  border-radius: $radius;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: $muted;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: rgba($accent, 0.5);
+    background: $accent-soft;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent;
+    box-shadow: 0 0 0 4px rgba($accent, 0.14);
+  }
+
+  &::file-selector-button {
+    border: none;
+    background: linear-gradient(135deg, $accent, $accent-dark);
+    color: white;
+    font-weight: 600;
+    font-size: 0.76rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    margin-right: 0.6rem;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+  }
 }
 .nova-licao-error {
   color: #dc3545;
@@ -620,4 +637,92 @@ $radius: 12px;
 .nova-licao-select.is-invalid,
 .nova-licao-textarea.is-invalid {
   border-color: #dc3545 !important;
+}
+.nova-licao-btn-add-par {
+  background: #eff6ff;
+  border: 1.5px solid #3b82f6;
+  color: #1d4ed8;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #3b82f6;
+    color: white;
+  }
+}
+.gestao-link-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1.5px solid $accent;
+  background: white;
+  color: $accent-dark;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    background: $accent-soft;
+    transform: translateY(-1px);
+  }
+}
+.gestao-btn-criar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, $accent, $accent-dark);
+  color: white;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba($accent, 0.28);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba($accent, 0.35);
+  }
+}
+.gestao-item-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: auto;
+}
+.nova-licao-modal-confirm {
+  max-width: 400px;
+}
+
+.nova-licao-confirm-texto {
+  color: $ink;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.nova-licao-btn-confirm-danger {
+  border: none;
+  background: $danger;
+  color: white;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.7rem 1rem;
+  border-radius: $radius;
+  box-shadow: 0 4px 12px rgba($danger, 0.28);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
 }
