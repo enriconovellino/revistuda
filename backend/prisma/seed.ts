@@ -153,6 +153,85 @@ async function main() {
     },
   });
 
+  console.log('👩‍🏫 Criando professores adicionais...');
+  const professoraFernanda = await prisma.user.create({
+    data: {
+      nome: 'Professora Fernanda',
+      email: 'fernanda@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['PROFESSOR'],
+      approved: true,
+    },
+  });
+
+  const professorRoberto = await prisma.user.create({
+    data: {
+      nome: 'Professor Roberto',
+      email: 'roberto@revistuda.com.br',
+      senha: defaultPasswordHash,
+      permissions: ['PROFESSOR'],
+      approved: true,
+    },
+  });
+
+  console.log('🏫 Criando turmas adicionais...');
+  const turmaC = await prisma.turma.create({
+    data: {
+      nome_turma: 'Turma C - Inclusão Digital (Tarde)',
+      descricao_turma: 'Turma de inclusão digital para a terceira idade no período vespertino.',
+      capacidade_maxima: 10,
+      professor_id: professoraFernanda.id,
+    },
+  });
+
+  const turmaD = await prisma.turma.create({
+    data: {
+      nome_turma: 'Turma D - Informática Básica (Manhã)',
+      descricao_turma: 'Turma de informática básica para iniciantes no período matutino.',
+      capacidade_maxima: 10,
+      professor_id: professoraFernanda.id,
+    },
+  });
+
+  const turmaE = await prisma.turma.create({
+    data: {
+      nome_turma: 'Turma E - Inclusão Digital (Sábado)',
+      descricao_turma: 'Turma de inclusão digital aos sábados para quem trabalha durante a semana.',
+      capacidade_maxima: 10,
+      professor_id: professorRoberto.id,
+    },
+  });
+
+  console.log('🎓 Criando alunos adicionais...');
+  const novosAlunos = [
+    { nome: 'Francisco Barbosa', email: 'francisco@revistuda.com.br', turma_id: turmaA.turma_id },
+    { nome: 'Rita Nascimento', email: 'rita@revistuda.com.br', turma_id: turmaA.turma_id },
+    { nome: 'Sebastião Ramos', email: 'sebastiao@revistuda.com.br', turma_id: turmaB.turma_id },
+    { nome: 'Neide Carvalho', email: 'neide@revistuda.com.br', turma_id: turmaB.turma_id },
+    { nome: 'Geraldo Pinto', email: 'geraldo@revistuda.com.br', turma_id: turmaC.turma_id },
+    { nome: 'Ivone Duarte', email: 'ivone@revistuda.com.br', turma_id: turmaC.turma_id },
+    { nome: 'Osvaldo Teixeira', email: 'osvaldo@revistuda.com.br', turma_id: turmaC.turma_id },
+    { nome: 'Marlene Rocha', email: 'marlene@revistuda.com.br', turma_id: turmaC.turma_id },
+    { nome: 'Waldemar Gomes', email: 'waldemar@revistuda.com.br', turma_id: turmaD.turma_id },
+    { nome: 'Zilda Martins', email: 'zilda@revistuda.com.br', turma_id: turmaD.turma_id },
+    { nome: 'Benedito Freitas', email: 'benedito@revistuda.com.br', turma_id: turmaE.turma_id },
+    { nome: 'Aparecida Nunes', email: 'aparecida@revistuda.com.br', turma_id: turmaE.turma_id },
+  ];
+
+  const alunosCriados: Record<string, { id: number }> = {};
+  for (const aluno of novosAlunos) {
+    alunosCriados[aluno.email] = await prisma.user.create({
+      data: {
+        nome: aluno.nome,
+        email: aluno.email,
+        senha: defaultPasswordHash,
+        permissions: ['ALUNO_IDOSO'],
+        approved: true,
+        turma_id: aluno.turma_id,
+      },
+    });
+  }
+
   console.log('📚 Criando módulos...');
   const moduloSeguranca = await prisma.modulo.create({
     data: {
@@ -223,6 +302,106 @@ async function main() {
       turma_id: turmaB.turma_id,
     },
   });
+
+  console.log('📚 Criando módulos para as novas turmas...');
+  const modulosNovasTurmas = [
+    {
+      titulo_modulo: 'Segurança Digital',
+      descricao_modulo: 'Aprenda a reconhecer e evitar os golpes mais comuns na internet e no celular.',
+      dificuldade: 'Fácil',
+      imagem_url: '/uploads/modulo-seguranca.jpg',
+      turma_id: turmaC.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Como evitar golpes no WhatsApp e no celular',
+        comentario: 'Conheça os golpes mais comuns e aprenda atitudes simples para se proteger.',
+      },
+    },
+    {
+      titulo_modulo: 'WhatsApp no Dia a Dia',
+      descricao_modulo: 'Envie mensagens, áudios e faça videochamadas para conversar com a família.',
+      dificuldade: 'Fácil',
+      imagem_url: '/uploads/modulo-whatsapp.jpg',
+      turma_id: turmaC.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Primeiros passos e videochamadas',
+        comentario: 'Aprenda o básico do WhatsApp e como fazer uma videochamada com a família.',
+      },
+    },
+    {
+      titulo_modulo: 'Fotos e Memórias no Celular',
+      descricao_modulo: 'Tire fotos bonitas, encontre suas imagens na galeria e compartilhe com a família.',
+      dificuldade: 'Fácil',
+      imagem_url: '/uploads/modulo-fotos.jpg',
+      turma_id: turmaD.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Tirando e compartilhando fotos',
+        comentario: 'Aprenda a fotografar, encontrar as fotos na galeria e enviar para a família.',
+      },
+    },
+    {
+      titulo_modulo: 'Pix e Banco pelo Celular',
+      descricao_modulo: 'Use o aplicativo do banco e faça Pix com tranquilidade e segurança.',
+      dificuldade: 'Médio',
+      imagem_url: '/uploads/modulo-pix.jpg',
+      turma_id: turmaD.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Fazendo um Pix com segurança',
+        comentario: 'Passo a passo do Pix e os cuidados essenciais antes de confirmar um pagamento.',
+      },
+    },
+    {
+      titulo_modulo: 'Notícias Falsas (Fake News)',
+      descricao_modulo: 'Como identificar informações falsas antes de acreditar ou compartilhar.',
+      dificuldade: 'Médio',
+      imagem_url: '/uploads/modulo-fakenews.jpg',
+      turma_id: turmaE.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Como identificar uma notícia falsa',
+        comentario: 'Dicas práticas para desconfiar, verificar e não espalhar informações falsas.',
+      },
+    },
+    {
+      titulo_modulo: 'Compras Online com Segurança',
+      descricao_modulo: 'Aprenda a comprar pela internet sem cair em sites falsos e ofertas enganosas.',
+      dificuldade: 'Médio',
+      imagem_url: '/uploads/modulo-compras.jpg',
+      turma_id: turmaE.turma_id,
+      licao: {
+        titulo_licao: 'Lição 1 - Comprando pela internet sem cair em golpes',
+        comentario: 'Como reconhecer um site confiável e desconfiar de ofertas boas demais.',
+      },
+    },
+  ];
+
+  for (const item of modulosNovasTurmas) {
+    const modulo = await prisma.modulo.create({
+      data: {
+        titulo_modulo: item.titulo_modulo,
+        descricao_modulo: item.descricao_modulo,
+        dificuldade: item.dificuldade,
+        imagem_url: item.imagem_url,
+        turma_id: item.turma_id,
+      },
+    });
+
+    const licao = await prisma.licao.create({
+      data: {
+        titulo_licao: item.licao.titulo_licao,
+        comentario: item.licao.comentario,
+        modulo_id: modulo.modulo_id,
+      },
+    });
+
+    await prisma.conteudo.create({
+      data: {
+        nome_conteudo: `Leitura: ${item.titulo_modulo} - primeiros passos`,
+        tipo_conteudo: 'Texto',
+        texto_conteudo:
+          'Leia com calma o material desta lição e, se tiver dúvidas, use o espaço de comentários para perguntar ao professor.',
+        licao_id: licao.licao_id,
+      },
+    });
+  }
 
   console.log('📖 Criando lições...');
   const licaoGolpes = await prisma.licao.create({
@@ -622,13 +801,36 @@ async function main() {
       { aluno_id: josecarlos.id, resposta_aluno_id: opcaoPixCorreta.opcao_id },
       { aluno_id: josecarlos.id, resposta_aluno_id: opcaoGolpesErrada.opcao_id },
       // Pedro e Lourdes: sem respostas
+      // Francisco: 2 acertos + 1 erro
+      { aluno_id: alunosCriados['francisco@revistuda.com.br'].id, resposta_aluno_id: opcaoGolpesCorreta.opcao_id },
+      { aluno_id: alunosCriados['francisco@revistuda.com.br'].id, resposta_aluno_id: opcaoPixCorreta.opcao_id },
+      { aluno_id: alunosCriados['francisco@revistuda.com.br'].id, resposta_aluno_id: opcaoWhatsappErrada.opcao_id },
+      // Rita: 1 acerto
+      { aluno_id: alunosCriados['rita@revistuda.com.br'].id, resposta_aluno_id: opcaoWhatsappCorreta.opcao_id },
+      // Sebastião: 2 erros
+      { aluno_id: alunosCriados['sebastiao@revistuda.com.br'].id, resposta_aluno_id: opcaoGolpesErrada.opcao_id },
+      { aluno_id: alunosCriados['sebastiao@revistuda.com.br'].id, resposta_aluno_id: opcaoPixErrada.opcao_id },
+      // Geraldo: 2 acertos
+      { aluno_id: alunosCriados['geraldo@revistuda.com.br'].id, resposta_aluno_id: opcaoGolpesCorreta.opcao_id },
+      { aluno_id: alunosCriados['geraldo@revistuda.com.br'].id, resposta_aluno_id: opcaoWhatsappCorreta.opcao_id },
+      // Ivone: 1 acerto + 1 erro
+      { aluno_id: alunosCriados['ivone@revistuda.com.br'].id, resposta_aluno_id: opcaoPixCorreta.opcao_id },
+      { aluno_id: alunosCriados['ivone@revistuda.com.br'].id, resposta_aluno_id: opcaoGolpesErrada.opcao_id },
+      // Waldemar: 1 acerto
+      { aluno_id: alunosCriados['waldemar@revistuda.com.br'].id, resposta_aluno_id: opcaoGolpesCorreta.opcao_id },
+      // Benedito: 1 erro
+      { aluno_id: alunosCriados['benedito@revistuda.com.br'].id, resposta_aluno_id: opcaoWhatsappErrada.opcao_id },
+      // Neide, Osvaldo, Marlene, Zilda e Aparecida: sem respostas
     ],
   });
 
   console.log('✅ Semeadura concluída com sucesso!');
-  console.log('   Professor: professor@revistuda.com.br / 123456');
-  console.log('   Turma A: Maria, João, Antônio e Terezinha');
-  console.log('   Turma B: Ana, Pedro, José Carlos e Lourdes');
+  console.log('   Professores: professor@ | fernanda@ | roberto@ (revistuda.com.br) / 123456');
+  console.log('   Turma A (Prof. Carlos): Maria, João, Antônio, Terezinha, Francisco e Rita');
+  console.log('   Turma B (Prof. Carlos): Ana, Pedro, José Carlos, Lourdes, Sebastião e Neide');
+  console.log('   Turma C (Profa. Fernanda): Geraldo, Ivone, Osvaldo e Marlene');
+  console.log('   Turma D (Profa. Fernanda): Waldemar e Zilda');
+  console.log('   Turma E (Prof. Roberto): Benedito e Aparecida');
 }
 
 main()
