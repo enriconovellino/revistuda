@@ -239,10 +239,9 @@
 
         <!-- Link Voltar no fim do card sem quebrar estrutura -->
         <div class="text-center mt-4">
-          <a class="text-primary small fw-semibold link-voltar-nav" style="cursor: pointer; font-size: 1.1rem; text-decoration: underline;" 
-             (click)="voltarTutorial()">
-            ← Voltar para a tela inicial
-          </a>
+          <button type="button" class="link-voltar-nav" (click)="voltarTutorial()">
+            <i class="fi fi-rr-arrow-small-left"></i> Voltar para a tela inicial
+          </button>
         </div>
 
       </ng-container>
