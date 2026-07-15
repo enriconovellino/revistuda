@@ -259,7 +259,15 @@ export class LoginIdosoComponent implements OnDestroy {
       this.carregando.set(true);
       this.erro.set(null);
       const data = await this.authService.login({ email: this.email, senha: this.senha });
-      
+
+      // Verifica se o usuário é realmente um aluno idoso
+      const permissions: string[] = data.user.permissions || [];
+      if (!permissions.includes('ALUNO_IDOSO')) {
+        this.authService.logout();
+        this.erro.set('Esta entrada é exclusiva para alunos. Use a tela de login correta para o seu perfil.');
+        return;
+      }
+
       // Concluir o tutorial se estiver ativo
       if (this.tutorialService.active()) {
         this.tutorialService.completeTutorial();
