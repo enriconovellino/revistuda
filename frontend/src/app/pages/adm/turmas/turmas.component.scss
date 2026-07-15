@@ -241,3 +241,21 @@
     transform: translateY(0);
   }
 }
+
+.btn-nova-turma {
+  background-color: #0f2744;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(15, 39, 68, 0.15);
+
+  &:hover {
+    background-color: #1a428a; /* Azul um pouco mais claro para hover */
+    box-shadow: 0 4px 12px rgba(15, 39, 68, 0.25);
+    color: white;
+  }
+}
