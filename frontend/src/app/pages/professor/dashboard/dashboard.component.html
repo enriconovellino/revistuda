@@ -60,7 +60,9 @@
         <div class="d-flex justify-content-between align-items-start mb-2">
           <div>
             <h5 class="fw-bold text-dark-navy mb-1">Desempenho Geral</h5>
-            <p class="text-muted-custom small mb-0">Comparativo de resultados por categoria</p>
+            <p class="text-muted-custom small mb-0">
+              Aproveitamento Geral: <strong class="text-success">{{ taxaAcertos() }}% de Acertos</strong> ({{ estatisticas().totalRespostas }} respostas)
+            </p>
           </div>
           <select class="form-select form-select-custom w-auto">
             <option>Últimos 30 dias</option>

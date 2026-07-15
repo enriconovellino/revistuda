@@ -30,6 +30,13 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     naoRespondeu: 0,
   });
 
+  taxaAcertos = computed(() => {
+    const stats = this.estatisticas();
+    const total = stats.acertos + stats.erros;
+    if (total === 0) return 0;
+    return Math.round((stats.acertos / total) * 100);
+  });
+
   proximasAtividades = signal<{ data: string; mes: string; titulo: string; info: string }[]>([]);
 
   private graficoChart: Chart | null = null;
@@ -126,7 +133,6 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
 
     const stats = this.estatisticas();
     const valores = [stats.acertos, stats.erros, stats.naoRespondeu];
-    const total = valores.reduce((soma, v) => soma + v, 0);
 
     if (this.graficoChart) {
       this.graficoChart.destroy();
@@ -134,23 +140,6 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
     }
 
     Chart.register(...registerables);
-
-    const percentPlugin = {
-      id: 'percentLabels',
-      afterDatasetsDraw: (chart: Chart) => {
-        const { ctx } = chart;
-        chart.getDatasetMeta(0).data.forEach((bar: any, index: number) => {
-          const valor = valores[index];
-          const percent = total > 0 ? Math.round((valor / total) * 100) : 0;
-          ctx.save();
-          ctx.font = 'bold 12px Inter, sans-serif';
-          ctx.fillStyle = '#0f2744';
-          ctx.textAlign = 'center';
-          ctx.fillText(`${percent}% (${valor})`, bar.x, bar.y - 8);
-          ctx.restore();
-        });
-      },
-    };
 
     this.graficoChart = new Chart(canvas, {
       type: 'bar',
@@ -171,7 +160,7 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 25 },
+          padding: { top: 10 },
         },
         plugins: {
           legend: { display: false },
@@ -199,7 +188,6 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
           },
         },
       },
-      plugins: [percentPlugin],
     });
   }
 
