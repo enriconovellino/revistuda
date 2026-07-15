@@ -94,8 +94,8 @@
           <td>{{ cargoLabel(user) }}</td>
           <td>
             <!-- Status Pill baseada na aprovação do usuário -->
-            <span class="status-pill" [ngClass]="user.approved ? 'status-ativo' : 'status-pendente'">
-              {{ user.approved ? (isProfessor(user) ? 'Aprovado' : 'Ativo') : 'Pendente' }}
+            <span class="status-pill" [ngClass]="user.rejected ? 'status-suspenso' : (user.approved ? 'status-ativo' : 'status-pendente')">
+              {{ user.rejected ? 'Recusado' : (user.approved ? (isProfessor(user) ? 'Aprovado' : 'Ativo') : 'Pendente') }}
             </span>
           </td>
           <td>
@@ -130,7 +130,7 @@
               </ng-template>
             </ng-container>
 
-            <!-- Se for um aluno ou professor pendente (não aprovado) -->
+            <!-- Se for um aluno ou professor pendente ou recusado -->
             <ng-container *ngIf="!user.approved">
               <span class="text-muted">Sem turma</span>
             </ng-container>
@@ -138,10 +138,10 @@
             <ng-container *ngIf="!isAluno(user) && !isProfessor(user)">—</ng-container>
           </td>
           <td>
-            <!-- Ações: Pendente (Aprovar / Recusar) -->
+            <!-- Ações: Pendente ou Recusado (Aprovar / Recusar) -->
             <div class="action-buttons-group" *ngIf="!user.approved">
               <button class="btn-approve-pill" (click)="pedirAprovacao(user)">Aprovar</button>
-              <button class="btn-reject-pill" (click)="pedirRejeicao(user)">Recusar</button>
+              <button class="btn-reject-pill" *ngIf="!user.rejected" (click)="pedirRejeicao(user)">Recusar</button>
             </div>
 
             <!-- Ações: Professor Aprovado (Revogar acesso) -->

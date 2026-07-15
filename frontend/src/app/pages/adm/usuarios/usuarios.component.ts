@@ -72,7 +72,7 @@ export class UsuariosAdminComponent implements OnInit {
     return filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
   });
 
-  readonly PAGE_SIZE = 10;
+  readonly PAGE_SIZE = 5;
   paginaAtual = signal(1);
   totalPaginas = computed(() => Math.max(1, Math.ceil(this.filteredUsers().length / this.PAGE_SIZE)));
   usuariosPaginados = computed(() =>
@@ -232,7 +232,7 @@ export class UsuariosAdminComponent implements OnInit {
       return `Aprovar o cadastro de ${nome}? Ela(e) poderá fazer login como ${cargo} imediatamente.`;
     }
     if (acao.tipo === 'rejeitar') {
-      return `Rejeitar e excluir o cadastro de ${nome}? Essa ação não pode ser desfeita.`;
+      return `Rejeitar o cadastro de ${nome}? O acesso dela(e) continuará bloqueado e o status será marcado como Recusado.`;
     }
     if (acao.tipo === 'excluir') {
       return `Excluir permanentemente a conta de ${nome}? Todo o histórico de respostas dela(e) será apagado. Essa ação não pode ser desfeita.`;

@@ -13,6 +13,7 @@ export interface UpdateUserInput {
   senha_atual?: string;
   permissions?: string[];
   approved?: boolean;
+  rejected?: boolean;
   turma_id?: number | null;
 }
 

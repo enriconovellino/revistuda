@@ -64,11 +64,27 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuário aprovado com sucesso' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   async approve(@Param('id', ParseIntPipe) id: number): Promise<UserPresenter> {
-    const user = await this.updateUserUseCase.execute({ id, approved: true });
+    const user = await this.updateUserUseCase.execute({ id, approved: true, rejected: false });
     const cargo = user.permissions.includes('PROFESSOR') ? 'Professor(a)' : 'Administrador(a)';
     await this.atividadesRecentesService.registrar(
       'usuario_aprovado',
       `${cargo} ${user.nome} teve o cadastro aprovado`,
+    );
+    return UserPresenter.toPresentation(user);
+  }
+
+  @Put(':id/reject')
+  @Permissions('users.update')
+  @ApiOperation({ summary: 'Recusar cadastro de professor ou aluno' })
+  @ApiParam({ name: 'id', description: 'ID do usuário', type: Number })
+  @ApiResponse({ status: 200, description: 'Usuário recusado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async reject(@Param('id', ParseIntPipe) id: number): Promise<UserPresenter> {
+    const user = await this.updateUserUseCase.execute({ id, approved: false, rejected: true });
+    const cargo = user.permissions.includes('PROFESSOR') ? 'Professor(a)' : 'Administrador(a)';
+    await this.atividadesRecentesService.registrar(
+      'usuario_recusado',
+      `O cadastro de ${cargo} ${user.nome} foi recusado`,
     );
     return UserPresenter.toPresentation(user);
   }
