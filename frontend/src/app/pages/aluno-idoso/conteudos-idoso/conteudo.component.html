@@ -10,44 +10,52 @@
 
   <div *ngIf="!loading() && !error() && modulo()">
     <div *ngIf="licaoAtual as licao; else noLicoes">
-      
+
       <!-- TÍTULO E SUBTÍTULO DA LIÇÃO NO TOPO -->
       <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-2" style="font-size: 26px; color: #0f2744 !important;">{{ licao.titulo_licao }}</h2>
-        <p class="text-muted" style="font-size: 16px; line-height: 1.6;" *ngIf="licao.comentario">
+        <h2 class="fw-bold text-dark mb-2" style="font-size: 1.25em; color: #0f2744 !important;">{{ licao.titulo_licao
+          }}</h2>
+        <p class="text-muted" style="font-size: 1em; line-height: 1.6;" *ngIf="licao.comentario">
           {{ licao.comentario }}
         </p>
       </div>
 
       <!-- LOOPS DE CONTEÚDOS E COMENTÁRIOS LADO A LADO (ALINHAMENTO COM O VÍDEO) -->
       <div *ngFor="let conteudo of conteudosForLicao()[licao.licao_id]">
-        
-        <!-- Texto do Conteúdo (Fica acima do grid para alinhar o vídeo com a caixa de comentário) -->
-        <div class="mb-3" *ngIf="conteudo.texto_conteudo">
-          <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.7; font-size: 16px;">
-            {{ conteudo.texto_conteudo }}
-          </p>
-        </div>
 
-        <div class="row g-4 mb-4">
-          <!-- COLUNA ESQUERDA: VÍDEO/ÁUDIO -->
-          <div class="col-lg-8 col-md-12">
-            <div class="content-box p-3 border rounded bg-white shadow-sm" *ngIf="conteudo.url_conteudo">
-              
-              <div *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'vídeo' || conteudo.tipo_conteudo.toLowerCase() === 'video'">
-                <div class="w-100" *ngIf="conteudo.safeUrl; else normalLink">
+        <div class="row g-4 mb-4 align-items-stretch">
+          <!-- COLUNA ESQUERDA: TEXTO / VÍDEO / ÁUDIO -->
+          <div class="col-lg-8 col-md-12 d-flex flex-column">
+
+            <!-- Caixa de Texto do Conteúdo: só quando é conteúdo unicamente textual (tamanho padrão, com scroll) -->
+            <div class="content-box p-4 border rounded bg-white shadow-sm d-flex flex-column"
+              *ngIf="conteudo.texto_conteudo && !conteudo.url_conteudo"
+              style="border-radius: 16px; height: 460px; overflow-y: auto; overflow-x: hidden;">
+              <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.7; font-size: 1em;">
+                {{ conteudo.texto_conteudo }}
+              </p>
+            </div>
+
+            <!-- Caixa de Vídeo / Áudio (tamanho padrão) -->
+            <div class="content-box p-2 border rounded bg-white shadow-sm d-flex flex-column align-items-center justify-content-center"
+              *ngIf="conteudo.url_conteudo" style="border-radius: 12px; height: 460px; overflow: hidden;">
+
+              <div class="w-100 h-100"
+                *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'vídeo' || conteudo.tipo_conteudo.toLowerCase() === 'video'">
+                <div class="w-100 h-100" *ngIf="conteudo.safeUrl; else normalLink">
                   <iframe [src]="conteudo.safeUrl" allowfullscreen
-                    style="border-radius: 8px; border: none; width: 100%; aspect-ratio: 16/9;"></iframe>
+                    style="border-radius: 8px; border: none; width: 100%; height: 100%; display: block;"></iframe>
                 </div>
                 <ng-template #normalLink>
                   <a [href]="conteudo.url_conteudo" target="_blank"
-                    class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                    class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 align-self-center">
                     Assistir Vídeo (Link Externo) ↗
                   </a>
                 </ng-template>
               </div>
 
-              <div *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'áudio' || conteudo.tipo_conteudo.toLowerCase() === 'audio'">
+              <div
+                *ngIf="conteudo.tipo_conteudo.toLowerCase() === 'áudio' || conteudo.tipo_conteudo.toLowerCase() === 'audio'">
                 <audio controls class="w-100" *ngIf="conteudo.url_conteudo">
                   <source [src]="conteudo.url_conteudo" type="audio/mpeg">
                   Seu navegador não suporta o player de áudio.
@@ -60,42 +68,58 @@
               </div>
 
             </div>
+
+            <!-- Texto do Conteúdo: solto (sem caixa), agora ABAIXO do vídeo/áudio, com scroll se for longo -->
+            <div class="mt-3" *ngIf="conteudo.texto_conteudo && conteudo.url_conteudo"
+              style="max-height: 150px; overflow-y: auto;">
+              <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.7; font-size: 1em;">
+                {{ conteudo.texto_conteudo }}
+              </p>
+            </div>
+
           </div>
 
-          <!-- COLUNA DIREITA: COMENTÁRIOS ALINHADOS COM O VÍDEO -->
-          <div class="col-lg-4 col-md-12">
-            <div class="comentario-box p-4 border rounded bg-white shadow-sm h-100" style="border-radius: 12px;">
-              
-              <h5 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: 18px;">
+          <!-- COLUNA DIREITA: COMENTÁRIOS ALINHADOS COM O VÍDEO (tamanho padrão) -->
+          <div class="col-lg-4 col-md-12 d-flex">
+            <div class="comentario-box p-4 border rounded bg-white shadow-sm d-flex flex-column"
+              style="border-radius: 20px; height: 460px;">
+
+              <h5 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: 1.125em;">
                 <i class="fi fi-sr-comments" style="color: #ea580c;"></i> O que você entendeu?
               </h5>
-              <p class="text-muted mb-3" style="font-size: 14px; font-weight: 500;">Escreva aqui suas dúvidas ou anotações:</p>
+              <p class="text-muted mb-3" style="font-size: 0.875em; font-weight: 500;">Escreva aqui suas dúvidas ou
+                anotações:</p>
 
-              <div *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvo">
-                <textarea class="form-control mb-3" rows="6"
+              <div class="d-flex flex-column flex-grow-1" style="min-height: 0;"
+                *ngIf="estaEditandoComentario(conteudo.conteudo_id); else comentarioSalvo">
+                <textarea class="form-control mb-3 flex-grow-1"
                   placeholder="Ex: Hoje aprendi que o cadeado no navegador indica uma conexão segura..."
-                  style="resize: none; font-size: 15px; border-radius: 8px; border: 1.5px solid #cbd5e1;" 
+                  style="resize: none; font-size: 0.9375em; border-radius: 8px; border: 1.5px solid #cbd5e1; min-height: 0;"
                   [ngModel]="getComentario(conteudo.conteudo_id)"
                   (ngModelChange)="onComentarioChange(conteudo.conteudo_id, $event)" maxlength="2000"></textarea>
-                
+
                 <div class="d-flex flex-column gap-2">
-                  <span class="text-success small fw-semibold text-center" *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
+                  <span class="text-success small fw-semibold text-center"
+                    *ngIf="comentarioSalvoId() === conteudo.conteudo_id">
                     ✓ Comentário salvo!
                   </span>
-                  <button class="btn btn-outline-primary w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" 
-                          style="border-radius: 8px;"
-                          (click)="salvarComentario(conteudo.conteudo_id)">
+                  <button
+                    class="btn btn-outline-primary w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                    style="border-radius: 8px;" (click)="salvarComentario(conteudo.conteudo_id)">
                     <i class="fi fi-rr-disk"></i> Salvar comentário
                   </button>
                 </div>
               </div>
 
               <ng-template #comentarioSalvo>
-                <div class="comentario-salvo-box p-3 rounded mb-3 bg-light" style="border-radius: 8px;">
-                  <p class="mb-0 text-dark" style="white-space: pre-wrap; font-size: 15px;">{{ getComentario(conteudo.conteudo_id) }}</p>
+                <div class="comentario-salvo-box p-3 rounded mb-3 bg-light flex-grow-1"
+                  style="border-radius: 8px; overflow-y: auto; min-height: 0;">
+                  <p class="mb-0 text-dark" style="white-space: pre-wrap; font-size: 0.9375em;">{{
+                    getComentario(conteudo.conteudo_id) }}</p>
                 </div>
                 <div class="d-flex justify-content-end">
-                  <button class="comentario-editar-link py-2 px-3 fw-bold" style="font-size: 14px;" (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
+                  <button class="comentario-editar-link py-2 px-3 fw-bold" style="font-size: 0.875em;"
+                    (click)="abrirEdicaoComentario(conteudo.conteudo_id)">
                     <i class="fi fi-rr-pencil"></i> Editar comentário
                   </button>
                 </div>
@@ -109,25 +133,24 @@
 
       <!-- SEÇÃO DE CONCLUSÃO E LISTA DE MÓDULOS -->
       <div class="row g-4 align-items-start mt-3">
-        
+
         <!-- Coluna Esquerda: Conclusão e Atividades -->
         <div class="col-lg-8 col-md-12 text-center py-3">
           <button class="btn btn-lg fw-bold px-5 py-3 text-white"
             [style.background-color]="isConcluida(licao.licao_id) ? '#16a34a' : '#0f2744'"
-            style="font-size: 18px; border-radius: 8px; border: none;"
-            [disabled]="isConcluida(licao.licao_id)"
+            style="font-size: 1.125em; border-radius: 8px; border: none;" [disabled]="isConcluida(licao.licao_id)"
             (click)="marcarLicaoConcluida(licao.licao_id)">
             <span *ngIf="isConcluida(licao.licao_id)">✓ Lição Concluída</span>
             <span *ngIf="!isConcluida(licao.licao_id)">✓ Marcar como concluída</span>
           </button>
-          <p class="text-muted mt-2 font-italic" style="font-size: 14px;">
+          <p class="text-muted mt-2 font-italic" style="font-size: 0.875em;">
             Ao concluir esta aula, você avançará no seu aprendizado.
           </p>
 
           <!-- Caixa de Atividade (Aparece quando a lição está concluída) -->
-          <div class="seguir-atividade-box mt-4 p-4 text-center rounded"
+          <div class="seguir-atividade-box mt-4 p-4 text-center rounded" style="border-radius: 12px;"
             *ngIf="isConcluida(licao.licao_id) && getAtividadeDaLicao(licao.licao_id)">
-            <p class="fw-semibold text-dark mb-3" style="font-size: 18px;">
+            <p class="fw-semibold text-dark mb-3" style="font-size: 1.125em;">
               Parabéns! Você concluiu esta lição.
             </p>
             <button class="btn btn-lg btn-success fw-semibold px-5" (click)="realizarAtividade(licao.licao_id)">
@@ -138,27 +161,26 @@
 
         <!-- Coluna Direita: Módulos da Trilha -->
         <div class="col-lg-4 col-md-12">
-          <div class="p-4 border rounded bg-white shadow-sm" style="border-radius: 12px; background-color: #f1f5f9 !important;">
-            <h5 class="fw-bold mb-3 text-dark" style="font-size: 16px;">Módulos do Curso</h5>
-            
+          <div class="p-4 border rounded bg-white shadow-sm"
+            style="border-radius: 12px; background-color: #f1f5f9 !important;">
+            <h5 class="fw-bold mb-3 text-dark" style="font-size: 1em;">Módulos do Curso</h5>
+
             <div class="d-flex flex-column gap-2">
-              <div *ngFor="let l of licoes(); let idx = index" 
+              <div *ngFor="let l of licoes(); let idx = index"
                 class="d-flex align-items-center gap-3 p-3 rounded bg-white border"
                 [style.border-left]="idx === licaoAtualIndex() ? '4px solid #ea580c' : '1px solid #e2e8f0'"
                 [style.font-weight]="idx === licaoAtualIndex() ? 'bold' : 'normal'"
-                style="cursor: pointer; border-radius: 8px;"
-                (click)="licaoAtualIndex.set(idx)">
-                
+                style="cursor: pointer; border-radius: 8px;" (click)="licaoAtualIndex.set(idx)">
+
                 <!-- Ícone de Check ou Círculo -->
-                <i class="fi" 
-                   [class.fi-sr-check-circle]="isConcluida(l.licao_id)"
-                   [class.fi-sr-dot-circle]="idx === licaoAtualIndex() && !isConcluida(l.licao_id)"
-                   [class.fi-rr-circle]="idx !== licaoAtualIndex() && !isConcluida(l.licao_id)"
-                   style="font-size: 20px;"
-                   [style.color]="isConcluida(l.licao_id) ? '#10b981' : (idx === licaoAtualIndex() ? '#ea580c' : '#94a3b8')">
+                <i class="fi" [class.fi-sr-check-circle]="isConcluida(l.licao_id)"
+                  [class.fi-sr-dot-circle]="idx === licaoAtualIndex() && !isConcluida(l.licao_id)"
+                  [class.fi-rr-circle]="idx !== licaoAtualIndex() && !isConcluida(l.licao_id)"
+                  style="font-size: 1.25em;"
+                  [style.color]="isConcluida(l.licao_id) ? '#10b981' : (idx === licaoAtualIndex() ? '#ea580c' : '#94a3b8')">
                 </i>
-                
-                <div style="font-size: 15px; color: #334155;">
+
+                <div style="font-size: 0.9375em; color: #334155;">
                   {{ idx + 1 }}. {{ l.titulo_licao }}
                 </div>
               </div>
@@ -170,28 +192,25 @@
 
       <!-- FOOTER DE NAVEGAÇÃO FIXO / STICKY NA BASE -->
       <div class="fixed-bottom bg-light border-top py-3 px-4 shadow" style="z-index: 1030;">
-        <div class="container-fluid d-flex justify-content-between align-items-center" style="max-width: 1366px; margin: 0 auto;">
-          
+        <div class="container-fluid d-flex justify-content-between align-items-center"
+          style="max-width: 1366px; margin: 0 auto;">
+
           <!-- Botão Anterior -->
-          <button
-            class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 fw-bold"
-            style="border-radius: 8px; font-size: 16px; border: none;"
-            [disabled]="licaoAtualIndex() === 0"
+          <button class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 fw-bold"
+            style="border-radius: 8px; font-size: 1em; border: none;" [disabled]="licaoAtualIndex() === 0"
             (click)="licaoAnterior()">
             <i class="fi fi-rr-arrow-left"></i> Anterior
           </button>
 
           <!-- Texto de Navegação Central -->
-          <span class="text-muted fw-bold text-center d-none d-md-inline" style="font-size: 15px;">
+          <span class="text-muted fw-bold text-center d-none d-md-inline" style="font-size: 0.9375em;">
             Você está navegando no Módulo de {{ modulo()?.titulo_modulo }}
           </span>
 
           <!-- Botão Próxima -->
-          <button
-            class="btn d-flex align-items-center gap-2 py-2 px-4 fw-bold"
-            style="border-radius: 8px; font-size: 16px; background-color: #fef08a; color: #854d0e; border: 1.5px solid #fef08a;"
-            [disabled]="licaoAtualIndex() === licoes().length - 1"
-            (click)="proximaLicao()">
+          <button class="btn d-flex align-items-center gap-2 py-2 px-4 fw-bold"
+            style="border-radius: 8px; font-size: 1em; background-color: #fef08a; color: #854d0e; border: 1.5px solid #fef08a;"
+            [disabled]="licaoAtualIndex() === licoes().length - 1" (click)="proximaLicao()">
             Próxima <i class="fi fi-rr-arrow-right"></i>
           </button>
 
@@ -202,7 +221,7 @@
 
     <ng-template #noLicoes>
       <div class="empty-state py-5 text-center">
-        <p class="mb-0 text-muted" style="font-size: 18px;">Nenhuma lição cadastrada neste curso ainda.</p>
+        <p class="mb-0 text-muted" style="font-size: 1.125em;">Nenhuma lição cadastrada neste curso ainda.</p>
       </div>
     </ng-template>
 

@@ -165,3 +165,13 @@
     <button class="btn btn-sm btn-primary" (click)="irParaTurmas()">Ir para turmas</button>
   </div>
   }
+
+<app-confirm-dialog
+  [isOpen]="isDeleteModalOpen()"
+  title="Deletar módulo"
+  message="Tem certeza que deseja deletar este módulo? Todas as lições, conteúdos e atividades vinculadas a ele também serão apagados. Essa ação não pode ser desfeita."
+  confirmLabel="Deletar"
+  variant="danger"
+  (confirmed)="confirmarExclusaoModulo()"
+  (cancelled)="cancelarExclusaoModulo()">
+</app-confirm-dialog>

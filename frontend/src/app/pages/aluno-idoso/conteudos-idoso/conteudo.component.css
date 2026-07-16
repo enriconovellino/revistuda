@@ -45,10 +45,10 @@
   border-radius: 50px;
 }
 
-/* Bloco de conteúdo dentro da lição */
+/* Bloco de conteúdo dentro da lição (texto e vídeo/áudio) */
 .content-box {
   background: #f8fafc;
-  border-radius: 12px !important;
+  border-radius: 16px !important;
   border-color: #eef2f6 !important;
 }
 
@@ -79,6 +79,7 @@
 /* Área de comentários */
 .comentario-box {
   background: #ffffff;
+  border-radius: 20px !important;
 }
 
 .comentario-box label {
@@ -275,4 +276,31 @@
 
 :host-context(.sidebar-collapsed) .fixed-bottom {
   margin-left: 68px;
-}
+}
+
+/* Scrollbar customizado (fino e arredondado) para os cards com rolagem interna */
+.content-box,
+.comentario-box,
+.comentario-salvo-box {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+
+  .Firefox
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
