@@ -46,7 +46,7 @@
             <i class="fi fi-rr-book-alt"></i>
           </div>
           <div class="stat-card-info">
-            <span class="stat-card-label">MÓDULOS</span>
+            <span class="stat-card-label">CURSOS</span>
             <span class="stat-card-value">{{ totalModulosComComentario() }}</span>
           </div>
         </div>
@@ -66,7 +66,7 @@
 
       <div class="select-wrap-custom">
         <select class="form-select-custom" (change)="onModuloChange($any($event.target).value)">
-          <option value="">Todos os módulos</option>
+          <option value="">Todos os cursos</option>
           <option *ngFor="let modulo of modulosDisponiveis()" [value]="modulo.modulo_id" [selected]="moduloFiltro() === modulo.modulo_id">
             {{ modulo.titulo_modulo }}
           </option>
