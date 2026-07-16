@@ -57,6 +57,8 @@ export class AlunosProfessorComponent implements OnInit {
 
   totalPaginas = computed(() => Math.max(1, Math.ceil(this.alunosFiltrados().length / this.PAGE_SIZE)));
 
+  paginas = computed(() => Array.from({ length: this.totalPaginas() }, (_, i) => i + 1));
+
   mediaAcertos = computed(() => {
     const lista = this.alunos();
     const comRespostas = lista.filter((a) => a.desempenho.totalRespostas > 0);

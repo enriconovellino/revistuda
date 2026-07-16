@@ -17,6 +17,7 @@ export type TutorialStep =
   | 'dashboardMinhasAtividades'
   | 'dashboardDesempenho'
   | 'dashboardPendentes'
+  | 'atividadesComentarios'
   | 'atividadesLista'
   | 'atividadesFazer'
   | 'atividadesPaginacao'
@@ -102,7 +103,9 @@ export class TutorialService {
   avancarAtividades(): void {
     if (!this.active()) return;
     const current = this.step();
-    if (current === 'atividadesLista') {
+    if (current === 'atividadesComentarios') {
+      this.step.set('atividadesLista');
+    } else if (current === 'atividadesLista') {
       this.completeTutorialDefinitivo();
     }
   }

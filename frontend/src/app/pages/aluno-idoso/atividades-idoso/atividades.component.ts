@@ -25,7 +25,7 @@ export class AtividadesIdosoComponent implements OnInit {
 
   iniciarTutorialAtividades() {
     this.tutorialService.active.set(true);
-    this.tutorialService.step.set('atividadesLista');
+    this.tutorialService.step.set('atividadesComentarios');
   }
 
   isLoading = signal<boolean>(true);

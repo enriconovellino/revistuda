@@ -25,7 +25,7 @@ export class TurmasAdminComponent implements OnInit {
   professors = signal<Usuario[]>([]);
   turmas = signal<Turma[]>([]);
   searchTerm = signal<string>('');
-  activeFilter = signal<'cheia' | 'sem-professor' | 'com-vagas' | null>(null);
+  activeFilter = signal<'todas' | 'cheia' | 'sem-professor' | 'com-vagas'>('todas');
 
   showCreateForm = signal<boolean>(false);
   newTurmaNome = signal<string>('');
@@ -73,7 +73,7 @@ export class TurmasAdminComponent implements OnInit {
     const filtradas = this.turmas().filter((t) => {
       const matchesTerm = !term || t.nome_turma.toLowerCase().includes(term);
       const matchesFiltro =
-        filtro === null ? true :
+        filtro === 'todas' ? true :
         filtro === 'cheia' ? this.isCheia(t) :
         filtro === 'sem-professor' ? !t.professor_id :
         filtro === 'com-vagas' ? this.temVagas(t) : true;
@@ -82,8 +82,8 @@ export class TurmasAdminComponent implements OnInit {
     return filtradas.sort((a, b) => a.nome_turma.localeCompare(b.nome_turma));
   });
 
-  toggleFilter(filtro: 'cheia' | 'sem-professor' | 'com-vagas') {
-    this.activeFilter.set(this.activeFilter() === filtro ? null : filtro);
+  toggleFilter(filtro: 'todas' | 'cheia' | 'sem-professor' | 'com-vagas') {
+    this.activeFilter.set(filtro);
   }
 
   readonly maxAlunos = MAX_ALUNOS_POR_TURMA;

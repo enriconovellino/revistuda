@@ -23,7 +23,6 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
   isLogoutModalOpen = signal<boolean>(false);
   fontSize = signal<number>(1.2);
   sidebarCollapsed = signal<boolean>(false);
-  showBackButton = signal<boolean>(false);
 
   private router = inject(Router);
   private routerSub?: Subscription;
@@ -36,12 +35,8 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
       if (user) this.userName.set(user.nome);
     }
 
-    this.checkRoute(this.router.url);
-
-    // Assina todos os eventos de rota: verifica sub-rota ativa E intercepta popstate para fora de /aluno-idoso
+    // Assina eventos de navegação para interceptar popstate para fora de /aluno-idoso
     this.routerSub = this.router.events.subscribe(e => {
-      this.checkRoute(this.router.url);
-
       if (e instanceof NavigationStart &&
           e.navigationTrigger === 'popstate' &&
           !e.url.startsWith('/aluno-idoso')) {
@@ -55,13 +50,6 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
   }
 
-  checkRoute(url: string) {
-    this.showBackButton.set(url.includes('/modulo'));
-  }
-
-  voltar() {
-    this.router.navigate(['/aluno-idoso'], { queryParams: { view: 'modulos' } });
-  }
 
   changeFontSize(offset: number) {
     const next = parseFloat((this.fontSize() + offset).toFixed(1));
