@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TutorialService } from '../../../services/tutorial.service';
 
@@ -8,7 +8,7 @@ type Perfil = 'idoso' | 'professor' | 'adm';
 @Component({
   selector: 'app-tela-inicial',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './tela-inicial.component.html',
   styleUrl: './tela-inicial.component.scss'
 })

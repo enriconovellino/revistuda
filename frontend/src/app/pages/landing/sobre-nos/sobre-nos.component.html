@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand-lg navbar-revistuda fixed-top entrada-navbar">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand-revistuda" routerLink="/">
+      <span class="icone-marca"><i class="fi fi-sr-book-open-cover"></i></span>
+      <span class="nome-marca">ReviStuda</span>
+    </a>
+
+    <a class="btn-voltar" routerLink="/">
+      <i class="fi fi-rr-arrow-left"></i> Voltar ao início
+    </a>
+  </div>
+</nav>
+
+<div class="sobre-nos-page">
+
+  <!-- Hero -->
+  <header class="sobre-hero">
+    <span class="hero-tag entrada-1">Sobre nós</span>
+    <h1 class="hero-titulo entrada-2">4 estados, <span class="destaque">1 propósito</span></h1>
+    <p class="hero-subtexto entrada-3">
+      Somos estudantes de diferentes cantos do Brasil unidos pela mesma missão:
+      usar tecnologia e ciência da aprendizagem para tornar a educação pública
+      mais justa — da revisão que combate o esquecimento à inclusão digital da terceira idade.
+    </p>
+
+    <!-- Linha do Brasil: UFs de origem -->
+    <div class="hero-ufs entrada-3">
+      @for (membro of equipe; track membro.nome) {
+      <span class="uf-pill">{{ membro.uf }}</span>
+      }
+    </div>
+  </header>
+
+  <!-- Equipe -->
+  <section class="sobre-equipe">
+    <div class="equipe-grid">
+      @for (membro of equipe; track membro.nome; let i = $index) {
+      <article class="card-membro entrada-card" [class.card-techlead]="membro.techLead" [style.animation-delay]="(0.35 + i * 0.15) + 's'">
+
+        @if (membro.techLead) {
+        <span class="badge-techlead"><i class="fi fi-sr-star"></i> Tech Lead</span>
+        }
+
+        <div class="avatar" [ngClass]="'avatar-' + (i % 4)">
+          <span>{{ membro.iniciais }}</span>
+        </div>
+
+        <h3 class="membro-nome">{{ membro.nome }}</h3>
+        <span class="membro-papel" [class.papel-lead]="membro.techLead">{{ membro.papel }}</span>
+
+        <ul class="membro-detalhes">
+          <li>
+            <i class="fi fi-rr-graduation-cap"></i>
+            <span>{{ membro.curso }}@if (membro.instituicao) {<span class="detalhe-inst"> · {{ membro.instituicao }}</span>}</span>
+          </li>
+          <li>
+            <i class="fi fi-rr-marker"></i>
+            <span>{{ membro.cidade }} — {{ membro.uf }}</span>
+          </li>
+        </ul>
+      </article>
+      }
+    </div>
+
+    <!-- Mentoria -->
+    <aside class="card-mentoria entrada-mentoria">
+      <div class="mentoria-icone"><i class="fi fi-rr-hands-heart"></i></div>
+      <div class="mentoria-texto">
+        <h4>Com o apoio de</h4>
+        <p><strong>Vinicius Pimenta</strong> — que acompanhou e auxiliou o time ao longo de todo o desenvolvimento.</p>
+      </div>
+    </aside>
+
+    <p class="sobre-rodape entrada-mentoria">
+      ReviStuda · 2026 — construído a muitas mãos, dos quatro cantos do Brasil, para quem mais precisa.
+    </p>
+  </section>
+
+</div>
