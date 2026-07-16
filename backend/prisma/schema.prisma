@@ -79,7 +79,7 @@ model Licao {
   titulo_licao   String
   comentario     String?
   modulo_id      Int
-  modulo         Modulo  @relation(fields: [modulo_id], references: [modulo_id])
+  modulo         Modulo  @relation(fields: [modulo_id], references: [modulo_id], onDelete: Cascade)
   conteudos      Conteudo[]
   atividades     Atividade[]
 }
