@@ -7,16 +7,42 @@
 .card-box {
   background: white;
   border-radius: 16px;
-  padding: 52px;
-  max-width: 560px;
+  padding: 64px;
+  max-width: 680px;
   width: 100%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #0f2744, #1E90FF);
+}
+
+.card-box h3,
+.card-box h4 {
+  font-size: 1.9rem;
+}
+
+.card-box p.text-muted {
+  font-size: 16px !important;
+}
+
+.card-box .form-label {
+  font-size: 15px;
 }
 
 .form-control {
   border-radius: 8px;
   border: 1px solid #cbd5e1;
-  padding: 0.6rem 0.85rem;
+  padding: 0.75rem 1rem;
+  font-size: 16px;
 }
 
 .form-control:focus {
@@ -27,7 +53,9 @@
 .btn-primary {
   background-color: #0f2744;
   border-color: #0f2744;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 0.75rem 1rem;
 }
 
 .btn-primary:hover {
@@ -38,7 +66,9 @@
 .btn-outline-primary {
   color: #0f2744;
   border-color: #0f2744;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 0.75rem 1rem;
 }
 
 .btn-outline-primary:hover {
