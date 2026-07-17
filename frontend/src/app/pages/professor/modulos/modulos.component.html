@@ -54,9 +54,9 @@
         <div class="col-md-2">
           <label class="modulo-form-label">Dificuldade</label>
           <select class="modulo-form-select" [(ngModel)]="novaDificuldadeModulo" name="dificuldadeModulo">
-            <option value="fácil">Fácil</option>
-            <option value="médio">Médio</option>
-            <option value="difícil">Difícil</option>
+            <option value="Fácil">Fácil</option>
+            <option value="Médio">Médio</option>
+            <option value="Difícil">Difícil</option>
           </select>
         </div>
 
@@ -123,10 +123,8 @@
             <i class="fi fi-rr-picture"></i>
           </div>
           }
-          <span class="modulo-badge-v3" [class.badge-facil]="modulo.dificuldade === 'fácil'"
-            [class.badge-medio]="modulo.dificuldade === 'médio'"
-            [class.badge-dificil]="modulo.dificuldade === 'difícil'">
-            {{ modulo.dificuldade }}
+          <span class="modulo-badge-v3" [ngClass]="'badge-' + nivelDificuldade(modulo.dificuldade)">
+            {{ labelDificuldade(modulo.dificuldade) }}
           </span>
         </div>
 
