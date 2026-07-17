@@ -79,15 +79,16 @@ export class AtividadesIdosoComponent implements OnInit {
           todasLicoes.filter((l: Licao) => l.modulo_id === moduloId).map((l: Licao) => l.licao_id)
         );
         atividadesFinais = todasAtividades.filter(a => licaoIdsDoModulo.has(a.licao_id));
+        atividadesFinais = this.ordenarPorPendentes(atividadesFinais);
         this.atividades.set(atividadesFinais);
 
-        // Se só tiver uma atividade nesse módulo, abre ela direto
+    
         if (atividadesFinais.length === 1) {
           this.fazerAtividade(atividadesFinais[0].atividade_id);
           return;
         }
       } else {
-        atividadesFinais = todasAtividades;
+        atividadesFinais = this.ordenarPorPendentes(todasAtividades);
         this.atividades.set(atividadesFinais);
       }
     } catch (error: unknown) {
@@ -96,8 +97,16 @@ export class AtividadesIdosoComponent implements OnInit {
       this.hasError.set(true);
     } finally {
       this.isLoading.set(false);
-      this.paginaAtual.set(1); // reset ao recarregar
+      this.paginaAtual.set(1); 
     }
+  }
+
+  private ordenarPorPendentes(atividades: Atividade[]): Atividade[] {
+    return [...atividades].sort((a, b) => {
+      const aFeito = a.status === 'feito' ? 1 : 0;
+      const bFeito = b.status === 'feito' ? 1 : 0;
+      return aFeito - bFeito; 
+    });
   }
 
   paginaAnterior(): void {
