@@ -21,7 +21,9 @@ export type TutorialStep =
   | 'atividadesLista'
   | 'atividadesFazer'
   | 'atividadesPaginacao'
-  | 'cursosLista';
+  | 'cursosLista'
+  | 'comentariosExplicacao'
+  | 'comentariosPendentes';
 
 @Injectable({
   providedIn: 'root'
@@ -114,6 +116,16 @@ export class TutorialService {
     if (!this.active()) return;
     const current = this.step();
     if (current === 'cursosLista') {
+      this.completeTutorialDefinitivo();
+    }
+  }
+
+  avancarComentarios(): void {
+    if (!this.active()) return;
+    const current = this.step();
+    if (current === 'comentariosExplicacao') {
+      this.step.set('comentariosPendentes');
+    } else if (current === 'comentariosPendentes') {
       this.completeTutorialDefinitivo();
     }
   }
