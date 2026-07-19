@@ -169,11 +169,17 @@ h4.fw-bold {
   bottom: 0;
   left: 0;
   right: 0;
+  margin-left: 15rem;
+  transition: margin-left 0.25s ease;
   background-color: #f8f9fa;
   border-top: 1px solid #dee2e6;
   padding: 1rem 1.5rem;
   box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
   z-index: 1030;
+}
+
+:host-context(.sidebar-collapsed) .nav-footer-fixo {
+  margin-left: 68px;
 }
 
 .nav-footer-inner {

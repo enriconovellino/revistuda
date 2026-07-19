@@ -25,6 +25,9 @@
 
 /* HEADER */
 .main-header {
+  position: sticky;
+  top: 0;
+  z-index: 99;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -255,8 +258,12 @@
   flex-grow: 1;
   min-width: 0;
   max-width: calc(100vw - 15rem);
-  overflow-x: hidden;
   transition: margin-left 0.25s ease, max-width 0.25s ease;
+}
+
+/* overflow no body (não no wrapper) para o sticky do header funcionar */
+.page-body {
+  overflow-x: hidden;
 }
 
 .sidebar-collapsed {
