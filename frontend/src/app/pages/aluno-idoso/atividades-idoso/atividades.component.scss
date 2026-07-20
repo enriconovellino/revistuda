@@ -8,8 +8,8 @@
   --color-ink-soft: #1e4db7;
   --color-primary: #0f2744;
   --color-primary-soft: #dbeafe;
-  --color-success: #ea580c;
-  --color-success-soft: #fff7ed;
+  --color-success: #16a34a;
+  --color-success-soft: #ecfdf5;
   --color-warning: #ea580c;
   --color-warning-soft: #fff7ed;
   --color-border: #E1E5F0;
@@ -28,41 +28,9 @@
 }
 
 h4.fw-bold {
-  font-family: 'Baloo 2', sans-serif;
   font-size: calc(1.9rem * var(--app-font-scale, 1));
   color: var(--color-ink);
   letter-spacing: -0.01em;
-}
-
-// --- Aviso do tutorial ---
-.bg-white.border-bottom {
-  border-radius: var(--radius-lg) !important;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-card) !important;
-
-  span {
-    font-family: 'Baloo 2', sans-serif;
-    font-weight: 600 !important;
-    font-size: calc(1.05rem * var(--app-font-scale, 1)) !important;
-    color: var(--color-ink);
-
-    i {
-      color: var(--color-accent);
-    }
-  }
-}
-
-.btn-info {
-  background-color: var(--color-accent) !important;
-  border: none !important;
-  border-radius: var(--radius-sm);
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 700 !important;
-  padding: 10px 18px !important;
-
-  &:hover {
-    background-color: #0ea5c4 !important;
-  }
 }
 
 // --- Botões de navegação ---
@@ -79,11 +47,21 @@ h4.fw-bold {
   transition: all 0.18s ease;
   cursor: pointer;
 
+  i {
+    font-size: calc(1rem * var(--app-font-scale, 1));
+  }
+
   &:hover {
     background-color: var(--color-primary-soft);
     border-color: var(--color-primary);
     color: var(--color-primary);
     transform: translateY(-1px);
+  }
+
+  &.ativo {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
   }
 }
 
@@ -145,7 +123,6 @@ h4.fw-bold {
 }
 
 .atividade-titulo {
-  font-family: 'Baloo 2', sans-serif;
   font-weight: 600;
   font-size: calc(1.2rem * var(--app-font-scale, 1));
   color: var(--color-ink);
@@ -184,7 +161,6 @@ h4.fw-bold {
   border: none;
   padding: 0.9rem 1.25rem;
   border-radius: var(--radius-md);
-  font-family: 'Nunito Sans', sans-serif;
   font-weight: 800;
   font-size: calc(1rem * var(--app-font-scale, 1));
   letter-spacing: 0.02em;
@@ -323,6 +299,15 @@ h4.fw-bold {
   color: var(--color-ink-soft);
 }
 
+.empty-state {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--color-border);
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
+}
+
 .btn-cancelar-tutorial {
   background: rgba(255, 255, 255, 0.2);
   border: 1.5px solid white;
@@ -389,7 +374,6 @@ h4.fw-bold {
   animation: bounce 1.5s infinite;
   min-width: 280px;
   text-align: center;
-  font-family: 'Nunito Sans', sans-serif;
   font-size: calc(1.05rem * var(--app-font-scale, 1));
 
   &::after {
