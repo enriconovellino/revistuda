@@ -16,10 +16,6 @@
       <div class="stat-info">
         <div class="stat-label">TOTAL DE ALUNOS</div>
         <div class="stat-value">{{ alunos().length }}</div>
-        <div class="stat-sub text-success">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
-          
-        </div>
       </div>
       <div class="stat-icon-wrap stat-icon-blue">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,7 +52,6 @@
       <div class="stat-info">
         <div class="stat-label">TURMAS ATIVAS</div>
         <div class="stat-value">{{ turmasDisponiveis().length | number: '2.0-0' }}</div>
-        <div class="stat-sub text-muted">{{ turmasDisponiveis().length }} turma(s) com alunos</div>
       </div>
       <div class="stat-icon-wrap stat-icon-light">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,28 +95,27 @@
 </div>
 
 <!-- Tabela -->
-<div class="chart-card p-0" *ngIf="!loading(); else carregando">
+<div class="table-card" *ngIf="!loading(); else carregando">
   <div class="table-responsive" *ngIf="alunosFiltrados().length > 0; else semAlunos">
-    <table class="table align-middle mb-0">
+    <table class="custom-table">
       <thead>
-        <tr class="text-muted small text-uppercase">
-          <th class="ps-4">Aluno</th>
+        <tr>
+          <th>Aluno</th>
           <th>Turma</th>
           <th>Status</th>
           <th>Taxa de Acertos</th>
           <th>Última Atividade</th>
-          <th class="pe-3"></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let aluno of alunosPaginados()">
           <!-- Nome + avatar -->
-          <td class="ps-4">
-            <div class="d-flex align-items-center gap-3">
-              <div class="aluno-avatar" [attr.data-initials]="getInitials(aluno.nome)"></div>
-              <div>
-                <div class="fw-semibold text-dark">{{ aluno.nome }}</div>
-                <div class="text-muted small">{{ aluno.email }}</div>
+          <td>
+            <div class="user-cell">
+              <div class="avatar-circle avatar-blue">{{ getInitials(aluno.nome) }}</div>
+              <div class="user-info">
+                <span class="user-name">{{ aluno.nome }}</span>
+                <span class="user-email">{{ aluno.email }}</span>
               </div>
             </div>
           </td>
@@ -131,7 +125,7 @@
           </td>
           <!-- Status -->
           <td>
-            <span class="status-badge" [ngClass]="statusClass(aluno)">
+            <span class="status-pill" [ngClass]="statusClass(aluno)">
               {{ statusLabel(aluno) }}
             </span>
           </td>
@@ -150,30 +144,29 @@
           <td class="text-muted small">
             {{ ultimaAtividade(aluno) }}
           </td>
-          <!-- Menu ações -->
-          <td class="pe-3 text-end">
-            <button class="btn-menu-acoes" title="Opções">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <circle cx="12" cy="5" r="1.5"></circle>
-                <circle cx="12" cy="12" r="1.5"></circle>
-                <circle cx="12" cy="19" r="1.5"></circle>
-              </svg>
-            </button>
-          </td>
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <!-- Rodapé paginação -->
-    <div class="table-footer d-flex align-items-center justify-content-between px-4 py-2">
-      <span class="text-muted small">
-        Exibindo {{ alunosPaginados().length }} de {{ alunosFiltrados().length }} alunos
-      </span>
-      <app-paginator
-        [paginaAtual]="paginaAtual()"
-        [totalPaginas]="totalPaginas()"
-        (paginaMudou)="mudarPagina($event)">
-      </app-paginator>
+  <!-- Rodapé com paginação -->
+  <div class="table-footer" *ngIf="alunosFiltrados().length > 0">
+    <div class="footer-info">
+      Exibindo {{ alunosPaginados().length }} de {{ alunosFiltrados().length }} alunos
+    </div>
+
+    <div class="custom-pagination" *ngIf="totalPaginas() > 1">
+      <button class="pag-arrow" [disabled]="paginaAtual() <= 1" (click)="mudarPagina(paginaAtual() - 1)">
+        <i class="fi fi-rr-angle-left"></i>
+      </button>
+
+      <button class="pag-num" *ngFor="let p of paginas()" [class.active]="paginaAtual() === p" (click)="mudarPagina(p)">
+        {{ p }}
+      </button>
+
+      <button class="pag-arrow" [disabled]="paginaAtual() >= totalPaginas()" (click)="mudarPagina(paginaAtual() + 1)">
+        <i class="fi fi-rr-angle-right"></i>
+      </button>
     </div>
   </div>
 

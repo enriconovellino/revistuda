@@ -70,9 +70,11 @@ export class ComentariosAlunosComponent implements OnInit {
     return this.comentariosFiltrados().slice(inicio, fim);
   });
 
-  totalPaginas = computed(() => {
-    return Math.ceil(this.comentariosFiltrados().length / this.itensPorPagina);
-  });
+  totalPaginas = computed(() =>
+    Math.max(1, Math.ceil(this.comentariosFiltrados().length / this.itensPorPagina))
+  );
+
+  paginas = computed(() => Array.from({ length: this.totalPaginas() }, (_, i) => i + 1));
 
   proximaPagina() {
     if (this.paginaAtualLista() < this.totalPaginas()) {
@@ -84,6 +86,10 @@ export class ComentariosAlunosComponent implements OnInit {
     if (this.paginaAtualLista() > 1) {
       this.paginaAtualLista.update(p => p - 1);
     }
+  }
+
+  mudarPagina(p: number) {
+    this.paginaAtualLista.set(p);
   }
 
   totalComentarios = computed(() => this.comentarios().length);

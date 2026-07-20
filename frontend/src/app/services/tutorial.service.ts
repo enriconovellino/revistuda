@@ -17,10 +17,13 @@ export type TutorialStep =
   | 'dashboardMinhasAtividades'
   | 'dashboardDesempenho'
   | 'dashboardPendentes'
+  | 'atividadesComentarios'
   | 'atividadesLista'
   | 'atividadesFazer'
   | 'atividadesPaginacao'
-  | 'cursosLista';
+  | 'cursosLista'
+  | 'comentariosExplicacao'
+  | 'comentariosPendentes';
 
 @Injectable({
   providedIn: 'root'
@@ -102,7 +105,9 @@ export class TutorialService {
   avancarAtividades(): void {
     if (!this.active()) return;
     const current = this.step();
-    if (current === 'atividadesLista') {
+    if (current === 'atividadesComentarios') {
+      this.step.set('atividadesLista');
+    } else if (current === 'atividadesLista') {
       this.completeTutorialDefinitivo();
     }
   }
@@ -111,6 +116,16 @@ export class TutorialService {
     if (!this.active()) return;
     const current = this.step();
     if (current === 'cursosLista') {
+      this.completeTutorialDefinitivo();
+    }
+  }
+
+  avancarComentarios(): void {
+    if (!this.active()) return;
+    const current = this.step();
+    if (current === 'comentariosExplicacao') {
+      this.step.set('comentariosPendentes');
+    } else if (current === 'comentariosPendentes') {
       this.completeTutorialDefinitivo();
     }
   }

@@ -3,8 +3,8 @@
     <h4 class="mb-0 fw-bold">Gerenciar Turmas</h4>
     <small class="text-muted">Aloque ou desaloque professores e altere a capacidade das turmas registradas.</small>
   </div>
-  <button class="btn btn-nova-turma d-flex align-items-center gap-2" (click)="showCreateForm.set(!showCreateForm())">
-    <i class="fi fi-rr-plus"></i>
+  <button class="btn-criar d-flex align-items-center gap-2" (click)="showCreateForm.set(!showCreateForm())">
+    <i class="fi fi-rr-users"></i>
     Nova Turma
   </button>
 </div>
@@ -52,15 +52,19 @@
   </div>
 </div>
 
-<div class="d-flex flex-wrap gap-3 align-items-center mb-4">
-  <div class="search-box">
-    <input type="text" class="form-control form-control-sm" placeholder="Pesquisar turma..." [ngModel]="searchTerm()"
-      (ngModelChange)="searchTerm.set($event)" />
+<!-- Barra superior de filtros e busca -->
+<div class="filter-search-container">
+  <div class="filter-switcher">
+    <button class="filter-btn" [class.active]="activeFilter() === 'todas'" (click)="toggleFilter('todas')">Todas</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'com-vagas'" (click)="toggleFilter('com-vagas')">Com vagas</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'cheia'" (click)="toggleFilter('cheia')">Cheias</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'sem-professor'" (click)="toggleFilter('sem-professor')">Sem professor</button>
   </div>
-  <div class="d-flex gap-2 flex-wrap">
-    <button class="chip" [class.active]="activeFilter() === 'cheia'" (click)="toggleFilter('cheia')">Cheias</button>
-    <button class="chip" [class.active]="activeFilter() === 'sem-professor'" (click)="toggleFilter('sem-professor')">Sem professor</button>
-    <button class="chip" [class.active]="activeFilter() === 'com-vagas'" (click)="toggleFilter('com-vagas')">Com vagas</button>
+
+  <div class="search-box-custom">
+    <i class="fi fi-rr-search search-icon"></i>
+    <input type="text" placeholder="Pesquisar turma..." [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)" />
   </div>
 </div>
 

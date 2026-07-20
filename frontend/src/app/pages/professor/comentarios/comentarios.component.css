@@ -88,11 +88,27 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  background: #eff6ff;
-  color: #2563eb;
   border-radius: 12px;
   font-size: 1.3rem;
   flex-shrink: 0;
+}
+
+/* Azul — Total de comentários */
+.stat-card-icon-container.icon-blue {
+  background: #e2ecf7;
+  color: #0a1b30;
+}
+
+/* Roxo — Alunos */
+.stat-card-icon-container.icon-purple {
+  background: #f3e8ff;
+  color: #5b1a99;
+}
+
+/* Verde — Módulos */
+.stat-card-icon-container.icon-green {
+  background: #e8f5e9;
+  color: #1b5e20;
 }
 
 .stat-card-info {
@@ -315,6 +331,70 @@
 .empty-state {
   color: #94a3b8;
 }
+
+/* ============================================
+   Paginação (igual alunos/usuarios)
+   ============================================ */
+.paginacao-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.paginacao-footer .footer-info {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.custom-pagination {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.custom-pagination .pag-arrow,
+.custom-pagination .pag-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-pagination .pag-arrow:hover:not(:disabled),
+.custom-pagination .pag-num:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f2744;
+}
+
+.custom-pagination .pag-arrow:disabled,
+.custom-pagination .pag-num:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-pagination .pag-num.active {
+  background: #003b7a;
+  border-color: #003b7a;
+  color: white;
+  font-weight: 700;
+}
+
 
 /* Animações simples */
 @keyframes slideDown {

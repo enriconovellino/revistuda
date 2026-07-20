@@ -18,9 +18,18 @@
       <button type="button" class="btn-nav-secundario" (click)="irParaAtividades()">
         <i class="fi fi-br-edit me-1"></i> Atividades
       </button>
-      <button type="button" class="btn-nav-secundario" (click)="irParaComentarios()">
-        <i class="fi fi-sr-comments me-1"></i> Comentários
-      </button>
+      <div class="position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'atividadesComentarios'">
+        <!-- Tooltip explicativo com Botão de Avanço -->
+        <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'atividadesComentarios'">
+          <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+            <span style="font-size: 0.95rem; line-height: 1.4;">Clique aqui para acessar os seus comentários e conversar com o professor sobre as aulas!</span>
+            <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
+          </div>
+        </div>
+        <button type="button" class="btn-nav-secundario" (click)="irParaComentarios()">
+          <i class="fi fi-sr-comments me-1"></i> Comentários
+        </button>
+      </div>
     </div>
   </div>
 
@@ -46,7 +55,7 @@
       <!-- Tooltip explicativo com Botão de Avanço finalizando o tutorial -->
       <div class="tooltip-tutorial-balao" *ngIf="first && tutorialService.active() && tutorialService.step() === 'atividadesLista'">
         <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
-          <span>Aqui você vê o título e a descrição de cada tarefa de casa disponível.</span>
+          <span style="font-size: 0.95rem; line-height: 1.4;">Aqui você vê o título e a descrição de cada tarefa de casa disponível.</span>
           <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial()">Concluir Tutorial!</button>
         </div>
       </div>
@@ -78,14 +87,18 @@
   </div>
 
   @if (totalPaginas > 1) {
-  <div class="paginacao">
-    <button class="btn-pag" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()" id="btn-pag-anterior">
-      ← Anterior
-    </button>
-    <span class="pag-info">{{ paginaAtual() }} / {{ totalPaginas }}</span>
-    <button class="btn-pag" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()" id="btn-pag-proxima">
-      Próxima →
-    </button>
+  <div class="nav-footer-fixo">
+    <div class="nav-footer-inner">
+      <button class="btn-nav-anterior" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()">
+        <i class="fi fi-rr-arrow-left"></i> Anterior
+      </button>
+      <span class="nav-info-pagina">
+        Página <strong>{{ paginaAtual() }}</strong> de {{ totalPaginas }}
+      </span>
+      <button class="btn-nav-proxima" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()">
+        Próxima <i class="fi fi-rr-arrow-right"></i>
+      </button>
+    </div>
   </div>
   }
   } @else {

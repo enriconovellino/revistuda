@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
+@use 'sass:color';
+@use 'variables' as *;
 
 :host {
   --color-bg: #F6F7FB;
@@ -20,10 +21,10 @@
   --shadow-card: 0 4px 16px rgba(35, 42, 59, 0.06);
 
   display: block;
-  font-family: 'Nunito Sans', sans-serif;
   color: var(--color-ink);
   background: var(--color-bg);
   min-height: 100%;
+  padding-bottom: 120px;
 }
 
 h4.fw-bold {
@@ -73,7 +74,6 @@ h4.fw-bold {
   border: 1.5px solid var(--color-border);
   background-color: var(--color-surface);
   color: var(--color-ink-soft);
-  font-family: 'Nunito Sans', sans-serif;
   font-weight: 700;
   font-size: calc(1.5rem * var(--app-font-scale, 1));
   transition: all 0.18s ease;
@@ -171,7 +171,6 @@ h4.fw-bold {
 
 .badge.bg-success {
   background-color: var(--color-success) !important;
-  font-family: 'Nunito Sans', sans-serif;
   font-weight: 800 !important;
   font-size: calc(0.9rem * var(--app-font-scale, 1)) !important;
 }
@@ -183,29 +182,66 @@ h4.fw-bold {
   background-color: var(--color-primary);
   color: #fff;
   border: none;
-  padding: 12px 22px;
+  padding: 0.9rem 1.25rem;
   border-radius: var(--radius-md);
   font-family: 'Nunito Sans', sans-serif;
   font-weight: 800;
   font-size: calc(1rem * var(--app-font-scale, 1));
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s;
   flex-shrink: 0;
 
   &:hover {
-    background-color: #1a3a5c;
-    transform: translateY(-1px);
+    background-color: color.adjust(#35467D, $lightness: -6%);
   }
 }
 
-// --- Paginação ---
-.paginacao {
+// --- Paginação (Estilo Fixo na Base) ---
+.nav-footer-fixo {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  z-index: 1030;
+}
+
+.nav-footer-inner {
+  max-width: 1366px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-nav-anterior {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin-top: 24px;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #e2e6ea;
+    color: #343a40;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .btn-pag {
@@ -231,6 +267,41 @@ h4.fw-bold {
     cursor: not-allowed;
   }
 }
+
+.nav-info-pagina {
+  font-weight: 700;
+  font-size: 0.9375em;
+  color: #6c757d;
+  text-align: center;
+}
+
+.btn-nav-proxima {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #fef08a;
+  background-color: #fef08a;
+  color: #854d0e;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust(#fef08a, $lightness: -5%);
+    border-color: color.adjust(#fef08a, $lightness: -5%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  font-size: calc(1rem * var(--app-font-scale, 1));
+}
+
 
 .pag-info {
   font-family: 'Baloo 2', sans-serif;
@@ -279,6 +350,7 @@ h4.fw-bold {
   box-shadow: 0 0 35px rgba(23, 193, 232, 1) !important;
   animation: pulsar-tutorial-item 2s infinite ease-in-out;
   cursor: pointer;
+  background: #ffffff !important;
   overflow: visible !important;
 }
 
@@ -313,6 +385,31 @@ h4.fw-bold {
   text-align: center;
   font-family: 'Nunito Sans', sans-serif;
   font-size: calc(1.05rem * var(--app-font-scale, 1));
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #17a2b8 transparent;
+    display: block;
+    width: 0;
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, -8px);
+  }
 }
 
 .alert-danger {

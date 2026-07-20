@@ -45,8 +45,8 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
       this.checkRoute(this.router.url);
 
       if (e instanceof NavigationStart &&
-          e.navigationTrigger === 'popstate' &&
-          !e.url.startsWith('/aluno-idoso')) {
+        e.navigationTrigger === 'popstate' &&
+        !e.url.startsWith('/aluno-idoso')) {
         this.router.navigate([this.router.url]);
         this.isLogoutModalOpen.set(true);
       }
@@ -62,6 +62,7 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
       document.documentElement.style.removeProperty('--app-font-scale');
     }
   }
+
 
   checkRoute(url: string) {
     this.showBackButton.set(url.includes('/modulo'));

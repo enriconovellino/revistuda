@@ -9,7 +9,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h3 class="mb-1 fw-bold text-dark-navy">Painel do Professor</h3>
-      <p class="text-muted small mb-0">Acompanhe o desempenho das suas turmas e módulos em tempo real.</p>
+      <p class="text-muted small mb-0">Acompanhe o desempenho das suas turmas e cursos em tempo real.</p>
     </div>
     <button class="btn-relatorio d-flex align-items-center gap-2" (click)="baixarRelatorio()">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -102,17 +102,17 @@
       </div>
     </div>
 
-    <!-- Módulos + Atividades -->
-    <div class="col-lg-4 col-md-5 d-flex flex-column gap-4">
-      <!-- Meus Módulos -->
-      <div class="chart-card-custom">
+    <!-- Cursos -->
+    <div class="col-lg-4 col-md-5">
+      <!-- Meus Cursos -->
+      <div class="chart-card-custom h-100">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold text-dark-navy mb-0">Meus Módulos</h5>
+          <h5 class="fw-bold text-dark-navy mb-0">Meus Cursos</h5>
           <a routerLink="/professor/modulos" class="btn-ver-todos fw-bold text-decoration-none">VER TODOS</a>
         </div>
         <div class="d-flex flex-column gap-3">
           @if (modulos().length === 0) {
-            <p class="text-muted small">Nenhum módulo criado ainda.</p>
+            <p class="text-muted small">Nenhum curso criado ainda.</p>
           }
           @for (modulo of modulos().slice(0, 3); track modulo.modulo_id; let idx = $index) {
             <div class="modulo-item d-flex align-items-center gap-3">
@@ -151,42 +151,6 @@
         </div>
       </div>
 
-      <!-- Próximas Atividades -->
-      <div class="atividades-card d-flex flex-column justify-content-between">
-        <div>
-          <div class="d-flex align-items-center gap-2 text-white mb-3">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <h6 class="fw-bold mb-0">Próximas Atividades</h6>
-          </div>
-          
-          <div class="d-flex flex-column gap-3 mb-3">
-            @if (proximasAtividades().length === 0) {
-              <div class="text-white-50 small text-center py-4">Nenhuma atividade agendada.</div>
-            }
-            @for (ativ of proximasAtividades(); track ativ.titulo) {
-              <div class="atividade-item d-flex align-items-center gap-3 p-3">
-                <div class="atividade-data-box d-flex flex-column align-items-center justify-content-center">
-                  <span class="dia">{{ ativ.data }}</span>
-                  <span class="mes">{{ ativ.mes }}</span>
-                </div>
-                <div class="atividade-info flex-grow-1 min-width-0">
-                  <div class="atividade-titulo text-white fw-bold text-truncate">{{ ativ.titulo }}</div>
-                  <div class="atividade-horario text-white-50 text-truncate">{{ ativ.info }}</div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-
-        <button class="btn btn-abrir-agenda w-100 py-2 fw-bold" routerLink="/professor/turmas">
-          ABRIR AGENDA
-        </button>
-      </div>
     </div>
   </div>
 </div>

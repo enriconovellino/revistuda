@@ -1,17 +1,27 @@
-<div class="p-4">
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-    <h4 class="mb-0 fw-bold">Meus Comentários</h4>
-    <div class="d-flex gap-2">
-      <button type="button" class="btn-nav-secundario" (click)="irParaAtividades()">
-        <i class="fi fi-br-edit me-1"></i> Atividades
-      </button>
-      <button type="button" class="btn-nav-secundario" (click)="irParaComentarios()">
-        <i class="fi fi-sr-comments me-1"></i> Comentários
-      </button>
-    </div>
-  </div>
+<!-- Botão no topo para iniciar/reiniciar o tutorial à vontade -->
+<div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center" style="margin-top: -1px; position: relative; z-index: 10;" *ngIf="!tutorialService.active()">
+  <span class="text-muted fw-bold" style="font-size: 1.15rem;"><i class="fi fi-sr-info text-info me-2"></i> Precisa de ajuda para entender a tela?</span>
+  <button type="button" class="btn btn-info text-white border-2 px-3 fw-bold btn-sm" (click)="iniciarTutorial()">
+    <i class="fi fi-rr-graduation-cap me-1"></i> Iniciar Tutorial da Tela
+  </button>
+</div>
 
-  @if (isLoading()) {
+<div class="tutorial-backdrop-overlay" *ngIf="tutorialService.active() && tutorialService.step().startsWith('comentarios')"></div>
+
+<div class="p-4" [class.com-tutorial]="tutorialService.active() && tutorialService.step().startsWith('comentarios')">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h4 class="mb-0 fw-bold">Meus Comentários</h4>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn-nav-secundario" (click)="irParaAtividades()">
+          <i class="fi fi-br-edit me-1"></i> Atividades
+        </button>
+        <button type="button" class="btn-nav-secundario" (click)="irParaComentarios()">
+          <i class="fi fi-sr-comments me-1"></i> Comentários
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
   <div class="loading-container text-center">
     <div class="spinner-border text-primary" role="status"></div>
     <p class="mt-2 text-muted">Carregando...</p>
@@ -27,15 +37,32 @@
 
   @if (!isLoading() && !hasError()) {
 
-  <div class="d-flex flex-wrap gap-3 mb-4">
+  <div class="d-flex flex-wrap gap-3 mb-4 position-relative" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'comentariosPendentes'">
+    <!-- Tooltip explicativo com Botão de Avanço -->
+    <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'comentariosPendentes'">
+      <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+        <span style="font-size: 0.95rem; line-height: 1.4;">Comentários <strong>Pendentes</strong> são dúvidas que você enviou e o professor ainda não respondeu. Quando ele responder, passará para Respondidos!</span>
+        <button type="button" class="btn btn-success btn-sm fw-bold text-white mt-1" (click)="proximoPassoTutorial()">Concluir Tutorial!</button>
+      </div>
+    </div>
+
     <span class="resumo-badge resumo-total">Total: {{ totalComentarios() }}</span>
     <span class="resumo-badge resumo-respondido">Respondidos: {{ totalRespondidos() }}</span>
     <span class="resumo-badge resumo-pendente">Pendentes: {{ totalPendentes() }}</span>
   </div>
 
-  @if (comentarios().length > 0) {
-  <div class="d-flex flex-column gap-3">
-    @for (comentario of comentarios(); track comentario.id) {
+  <div class="position-relative w-100 p-1" style="min-height: 120px; border-radius: 12px;" [class.highlight-tutorial-item]="tutorialService.active() && tutorialService.step() === 'comentariosExplicacao'">
+    <!-- Tooltip explicativo com Botão de Avanço -->
+    <div class="tooltip-tutorial-balao" *ngIf="tutorialService.active() && tutorialService.step() === 'comentariosExplicacao'">
+      <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
+        <span style="font-size: 0.95rem; line-height: 1.4;">Aqui fica a lista com todos os comentários e dúvidas que você enviou nas aulas, junto com as respostas do professor.</span>
+        <button type="button" class="btn btn-warning btn-sm fw-bold text-dark mt-1" (click)="proximoPassoTutorial()">Entendi. Próximo! →</button>
+      </div>
+    </div>
+
+    @if (comentarios().length > 0) {
+    <div class="d-flex flex-column gap-3">
+      @for (comentario of comentarios(); track comentario.id) {
     <div class="comentario-atividade-box">
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
         <div>
@@ -66,12 +93,13 @@
       </span>
       }
     </div>
+      }
+    </div>
+    } @else {
+    <div class="empty-state">
+      <p class="mb-0">Você ainda não fez nenhum comentário.</p>
+    </div>
     }
   </div>
-  } @else {
-  <div class="empty-state">
-    <p class="mb-0">Você ainda não fez nenhum comentário.</p>
+  }
   </div>
-  }
-  }
-</div>
