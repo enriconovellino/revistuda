@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Modulo } from '../../../model/modulo.model';
+import { labelDificuldade, nivelDificuldade } from '../../../model/dificuldade.util';
 import { Turma } from '../../../model/turma.model';
 import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
@@ -58,8 +59,11 @@ export class ModulosProfessorComponent implements OnInit {
 
   novoTituloModulo = '';
   novaDescricaoModulo = '';
-  novaDificuldadeModulo = 'fácil';
+  novaDificuldadeModulo = 'Fácil';
   novaImagemUrl = '';
+
+  nivelDificuldade = nivelDificuldade;
+  labelDificuldade = labelDificuldade;
 
   /** Controle do modal de confirmação de exclusão de módulo */
   isDeleteModalOpen = signal<boolean>(false);
@@ -146,7 +150,7 @@ export class ModulosProfessorComponent implements OnInit {
     this.moduloEmEdicao.set(modulo);
     this.novoTituloModulo = modulo.titulo_modulo;
     this.novaDescricaoModulo = modulo.descricao_modulo || '';
-    this.novaDificuldadeModulo = modulo.dificuldade;
+    this.novaDificuldadeModulo = labelDificuldade(modulo.dificuldade);
     this.novaImagemUrl = modulo.imagem_url || '';
     this.mostrarFormModulo.set(true);
   }
@@ -257,7 +261,7 @@ export class ModulosProfessorComponent implements OnInit {
   private limparCamposModulo() {
     this.novoTituloModulo = '';
     this.novaDescricaoModulo = '';
-    this.novaDificuldadeModulo = 'fácil';
+    this.novaDificuldadeModulo = 'Fácil';
     this.novaImagemUrl = '';
   }
 

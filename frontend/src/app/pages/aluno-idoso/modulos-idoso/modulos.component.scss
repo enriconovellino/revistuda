@@ -157,19 +157,20 @@ h4.fw-bold {
   font-weight: 700;
   text-transform: capitalize;
   color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .badge-facil {
-  background-color: #22c55e;
+  background-color: #16a34a;
 }
 
 .badge-medio {
-  background-color: #f59e0b;
+  background-color: #d97706;
 }
 
 .badge-dificil {
-  background-color: #ef4444;
+  background-color: #dc2626;
 }
 
 /* Estilos do Tutorial nos Cursos do Idoso */
