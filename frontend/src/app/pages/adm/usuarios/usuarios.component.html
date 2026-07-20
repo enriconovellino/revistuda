@@ -3,7 +3,8 @@
     <h4 class="mb-0 fw-bold">Gestão de Usuários</h4>
     <small class="text-muted">Aprove cadastros, acompanhe status e gerencie professores e alunos.</small>
   </div>
-  <button class="btn btn-primary px-4 py-2 fw-semibold d-flex align-items-center gap-2" (click)="abrirModalCriarUsuario()">
+  <button class="btn-criar d-flex align-items-center gap-2"
+    (click)="abrirModalCriarUsuario()">
     <i class="fi fi-rr-user-add"></i>
     Novo Usuário
   </button>
@@ -14,16 +15,20 @@
 <!-- Barra superior de filtros e busca -->
 <div class="filter-search-container">
   <div class="filter-switcher">
-    <button class="filter-btn" [class.active]="activeFilter() === 'todos'" (click)="activeFilter.set('todos')">Todos</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'professor'" (click)="activeFilter.set('professor')">Professores</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'aluno'" (click)="activeFilter.set('aluno')">Alunos</button>
-    <button class="filter-btn" [class.active]="activeFilter() === 'pendente'" (click)="activeFilter.set('pendente')">Pendentes</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'todos'"
+      (click)="activeFilter.set('todos')">Todos</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'professor'"
+      (click)="activeFilter.set('professor')">Professores</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'aluno'"
+      (click)="activeFilter.set('aluno')">Alunos</button>
+    <button class="filter-btn" [class.active]="activeFilter() === 'pendente'"
+      (click)="activeFilter.set('pendente')">Pendentes</button>
   </div>
 
   <div class="search-box-custom">
     <i class="fi fi-rr-search search-icon"></i>
-    <input type="text" placeholder="Buscar por nome ou e-mail..."
-      [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+    <input type="text" placeholder="Buscar por nome ou e-mail..." [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)" />
   </div>
 </div>
 
@@ -94,20 +99,20 @@
           <td>{{ cargoLabel(user) }}</td>
           <td>
             <!-- Status Pill baseada na aprovação do usuário -->
-            <span class="status-pill" [ngClass]="user.rejected ? 'status-suspenso' : (user.approved ? 'status-ativo' : 'status-pendente')">
-              {{ user.rejected ? 'Recusado' : (user.approved ? (isProfessor(user) ? 'Aprovado' : 'Ativo') : 'Pendente') }}
+            <span class="status-pill"
+              [ngClass]="user.rejected ? 'status-suspenso' : (user.approved ? 'status-ativo' : 'status-pendente')">
+              {{ user.rejected ? 'Recusado' : (user.approved ? (isProfessor(user) ? 'Aprovado' : 'Ativo') : 'Pendente')
+              }}
             </span>
           </td>
           <td>
             <!-- Lógica da Turma -->
             <ng-container *ngIf="isAluno(user) && user.approved">
-              <select *ngIf="alunoSendoEditado() === user.id; else textoTurma"
-                class="turma-select-custom" [disabled]="actionLoading()"
-                title="Mover aluno para outra turma"
+              <select *ngIf="alunoSendoEditado() === user.id; else textoTurma" class="turma-select-custom"
+                [disabled]="actionLoading()" title="Mover aluno para outra turma"
                 (change)="moverParaTurma(user, $any($event.target).value); alternarEdicao(user.id)">
                 <option value="" [selected]="!user.turmaId">Sem turma</option>
-                <option *ngFor="let t of turmas()" [value]="t.turma_id"
-                  [selected]="t.turma_id === user.turmaId"
+                <option *ngFor="let t of turmas()" [value]="t.turma_id" [selected]="t.turma_id === user.turmaId"
                   [disabled]="turmaCheia(t) && t.turma_id !== user.turmaId">
                   {{ t.nome_turma }}{{ turmaCheia(t) && t.turma_id !== user.turmaId ? ' (cheia)' : '' }}
                 </option>
@@ -171,16 +176,16 @@
     <div class="footer-info">
       Exibindo {{ usuariosPaginados().length }} de {{ filteredUsers().length }} usuários
     </div>
-    
+
     <div class="custom-pagination" *ngIf="totalPaginas() > 1">
       <button class="pag-arrow" [disabled]="paginaAtual() <= 1" (click)="mudarPagina(paginaAtual() - 1)">
         <i class="fi fi-rr-angle-left"></i>
       </button>
-      
+
       <button class="pag-num" *ngFor="let p of paginas()" [class.active]="paginaAtual() === p" (click)="mudarPagina(p)">
         {{ p }}
       </button>
-      
+
       <button class="pag-arrow" [disabled]="paginaAtual() >= totalPaginas()" (click)="mudarPagina(paginaAtual() + 1)">
         <i class="fi fi-rr-angle-right"></i>
       </button>
@@ -218,27 +223,27 @@
       <form (submit)="$event.preventDefault(); criarUsuario()">
         <div class="mb-3">
           <label class="form-label small fw-bold">Nome Completo <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" placeholder="Ex: Maria Souza"
-            [ngModel]="novoUsuarioNome()" (ngModelChange)="novoUsuarioNome.set($event)" name="nome" required [disabled]="createLoading()" />
+          <input type="text" class="form-control" placeholder="Ex: Maria Souza" [ngModel]="novoUsuarioNome()"
+            (ngModelChange)="novoUsuarioNome.set($event)" name="nome" required [disabled]="createLoading()" />
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold">E-mail <span class="text-danger">*</span></label>
-          <input type="email" class="form-control" placeholder="Ex: maria@email.com"
-            [ngModel]="novoUsuarioEmail()" (ngModelChange)="novoUsuarioEmail.set($event)" name="email" required [disabled]="createLoading()" />
+          <input type="email" class="form-control" placeholder="Ex: maria@email.com" [ngModel]="novoUsuarioEmail()"
+            (ngModelChange)="novoUsuarioEmail.set($event)" name="email" required [disabled]="createLoading()" />
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold">Senha <span class="text-danger">*</span></label>
-          <input type="password" class="form-control" placeholder="Mínimo 6 caracteres"
-            [ngModel]="novoUsuarioSenha()" (ngModelChange)="novoUsuarioSenha.set($event)" name="senha" required [disabled]="createLoading()" />
+          <input type="password" class="form-control" placeholder="Mínimo 6 caracteres" [ngModel]="novoUsuarioSenha()"
+            (ngModelChange)="novoUsuarioSenha.set($event)" name="senha" required [disabled]="createLoading()" />
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold">Perfil / Cargo <span class="text-danger">*</span></label>
-          <select class="form-select" [ngModel]="novoUsuarioPermission()" (ngModelChange)="novoUsuarioPermission.set($event)" name="permission" required [disabled]="createLoading()">
+          <select class="form-select" [ngModel]="novoUsuarioPermission()"
+            (ngModelChange)="novoUsuarioPermission.set($event)" name="permission" required [disabled]="createLoading()">
             <option value="ALUNO_IDOSO">Aluno(a) Idoso</option>
-            <option value="ALUNO_CRIANCA">Aluno(a) Criança</option>
             <option value="PROFESSOR">Professor(a)</option>
             <option value="ADM">Administrador</option>
           </select>
@@ -246,14 +251,17 @@
 
         <div class="mb-4">
           <label class="form-label small fw-bold">Status Inicial <span class="text-danger">*</span></label>
-          <select class="form-select" [ngModel]="novoUsuarioAprovado() ? 'true' : 'false'" (ngModelChange)="novoUsuarioAprovado.set($event === 'true')" name="aprovado" required [disabled]="createLoading()">
+          <select class="form-select" [ngModel]="novoUsuarioAprovado() ? 'true' : 'false'"
+            (ngModelChange)="novoUsuarioAprovado.set($event === 'true')" name="aprovado" required
+            [disabled]="createLoading()">
             <option value="true">Aprovado (Ativo)</option>
             <option value="false">Pendente</option>
           </select>
         </div>
 
         <div class="d-flex justify-content-end gap-2">
-          <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="fecharModalCriarUsuario()" [disabled]="createLoading()">
+          <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="fecharModalCriarUsuario()"
+            [disabled]="createLoading()">
             Cancelar
           </button>
           <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="createLoading()">

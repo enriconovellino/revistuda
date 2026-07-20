@@ -9,11 +9,12 @@ import { ProfessorService } from '../../../services/professor.service';
 import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
 import { PaginatorComponent } from '../../../components/paginator/paginator.component';
+import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-modulos-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginatorComponent],
+  imports: [CommonModule, FormsModule, PaginatorComponent, ConfirmDialogComponent],
   templateUrl: './modulos.component.html',
   styleUrl: './modulos.component.scss',
 })
@@ -63,6 +64,10 @@ export class ModulosProfessorComponent implements OnInit {
 
   nivelDificuldade = nivelDificuldade;
   labelDificuldade = labelDificuldade;
+
+  /** Controle do modal de confirmação de exclusão de módulo */
+  isDeleteModalOpen = signal<boolean>(false);
+  moduloParaDeletar = signal<number | null>(null);
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -196,18 +201,33 @@ export class ModulosProfessorComponent implements OnInit {
     }
   }
 
-  async deletarModulo(id: number) {
-    if (!confirm('Tem certeza que deseja deletar este módulo?')) {
-      return;
-    }
+  /** Abre o modal customizado de confirmação de exclusão */
+  deletarModulo(id: number) {
+    this.moduloParaDeletar.set(id);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  /** Executado quando o usuário confirma a exclusão no modal */
+  async confirmarExclusaoModulo() {
+    const id = this.moduloParaDeletar();
+    if (id === null) return;
 
     try {
-      await this.moduloService.deleteModulo(Number(id));
-      this.modulos.update((lista) => lista.filter((m) => m.modulo_id !== Number(id)));
+      await this.moduloService.deleteModulo(id);
+      this.modulos.update((lista) => lista.filter((m) => m.modulo_id !== id));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao deletar módulo';
       alert(message);
+    } finally {
+      this.isDeleteModalOpen.set(false);
+      this.moduloParaDeletar.set(null);
     }
+  }
+
+  /** Executado quando o usuário cancela a exclusão no modal */
+  cancelarExclusaoModulo() {
+    this.isDeleteModalOpen.set(false);
+    this.moduloParaDeletar.set(null);
   }
 
   verModulo(id: number) {

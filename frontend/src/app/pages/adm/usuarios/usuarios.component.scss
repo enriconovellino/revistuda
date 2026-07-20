@@ -1,5 +1,27 @@
 @use 'variables' as *;
 
+.btn-criar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+  transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  }
+}
+
 .filter-search-container {
   background: white;
   border-radius: 16px;

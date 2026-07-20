@@ -34,17 +34,19 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
     if (typeof window !== 'undefined') {
       const user = this.authService.getUser();
       if (user) this.userName.set(user.nome);
+
+      // aplica a escala inicial de fonte (sem mexer no font-size base do html)
+      this.aplicarFontSizeNoRoot(this.fontSize());
     }
 
     this.checkRoute(this.router.url);
 
-    // Assina todos os eventos de rota: verifica sub-rota ativa E intercepta popstate para fora de /aluno-idoso
     this.routerSub = this.router.events.subscribe(e => {
       this.checkRoute(this.router.url);
 
       if (e instanceof NavigationStart &&
-          e.navigationTrigger === 'popstate' &&
-          !e.url.startsWith('/aluno-idoso')) {
+        e.navigationTrigger === 'popstate' &&
+        !e.url.startsWith('/aluno-idoso')) {
         this.router.navigate([this.router.url]);
         this.isLogoutModalOpen.set(true);
       }
@@ -53,7 +55,14 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routerSub?.unsubscribe();
+
+    // remove a variável de escala ao sair da área do aluno-idoso,
+    // pra não afetar o resto do sistema (professor, admin, etc.)
+    if (typeof window !== 'undefined') {
+      document.documentElement.style.removeProperty('--app-font-scale');
+    }
   }
+
 
   checkRoute(url: string) {
     this.showBackButton.set(url.includes('/modulo'));
@@ -65,7 +74,17 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
 
   changeFontSize(offset: number) {
     const next = parseFloat((this.fontSize() + offset).toFixed(1));
-    if (next >= 0.9 && next <= 2.0) this.fontSize.set(next);
+    if (next >= 0.9 && next <= 2.0) {
+      this.fontSize.set(next);
+      this.aplicarFontSizeNoRoot(next);
+    }
+  }
+
+  private aplicarFontSizeNoRoot(size: number): void {
+    if (typeof window !== 'undefined') {
+      // variável CSS dedicada só pra escala de TEXTO, não afeta layout/rem geral
+      document.documentElement.style.setProperty('--app-font-scale', `${size}`);
+    }
   }
 
   abrirEditarPerfil(): void {

@@ -55,10 +55,19 @@ export class AlunosProfessorComponent implements OnInit {
     });
   });
 
+  // Alunos filtrados só por turma (ignora a busca por nome).
+  // Usado exclusivamente pra calcular a média de acertos do card.
+  alunosPorTurma = computed(() => {
+    const turmaId = this.turmaFiltro();
+    return this.alunos().filter((a) => turmaId === null || a.turma_id === turmaId);
+  });
+
   totalPaginas = computed(() => Math.max(1, Math.ceil(this.alunosFiltrados().length / this.PAGE_SIZE)));
 
+  paginas = computed(() => Array.from({ length: this.totalPaginas() }, (_, i) => i + 1));
+
   mediaAcertos = computed(() => {
-    const lista = this.alunos();
+    const lista = this.alunosPorTurma(); // reflete o filtro de turma selecionado
     const comRespostas = lista.filter((a) => a.desempenho.totalRespostas > 0);
     if (!comRespostas.length) return 0;
     const soma = comRespostas.reduce((acc, a) => acc + a.desempenho.taxaAcerto, 0);

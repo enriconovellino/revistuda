@@ -20,7 +20,7 @@
     </div>
     <div class="col-6 col-md">
       <div class="stat-card">
-        <div class="stat-card-label">Módulos</div>
+        <div class="stat-card-label">Cursos</div>
         <div class="stat-card-value">{{ data.totalModulos }}</div>
       </div>
     </div>
@@ -68,7 +68,7 @@
     <div class="col-md-6">
       <div class="chart-card h-100">
         <div class="card-header-custom">
-          <h5 class="fw-bold">Média por módulo</h5>
+          <h5 class="fw-bold">Média por curso</h5>
           <i class="fi fi-rr-book"></i>
         </div>
         <div class="d-flex flex-column gap-3" *ngIf="data.mediaPorModulo.length > 0; else semModulos">
@@ -85,7 +85,7 @@
           </div>
         </div>
         <ng-template #semModulos>
-          <div class="empty-state py-3"><p class="mb-0 small">Nenhum módulo cadastrado.</p></div>
+          <div class="empty-state py-3"><p class="mb-0 small">Nenhum curso cadastrado.</p></div>
         </ng-template>
       </div>
     </div>
@@ -101,7 +101,7 @@
         <div>
           <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Métricas Consolidadas</h6>
           <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
-            Visão geral quantitativa de alunos, professores, módulos, lições e respostas registradas.
+            Visão geral quantitativa de alunos, professores, cursos, lições e respostas registradas.
           </p>
         </div>
       </div>
@@ -125,9 +125,9 @@
           <i class="fi fi-rr-book-alt"></i>
         </div>
         <div>
-          <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Médias por Módulo</h6>
+          <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Médias por Curso</h6>
           <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
-            Análise do desempenho dos alunos em cada módulo para identificar áreas de melhoria.
+            Análise do desempenho dos alunos em cada curso para identificar áreas de melhoria.
           </p>
         </div>
       </div>

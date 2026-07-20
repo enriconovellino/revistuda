@@ -9,6 +9,7 @@ import { LoginData, RegisterData, AuthResponse, User } from '../model/auth.model
 export class AuthService {
   private router = inject(Router);
   private backendUrl = `${environment.apiUrl}/auth`;
+  private refreshPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null;
 
   async login(loginData: LoginData): Promise<AuthResponse> {
     const response = await fetch(`${this.backendUrl}/login`, {
@@ -74,14 +75,30 @@ export class AuthService {
       return response;
     }
 
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
+    const storedRefreshToken = localStorage.getItem('refreshToken');
+    if (!storedRefreshToken) {
       this.logout();
       throw new Error('Sessão expirada. Faça login novamente.');
     }
 
+    if (!this.refreshPromise) {
+      const refreshingAt = localStorage.getItem('refreshing');
+      const isAnotherTabRefreshing =
+        refreshingAt && Date.now() - parseInt(refreshingAt, 10) < 5000;
+
+      if (isAnotherTabRefreshing) {
+        this.refreshPromise = this.waitForCrossTabRefresh().finally(() => {
+          this.refreshPromise = null;
+        });
+      } else {
+        this.refreshPromise = this.doRefresh(storedRefreshToken).finally(() => {
+          this.refreshPromise = null;
+        });
+      }
+    }
+
     try {
-      const tokens = await this.refresh(refreshToken);
+      const tokens = await this.refreshPromise;
       const retryOptions = this.injectToken(options, tokens.accessToken);
       response = await fetch(url, retryOptions);
 
@@ -95,6 +112,41 @@ export class AuthService {
       this.logout();
       throw new Error('Sessão expirada. Faça login novamente.');
     }
+  }
+
+  private async doRefresh(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    localStorage.setItem('refreshing', Date.now().toString());
+    try {
+      return await this.refresh(refreshToken);
+    } finally {
+      localStorage.removeItem('refreshing');
+    }
+  }
+
+  private waitForCrossTabRefresh(): Promise<{ accessToken: string; refreshToken: string }> {
+    return new Promise((resolve, reject) => {
+      const MAX_WAIT_MS = 5000;
+      const POLL_INTERVAL_MS = 100;
+      const startedAt = Date.now();
+
+      const poll = setInterval(() => {
+        const stillRefreshing = localStorage.getItem('refreshing');
+        const newAccessToken = localStorage.getItem('accessToken');
+
+        if (!stillRefreshing && newAccessToken) {
+          clearInterval(poll);
+          resolve({
+            accessToken: newAccessToken,
+            refreshToken: localStorage.getItem('refreshToken') ?? '',
+          });
+        } else if (Date.now() - startedAt > MAX_WAIT_MS) {
+          clearInterval(poll);
+          reject(new Error('Timeout aguardando renovação de token de outra guia.'));
+        }
+      }, POLL_INTERVAL_MS);
+    });
   }
 
   private injectToken(options: RequestInit, token: string | null): RequestInit {

@@ -1,4 +1,4 @@
-<div class="d-flex" [class.sidebar-collapsed]="sidebarCollapsed()" [style.font-size.rem]="fontSize()" style="min-height: 100vh; background: #f5f7fb;">
+<div class="d-flex" [class.sidebar-collapsed]="sidebarCollapsed()" style="min-height: 100vh; background: #f5f7fb;">
 
   <app-sidebar-idoso (collapsedChange)="sidebarCollapsed.set($event)" (abrirPerfil)="abrirEditarPerfil()"></app-sidebar-idoso>
 
@@ -6,9 +6,6 @@
 
    <div class="main-header">
      <div class="header-left">
-       <button *ngIf="showBackButton()" (click)="voltar()" class="btn-voltar-topo">
-         <i class="fi fi-rr-arrow-small-left"></i> Voltar para Tela Inicial
-       </button>
      </div>
 
   <div class="header-boas-vindas navbar-name-enter"> Seja 
@@ -21,19 +18,7 @@
       <button class="font-btn" (click)="changeFontSize(-0.1)" id="font-decrease" title="Diminuir Texto">A-</button>
       <button class="font-btn" (click)="changeFontSize(0.1)" id="font-increase" title="Aumentar Texto">A+</button>
     </div>
-
-    <!-- PERFIL OCULTO — descomente para reativar
-    <div class="d-flex align-items-center gap-2" style="cursor: pointer;" (click)="abrirEditarPerfil()">
-      <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
-        style="width: 36px; height: 36px; background: #0f2744 !important;">
-        {{ userName().charAt(0).toUpperCase() }}
-      </div>
-      <div>
-        <div class="fw-semibold small">{{ userName() }}</div>
-        <div class="text-muted" style="font-size: 11px;">Aluno(a)</div>
-      </div>
-    </div>
-    -->
+   
 
     <button class="btn-sair-topo" (click)="abrirModalLogout()">Sair</button>
   </div>
