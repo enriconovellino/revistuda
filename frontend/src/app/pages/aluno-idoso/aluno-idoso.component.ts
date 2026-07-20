@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
+import { TutorialService } from '../../services/tutorial.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -27,6 +28,7 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
 
   private router = inject(Router);
   private routerSub?: Subscription;
+  public tutorialService = inject(TutorialService);
 
   constructor(private authService: AuthService) { }
 

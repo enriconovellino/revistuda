@@ -65,3 +65,10 @@
 
   </div>
 </div>
+
+<div class="tutorial-audio-control" *ngIf="tutorialService.active()" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000;">
+  <button class="btn btn-warning text-dark d-flex align-items-center gap-2 px-4 py-2" (click)="tutorialService.toggleAudio()" style="border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    <i [class]="tutorialService.audioEnabled() ? 'fi fi-sr-volume' : 'fi fi-sr-volume-slash'" style="font-size: 1.2rem;"></i>
+    <span class="fw-bold" style="font-size: 1.1rem;">{{ tutorialService.audioEnabled() ? 'Voz Ligada' : 'Voz Desligada' }}</span>
+  </button>
+</div>

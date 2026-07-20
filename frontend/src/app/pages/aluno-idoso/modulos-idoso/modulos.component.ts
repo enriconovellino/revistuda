@@ -36,7 +36,7 @@ export class ModulosIdosoComponent implements OnInit {
 
   iniciarTutorialCursos() {
     this.tutorialService.active.set(true);
-    this.tutorialService.step.set('cursosLista');
+    this.tutorialService.setStepAndSpeak('cursosLista');
   }
 
   isLoading = signal<boolean>(true);

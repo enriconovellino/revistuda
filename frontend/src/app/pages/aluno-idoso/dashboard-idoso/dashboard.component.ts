@@ -29,7 +29,7 @@ export class DashboardAlunoIdosoComponent implements OnInit {
 
   iniciarTutorialDashboard() {
     this.tutorialService.active.set(true);
-    this.tutorialService.step.set('dashboardContinuar');
+    this.tutorialService.setStepAndSpeak('dashboardContinuar');
   }
 
   isLoading = signal<boolean>(true);

@@ -70,7 +70,7 @@ export class ComentariosIdosoComponent implements OnInit {
 
   iniciarTutorial(): void {
     this.tutorialService.active.set(true);
-    this.tutorialService.step.set('comentariosExplicacao');
+    this.tutorialService.setStepAndSpeak('comentariosExplicacao');
   }
 
   proximoPassoTutorial(): void {
