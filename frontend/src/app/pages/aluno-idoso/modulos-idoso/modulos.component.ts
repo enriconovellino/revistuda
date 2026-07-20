@@ -1,12 +1,14 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ModuloService } from '../../../services/modulo.service';
 import { LicaoService } from '../../../services/licao.service';
 import { ConteudoService } from '../../../services/conteudo.service';
 import { TutorialService } from '../../../services/tutorial.service';
 import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
+import { Conteudo } from '../../../model/conteudo.model';
 import { environment } from '../../../../environments/environment';
 
 interface ModuloComProgresso extends Modulo {
@@ -14,6 +16,14 @@ interface ModuloComProgresso extends Modulo {
   licoesConcluidas: number;
   percentual: number;
   status: 'nao_iniciado' | 'em_andamento' | 'concluido';
+}
+
+interface PreviewConteudo {
+  tipo: 'video' | 'texto' | 'vazio';
+  titulo?: string;
+  thumbnailUrl?: string;
+  embedUrl?: SafeResourceUrl;
+  textoResumo?: string;
 }
 
 @Component({
@@ -25,20 +35,19 @@ interface ModuloComProgresso extends Modulo {
 })
 export class ModulosIdosoComponent implements OnInit {
   public tutorialService = inject(TutorialService);
-
-  proximoPassoTutorial() {
-    this.tutorialService.avancarCursos();
-  }
-
-  iniciarTutorialCursos() {
-    this.tutorialService.active.set(true);
-    this.tutorialService.step.set('cursosLista');
-  }
+  private sanitizer = inject(DomSanitizer);
 
   isLoading = signal<boolean>(true);
   hasError = signal<boolean>(false);
   modulos = signal<ModuloComProgresso[]>([]);
   licoes = signal<Licao[]>([]);
+
+  // --- Preview no hover ---
+  moduloEmPreview = signal<number | null>(null);
+  previewCache = signal<Map<number, PreviewConteudo>>(new Map());
+  carregandoPreview = signal<Set<number>>(new Set());
+  private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+  private todosConteudos: Conteudo[] | null = null;
 
   constructor(
     private moduloService: ModuloService,
@@ -63,18 +72,14 @@ export class ModulosIdosoComponent implements OnInit {
 
       this.licoes.set(licoes);
 
-      // Buscar progresso de conteúdos por módulo via API
       const modulosComProgresso: ModuloComProgresso[] = await Promise.all(
         modulos.map(async modulo => {
           const licoeDoModulo = licoes.filter(l => l.modulo_id === modulo.modulo_id);
           const total = licoeDoModulo.length;
 
-          // Busca os conteúdos concluídos do banco para este módulo
           let concluidas = 0;
           try {
             const conteudosConcluidos = await this.conteudoService.getProgressoConteudos(modulo.modulo_id);
-            // Uma lição é concluída quando todos os seus conteúdos estão marcados — aqui
-            // usamos conteúdos concluídos como proxy; se o array não está vazio, conta
             if (conteudosConcluidos.length > 0) {
               concluidas = Math.min(conteudosConcluidos.length, total);
             }
@@ -124,5 +129,127 @@ export class ModulosIdosoComponent implements OnInit {
 
   acessarModulo(moduloId: number): void {
     this.router.navigate(['/aluno-idoso/modulo', moduloId]);
+  }
+
+  proximoPassoTutorial() {
+    this.tutorialService.avancarCursos();
+  }
+
+  iniciarTutorialCursos() {
+    this.tutorialService.active.set(true);
+    this.tutorialService.step.set('cursosLista');
+  }
+
+  // ---------- Lógica do hover-preview ----------
+
+  onMouseEnterModulo(moduloId: number): void {
+    this.hoverTimeout = setTimeout(() => {
+      this.moduloEmPreview.set(moduloId);
+      this.carregarPreview(moduloId);
+    }, 350);
+  }
+
+  onMouseLeaveModulo(): void {
+    if (this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = null;
+    }
+    this.moduloEmPreview.set(null);
+  }
+
+  private async carregarPreview(moduloId: number): Promise<void> {
+    if (this.previewCache().has(moduloId)) return;
+    if (this.carregandoPreview().has(moduloId)) return;
+
+    this.carregandoPreview.update(set => new Set(set).add(moduloId));
+
+    try {
+      const primeiraLicao = this.licoes()
+        .filter(l => l.modulo_id === moduloId)
+        .sort((a, b) => a.licao_id - b.licao_id)[0];
+
+      if (!primeiraLicao) {
+        this.salvarPreview(moduloId, { tipo: 'vazio' });
+        return;
+      }
+
+      if (!this.todosConteudos) {
+        this.todosConteudos = await this.conteudoService.getConteudos();
+      }
+
+      const conteudosDaLicao = this.todosConteudos
+        .filter(c => c.licao_id === primeiraLicao.licao_id);
+      const primeiroConteudo = conteudosDaLicao[0];
+
+      if (!primeiroConteudo) {
+        this.salvarPreview(moduloId, { tipo: 'vazio' });
+        return;
+      }
+
+      // Aceita "Vídeo" (como salvo pelo formulário do professor) e "video" (sem acento/minúsculo)
+      const tipo = (primeiroConteudo.tipo_conteudo ?? '').toLowerCase();
+      const ehVideo = tipo === 'vídeo' || tipo === 'video';
+
+      if (ehVideo && primeiroConteudo.url_conteudo) {
+        const videoId = this.extrairIdYoutube(primeiroConteudo.url_conteudo);
+        let embedUrl: SafeResourceUrl | undefined;
+
+        if (videoId) {
+         const params = new URLSearchParams({
+            autoplay: '1',
+            mute: '0',           // tentando com som — pode não funcionar (ver aviso acima)
+            controls: '0',
+            loop: '1',
+            playlist: videoId,
+            start: '0',
+            end: '15',
+            modestbranding: '1',
+            rel: '0',
+            disablekb: '1',
+            fs: '0'
+          });
+          const rawUrl = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+          embedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+        }
+
+        this.salvarPreview(moduloId, {
+          tipo: 'video',
+          titulo: primeiroConteudo.nome_conteudo,
+          thumbnailUrl: videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : undefined,
+          embedUrl
+        });
+      } else {
+        this.salvarPreview(moduloId, {
+          tipo: 'texto',
+          titulo: primeiroConteudo.nome_conteudo,
+          textoResumo: (primeiroConteudo.texto_conteudo ?? '').slice(0, 140)
+        });
+      }
+    } catch {
+      this.salvarPreview(moduloId, { tipo: 'vazio' });
+    } finally {
+      this.carregandoPreview.update(set => {
+        const novo = new Set(set);
+        novo.delete(moduloId);
+        return novo;
+      });
+    }
+  }
+
+  private salvarPreview(moduloId: number, preview: PreviewConteudo): void {
+    this.previewCache.update(map => {
+      const novo = new Map(map);
+      novo.set(moduloId, preview);
+      return novo;
+    });
+  }
+
+  previewDoModulo(moduloId: number): PreviewConteudo | undefined {
+    return this.previewCache().get(moduloId);
+  }
+
+  private extrairIdYoutube(url: string): string | null {
+    const match = url.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);
+    return match ? match[1] : null;
   }
 }
