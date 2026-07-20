@@ -87,18 +87,16 @@
   </div>
 
   @if (totalPaginas > 1) {
-  <div class="nav-footer-fixo">
-    <div class="nav-footer-inner">
-      <button class="btn-nav-anterior" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()">
-        <i class="fi fi-rr-arrow-left"></i> Anterior
-      </button>
-      <span class="nav-info-pagina">
-        Página <strong>{{ paginaAtual() }}</strong> de {{ totalPaginas }}
-      </span>
-      <button class="btn-nav-proxima" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()">
-        Próxima <i class="fi fi-rr-arrow-right"></i>
-      </button>
-    </div>
+  <div class="nav-footer-inline">
+    <button class="btn-nav-anterior" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()">
+      <i class="fi fi-rr-arrow-left"></i> Anterior
+    </button>
+    <span class="nav-info-pagina">
+      Página <strong>{{ paginaAtual() }}</strong> de {{ totalPaginas }}
+    </span>
+    <button class="btn-nav-proxima" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()">
+      Próxima <i class="fi fi-rr-arrow-right"></i>
+    </button>
   </div>
   }
   } @else {
