@@ -230,17 +230,18 @@ $accent-dark: #1d4ed8;
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 0.28rem 0.7rem;
+  padding: 0.32rem 0.85rem;
   border-radius: 20px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 
   &.badge-facil { background: #16a34a; }
-  &.badge-medio { background: #2563eb; }
+  &.badge-medio { background: #d97706; }
   &.badge-dificil { background: #dc2626; }
 }
 
