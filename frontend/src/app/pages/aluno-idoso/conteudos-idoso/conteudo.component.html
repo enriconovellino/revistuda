@@ -37,7 +37,8 @@
             </div>
 
             <!-- Caixa de Vídeo / Áudio (tamanho padrão) -->
-            <div class="content-box p-2 border rounded bg-white shadow-sm d-flex flex-column align-items-center justify-content-center"
+            <div
+              class="content-box p-2 border rounded bg-white shadow-sm d-flex flex-column align-items-center justify-content-center"
               *ngIf="conteudo.url_conteudo" style="border-radius: 12px; height: 460px; overflow: hidden;">
 
               <div class="w-100 h-100"
@@ -147,7 +148,7 @@
             Ao concluir esta aula, você avançará no seu aprendizado.
           </p>
 
-          <!-- Caixa de Atividade (Aparece quando a lição está concluída) -->
+          <!-- Caixa de Atividade (Aparece quando a lição está concluída e tem atividade) -->
           <div class="seguir-atividade-box mt-4 p-4 text-center rounded" style="border-radius: 12px;"
             *ngIf="isConcluida(licao.licao_id) && getAtividadeDaLicao(licao.licao_id)">
             <p class="fw-semibold text-dark mb-3" style="font-size: 1.125em;">
@@ -157,13 +158,36 @@
               {{ getBotaoAtividadeLabel(licao.licao_id) }} →
             </button>
           </div>
+
+          <!-- Botão Próxima Lição (sem atividade pendente e não é a última lição) -->
+          <div class="seguir-atividade-box mt-4 p-4 text-center rounded" style="border-radius: 12px;"
+            *ngIf="isConcluida(licao.licao_id) && !getAtividadeDaLicao(licao.licao_id) && licaoAtualIndex() < licoes().length - 1">
+            <p class="fw-semibold text-dark mb-3" style="font-size: 1.125em;">
+              🎉 Parabéns! Você concluiu esta lição.
+            </p>
+            <button class="btn btn-lg btn-primary fw-semibold px-5" (click)="proximaLicao()">
+              Próxima Lição →
+            </button>
+          </div>
+
+          <!-- Mensagem de conclusão do módulo (última lição, sem atividade) -->
+          <div class="seguir-atividade-box mt-4 p-4 text-center rounded" style="border-radius: 12px;"
+            *ngIf="isConcluida(licao.licao_id) && !getAtividadeDaLicao(licao.licao_id) && licaoAtualIndex() === licoes().length - 1">
+            <p class="fw-semibold text-dark mb-3" style="font-size: 1.125em;">
+              🏆 Parabéns! Você concluiu todas as lições deste curso!
+            </p>
+            <button class="btn btn-lg fw-semibold px-5 text-white" style="background-color: #16a34a; border: none;"
+              (click)="voltar()">
+              Voltar para os Cursos
+            </button>
+          </div>
         </div>
 
         <!-- Coluna Direita: Módulos da Trilha -->
         <div class="col-lg-4 col-md-12">
           <div class="p-4 border rounded bg-white shadow-sm"
             style="border-radius: 12px; background-color: #f1f5f9 !important;">
-            <h5 class="fw-bold mb-3 text-dark" style="font-size: 1em;">Módulos do Curso</h5>
+            <h5 class="fw-bold mb-3 text-dark" style="font-size: 1em;">Lições do Curso</h5>
 
             <div class="d-flex flex-column gap-2">
               <div *ngFor="let l of licoes(); let idx = index"
