@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AtividadesRecentesService } from './atividades-recentes.service';
 import { Permissions } from '@/shared/decorators/permissions.decorator';
@@ -16,5 +16,14 @@ export class AtividadesRecentesController {
   @ApiResponse({ status: 200, description: 'Lista de atividades retornada com sucesso' })
   async findRecent() {
     return this.atividadesRecentesService.listar();
+  }
+
+  @Get('professor')
+  @Permissions('PROFESSOR')
+  @ApiOperation({ summary: 'Listar as atividades recentes dos alunos das turmas do professor logado (feed do painel do professor)' })
+  @ApiResponse({ status: 200, description: 'Lista de atividades retornada com sucesso' })
+  async findRecentByProfessor(@Req() req: any) {
+    const professorId = req.user.sub;
+    return this.atividadesRecentesService.listarPorProfessor(professorId);
   }
 }
