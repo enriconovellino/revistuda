@@ -1,4 +1,4 @@
-<div class="p-4 container-fluid" style="max-width: 1366px; margin: 0 auto; padding-bottom: 120px !important;">
+<div class="p-4 container-fluid" style="max-width: 1366px; margin: 0 auto;">
 
   <div *ngIf="loading()" class="d-flex justify-content-center my-5">
     <div class="spinner-border text-primary" role="status"></div>
@@ -188,33 +188,6 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- FOOTER DE NAVEGAÇÃO FIXO / STICKY NA BASE -->
-      <div class="fixed-bottom bg-light border-top py-3 px-4 shadow" style="z-index: 1030;">
-        <div class="container-fluid d-flex justify-content-between align-items-center"
-          style="max-width: 1366px; margin: 0 auto;">
-
-          <!-- Botão Anterior -->
-          <button class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 fw-bold"
-            style="border-radius: 8px; font-size: 1em; border: none;" [disabled]="licaoAtualIndex() === 0"
-            (click)="licaoAnterior()">
-            <i class="fi fi-rr-arrow-left"></i> Anterior
-          </button>
-
-          <!-- Texto de Navegação Central -->
-          <span class="text-muted fw-bold text-center d-none d-md-inline" style="font-size: 0.9375em;">
-            Você está navegando no Módulo de {{ modulo()?.titulo_modulo }}
-          </span>
-
-          <!-- Botão Próxima -->
-          <button class="btn d-flex align-items-center gap-2 py-2 px-4 fw-bold"
-            style="border-radius: 8px; font-size: 1em; background-color: #fef08a; color: #854d0e; border: 1.5px solid #fef08a;"
-            [disabled]="licaoAtualIndex() === licoes().length - 1" (click)="proximaLicao()">
-            Próxima <i class="fi fi-rr-arrow-right"></i>
-          </button>
-
-        </div>
       </div>
 
     </div>
