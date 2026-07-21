@@ -53,7 +53,8 @@
   .page-body {
     position: relative;
     z-index: 1; /* acima do header; libera overlay 1010+ */
-    overflow: visible; /* não recortar balões com top negativo */
+    overflow-y: visible; /* não recortar balões com top negativo */
+    overflow-x: clip;
   }
 }
 
