@@ -25,4 +25,15 @@ export class AtividadeRecenteService {
       return [];
     }
   }
+
+  /** Feed de atividades dos alunos das turmas do professor logado. */
+  async getAtividadesRecentesAlunos(): Promise<AtividadeRecente[]> {
+    try {
+      const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades-recentes/professor`);
+      if (!response.ok) return [];
+      return await response.json();
+    } catch {
+      return [];
+    }
+  }
 }

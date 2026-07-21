@@ -9,6 +9,7 @@ import { ModuloService } from '../../../services/modulo.service';
 import { environment } from '../../../../environments/environment';
 import { StatCardComponent } from '../../../components/stat-card/stat-card.component';
 import { AtividadeService } from '../../../services/atividade.service';
+import { AtividadeRecente, AtividadeRecenteService } from '../../../services/atividade-recente.service';
 
 @Component({
   selector: 'app-professor-dashboard',
@@ -41,6 +42,23 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
 
   proximasAtividades = signal<{ data: string; mes: string; titulo: string; info: string }[]>([]);
 
+  // Feed "Atividades dos alunos": igual ao feed do painel admin, mas
+  // restrito às atividades (conclusões, comentários) dos alunos das
+  // turmas deste professor.
+  atividadesAlunos = signal<AtividadeRecente[]>([]);
+  private readonly atividadesAlunosRecolhidas = 5;
+  mostrarTodasAtividadesAlunos = signal<boolean>(false);
+
+  atividadesAlunosVisiveis = computed(() =>
+    this.mostrarTodasAtividadesAlunos()
+      ? this.atividadesAlunos()
+      : this.atividadesAlunos().slice(0, this.atividadesAlunosRecolhidas)
+  );
+
+  atividadesAlunosOcultas = computed(() =>
+    Math.max(0, this.atividadesAlunos().length - this.atividadesAlunosRecolhidas)
+  );
+
   private graficoChart: Chart | null = null;
   private userId: number | null = null;
 
@@ -48,6 +66,7 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
   private professorService = inject(ProfessorService);
   private moduloService = inject(ModuloService);
   private atividadeService = inject(AtividadeService);
+  private atividadeRecenteService = inject(AtividadeRecenteService);
   @Inject(PLATFORM_ID) private platformId = inject(PLATFORM_ID);
 
   async ngOnInit() {
@@ -64,6 +83,10 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
       try {
         const alunos = await this.professorService.getMeusAlunos();
         this.alunos.set(alunos);
+      } catch { /* silencioso */ }
+      try {
+        const atividades = await this.atividadeRecenteService.getAtividadesRecentesAlunos();
+        this.atividadesAlunos.set(atividades);
       } catch { /* silencioso */ }
     }
   }
@@ -195,6 +218,27 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
         },
       },
     });
+  }
+
+  iconeAtividadeAluno(tipo: string): string {
+    switch (tipo) {
+      case 'atividade_concluida': return '✅';
+      case 'comentario_aluno': return '💬';
+      case 'conteudo_concluido': return '📘';
+      default: return '🔹';
+    }
+  }
+
+  tempoRelativo(data: string): string {
+    const diffMs = Date.now() - new Date(data).getTime();
+    const minutos = Math.floor(diffMs / 60000);
+    if (minutos < 1) return 'agora';
+    if (minutos < 60) return `há ${minutos} min`;
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `há ${horas} h`;
+    const dias = Math.floor(horas / 24);
+    if (dias < 7) return dias === 1 ? 'há 1 dia' : `há ${dias} dias`;
+    return new Date(data).toLocaleDateString('pt-BR');
   }
 
   verModulo(id: number) {
