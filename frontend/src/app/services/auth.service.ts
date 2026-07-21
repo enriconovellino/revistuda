@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { LoginData, RegisterData, AuthResponse, User } from '../model/auth.model';
@@ -8,6 +9,7 @@ import { LoginData, RegisterData, AuthResponse, User } from '../model/auth.model
 })
 export class AuthService {
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
   private backendUrl = `${environment.apiUrl}/auth`;
   private refreshPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null;
 
@@ -62,8 +64,8 @@ export class AuthService {
   }
 
   async fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
-    if (typeof window === 'undefined' || !window.localStorage) {
-      return fetch(url, options);
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('SSR: request autenticada ignorada no servidor');
     }
 
     const accessToken = this.getAccessToken();
