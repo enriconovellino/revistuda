@@ -9,6 +9,7 @@ export interface UpdateModuloInput {
   descricao_modulo?: string;
   dificuldade?: string;
   turma_id?: number;
+  imagem_url?: string;
 }
 
 @Injectable()

@@ -7,5 +7,22 @@
   --revi-azul-escuro: #{$azul-escuro};
   --revi-azul-medio: #{$azul-medio};
   --revi-azul-claro: #{$azul-claro};
+
+  --app-font-scale: 1.2; // valor inicial, igual ao signal fontSize do aluno-idoso
 }
 
+// Elementos de TEXTO da área do aluno-idoso que devem escalar com o botão A-/A+
+// (não aplicar em padding/margin/width/ícones — só font-size, pra não "dar zoom")
+.header-boas-vindas,
+.atividade-titulo,
+.atividade-descricao,
+.atividade-tipo,
+.pag-info,
+.btn-primary-custom,
+.btn-nav-secundario,
+.font-btn,
+.btn-pag,
+h1, h2, h3, h4, h5, h6,
+p, span, label {
+  font-size: calc(1rem * var(--app-font-scale));
+}

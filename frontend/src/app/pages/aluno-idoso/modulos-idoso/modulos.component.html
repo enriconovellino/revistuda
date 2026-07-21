@@ -56,9 +56,8 @@
           <i class="fi fi-br-book-alt"></i>
         </div>
         }
-        <span class="modulo-badge" [class.badge-facil]="modulo.dificuldade === 'fácil'"
-          [class.badge-medio]="modulo.dificuldade === 'médio'" [class.badge-dificil]="modulo.dificuldade === 'difícil'">
-          {{ modulo.dificuldade }}
+        <span class="modulo-badge" [ngClass]="'badge-' + nivelDificuldade(modulo.dificuldade)">
+          {{ labelDificuldade(modulo.dificuldade) }}
         </span>
       </div>
 

@@ -10,6 +10,7 @@ import { Modulo } from '../../../model/modulo.model';
 import { Licao } from '../../../model/licao.model';
 import { Conteudo } from '../../../model/conteudo.model';
 import { environment } from '../../../../environments/environment';
+import { labelDificuldade, nivelDificuldade } from '../../../model/dificuldade.util';
 
 interface ModuloComProgresso extends Modulo {
   totalLicoes: number;
@@ -35,6 +36,19 @@ interface PreviewConteudo {
 })
 export class ModulosIdosoComponent implements OnInit {
   public tutorialService = inject(TutorialService);
+
+  nivelDificuldade = nivelDificuldade;
+  labelDificuldade = labelDificuldade;
+
+  proximoPassoTutorial() {
+    this.tutorialService.avancarCursos();
+  }
+
+  iniciarTutorialCursos() {
+    this.tutorialService.active.set(true);
+    this.tutorialService.setStepAndSpeak('cursosLista');
+  }
+
   private sanitizer = inject(DomSanitizer);
 
   isLoading = signal<boolean>(true);
@@ -131,15 +145,6 @@ export class ModulosIdosoComponent implements OnInit {
     this.router.navigate(['/aluno-idoso/modulo', moduloId]);
   }
 
-  proximoPassoTutorial() {
-    this.tutorialService.avancarCursos();
-  }
-
-  iniciarTutorialCursos() {
-    this.tutorialService.active.set(true);
-    this.tutorialService.step.set('cursosLista');
-  }
-
   // ---------- Lógica do hover-preview ----------
 
   onMouseEnterModulo(moduloId: number): void {
@@ -195,7 +200,7 @@ export class ModulosIdosoComponent implements OnInit {
         let embedUrl: SafeResourceUrl | undefined;
 
         if (videoId) {
-         const params = new URLSearchParams({
+          const params = new URLSearchParams({
             autoplay: '1',
             mute: '0',           // tentando com som — pode não funcionar (ver aviso acima)
             controls: '0',

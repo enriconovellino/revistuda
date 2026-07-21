@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ConteudoService } from '../../../services/conteudo.service';
 import { AlunoService } from '../../../services/aluno.service';
+import { TutorialService } from '../../../services/tutorial.service';
 import { ComentarioAlunoProfessor } from '../../../model/professor.models';
 
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -29,6 +30,7 @@ export class ComentariosIdosoComponent implements OnInit {
     private router: Router,
     private conteudoService: ConteudoService,
     private alunoService: AlunoService,
+    public tutorialService: TutorialService
   ) {}
 
   ngOnInit(): void {
@@ -64,5 +66,14 @@ export class ComentariosIdosoComponent implements OnInit {
 
   irParaComentarios(): void {
     this.router.navigate(['/aluno-idoso/comentarios']);
+  }
+
+  iniciarTutorial(): void {
+    this.tutorialService.active.set(true);
+    this.tutorialService.setStepAndSpeak('comentariosExplicacao');
+  }
+
+  proximoPassoTutorial(): void {
+    this.tutorialService.avancarComentarios();
   }
 }

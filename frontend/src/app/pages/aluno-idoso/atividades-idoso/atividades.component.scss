@@ -8,8 +8,8 @@
   --color-ink-soft: #1e4db7;
   --color-primary: #0f2744;
   --color-primary-soft: #dbeafe;
-  --color-success: #ea580c;
-  --color-success-soft: #fff7ed;
+  --color-success: #16a34a;
+  --color-success-soft: #ecfdf5;
   --color-warning: #ea580c;
   --color-warning-soft: #fff7ed;
   --color-border: #E1E5F0;
@@ -28,11 +28,10 @@
 }
 
 h4.fw-bold {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: calc(1.9rem * var(--app-font-scale, 1));
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
 }
-
 
 // --- Botões de navegação ---
 .btn-nav-secundario {
@@ -44,15 +43,25 @@ h4.fw-bold {
   background-color: var(--color-surface);
   color: var(--color-ink-soft);
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: calc(1.5rem * var(--app-font-scale, 1));
   transition: all 0.18s ease;
   cursor: pointer;
+
+  i {
+    font-size: calc(1rem * var(--app-font-scale, 1));
+  }
 
   &:hover {
     background-color: var(--color-primary-soft);
     border-color: var(--color-primary);
     color: var(--color-primary);
     transform: translateY(-1px);
+  }
+
+  &.ativo {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
   }
 }
 
@@ -114,14 +123,14 @@ h4.fw-bold {
 }
 
 .atividade-titulo {
-  font-weight: 700;
-  font-size: 1.7rem;
+  font-weight: 600;
+  font-size: calc(1.2rem * var(--app-font-scale, 1));
   color: var(--color-ink);
   margin-bottom: 4px;
 }
 
 .atividade-descricao {
-  font-size: 0.98rem;
+  font-size: calc(0.98rem * var(--app-font-scale, 1));
   color: var(--color-ink-soft);
   margin-bottom: 8px;
   line-height: 1.4;
@@ -129,7 +138,7 @@ h4.fw-bold {
 
 .atividade-tipo {
   display: inline-block;
-  font-size: 0.95rem;
+  font-size: calc(0.82rem * var(--app-font-scale, 1));
   font-weight: 700;
   color: var(--color-ink-soft);
   background-color: var(--color-primary-soft);
@@ -140,7 +149,7 @@ h4.fw-bold {
 .badge.bg-success {
   background-color: var(--color-success) !important;
   font-weight: 800 !important;
-  font-size: 1.2rem !important;
+  font-size: calc(0.9rem * var(--app-font-scale, 1)) !important;
 }
 
 .btn-primary-custom {
@@ -152,8 +161,9 @@ h4.fw-bold {
   border: none;
   padding: 0.9rem 1.25rem;
   border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 1.4rem;
+  font-weight: 800;
+  font-size: calc(1rem * var(--app-font-scale, 1));
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
@@ -169,11 +179,17 @@ h4.fw-bold {
   bottom: 0;
   left: 0;
   right: 0;
+  margin-left: 15rem;
+  transition: margin-left 0.25s ease;
   background-color: #f8f9fa;
   border-top: 1px solid #dee2e6;
   padding: 1rem 1.5rem;
   box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
   z-index: 1030;
+}
+
+:host-context(.sidebar-collapsed) .nav-footer-fixo {
+  margin-left: 68px;
 }
 
 .nav-footer-inner {
@@ -210,6 +226,30 @@ h4.fw-bold {
   }
 }
 
+.btn-pag {
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  color: var(--color-ink);
+  font-size: calc(1rem * var(--app-font-scale, 1));
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
 .nav-info-pagina {
   font-weight: 700;
   font-size: 0.9375em;
@@ -240,6 +280,16 @@ h4.fw-bold {
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  font-size: calc(1rem * var(--app-font-scale, 1));
+}
+
+
+.pag-info {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  font-size: calc(1rem * var(--app-font-scale, 1));
 }
 
 // --- Estados vazio / carregando / erro ---
@@ -247,6 +297,15 @@ h4.fw-bold {
 .empty-state {
   padding: 48px 24px;
   color: var(--color-ink-soft);
+}
+
+.empty-state {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--color-border);
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.05rem;
 }
 
 .btn-cancelar-tutorial {
@@ -263,8 +322,6 @@ h4.fw-bold {
     color: var(--color-accent);
   }
 }
-
-
 
 .tutorial-backdrop-overlay {
   position: fixed;
@@ -312,12 +369,12 @@ h4.fw-bold {
   padding: 0.6rem 1.2rem;
   border-radius: 12px;
   font-weight: bold;
-  font-size: 1rem;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   z-index: 1080;
   animation: bounce 1.5s infinite;
   min-width: 280px;
   text-align: center;
+  font-size: calc(1.05rem * var(--app-font-scale, 1));
 
   &::after {
     content: '';
