@@ -1,11 +1,10 @@
-import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, inject, HostBinding, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Usuario } from '../../model/professor.models';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
 import { TutorialService } from '../../services/tutorial.service';
@@ -30,7 +29,19 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
   private routerSub?: Subscription;
   public tutorialService = inject(TutorialService);
 
-  constructor(private authService: AuthService) { }
+  /** No host para cobrir também o modal de Minha Conta (irmão do .d-flex). */
+  @HostBinding('class.tutorial-ativo')
+  get tutorialAtivoHost(): boolean {
+    return this.tutorialService.active();
+  }
+
+  constructor(private authService: AuthService) {
+    effect(() => {
+      if (this.tutorialService.active() && this.isEditProfileOpen()) {
+        this.isEditProfileOpen.set(false);
+      }
+    });
+  }
 
   ngOnInit() {
     if (typeof window !== 'undefined') {
@@ -90,6 +101,7 @@ export class AlunoIdosoComponent implements OnInit, OnDestroy {
   }
 
   abrirEditarPerfil(): void {
+    if (this.tutorialService.active()) return;
     this.isEditProfileOpen.set(true);
   }
 

@@ -185,7 +185,8 @@ h4.fw-bold {
   border-top: 1px solid #dee2e6;
   padding: 1rem 1.5rem;
   box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
-  z-index: 1030;
+  /* Abaixo do modal Minha Conta (1000) e do overlay do tutorial (1010) */
+  z-index: 900;
 }
 
 :host-context(.sidebar-collapsed) .nav-footer-fixo {
