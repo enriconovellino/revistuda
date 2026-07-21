@@ -153,5 +153,33 @@
 
     </div>
   </div>
+
+  <!-- Linha 3: Atividades dos alunos (feed, igual ao painel admin, só de alunos) -->
+  <div class="row g-4 mt-0">
+    <div class="col-12">
+      <div class="chart-card-custom h-100">
+        <h5 class="fw-bold text-dark-navy mb-4">Atividades dos alunos</h5>
+
+        <div class="d-flex flex-column" *ngIf="atividadesAlunos().length > 0; else semAtividadesAlunos">
+          <div class="feed-atividade-item" *ngFor="let atividade of atividadesAlunosVisiveis()">
+            <span class="feed-pin-icon">{{ iconeAtividadeAluno(atividade.tipo) }}</span>
+            <div class="feed-atividade-content">
+              <span class="feed-atividade-texto">{{ atividade.descricao }}</span>
+              <span class="feed-atividade-tempo">{{ tempoRelativo(atividade.data) }}</span>
+            </div>
+          </div>
+
+          <button class="btn btn-link btn-sm text-decoration-none align-self-center mt-2" *ngIf="atividadesAlunosOcultas() > 0"
+            (click)="mostrarTodasAtividadesAlunos.set(!mostrarTodasAtividadesAlunos())">
+            {{ mostrarTodasAtividadesAlunos() ? 'Ver menos ↑' : ('Ver mais (' + atividadesAlunosOcultas() + ') ↓') }}
+          </button>
+        </div>
+
+        <ng-template #semAtividadesAlunos>
+          <p class="text-muted small mb-0">Nenhuma atividade dos seus alunos registrada ainda.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </div>
 }
