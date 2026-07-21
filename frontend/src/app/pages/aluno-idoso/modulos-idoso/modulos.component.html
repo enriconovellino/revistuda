@@ -34,7 +34,12 @@
   @if (modulos().length > 0) {
   <div class="modulos-grid">
     @for (modulo of modulos(); track modulo.modulo_id; let first = $first) {
-    <div class="modulo-card position-relative" [class.highlight-tutorial-item]="first && tutorialService.active() && tutorialService.step() === 'cursosLista'" (click)="tutorialService.active() ? proximoPassoTutorial() : acessarModulo(modulo.modulo_id)">
+    <div class="modulo-card position-relative"
+         [class.highlight-tutorial-item]="first && tutorialService.active() && tutorialService.step() === 'cursosLista'"
+         (click)="tutorialService.active() ? proximoPassoTutorial() : acessarModulo(modulo.modulo_id)"
+         (mouseenter)="onMouseEnterModulo(modulo.modulo_id)"
+         (mouseleave)="onMouseLeaveModulo()">
+
       <!-- Tooltip explicativo com Botão de Avanço finalizando o tutorial -->
       <div class="tooltip-tutorial-balao" *ngIf="first && tutorialService.active() && tutorialService.step() === 'cursosLista'">
         <div class="d-flex flex-column gap-2 text-center" style="max-width: 280px; white-space: normal;">
@@ -74,6 +79,41 @@
           {{ textoBotao(modulo) }} <i class="fi fi-br-arrow-right"></i>
         </button>
       </div>
+
+      <!-- Popover de preview no hover -->
+      @if (moduloEmPreview() === modulo.modulo_id) {
+      <div class="preview-popover" (click)="$event.stopPropagation()">
+        @if (carregandoPreview().has(modulo.modulo_id)) {
+        <div class="preview-loading">
+          <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+          <span>Carregando prévia...</span>
+        </div>
+        } @else {
+        @let preview = previewDoModulo(modulo.modulo_id);
+        @if (preview?.tipo === 'video') {
+        <div class="preview-thumb-wrapper">
+          @if (preview?.embedUrl) {
+          <iframe
+            [src]="preview?.embedUrl"
+            class="preview-video-iframe"
+            frameborder="0"
+            allow="autoplay; encrypted-media">
+          </iframe>
+          } @else if (preview?.thumbnailUrl) {
+          <img [src]="preview?.thumbnailUrl" class="preview-thumb" alt="Prévia do vídeo">
+          <i class="fi fi-sr-play preview-play-icon"></i>
+          }
+        </div>
+        <p class="preview-titulo">{{ preview?.titulo }}</p>
+        } @else if (preview?.tipo === 'texto') {
+        <p class="preview-titulo">{{ preview?.titulo }}</p>
+        <p class="preview-texto">{{ preview?.textoResumo }}...</p>
+        } @else {
+        <p class="preview-texto text-muted mb-0">Prévia não disponível.</p>
+        }
+        }
+      </div>
+      }
     </div>
     }
   </div>
