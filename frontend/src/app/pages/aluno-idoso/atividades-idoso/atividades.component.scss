@@ -172,6 +172,25 @@ h4.fw-bold {
   }
 }
 
+// --- Paginação (Estilo Fixo na Base) ---
+.nav-footer-fixo {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: 15rem;
+  transition: margin-left 0.25s ease;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  /* Abaixo do modal Minha Conta (1000) e do overlay do tutorial (1010) */
+  z-index: 900;
+}
+
+:host-context(.sidebar-collapsed) .nav-footer-fixo {
+  margin-left: 68px;
+}
 
 .nav-footer-inline {
   max-width: 1366px;

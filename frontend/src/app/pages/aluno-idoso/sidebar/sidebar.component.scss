@@ -22,6 +22,11 @@ $sidebar-width-collapsed: 68px;
   overflow: hidden;
 }
 
+/* Overlay do tutorial (z-index 1010+) precisa cobrir a sidebar também */
+:host-context(.tutorial-ativo) .sidebar {
+  z-index: 1;
+}
+
 .sidebar.collapsed {
   width: $sidebar-width-collapsed;
 }

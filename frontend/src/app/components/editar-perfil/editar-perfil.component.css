@@ -12,6 +12,12 @@
   align-items: center;
 }
 
+/* Durante o tutorial do aluno-idoso, o modal fica abaixo do overlay (1010) */
+:host-context(.tutorial-ativo) .modal-overlay {
+  z-index: 500;
+  pointer-events: none;
+}
+
 .modal-card {
   background: white;
   border-radius: 12px;

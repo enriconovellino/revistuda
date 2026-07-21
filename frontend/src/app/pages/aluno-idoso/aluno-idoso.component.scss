@@ -38,6 +38,25 @@
   background: white;
 }
 
+/* Tutorial overlay (z-index 1010+) acima do header sticky, sidebar e modal Minha Conta.
+   Classe fica no :host para incluir app-editar-perfil (irmão do .d-flex). */
+:host.tutorial-ativo {
+  .content-wrapper {
+    position: relative;
+    z-index: 1011; /* acima da sidebar (1) */
+  }
+
+  .main-header {
+    z-index: 0; /* abaixo do page-body */
+  }
+
+  .page-body {
+    position: relative;
+    z-index: 1; /* acima do header; libera overlay 1010+ */
+    overflow: visible; /* não recortar balões com top negativo */
+  }
+}
+
 .header-left {
   display: flex;
   align-items: center;
