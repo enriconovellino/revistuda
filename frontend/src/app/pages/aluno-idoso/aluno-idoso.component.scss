@@ -281,10 +281,7 @@
   transition: margin-left 0.25s ease, max-width 0.25s ease;
 }
 
-/* overflow no body (não no wrapper) para o sticky do header funcionar */
-.page-body {
-  overflow-x: hidden;
-}
+
 
 .sidebar-collapsed {
   .content-wrapper {
