@@ -13,12 +13,12 @@ export class AlunoService {
   constructor() { }
 
   private getUserId(): number | null {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) return null;
-    const user = JSON.parse(userStr);
-    return user.id ?? user.usuario_id ?? null;
+    const user = this.authService.getUser();
+    if (!user) return null;
+    return (user as { id?: number; usuario_id?: number }).id
+      ?? (user as { id?: number; usuario_id?: number }).usuario_id
+      ?? null;
   }
-
   async iniciarAtividade(atividadeId: number): Promise<{ status: string; data_inicio: string | null; data_conclusao: string | null }> {
     const response = await this.authService.fetchWithAuth(`${this.apiUrl}/atividades/${atividadeId}/iniciar`, {
       method: 'POST',
@@ -82,4 +82,4 @@ export class AlunoService {
 
     return resultado;
   }
-}
+}
