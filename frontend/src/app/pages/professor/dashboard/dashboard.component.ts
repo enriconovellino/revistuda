@@ -46,17 +46,29 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
   // restrito às atividades (conclusões, comentários) dos alunos das
   // turmas deste professor.
   atividadesAlunos = signal<AtividadeRecente[]>([]);
-  private readonly atividadesAlunosRecolhidas = 5;
+  private readonly atividadesAlunosRecolhidas = 10;
   mostrarTodasAtividadesAlunos = signal<boolean>(false);
+  filtroAtividadesAluno = signal<string>('todas');
+
+  atividadesAlunosFiltradas = computed(() => {
+    const filtro = this.filtroAtividadesAluno();
+    let atividades = this.atividadesAlunos();
+    if (filtro === 'concluido') {
+      atividades = atividades.filter(a => a.tipo === 'atividade_concluida' || a.tipo === 'conteudo_concluido');
+    } else if (filtro === 'nao_concluido') {
+      atividades = atividades.filter(a => a.tipo !== 'atividade_concluida' && a.tipo !== 'conteudo_concluido');
+    }
+    return atividades;
+  });
 
   atividadesAlunosVisiveis = computed(() =>
     this.mostrarTodasAtividadesAlunos()
-      ? this.atividadesAlunos()
-      : this.atividadesAlunos().slice(0, this.atividadesAlunosRecolhidas)
+      ? this.atividadesAlunosFiltradas()
+      : this.atividadesAlunosFiltradas().slice(0, this.atividadesAlunosRecolhidas)
   );
 
   atividadesAlunosOcultas = computed(() =>
-    Math.max(0, this.atividadesAlunos().length - this.atividadesAlunosRecolhidas)
+    Math.max(0, this.atividadesAlunosFiltradas().length - this.atividadesAlunosRecolhidas)
   );
 
   private graficoChart: Chart | null = null;
@@ -222,11 +234,18 @@ export class ProfessorDashboardComponent implements OnInit, AfterViewInit {
 
   iconeAtividadeAluno(tipo: string): string {
     switch (tipo) {
-      case 'atividade_concluida': return '✅';
-      case 'comentario_aluno': return '💬';
-      case 'conteudo_concluido': return '📘';
-      default: return '🔹';
+      case 'atividade_concluida': return 'fi fi-sr-checkbox';
+      case 'comentario_aluno': return 'fi fi-sr-comment-alt';
+      case 'conteudo_concluido': return 'fi fi-sr-book';
+      default: return 'fi fi-sr-bell';
     }
+  }
+
+  getAtividadeColorClass(tipo: string, idx: number): string {
+    if (tipo === 'atividade_concluida' || tipo === 'conteudo_concluido') {
+      return 'icon-color-success';
+    }
+    return 'icon-color-' + (idx % 3);
   }
 
   tempoRelativo(data: string): string {

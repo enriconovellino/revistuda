@@ -157,6 +157,10 @@
       background-color: #fff7ed;
       color: #c2410c; // Laranja/Marrom forte
     }
+    &.icon-color-success {
+      background-color: #f0fdf4;
+      color: #15803d; // Verde forte
+    }
 
     svg {
       stroke-linecap: round;
@@ -370,5 +374,29 @@
     flex: 1;
     justify-content: center !important;
     gap: 8px;
+  }
+}
+
+/* ==========================================
+   Scroll para feed expandido
+   ========================================== */
+.feed-scrollable {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 }
