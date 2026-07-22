@@ -22,6 +22,19 @@ export class ComentariosIdosoComponent implements OnInit {
   hasError = signal<boolean>(false);
   comentarios = signal<ComentarioAlunoProfessor[]>([]);
 
+  // --- Paginação ---
+  paginaAtual = signal<number>(1);
+  itensPorPagina = 5;
+
+  totalPaginas = computed(() =>
+    Math.max(1, Math.ceil(this.comentarios().length / this.itensPorPagina))
+  );
+
+  comentariosPaginados = computed(() => {
+    const inicio = (this.paginaAtual() - 1) * this.itensPorPagina;
+    return this.comentarios().slice(inicio, inicio + this.itensPorPagina);
+  });
+
   totalComentarios = computed(() => this.comentarios().length);
   totalRespondidos = computed(() => this.comentarios().filter(c => !!c.resposta).length);
   totalPendentes = computed(() => this.comentarios().filter(c => !c.resposta).length);
@@ -52,12 +65,30 @@ export class ComentariosIdosoComponent implements OnInit {
         .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
       this.comentarios.set(lista);
+
+      // garante que a página atual continue válida após recarregar
+      if (this.paginaAtual() > this.totalPaginas()) {
+        this.paginaAtual.set(1);
+      }
     } catch (error: unknown) {
       console.error('Erro ao carregar comentários:', getErrorMessage(error, 'Erro desconhecido'));
       this.hasError.set(true);
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  irParaPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas()) return;
+    this.paginaAtual.set(pagina);
+  }
+
+  paginaAnterior(): void {
+    this.irParaPagina(this.paginaAtual() - 1);
+  }
+
+  proximaPagina(): void {
+    this.irParaPagina(this.paginaAtual() + 1);
   }
 
   irParaAtividades(): void {
