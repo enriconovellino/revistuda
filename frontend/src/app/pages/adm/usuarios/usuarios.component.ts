@@ -81,7 +81,8 @@ export class UsuariosAdminComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      this.filteredUsers();
+      this.searchTerm();
+      this.activeFilter();
       untracked(() => this.paginaAtual.set(1));
     });
   }
