@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Usuario } from '../../model/professor.models';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
+import { RouterOutlet, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { SidebarIdosoComponent } from './sidebar/sidebar.component';
@@ -13,7 +13,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
 @Component({
   selector: 'app-aluno-idoso',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, RouterLink, RouterLinkActive, EditarPerfilComponent, SidebarIdosoComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, RouterOutlet, EditarPerfilComponent, SidebarIdosoComponent, ConfirmDialogComponent],
   templateUrl: './aluno-idoso.component.html',
   styleUrl: './aluno-idoso.component.scss'
 })

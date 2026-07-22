@@ -7,7 +7,6 @@ import { AuthService } from '../../../services/auth.service';
 import { MAX_ALUNOS_POR_TURMA, Usuario } from '../../../model/professor.models';
 import { Turma } from '../../../model/turma.model';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
-import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 type Filtro = 'todos' | 'professor' | 'aluno' | 'pendente';
 type TipoAcao = 'aprovar' | 'rejeitar' | 'revogar' | 'excluir';
@@ -20,7 +19,7 @@ interface AcaoPendente {
 @Component({
   selector: 'app-usuarios-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialogComponent, PaginatorComponent],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss'
 })

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProfessorService } from '../../../services/professor.service';
 import { AlunoProfessor } from '../../../model/professor.models';
-import { PaginatorComponent } from '../../../components/paginator/paginator.component';
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
@@ -13,7 +12,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 @Component({
   selector: 'app-alunos-professor',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginatorComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './alunos.component.html',
   styleUrl: './alunos.component.css',
 })

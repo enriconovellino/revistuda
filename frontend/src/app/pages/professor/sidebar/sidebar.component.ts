@@ -1,12 +1,11 @@
 import { Component, Output, EventEmitter, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar-professor',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ConfirmDialogComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })

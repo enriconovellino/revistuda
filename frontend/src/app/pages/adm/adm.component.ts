@@ -6,10 +6,6 @@ import { CommonModule } from '@angular/common';
 
 import { EditarPerfilComponent } from '../../components/editar-perfil/editar-perfil.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { DashboardAdminComponent } from './dashboard/dashboard.component';
-import { UsuariosAdminComponent } from './usuarios/usuarios.component';
-import { TurmasAdminComponent } from './turmas/turmas.component';
-import { RelatoriosAdminComponent } from './relatorios/relatorios.component';
 import { SidebarAdminComponent } from './sidebar/sidebar.component';
 import { Usuario } from '../../model/professor.models';
 
@@ -23,10 +19,6 @@ export type AdmView = 'dashboard' | 'usuarios' | 'turmas' | 'relatorios';
     RouterOutlet,
     EditarPerfilComponent,
     ConfirmDialogComponent,
-    DashboardAdminComponent,
-    UsuariosAdminComponent,
-    TurmasAdminComponent,
-    RelatoriosAdminComponent,
     SidebarAdminComponent,
   ],
   templateUrl: './adm.component.html',
