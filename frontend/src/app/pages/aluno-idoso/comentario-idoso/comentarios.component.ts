@@ -26,6 +26,18 @@ export class ComentariosIdosoComponent implements OnInit {
   totalRespondidos = computed(() => this.comentarios().filter(c => !!c.resposta).length);
   totalPendentes = computed(() => this.comentarios().filter(c => !c.resposta).length);
 
+  readonly ITENS_POR_PAGINA = 5;
+  paginaAtual = signal<number>(1);
+
+  get totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.comentarios().length / this.ITENS_POR_PAGINA));
+  }
+
+  get comentariosPaginados(): ComentarioAlunoProfessor[] {
+    const inicio = (this.paginaAtual() - 1) * this.ITENS_POR_PAGINA;
+    return this.comentarios().slice(inicio, inicio + this.ITENS_POR_PAGINA);
+  }
+
   constructor(
     private router: Router,
     private conteudoService: ConteudoService,
@@ -57,6 +69,7 @@ export class ComentariosIdosoComponent implements OnInit {
       this.hasError.set(true);
     } finally {
       this.isLoading.set(false);
+      this.paginaAtual.set(1);
     }
   }
 
@@ -66,6 +79,14 @@ export class ComentariosIdosoComponent implements OnInit {
 
   irParaComentarios(): void {
     this.router.navigate(['/aluno-idoso/comentarios']);
+  }
+
+  paginaAnterior(): void {
+    if (this.paginaAtual() > 1) this.paginaAtual.update(p => p - 1);
+  }
+
+  proximaPagina(): void {
+    if (this.paginaAtual() < this.totalPaginas) this.paginaAtual.update(p => p + 1);
   }
 
   iniciarTutorial(): void {

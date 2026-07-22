@@ -73,7 +73,7 @@
 
     @if (comentarios().length > 0) {
     <div class="d-flex flex-column gap-3">
-      @for (comentario of comentarios(); track comentario.id) {
+      @for (comentario of comentariosPaginados; track comentario.id) {
       <div class="comentario-atividade-box">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
           <div>
@@ -107,6 +107,20 @@
       </div>
       }
     </div>
+
+    @if (totalPaginas > 1) {
+    <div class="nav-footer-inline">
+      <button class="btn-nav-anterior" [disabled]="paginaAtual() === 1" (click)="paginaAnterior()">
+        <i class="fi fi-rr-arrow-left"></i> Anterior
+      </button>
+      <span class="nav-info-pagina">
+        Página <strong>{{ paginaAtual() }}</strong> de {{ totalPaginas }}
+      </span>
+      <button class="btn-nav-proxima" [disabled]="paginaAtual() === totalPaginas" (click)="proximaPagina()">
+        Próxima <i class="fi fi-rr-arrow-right"></i>
+      </button>
+    </div>
+    }
     } @else {
     <div class="empty-state">
       <p class="mb-0">Você ainda não fez nenhum comentário.</p>
