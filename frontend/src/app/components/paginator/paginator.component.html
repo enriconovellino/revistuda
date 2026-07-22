@@ -1,5 +1,13 @@
-<div class="paginator" *ngIf="totalPaginas > 1">
-  <button class="pag-btn" [disabled]="paginaAtual <= 1" (click)="anterior()">← Anterior</button>
-  <span class="pag-info">Página {{ paginaAtual }} de {{ totalPaginas }}</span>
-  <button class="pag-btn" [disabled]="paginaAtual >= totalPaginas" (click)="proxima()">Próxima →</button>
+<div class="custom-pagination" *ngIf="totalPaginas > 1">
+  <button class="pag-arrow" [disabled]="paginaAtual <= 1" (click)="anterior()">
+    <i class="fi fi-rr-angle-left"></i>
+  </button>
+
+  <button class="pag-num" *ngFor="let p of paginas" [class.active]="paginaAtual === p" (click)="mudarPagina(p)">
+    {{ p }}
+  </button>
+
+  <button class="pag-arrow" [disabled]="paginaAtual >= totalPaginas" (click)="proxima()">
+    <i class="fi fi-rr-angle-right"></i>
+  </button>
 </div>

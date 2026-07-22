@@ -40,10 +40,11 @@
         </select>
       </div>
       <div class="col-12 mt-3 d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-outline-secondary btn-sm px-3" (click)="showCreateForm.set(false)" [disabled]="loading()">
+        <button type="button" class="btn-criar btn-criar-outline" (click)="showCreateForm.set(false)" [disabled]="loading()">
           Cancelar
         </button>
-        <button type="button" class="btn btn-primary btn-sm px-4" (click)="createTurma()" [disabled]="loading()">
+        <button type="button" class="btn-criar btn-criar--sm d-flex align-items-center gap-2" (click)="createTurma()" [disabled]="loading()">
+          <i class="fi fi-rr-users"></i>
           <span *ngIf="!loading()">Criar Turma</span>
           <span *ngIf="loading()">Aguarde...</span>
         </button>

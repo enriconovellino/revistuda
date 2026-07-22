@@ -13,15 +13,21 @@ export class PaginatorComponent {
   @Input() totalPaginas = 1;
   @Output() paginaMudou = new EventEmitter<number>();
 
-  anterior() {
-    if (this.paginaAtual > 1) {
-      this.paginaMudou.emit(this.paginaAtual - 1);
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+  mudarPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaMudou.emit(pagina);
     }
   }
 
+  anterior() {
+    this.mudarPagina(this.paginaAtual - 1);
+  }
+
   proxima() {
-    if (this.paginaAtual < this.totalPaginas) {
-      this.paginaMudou.emit(this.paginaAtual + 1);
-    }
+    this.mudarPagina(this.paginaAtual + 1);
   }
 }
