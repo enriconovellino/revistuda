@@ -66,21 +66,23 @@
     </div>
 
     <div class="col-md-6">
-      <div class="chart-card h-100">
+      <div class="chart-card chart-card--scroll h-100">
         <div class="card-header-custom">
           <h5 class="fw-bold">Média por curso</h5>
           <i class="fi fi-rr-book"></i>
         </div>
-        <div class="d-flex flex-column gap-3" *ngIf="data.mediaPorModulo.length > 0; else semModulos">
-          <div *ngFor="let item of data.mediaPorModulo">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="small fw-semibold text-dark">{{ item.nome }}</span>
-              <span class="small fw-bold text-dark" *ngIf="item.media !== null">{{ item.media }}%</span>
-              <span class="small text-muted fst-italic" *ngIf="item.media === null">Sem dados</span>
-            </div>
-            <!-- Mantendo a regra original de exibição da barra -->
-            <div class="occ-bar" *ngIf="item.media !== null">
-              <div class="occ-bar-fill" [class.warn]="item.media < 70" [style.width.%]="item.media"></div>
+        <div class="modulos-scroll" *ngIf="data.mediaPorModulo.length > 0; else semModulos">
+          <div class="d-flex flex-column gap-3">
+            <div *ngFor="let item of data.mediaPorModulo">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-semibold text-dark">{{ item.nome }}</span>
+                <span class="small fw-bold text-dark" *ngIf="item.media !== null">{{ item.media }}%</span>
+                <span class="small text-muted fst-italic" *ngIf="item.media === null">Sem dados</span>
+              </div>
+              <!-- Mantendo a regra original de exibição da barra -->
+              <div class="occ-bar" *ngIf="item.media !== null">
+                <div class="occ-bar-fill" [class.warn]="item.media < 70" [style.width.%]="item.media"></div>
+              </div>
             </div>
           </div>
         </div>
