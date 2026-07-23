@@ -38,6 +38,8 @@
   box-shadow: 0 4px 20px rgba(15, 39, 68, 0.02);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   &::before {
     content: '';
@@ -105,4 +107,39 @@
     color: #0f2744;
     font-size: 1.1rem;
   }
+}
+
+.chart-card--scroll {
+  max-height: 800px;
+}
+
+.modulos-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scroll-behavior: smooth;
+  min-height: 0;
+
+  // Scrollbar customizada (Chrome/Edge/Safari)
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 99px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+
+    &:hover {
+      background: #94a3b8;
+    }
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
